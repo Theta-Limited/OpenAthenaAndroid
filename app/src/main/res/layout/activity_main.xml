@@ -13,21 +13,6 @@
       android:layout_height="fill_parent"
       android:orientation="vertical">
 
-    <Spinner
-        android:id="@+id/test_select"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <EditText
-        android:id="@+id/EditText01"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:lines="1"
-        android:autoText="false"
-        android:capitalize="none"
-        android:hint="@string/enter_host"
-        android:text=""/>
-
         <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/prefs_content"
             android:columnCount="2"

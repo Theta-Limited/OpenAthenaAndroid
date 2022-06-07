@@ -6,6 +6,7 @@
     <!-- we want to be able to read and access images -->
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <!-- starting in API 19+, WRITE is not required to read/write
          in our own application dirs

@@ -11,19 +11,25 @@
 // if possible; otherwise create new activity
 // intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
-
 package com.openathena;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import java.io.FileOutputStream;
 
@@ -46,6 +52,21 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences prefs;
     SharedPreferences.Editor edit;
     protected String versionName;
+    ImageView iView;
+    Uri imageUri = null;
+
+    ActivityResultLauncher<String> mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
+                new ActivityResultCallback<Uri>() {
+                    @Override
+                    public void onActivityResult(Uri uri) {
+                        // Handle the returned Uri
+                        //appendText("Back from chooser\n");
+
+                        appendText("Back from chooser\n");
+                        Log.d(TAG,"back from chooser");
+                        imageSelected(uri);
+                    }
+                });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         // get our prefs that we have saved
 
         textView = (TextView)findViewById(R.id.text_view);
+        iView = (ImageView)findViewById(R.id.ImagePreview);
 
         // try to get our version out of app/build.gradle
         // versionName field
@@ -77,6 +99,45 @@ public class MainActivity extends AppCompatActivity {
 
         textView.setText("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\nCopyright 2022\n");
         appendLog("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\nCopyright 2022\n");
+
+
+    }
+
+    // stolen from InterWebs
+    // https://mobikul.com/pick-image-gallery-android/
+    private String getPathFromURI(Uri uri)
+    {
+        String res = null;
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(uri, proj, null, null, null);
+        if (cursor.moveToFirst()) {
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            res = cursor.getString(column_index);
+        }
+        cursor.close();
+        return res;
+    }
+
+    // back from image selection dialog; handle it
+    private void imageSelected(Uri uri)
+    {
+        String aPath;
+
+        // save uri for later calculation
+        imageUri = uri;
+
+        //appendText("imageSelected: uri is "+uri+"\n");
+        //appendText(uri.toString()+"\n");
+
+        Log.d(TAG,"imageSelected: uri is "+uri);
+        aPath = getPathFromURI(uri);
+        Log.d(TAG,"imageSelected: path is "+aPath);
+
+        iView.setImageURI(uri);
+        appendLog("Selected image "+imageUri+"\n");
+
+        //appendText("Image selected "+aPath+"\n");
+        //appendLog("Image selected "+aPath+"\n");
     }
 
     @Override
@@ -154,33 +215,30 @@ public class MainActivity extends AppCompatActivity {
         appendText("Button clicked\n");
         appendLog("Going to start calculation\n");
 
-        Intent i = new Intent();
-        i.setType("image/*");
-        i.setAction(Intent.ACTION_GET_CONTENT);
-        getResult.launch(i);
-
-        private val getResult()
-
-        // pass the constant to compare it
-          // with the returned requestCode
-        StartActivityForResult(Intent.createChooser(i, "Select Picture"), SELECT_PICTURE);
 
     } // button click
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        super.onActivityResult(requestCode, resultCode, data);
-
-
-
-    }
-
-    // select image button clicked
+    // select image button clicked; launch chooser and get result
+    // in callback
     public void selectImageClick(View view)
     {
         Log.d(TAG,"selectImageClick started");
-        appendLog("Going to start selecting image");
+        appendLog("Going to start selecting image\n");
+        appendText("selectImageClick started\n");
 
+        //Intent i = new Intent();
+        //i.setType("image/*");
+        //i.setAction(Intent.ACTION_GET_CONTENT);
+        //startActivity(Intent.createChooser(i,"Select Picture"));
+
+        mGetContent.launch("image/*");
+
+        // pass the constant to compare it
+        // with the returned requestCode
+        // StartActivityForResult(Intent.createChooser(i, "Select Picture"), SELECT_PICTURE);
+
+        appendText("Chooser started\n");
+        appendLog("Chooser started\n");
     }
 
     private void appendText(final String aStr)
