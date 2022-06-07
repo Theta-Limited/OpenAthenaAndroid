@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      android:id="@+id/content"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:orientation="vertical">
+
+    <Spinner
+        android:id="@+id/test_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:id="@+id/EditText01"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:autoText="false"
+        android:capitalize="none"
+        android:hint="@string/enter_host"
+        android:text=""/>
+
+    <Button
+        android:id="@+id/connect_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="clickButton"
+        android:text="@string/test_button_text"/>
+
+    <ScrollView
+        android:id="@+id/phone_text_scroll"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        android:fillViewport="true">
+
+     <TextView
+        android:id="@+id/text_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1.0"
+        android:contentDescription="@string/text_view_value"/>
+    </ScrollView>
+
+</LinearLayout>

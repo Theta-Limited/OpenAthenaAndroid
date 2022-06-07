@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/prefs_content"
+    android:columnCount="2"
+    android:rowCount="9"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/save_prefs_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="prefsSave"
+        android:text="@string/save_prefs_text"/>
+
+    <Button
+        android:id="@+id/reset_prefs_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="prefsReset"
+        android:text="@string/reset_prefs_text"/>
+
+</GridLayout>
