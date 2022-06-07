@@ -61,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
 
         int id = item.getItemId();
 
+        // don't do anything if user chooses Calculate; we're already there.
+
         if (id == R.id.action_prefs) {
             intent = new Intent(getApplicationContext(), PrefsActivity.class);
             startActivity(intent);

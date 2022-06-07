@@ -1,27 +1,24 @@
 <resources>
     <string name="app_name">OpenAthena for Android</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
+
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-
-    <string name="action_prefs">Preferences</string>
+    <string name="action_prefs">Settings</string>
     <string name="action_settings">Settings</string>
 
     <string name="text_view_value">ChangeMe</string>
     <string name="log_text_view_value">OpenAthena for Android . . . </string>
     <string name="test_button_text">Calculate</string>
     <string name="enter_host">Filename</string>
-    <string name="title_activity_about">AboutActivity</string>
 
     <string name="finish_button_text">Back</string>
-    <string name="title_activity_prefs">PrefsActivity</string>
-    <string name="title_activity_log">ActivityLog</string>
 
     <string name="save_prefs_text">Save</string>
     <string name="reset_prefs_text">Reset</string>
+
+    <string name="title_activity_log">OpenAthena for Android Log</string>
+    <string name="title_activity_prefs">OpenAthena for Android Settings</string>
+    <string name="title_activity_about">About OpenAthena for Android</string>
+
 </resources>

@@ -50,6 +50,14 @@ public class PrefsActivity extends AppCompatActivity {
 
         // don't do anything if they select prefs
 
+        if (id == R.id.action_calculate) {
+            // jump to main activity
+            // its already created
+            intent = new Intent(getApplicationContext(),MainActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
         if (id == R.id.action_about) {
            intent = new Intent(getApplicationContext(),AboutActivity.class);
             startActivity(intent);

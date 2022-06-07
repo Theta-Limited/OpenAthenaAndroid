@@ -55,6 +55,14 @@ public class AboutActivity extends AppCompatActivity {
 
         int id = item.getItemId();
 
+        if (id == R.id.action_calculate) {
+            // jump to main activity
+            // its already created
+            intent = new Intent(getApplicationContext(),MainActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
         if (id == R.id.action_prefs) {
             intent = new Intent(getApplicationContext(), PrefsActivity.class);
             startActivity(intent);
