@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/phone_text_scroll"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        android:fillViewport="true">
+
+    <LinearLayout
       android:id="@+id/content"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
@@ -21,19 +28,39 @@
         android:hint="@string/enter_host"
         android:text=""/>
 
-    <Button
-        android:id="@+id/connect_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="clickButton"
-        android:text="@string/test_button_text"/>
+        <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/prefs_content"
+            android:columnCount="2"
+            android:rowCount="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <ScrollView
-        android:id="@+id/phone_text_scroll"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        android:fillViewport="true">
+            <Button
+                android:id="@+id/connect_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="clickButton"
+                android:text="@string/test_button_text" />
+
+            <Button
+                android:id="@+id/SelectImageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:onClick="selectImageClick"
+                android:text="SELECT IMAGE" />
+
+        </GridLayout>
+
+    <ImageView
+        android:id="@+id/ImagePreview"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_below="@id/SelectImageButton"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp" />
+
 
      <TextView
         android:id="@+id/text_view"
@@ -41,6 +68,8 @@
         android:layout_height="fill_parent"
         android:layout_weight="1.0"
         android:contentDescription="@string/text_view_value"/>
-    </ScrollView>
 
-</LinearLayout>
+    </LinearLayout>
+
+</ScrollView>
+

@@ -5,6 +5,13 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
+    <Button
+        android:id="@+id/clear_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="clearLogButton"
+        android:text="@string/clear_button_text"/>
+"
     <ScrollView
         android:id="@+id/log_text_scroll"
         android:layout_width="fill_parent"

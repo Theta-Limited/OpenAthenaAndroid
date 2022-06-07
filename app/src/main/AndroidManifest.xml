@@ -3,6 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.openathena">
 
+    <!-- we want to be able to read and access images -->
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <!-- starting in API 19+, WRITE is not required to read/write
+         in our own application dirs
+         <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+        -->
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"

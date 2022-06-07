@@ -5,6 +5,7 @@
 
 package com.openathena;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -12,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,13 +27,18 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.openathena.databinding.ActivityAboutBinding;
 
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+
 public class AboutActivity extends AppCompatActivity {
 
-    private AppBarConfiguration appBarConfiguration;
-    private ActivityAboutBinding binding;
+    public static String TAG = AboutActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Log.d(TAG,"onCreate started");
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_about);
@@ -59,18 +66,21 @@ public class AboutActivity extends AppCompatActivity {
             // jump to main activity
             // its already created
             intent = new Intent(getApplicationContext(),MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
             return true;
         }
 
         if (id == R.id.action_prefs) {
             intent = new Intent(getApplicationContext(), PrefsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
             return true;
         }
 
         if (id == R.id.action_log) {
-           intent = new Intent(getApplicationContext(),ActivityLog.class);
+            intent = new Intent(getApplicationContext(),ActivityLog.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
             return true;
         }
@@ -79,4 +89,53 @@ public class AboutActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+        @Override
+    protected void onResume() {
+        Log.d(TAG,"onResume");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause()
+    {
+        Log.d(TAG,"onPause");
+
+        //appendText("onPause\n");
+        super.onPause();
+
+    } // onPause()
+
+    @Override
+    protected void onDestroy()
+    {
+        Log.d(TAG,"onDestroy started");
+
+        // close logfile
+        //appendText("onDestroy\n");
+        // do whatever here
+        super.onDestroy();
+
+    } // onDestroy()
+
+    private void appendLog(String str)
+    {
+        FileOutputStream fos;
+        PrintWriter pw;
+
+        Log.d(TAG,"appendLogLocal started");
+
+        try {
+            fos = openFileOutput(MainActivity.LOG_NAME, Context.MODE_PRIVATE|Context.MODE_APPEND);
+            pw = new PrintWriter(fos);
+            pw.print(str);
+            pw.close();
+            fos.close();
+            Log.d(TAG,"appendLogLocal: wrote to logfile");
+
+        } catch (Exception e) {
+            Log.d(TAG,"appendLogLocal: failed to write log:"+e.getMessage());
+        }
+
+    } // appendLog()
 }
