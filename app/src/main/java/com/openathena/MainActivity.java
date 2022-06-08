@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                         if (uri == null)
                             return;
 
-                        appendText("Back from chooser\n");
+                        //appendText("Back from chooser\n");
                         Log.d(TAG,"back from chooser");
                         imageSelected(uri);
                     }
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
     // stolen from InterWebs
     // https://mobikul.com/pick-image-gallery-android/
-    private String getPathFromURI(Uri uri)
+/*    private String getPathFromURI(Uri uri)
     {
         String res = null;
         String[] proj = {MediaStore.Images.Media.DATA};
@@ -124,11 +124,11 @@ public class MainActivity extends AppCompatActivity {
         }
         cursor.close();
         return res;
-    }
+    }*/
 
     // stolen from https://stackoverflow.com/questions/5568874/how-to-extract-the-file-name-from-uri-returned-from-intent-action-get-content
     // modified by rdk
-    private String getFileName(Uri uri) {
+/*    private String getFileName(Uri uri) {
         String result = null;
         if (uri.getScheme().equals("content")) {
             Cursor cursor = getContentResolver().query(uri, null, null, null, null);
@@ -151,7 +151,8 @@ public class MainActivity extends AppCompatActivity {
             //}
         }
         return result;
-    }
+    }*/
+
     // back from image selection dialog; handle it
     private void imageSelected(Uri uri)
     {
@@ -163,9 +164,9 @@ public class MainActivity extends AppCompatActivity {
         //appendText("imageSelected: uri is "+uri+"\n");
         //appendText(uri.toString()+"\n");
 
-        Log.d(TAG,"imageSelected: uri is "+uri);
-        aPath = getPathFromURI(uri);
-        Log.d(TAG,"imageSelected: path is "+aPath);
+        //Log.d(TAG,"imageSelected: uri is "+uri);
+        //aPath = getPathFromURI(uri);
+        //Log.d(TAG,"imageSelected: path is "+aPath);
 
         iView.setImageURI(uri);
         appendLog("Selected image "+imageUri+"\n");
@@ -257,7 +258,9 @@ public class MainActivity extends AppCompatActivity {
         File aFile;
         String attribs = "Exif information ---\n";
 
-        appendText("calculateImage clicked\n");
+        clearText();
+
+        //appendText("calculateImage clicked\n");
         appendLog("Going to start calculation\n");
 
         if (imageUri == null) {
@@ -302,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
     {
         Log.d(TAG,"selectImageClick started");
         appendLog("Going to start selecting image\n");
-        appendText("selectImageClick started\n");
+        //appendText("selectImageClick started\n");
 
         //Intent i = new Intent();
         //i.setType("image/*");
@@ -315,7 +318,7 @@ public class MainActivity extends AppCompatActivity {
         // with the returned requestCode
         // StartActivityForResult(Intent.createChooser(i, "Select Picture"), SELECT_PICTURE);
 
-        appendText("Chooser started\n");
+        //appendText("Chooser started\n");
         appendLog("Chooser started\n");
     }
 
@@ -329,6 +332,18 @@ public class MainActivity extends AppCompatActivity {
         });
 
     } // appendText to textView but do so on UI thread
+
+    // reset the text field
+    private void clearText()
+    {
+        runOnUiThread(new Runnable() {
+           @Override
+           public void run() {
+               textView.setText("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\nCopyright 2022\n");
+           }
+        });
+
+    }
 
     private void appendLog(String str)
     {
