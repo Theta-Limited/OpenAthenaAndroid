@@ -62,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
                         // Handle the returned Uri
                         //appendText("Back from chooser\n");
 
+                        if (uri == null)
+                            return;
+
                         appendText("Back from chooser\n");
                         Log.d(TAG,"back from chooser");
                         imageSelected(uri);
@@ -74,12 +77,13 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"onCreate started");
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
+        setContentView(R.layout.test_layout);
 
         // get our prefs that we have saved
 
-        textView = (TextView)findViewById(R.id.text_view);
-        iView = (ImageView)findViewById(R.id.ImagePreview);
+        textView = (TextView)findViewById(R.id.textView);
+        iView = (ImageView)findViewById(R.id.imageView);
 
         // try to get our version out of app/build.gradle
         // versionName field
@@ -99,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
 
         textView.setText("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\nCopyright 2022\n");
         appendLog("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\nCopyright 2022\n");
-
 
     }
 
@@ -210,9 +213,9 @@ public class MainActivity extends AppCompatActivity {
 
     } // onDestroy()
 
-    public void clickButton(View view) {
+    public void calculateImage(View view) {
 
-        appendText("Button clicked\n");
+        appendText("calculateImage clicked\n");
         appendLog("Going to start calculation\n");
 
 
@@ -220,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
 
     // select image button clicked; launch chooser and get result
     // in callback
-    public void selectImageClick(View view)
+    public void selectImage(View view)
     {
         Log.d(TAG,"selectImageClick started");
         appendLog("Going to start selecting image\n");
