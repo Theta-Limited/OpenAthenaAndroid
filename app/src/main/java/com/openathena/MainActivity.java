@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
     // http://android-er.blogspot.com/2009/12/read-exif-information-in-jpeg-file.html
     private String getTagString(String tag, ExifInterface exif)
     {
-     return(tag + " : " + exif.getAttribute(tag) + "\n");
+        return(tag + " : " + exif.getAttribute(tag) + "\n");
     }
 
     public void calculateImage(View view)
@@ -265,6 +265,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (imageUri == null) {
             appendLog("Cannot calculate; no image selected\n");
+            appendText("Cannot calculate: no image selected\n");
             return;
         }
 
