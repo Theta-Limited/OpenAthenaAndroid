@@ -18,13 +18,17 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,6 +43,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 
 public class MainActivity extends AppCompatActivity {
@@ -121,6 +126,32 @@ public class MainActivity extends AppCompatActivity {
         return res;
     }
 
+    // stolen from https://stackoverflow.com/questions/5568874/how-to-extract-the-file-name-from-uri-returned-from-intent-action-get-content
+    // modified by rdk
+    private String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                cursor.close();
+            }
+            appendText("getFileName: using cursor thingys\n");
+        }
+        if (result == null) {
+            appendText("getFileName: using uri path\n");
+            result = uri.getPath();
+
+            //int cut = result.lastIndexOf('/');
+            //if (cut != -1) {
+              //  result = result.substring(cut + 1);
+            //}
+        }
+        return result;
+    }
     // back from image selection dialog; handle it
     private void imageSelected(Uri uri)
     {
@@ -213,10 +244,54 @@ public class MainActivity extends AppCompatActivity {
 
     } // onDestroy()
 
-    public void calculateImage(View view) {
+    // http://android-er.blogspot.com/2009/12/read-exif-information-in-jpeg-file.html
+    private String getTagString(String tag, ExifInterface exif)
+    {
+     return(tag + " : " + exif.getAttribute(tag) + "\n");
+    }
+
+    public void calculateImage(View view)
+    {
+        Drawable aDrawable;
+        ExifInterface exif;
+        File aFile;
+        String attribs = "Exif information ---\n";
 
         appendText("calculateImage clicked\n");
         appendLog("Going to start calculation\n");
+
+        if (imageUri == null) {
+            appendLog("Cannot calculate; no image selected\n");
+            return;
+        }
+
+        // load image into object
+        try {
+            ContentResolver cr = getContentResolver();
+            InputStream is = cr.openInputStream(imageUri);
+            aDrawable = iView.getDrawable();
+            exif = new ExifInterface(is);
+            appendText("Opened exif for image\n");
+            attribs += getTagString(ExifInterface.TAG_DATETIME, exif);
+            attribs += getTagString(ExifInterface.TAG_FLASH, exif);
+            attribs += getTagString(ExifInterface.TAG_GPS_LATITUDE, exif);
+            attribs += getTagString(ExifInterface.TAG_GPS_LATITUDE_REF, exif);
+            attribs += getTagString(ExifInterface.TAG_GPS_LONGITUDE, exif);
+            attribs += getTagString(ExifInterface.TAG_GPS_LONGITUDE_REF, exif);
+            attribs += getTagString(ExifInterface.TAG_IMAGE_LENGTH, exif);
+            attribs += getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif);
+            attribs += getTagString(ExifInterface.TAG_MAKE, exif);
+            attribs += getTagString(ExifInterface.TAG_MODEL, exif);
+            attribs += getTagString(ExifInterface.TAG_ORIENTATION, exif);
+            attribs += getTagString(ExifInterface.TAG_WHITE_BALANCE, exif);
+            appendText(attribs+"\n");
+
+            // close file
+            is.close();
+            //
+        } catch (Exception e) {
+            appendText("Unable to open image file to calculate: "+e+"\n");
+        }
 
 
     } // button click
