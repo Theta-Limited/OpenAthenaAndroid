@@ -49,7 +49,6 @@ import java.io.PrintWriter;
 public class MainActivity extends AppCompatActivity {
 
     public final static String PREFS_NAME = "openathena.preferences";
-    public final static String version = "0.2";
     public static String TAG = MainActivity.class.getSimpleName();
     public final static String LOG_NAME = "openathena.log";
 
@@ -93,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
         // try to get our version out of app/build.gradle
         // versionName field
         try {
-
             versionName = getPackageManager().getPackageInfo(getPackageName(),0).versionName;
             Log.d(TAG, "Got version " + versionName);
         }
@@ -195,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_prefs) {
             intent = new Intent(getApplicationContext(), PrefsActivity.class);
+            // https://stackoverflow.com/questions/8688099/android-switch-to-activity-without-restarting-it
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
             return true;

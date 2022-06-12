@@ -13,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,6 +34,8 @@ import java.io.PrintWriter;
 public class AboutActivity extends AppCompatActivity {
 
     public static String TAG = AboutActivity.class.getSimpleName();
+    TextView aboutText;
+    String versionName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +43,33 @@ public class AboutActivity extends AppCompatActivity {
         Log.d(TAG,"onCreate started");
 
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_about);
+
+        aboutText = (TextView)findViewById(R.id.aboutText);
+
+        // try to get our version out of app/build.gradle
+        // versionName field
+        try {
+            versionName = getPackageManager().getPackageInfo(getPackageName(),0).versionName;
+            Log.d(TAG, "Got version " + versionName);
+        }
+        catch (Exception e) {
+            versionName = "unknown";
+        }
+
+        // set About text
+        aboutText.setText(Html.fromHtml( "OpenAthena for Android version "+versionName+"<br>"
+                        + "Matthew Krupczak, Bobby Krupczak, et al.<br>"
+                        + "Copyright 2022, "
+                        + "<a href=\"https://openathena.com/\">OpenAthena.com</a> <br>"
+                        + "<br>Open Athena is a project to enable precision indirect fires that disrupt conventional combined arms warfare.  "
+                        + "This is accomplished by combining consumer rotary-wing aircraft (drones) sensor data with geospatial topography data "
+                        + "to provide the instantaneous location of target(s)<br>"
+                        + "<br><a href=\"https://github.com/mkrupczak3/OpenAthena\">View the project on GitHub</a><br>"
+                        + "mkrupczak3/OpenAthena<br>"
+                        + "<p><p><p><p>Project maintained by <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br>"
+                ,0,null, null)
+        );
 
     } // onCreate()
 
@@ -117,6 +145,17 @@ public class AboutActivity extends AppCompatActivity {
         super.onDestroy();
 
     } // onDestroy()
+
+    private void appendText(final String aStr)
+    {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                aboutText.append(aStr);
+            }
+        });
+
+    } // appendText to textView but do so on UI thread
 
     private void appendLog(String str)
     {
