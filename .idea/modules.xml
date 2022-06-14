@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/OpenAthenaAndroid.iml" filepath="$PROJECT_DIR$/.idea/OpenAthenaAndroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/OpenAthenaAndroid.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/OpenAthenaAndroid.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/OpenAthenaAndroid.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/OpenAthenaAndroid.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/OpenAthenaAndroid.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/OpenAthenaAndroid.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/OpenAthenaAndroid.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/OpenAthenaAndroid.app.unitTest.iml" />
+    </modules>
+  </component>
+</project>

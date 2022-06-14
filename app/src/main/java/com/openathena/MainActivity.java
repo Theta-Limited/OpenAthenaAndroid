@@ -104,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
         // open logfile for logging?  No, only open when someone calls
         // append
 
-        textView.setText("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\nCopyright 2022\n");
-        appendLog("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\nCopyright 2022\n");
+        textView.setText("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\n© 2022\n");
+        appendLog("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\n© 2022\n");
 
     }
 
@@ -320,6 +320,12 @@ public class MainActivity extends AppCompatActivity {
 
         //appendText("Chooser started\n");
         appendLog("Chooser started\n");
+    }
+
+    public void loadDEM(View view)
+    {
+        Log.d(TAG,"loadDEM started");
+        appendLog("Going to start selecting GeoTIFF\n");
     }
 
     private void appendText(final String aStr)
