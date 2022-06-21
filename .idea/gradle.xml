@@ -8,10 +8,11 @@
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="gradleHome" value="$APPLICATION_HOME_DIR$/gradle/gradle-3.1" />
+        <option name="gradleJvm" value="Embedded JDK" />
         <option name="modules">
           <set>
-            <option value="/columbia1/krupczak/rdk/repos/OpenAthenaAndroid" />
-            <option value="/columbia1/krupczak/rdk/repos/OpenAthenaAndroid/app" />
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
           </set>
         </option>
       </GradleProjectSettings>
