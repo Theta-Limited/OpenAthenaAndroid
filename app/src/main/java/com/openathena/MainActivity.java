@@ -22,13 +22,10 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,12 +34,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import java.io.FileOutputStream;
 
-import com.openathena.R;
-
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 
@@ -276,17 +268,16 @@ public class MainActivity extends AppCompatActivity {
             exif = new ExifInterface(is);
             appendText("Opened exif for image\n");
             attribs += getTagString(ExifInterface.TAG_DATETIME, exif);
-            attribs += getTagString(ExifInterface.TAG_FLASH, exif);
-            attribs += getTagString(ExifInterface.TAG_GPS_LATITUDE, exif);
-            attribs += getTagString(ExifInterface.TAG_GPS_LATITUDE_REF, exif);
-            attribs += getTagString(ExifInterface.TAG_GPS_LONGITUDE, exif);
-            attribs += getTagString(ExifInterface.TAG_GPS_LONGITUDE_REF, exif);
-            attribs += getTagString(ExifInterface.TAG_IMAGE_LENGTH, exif);
-            attribs += getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif);
             attribs += getTagString(ExifInterface.TAG_MAKE, exif);
             attribs += getTagString(ExifInterface.TAG_MODEL, exif);
+            Float[] yxz = exifGetYXZ(exif);
+            float y = yxz[0];
+            float x = yxz[1];
+            float z = yxz[2];
+            attribs += "Latitude : " + y + "\n";
+            attribs += "Longitude : " + x + "\n";
+            attribs += "Altitude : " + z + "\n";
             attribs += getTagString(ExifInterface.TAG_ORIENTATION, exif);
-            attribs += getTagString(ExifInterface.TAG_WHITE_BALANCE, exif);
             appendText(attribs+"\n");
 
             // close file
@@ -326,6 +317,50 @@ public class MainActivity extends AppCompatActivity {
     {
         Log.d(TAG,"loadDEM started");
         appendLog("Going to start selecting GeoTIFF\n");
+    }
+
+    private Float[] exifGetYXZ(ExifInterface exif)
+    {
+        String latDir = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+        latDir = latDir.toUpperCase();
+        String latRaw = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+        String[] latArr = latRaw.split(",", 3);
+        String lonDir = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+        lonDir = lonDir.toUpperCase();
+        String lonRaw = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+        String[] lonArr = lonRaw.split(",", 3);
+        String alt = exif.getAttribute(ExifInterface.TAG_GPS_ALTITUDE);
+
+        float y = 0.0f;
+        y += Float.valueOf(rationalToFloat(latArr[0]));
+        y += Float.valueOf(rationalToFloat(latArr[1])) / 60.0f;
+        y += Float.valueOf(rationalToFloat(latArr[2])) / 3600.0f;
+        if (latDir.equals("S"))
+        {
+            y = y * -1.0f;
+        }
+
+        float x = 0.0f;
+        x += rationalToFloat(lonArr[0]);
+        x += rationalToFloat(lonArr[1]) / 60.0f;
+        x += rationalToFloat(lonArr[2]) / 3600.0f;
+        if (lonDir.equals("W"))
+        {
+            x = x * -1.0f;
+        }
+
+        float z = rationalToFloat(alt);
+
+        Float[] arrOut = {y, x, z};
+        return(arrOut);
+    }
+
+    private float rationalToFloat(String str)
+    {
+        String[] split = str.split("/", 2);
+        float numerator = Float.valueOf(split[0]);
+        float denominator = Float.valueOf(split[1]);
+        return numerator / denominator;
     }
 
     private void appendText(final String aStr)
