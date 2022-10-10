@@ -1,6 +1,7 @@
 package com.openathena;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Vector;
@@ -60,8 +61,8 @@ public class GeoTIFFParser {
 
     public void loadGeoTIFF(File geofile) {
         this.geofile = geofile;
-        this.geoTransform = getDummyGeoTransform(geofile);
         this.geodata = gdal.Open(geofile);
+        this.geoTransform = getGeoTransform(geodata);
         this.ncols = (long) geodata.getRasterXSize();
         this.nrows = (long) geodata.getRasterYSize();
 
@@ -78,24 +79,31 @@ public class GeoTIFFParser {
         yParams.calcEndValue();
     }
 
-    private double[] getDummyGeoTransform(Dataset geodata) {
-        // dummy output, from Rome-30m-DEM.tif
-        double x0 = 12.34986111111111d;
-        double dx = 0.000277777777776933d;
-        double dxdy = 0.0d;
-        double y0 = 42.00013888888889d;
-        double dydx = 0.0d;
-        double dy = -0.00027777777777515666d;
+    // private double[] getDummyGeoTransform(Dataset geodata) {
+    //     // dummy output, from Rome-30m-DEM.tif
+    //     double x0 = 12.34986111111111d;
+    //     double dx = 0.000277777777776933d;
+    //     double dxdy = 0.0d;
+    //     double y0 = 42.00013888888889d;
+    //     double dydx = 0.0d;
+    //     double dy = -0.00027777777777515666d;
 
-        double[] transformOut = new double[]{x0, dx, dxdy, y0, dydx, dy};
-        return transformOut;
-    }
+    //     double[] transformOut = new double[]{x0, dx, dxdy, y0, dydx, dy};
+    //     return transformOut;
+    // }
 
     private double[] getGeoTransform(Dataset geodata) {
         return geodata.GetGeoTransform();
     }
 
-    public double getAltFromLatLon(double lat, double lon) {
+    public static byte[] floatsToBytes(float[] floats) {
+        byte bytes[] = new byte[Float.BYTES * floats.length];
+        ByteBuffer.wrap(bytes).asFloatBuffer().put(floats);
+        return bytes;
+    }
+
+
+    public double getAltFromLatLon(double lat, double lon) throws RequestedValueOOBException {
         if (geoTransform == null || geofile == null || geodata == null || xParams == null || yParams == null) {
             throw new NullPointerException("getAltFromLatLon pre-req was null!");
         }
@@ -143,7 +151,7 @@ public class GeoTIFFParser {
         int[] band = {1}; // first band should be elevation data (GDAL)
         // https://gdal.org/java/org/gdal/gdal/Dataset.html#ReadRaster(int,int,int,int,int,int,int,byte%5B%5D,int%5B%5D)
         // https://gis.stackexchange.com/questions/349760/get-elevation-of-geotiff-using-gdal-bindings-in-java
-        dataset.ReadRaster(xIndex, yIndex, 1, 1, 1, 1, 6, result, band);
+        dataset.ReadRaster((int) xIndex, (int) yIndex, 1, 1, 1, 1, 6, floatToBytes(result), band);
         double altitudeAtLatLon = result[0];
         return altitudeAtLatLon;
     }
