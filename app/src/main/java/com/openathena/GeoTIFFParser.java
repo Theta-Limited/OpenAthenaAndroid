@@ -19,6 +19,22 @@ import org.gdal.gdal.Band;
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.TranslateOptions;
 
+public class RequestedValueOOBException extends Exception {
+    public Double OOBLat;
+    public Double OOBLon;
+    public RequestedValueOOBException(String errorMessage) {
+        super(errorMessage);
+        OOBLat = null;
+        OOBLon = null;
+    }
+
+    public RequestedValueOOBException(String errorMessage, double OOBLat, double OOBLon) {
+        this(errorMessage);
+        OOBLat = new Double(OOBLat);
+        OOBLon = new Double(OOBLon);
+    }
+}
+
 public class geodataAxisParams {
     double start;
     double end;
@@ -27,12 +43,6 @@ public class geodataAxisParams {
 
     public void calcEndValue() {
         end = start + stepwiseIncrement * numOfSteps;
-    }
-}
-
-public class RequestedValueOOBException extends Exception {
-    public RequestedValueOOBException(String errorMessage) {
-        super(errorMessage);
     }
 }
 
@@ -104,18 +114,21 @@ public class GeoTIFFParser {
         return ((dxdy == 0.0d) && (dydx == 0.0d));
     }
 
-    public static byte[] floatsToBytes(float[] floats) {
+    public static byte[] floatToBytes(float[] floats) {
         byte bytes[] = new byte[Float.BYTES * floats.length];
         ByteBuffer.wrap(bytes).asFloatBuffer().put(floats);
         return bytes;
     }
 
+    public double getXResolution() {
+        return xParams.stepwiseIncrement;
+    }
 
     public double getAltFromLatLon(double lat, double lon) throws RequestedValueOOBException {
         if (geoTransform == null || geofile == null || geodata == null || xParams == null || yParams == null) {
             throw new NullPointerException("getAltFromLatLon pre-req was null!");
         }
-        if (ncols <= 0 || nrows <= 0) {
+        if ( xParams.numOfSteps <= 0 || yParams.numOfSteps <= 0) {
             throw new IllegalArgumentException("getAltFromLatLon dataset was empty!");
         }
 
@@ -131,7 +144,7 @@ public class GeoTIFFParser {
 
         // Out of Bounds (OOB) check
         if (( lat > y0 || y1 > lat ) || ( lon > x1 || x0 > lon)) { // note: y0 > y1 but x0 < x1 (dy is always negative)
-            throw new RequestedValueOOBException("getAltFromLatLon arguments out of bounds!");
+            throw new RequestedValueOOBException("getAltFromLatLon arguments out of bounds!", lat, lon);
         }
 
         long[] xNeighbors = binarySearchNearest(x0, ncols, lon, dx);
@@ -159,7 +172,7 @@ public class GeoTIFFParser {
         int[] band = {1}; // first band should be elevation data (GDAL)
         // https://gdal.org/java/org/gdal/gdal/Dataset.html#ReadRaster(int,int,int,int,int,int,int,byte%5B%5D,int%5B%5D)
         // https://gis.stackexchange.com/questions/349760/get-elevation-of-geotiff-using-gdal-bindings-in-java
-        dataset.ReadRaster((int) xIndex, (int) yIndex, 1, 1, 1, 1, 6, floatToBytes(result), band);
+        geodata.ReadRaster((int) xIndex, (int) yIndex, 1, 1, 1, 1, 6, floatToBytes(result), band);
         double altitudeAtLatLon = result[0];
         return altitudeAtLatLon;
     }
