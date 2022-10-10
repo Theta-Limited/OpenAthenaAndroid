@@ -41,8 +41,8 @@ public class GeoTIFFParser {
     private double[] geoTransform;
     private File geofile;
     private Dataset geodata;
-    private long ncols;
-    private long nrows;
+    // private long ncols;
+    // private long nrows;
     private geodataAxisParams xParams;
     private geodataAxisParams yParams;
 
@@ -63,19 +63,19 @@ public class GeoTIFFParser {
         this.geofile = geofile;
         this.geodata = gdal.Open(geofile);
         this.geoTransform = getGeoTransform(geodata);
-        this.ncols = (long) geodata.getRasterXSize();
-        this.nrows = (long) geodata.getRasterYSize();
 
+        // this.ncols = (long) geodata.getRasterXSize();
         this.xParams = new geodataAxisParams();
         xParams.start = geoTransform[0];
         xParams.stepwiseIncrement = geoTransform[1];
-        xParams.numOfSteps = ncols;
+        xParams.numOfSteps = (long) geodata.getRasterXSize();
         xParams.calcEndValue();
 
+        // this.nrows = (long) geodata.getRasterYSize();
         this.yParams = new geodataAxisParams();
         yParams.start = geoTransform[3];
         yParams.stepwiseIncrement = geoTransform[5];
-        yParams.numOfSteps = nrows;
+        yParams.numOfSteps = (long) geodata.getRasterYSize();
         yParams.calcEndValue();
     }
 
@@ -114,12 +114,12 @@ public class GeoTIFFParser {
         double x0 = xParams.start;
         double x1 = xParams.end;
         double dx = xParams.stepwiseIncrement;
-        long ncols = this.ncols;
+        long ncols = xParams.numOfSteps;
 
         double y0 = yParams.start;
         double y1 = yParams.end;
         double dy = yParams.stepwiseIncrement;
-        long nrows = this.nrows;
+        long nrows = yParams.numOfSteps;
 
         // Out of Bounds (OOB) check
         if (( lat > y0 || y1 > lat ) || ( lon > x1 || x0 > lon)) { // note: y0 > y1 but x0 < x1 (dy is always negative)
