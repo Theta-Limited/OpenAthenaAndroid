@@ -56,6 +56,7 @@ public class GeoTIFFParser {
 
     GeoTIFFParser(File geofile) {
         this();
+        this.geofile = geofile;
         loadGeoTIFF(geofile);
     }
 
