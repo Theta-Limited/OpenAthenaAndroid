@@ -34,3 +34,12 @@ google-services.json
 # Android Profiling
 *.hprof
 .DS_Store
+
+# Emacs and MacOS nonsense:
+*~
+\#*\#
+.\#*
+.DS_Store
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store
