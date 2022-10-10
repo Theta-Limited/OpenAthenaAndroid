@@ -97,6 +97,13 @@ public class GeoTIFFParser {
         return geodata.GetGeoTransform();
     }
 
+    public boolean isGeoTIFFValid() {
+        // {x0, dx, dxdy, y0, dydx, dy}
+        double dxdy = (double) this.geoTransform[2];
+        double dydx = (double) this.geoTransform[4];
+        return ((dxdy == 0.0d) && (dydx == 0.0d));
+    }
+
     public static byte[] floatsToBytes(float[] floats) {
         byte bytes[] = new byte[Float.BYTES * floats.length];
         ByteBuffer.wrap(bytes).asFloatBuffer().put(floats);
