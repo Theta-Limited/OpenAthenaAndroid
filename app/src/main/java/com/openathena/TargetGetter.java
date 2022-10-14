@@ -170,24 +170,31 @@ public class TargetGetter {
         return radDirection;
     }
 
+    public double radius_at_lat_lon(double lat, double lon) {
+        lat = Math.toRadians(lat);
+        lon = Math.toRadians(lon); // not used
+
+        final double A = 6378137.0d; // equatorial radius of WGS ellipsoid, in meters
+        final double B = 6356752.3d; // polar radius of WGS ellipsoid, in meters
+        double r = squared(A * A * cos(lat)) + squared(B * B * sin(lat)); // numerator
+        r /= squared(A * cos(lat)) + squared(B * sin(lat)); // denominator
+        r = Math.sqrt(r); // square root
+        return r;
+    }
+
     double[] inverse_haversine(double lat1, double lon1, double d /*distance*/, double radAzimuth, double alt) {
         if (d < 0.0d) {
             return inverse_haversine(lat1, lon1, -1.0d * d, normalize(radAzimuth + Math.PI), alt);
         }
 
-        final double A = 6378137.0d; // equatorial radius of WGS ellipsoid, in meters
-        final double B = 6356752.3d; // polar radius of WGS ellipsoid, in meters
-
-        lat1 = Math.toRadians(lat1);
-        lon1 = Math.toRadians(lon1);
-
         // calculate WGS84 radius at lat/lon
         //     based on: gis.stackexchange.com/a/20250
         //     R(f)^2 = ( (a^2 cos(f))^2 + (b^2 sin(f))^2 ) / ( (a cos(f))^2 + (b sin(f))^2 )
-        double r = squared(A * A * cos(lat1)) + squared(B * B * sin(lat1)); // numerator
-        r /= squared(A * cos(lat1)) + squared(B * sin(lat1)); // denominator
-        r = Math.sqrt(r); // square root
+        double r = radius_at_lat_lon(lat1, lon1);
         r += alt; // acutal height above or below idealized ellipsoid
+
+        lat1 = Math.toRadians(lat1);
+        lon1 = Math.toRadians(lon1);
 
         // based on code via github.com/jdeniau
         double lat2 = asin(sin(lat1) * cos(d / r) + cos(lat1) * sin(d / r) * cos(radAzimuth));
@@ -197,7 +204,7 @@ public class TargetGetter {
         return returnArr;
     }
 
-    // /* Inverse Haversine formula
+    // /* Accurate Inverse Haversine formula
     //  * via github.com/jdeniau and math.stackexchange.com/a/3707243
     //  * given a point, distance, and heading, return the new point (lat lon)
     //  * a certain distance along the great circle
@@ -219,8 +226,44 @@ public class TargetGetter {
     //     lon2 = lon1 + 2.0d * Math.asin(Math.sqrt(sec(lat1)*sec(lat2)*Math.pow(Math.sin(distance / (2.0d * r)), 2)-sec(lat1)*sec(lat2)*Math.pow(Math.sin((lat2 - lat1) / 2.0d), 2)));
     // }
 
+    double haversine(double lon1, double lat1, double lon2, double lat2, double alt) {
+        lon1 = Math.toRadians(lon1);
+        lat1 = Math.toRadians(lat1);
+        lon2 = Math.toRadians(lon2);
+        lat2 = Math.toRadians(lat2);
+
+        double dlon = lon2 - lon1;
+        double dlat = lat2 - lat1;
+        double a = squared(sin(dlat/2)) + cos(lat1) * cos(lat2) * squared(sin(dlon/2));
+        double c = 2.0d * asin(sqrt(a));
+        double r = radius_at_lat_lon((lat1+lat2)/2.0d, (lon1+lon2)/2.0d);
+        r = r + alt; // actual height above or below idealized ellipsoid
+        return c * r;
+    }
+
+    double haversine_bearing(double lon1, double lat1, double lon2, double lat2) {
+        lon1 = Math.toRadians(lon1);
+        lat1 = Math.toRadians(lat1);
+        lon2 = Math.toRadians(lon2);
+        lat2 = Math.toRadians(lat2);
+
+        double dLon = (lon2 - lon1);
+        double x = cos(lat2) * sin(dLon);
+        double y = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon);
+
+        double brng = atan2(x,y); // arguments intentionally swapped out of order
+        brng = normalize(brng);
+        brng = Math.toDegrees(brng);
+
+        return brng;
+    }
+
     double squared(double val) {
         return val * val;
+    }
+
+    double sqrt(double val) {
+        return Math.sqrt(val);
     }
 
     double sin(double radAngle) {
