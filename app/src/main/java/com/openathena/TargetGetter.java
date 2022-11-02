@@ -121,14 +121,14 @@ public class TargetGetter {
         double groundAlt;
         try {
             groundAlt = myGeoTIFFParser.getAltFromLatLon(curLat, curLon);
-        } catch (RequestedVauleOOBException e) {
+        } catch (RequestedValueOOBException e) {
             throw e;
         }
         double altDiff = curAlt - groundAlt;
         while (altDiff > THRESHOLD) {
             try {
                 groundAlt = myGeoTIFFParser.getAltFromLatLon(curLat, curLon);
-            } catch (RequestedVauleOOBException e) {
+            } catch (RequestedValueOOBException e) {
                 throw e;
             }
             altDiff = curAlt - groundAlt;
