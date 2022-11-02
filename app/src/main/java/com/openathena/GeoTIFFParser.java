@@ -19,32 +19,8 @@ import org.gdal.gdal.Band;
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.TranslateOptions;
 
-public class RequestedValueOOBException extends Exception {
-    public Double OOBLat;
-    public Double OOBLon;
-    public RequestedValueOOBException(String errorMessage) {
-        super(errorMessage);
-        OOBLat = null;
-        OOBLon = null;
-    }
-
-    public RequestedValueOOBException(String errorMessage, double OOBLat, double OOBLon) {
-        this(errorMessage);
-        OOBLat = new Double(OOBLat);
-        OOBLon = new Double(OOBLon);
-    }
-}
-
-public class geodataAxisParams {
-    double start;
-    double end;
-    double stepwiseIncrement;
-    long numOfSteps;
-
-    public void calcEndValue() {
-        end = start + stepwiseIncrement * numOfSteps;
-    }
-}
+import com.openathena.RequestedValueOOBException;
+import com.openathena.geodataAxisParams;
 
 public class GeoTIFFParser {
 

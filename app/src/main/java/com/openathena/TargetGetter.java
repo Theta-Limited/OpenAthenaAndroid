@@ -27,6 +27,10 @@ import org.gdal.gdal.Band;
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.TranslateOptions;
 
+import com.openathena.RequestedValueOOBException;
+import com.openathena.geodataAxisParams;
+import com.openathena.GeoTIFFParser;
+
 public class TargetGetter {
     private GeoTIFFParser myGeoTIFFParser;
     private File geofile;
