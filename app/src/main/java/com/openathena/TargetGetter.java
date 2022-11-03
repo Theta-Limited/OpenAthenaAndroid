@@ -25,6 +25,8 @@ import com.openathena.RequestedValueOOBException;
 import com.openathena.geodataAxisParams;
 import com.openathena.GeoTIFFParser;
 
+import mil.nga.tiff.*;
+
 public class TargetGetter {
     private GeoTIFFParser myGeoTIFFParser;
     private File geofile;

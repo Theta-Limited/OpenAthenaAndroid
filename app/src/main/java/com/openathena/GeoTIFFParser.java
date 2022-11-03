@@ -13,9 +13,10 @@ import java.lang.Math;
 import java.lang.IllegalArgumentException;
 import java.lang.NullPointerException;
 
-
 import com.openathena.RequestedValueOOBException;
 import com.openathena.geodataAxisParams;
+
+import mil.nga.tiff.*;
 
 public class GeoTIFFParser {
 
