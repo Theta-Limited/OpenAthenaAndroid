@@ -13,11 +13,6 @@ import java.lang.Math;
 import java.lang.IllegalArgumentException;
 import java.lang.NullPointerException;
 
-import org.gdal.gdal.gdal;
-import org.gdal.gdal.BuildVRTOptions;
-import org.gdal.gdal.Band;
-import org.gdal.gdal.Dataset;
-import org.gdal.gdal.TranslateOptions;
 
 import com.openathena.RequestedValueOOBException;
 import com.openathena.geodataAxisParams;
@@ -26,18 +21,22 @@ public class GeoTIFFParser {
 
     private double[] geoTransform;
     private File geofile;
+/*
     private Dataset geodata;
+*/
     // private long ncols;
     // private long nrows;
     private geodataAxisParams xParams;
     private geodataAxisParams yParams;
 
     GeoTIFFParser() {
-        gdal.AllRegister();
-        gdal.SetConfigOption("gdal_FILENAME_IS_UTF8", "YES");
+/*        gdal.AllRegister();
+        gdal.SetConfigOption("gdal_FILENAME_IS_UTF8", "YES");*/
         geoTransform = null;
         geofile = null;
+/*
         geodata = null;
+*/
     }
 
     GeoTIFFParser(File geofile) {
@@ -48,21 +47,25 @@ public class GeoTIFFParser {
 
     public void loadGeoTIFF(File geofile) {
         this.geofile = geofile;
-        this.geodata = gdal.Open(geofile);
-        this.geoTransform = getGeoTransform(geodata);
+  /*      this.geodata = gdal.Open(geofile);
+        this.geoTransform = getGeoTransform(geodata);*/
 
         // this.ncols = (long) geodata.getRasterXSize();
         this.xParams = new geodataAxisParams();
         xParams.start = geoTransform[0];
         xParams.stepwiseIncrement = geoTransform[1];
+/*
         xParams.numOfSteps = (long) geodata.getRasterXSize();
+*/
         xParams.calcEndValue();
 
         // this.nrows = (long) geodata.getRasterYSize();
         this.yParams = new geodataAxisParams();
         yParams.start = geoTransform[3];
         yParams.stepwiseIncrement = geoTransform[5];
+/*
         yParams.numOfSteps = (long) geodata.getRasterYSize();
+*/
         yParams.calcEndValue();
     }
 
@@ -79,9 +82,11 @@ public class GeoTIFFParser {
     //     return transformOut;
     // }
 
+/*
     private double[] getGeoTransform(Dataset geodata) {
         return geodata.GetGeoTransform();
     }
+*/
 
     public boolean isGeoTIFFValid() {
         // {x0, dx, dxdy, y0, dydx, dy}

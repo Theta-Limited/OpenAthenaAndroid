@@ -21,12 +21,6 @@ import java.lang.Math;
 import java.lang.IllegalArgumentException;
 import java.lang.NullPointerException;
 
-import org.gdal.gdal.gdal;
-import org.gdal.gdal.BuildVRTOptions;
-import org.gdal.gdal.Band;
-import org.gdal.gdal.Dataset;
-import org.gdal.gdal.TranslateOptions;
-
 import com.openathena.RequestedValueOOBException;
 import com.openathena.geodataAxisParams;
 import com.openathena.GeoTIFFParser;
@@ -71,7 +65,7 @@ public class TargetGetter {
         //     if so, skip iterative search b/c target is directly below us
         if (Math.abs(Double.compare(radTheta, Math.PI)) <= 0.005d) { // 0.005 radians ~= 0.29 degrees
             try {
-                terrainAlt = new Double(myGeoTIFFParser.getAltFromLatLon(lat, lon));
+                terrainAlt = myGeoTIFFParser.getAltFromLatLon(lat, lon);
             } catch (RequestedValueOOBException e) {
                 throw e;
             }
