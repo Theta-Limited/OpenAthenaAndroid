@@ -16,22 +16,31 @@ package com.openathena;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.io.FileOutputStream;
 
 import java.io.File;
@@ -43,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     public final static String PREFS_NAME = "openathena.preferences";
     public static String TAG = MainActivity.class.getSimpleName();
     public final static String LOG_NAME = "openathena.log";
+    public static int requestNo = 0;
 
     TextView textView;
     SharedPreferences prefs;
@@ -96,8 +106,8 @@ public class MainActivity extends AppCompatActivity {
         // open logfile for logging?  No, only open when someone calls
         // append
 
-        textView.setText("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\n© 2022\n");
-        appendLog("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\n© 2022\n");
+        textView.setText("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\n GPL-3.0, some rights reserved\n");
+        appendLog("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\n GPL-3.0, some rights reserved\n");
 
     }
 
@@ -158,11 +168,30 @@ public class MainActivity extends AppCompatActivity {
         //aPath = getPathFromURI(uri);
         //Log.d(TAG,"imageSelected: path is "+aPath);
 
+/*
         iView.setImageURI(uri);
+*/
         appendLog("Selected image "+imageUri+"\n");
+
+        GeoTIFFParser p = new GeoTIFFParser(new File(getRealPathFromURI(uri)));
 
         //appendText("Image selected "+aPath+"\n");
         //appendLog("Image selected "+aPath+"\n");
+    }
+
+    private String getRealPathFromURI(Uri contentURI) {
+        String result;
+        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) {
+            result = contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            result = cursor.getString(idx);
+            cursor.close();
+        }
+        Log.d("info", "gotRealPathFromURI: " + result);
+        return result;
     }
 
     @Override
@@ -212,6 +241,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         Log.d(TAG,"onResume started");
         super.onResume();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(MainActivity.this, "Permissions Granted", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(MainActivity.this, "Failed to Obtain Necessary Permissions", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -295,6 +336,16 @@ public class MainActivity extends AppCompatActivity {
     public void selectImage(View view)
     {
         Log.d(TAG,"selectImageClick started");
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED)
+        {
+            // Permission is not granted
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[] { Manifest.permission.READ_EXTERNAL_STORAGE } , requestNo);
+            requestNo++;
+            return;
+        }
+
         appendLog("Going to start selecting image\n");
         //appendText("selectImageClick started\n");
 

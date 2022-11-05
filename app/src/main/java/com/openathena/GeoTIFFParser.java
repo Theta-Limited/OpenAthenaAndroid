@@ -1,8 +1,13 @@
 package com.openathena;
 
+import android.util.Log;
+
+import java.io.Console;
 import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 import java.io.InputStream;
@@ -22,6 +27,12 @@ public class GeoTIFFParser {
 
     private double[] geoTransform;
     private File geofile;
+
+    private TIFFImage tiffImage;
+    private List<FileDirectory> directories;
+    private FileDirectory directory;
+    private Rasters rasters;
+
 /*
     private Dataset geodata;
 */
@@ -33,8 +44,14 @@ public class GeoTIFFParser {
     GeoTIFFParser() {
 /*        gdal.AllRegister();
         gdal.SetConfigOption("gdal_FILENAME_IS_UTF8", "YES");*/
+
         geoTransform = null;
         geofile = null;
+
+        TIFFImage tiffImage = null;
+        List<FileDirectory> directories = null;
+        FileDirectory directory = null;
+        Rasters rasters = null;
 /*
         geodata = null;
 */
@@ -44,6 +61,9 @@ public class GeoTIFFParser {
         this();
         this.geofile = geofile;
         loadGeoTIFF(geofile);
+
+
+
     }
 
     public void loadGeoTIFF(File geofile) {
@@ -51,23 +71,67 @@ public class GeoTIFFParser {
   /*      this.geodata = gdal.Open(geofile);
         this.geoTransform = getGeoTransform(geodata);*/
 
+        try {
+            tiffImage = TiffReader.readTiff(geofile);
+        } catch (IOException e) {
+            Log.d("IOException", "Failed to read geofile: " + e.getMessage());
+            return;
+        }
+
+        directories = tiffImage.getFileDirectories();
+        directory = directories.get(0);
+        rasters = directory.readRasters();
+
+        for (int i = 0; i < directories.size(); i++ ) {
+            FileDirectory aDirectory = directories.get(i);
+            Log.d("info", "\nFile Directory:");
+            Log.d("info", String.valueOf(i));
+            Log.d("info","\n");
+            Rasters theseRasters = aDirectory.readRasters();
+            Log.d("info","\n");
+            Log.d("info","Rasters:");
+            Log.d("info", "Width: " + rasters.getWidth());
+            Log.d("info", "Height: " + rasters.getHeight());
+            Log.d("info", "Number of Pixels: " + rasters.getNumPixels());
+            Log.d("info", "Samples Per Pixel: " + rasters.getSamplesPerPixel());
+            Log.d("info", "Bits Per Sample: " + rasters.getBitsPerSample());
+
+            theseRasters.getPixel(0, 0);
+        }
+
+        List<Double> pixelAxisScales = directory.getModelPixelScale();
+        List<Double> tiePoint = directory.getModelTiepoint();
+        Number imgWidth = directory.getImageWidth();
+        Number imgHeight = directory.getImageHeight();
+        List<Long> xres = directory.getXResolution();
+        List<Long> yres = directory.getYResolution();
+
+        Log.d("info", "pixelAxisScales:" + pixelAxisScales.toString());
+        Log.d("info", "tiePoint: " + tiePoint);
+        Log.d("info", "imgWidth: " + imgWidth );
+        Log.d("info", "imgHeight: " + imgHeight);
+        Log.d("info", "xres: " + xres);
+        Log.d("info", "yres: " + yres);
+
         // this.ncols = (long) geodata.getRasterXSize();
         this.xParams = new geodataAxisParams();
-        xParams.start = geoTransform[0];
-        xParams.stepwiseIncrement = geoTransform[1];
+/*        xParams.start = geoTransform[0];
+        xParams.stepwiseIncrement = geoTransform[1];*/
 /*
         xParams.numOfSteps = (long) geodata.getRasterXSize();
 */
+/*
         xParams.calcEndValue();
+*/
 
         // this.nrows = (long) geodata.getRasterYSize();
         this.yParams = new geodataAxisParams();
-        yParams.start = geoTransform[3];
-        yParams.stepwiseIncrement = geoTransform[5];
+/*        yParams.start = geoTransform[3];
+        yParams.stepwiseIncrement = geoTransform[5];*/
 /*
         yParams.numOfSteps = (long) geodata.getRasterYSize();
 */
-        yParams.calcEndValue();
+/*        yParams.calcEndValue();*/
     }
 
     // private double[] getDummyGeoTransform(Dataset geodata) {
@@ -88,6 +152,7 @@ public class GeoTIFFParser {
         return geodata.GetGeoTransform();
     }
 */
+/*
 
     public boolean isGeoTIFFValid() {
         // {x0, dx, dxdy, y0, dydx, dy}
@@ -95,6 +160,7 @@ public class GeoTIFFParser {
         double dydx = (double) this.geoTransform[4];
         return ((dxdy == 0.0d) && (dydx == 0.0d));
     }
+*/
 
     public static byte[] floatToBytes(float[] floats) {
         byte bytes[] = new byte[Float.BYTES * floats.length];
@@ -106,7 +172,7 @@ public class GeoTIFFParser {
         return xParams.stepwiseIncrement;
     }
 
-    public double getAltFromLatLon(double lat, double lon) throws RequestedValueOOBException {
+/*    public double getAltFromLatLon(double lat, double lon) throws RequestedValueOOBException {
         if (geoTransform == null || geofile == null || geodata == null || xParams == null || yParams == null) {
             throw new NullPointerException("getAltFromLatLon pre-req was null!");
         }
@@ -157,7 +223,7 @@ public class GeoTIFFParser {
         geodata.ReadRaster((int) xIndex, (int) yIndex, 1, 1, 1, 1, 6, floatToBytes(result), band);
         double altitudeAtLatLon = result[0];
         return altitudeAtLatLon;
-    }
+    }*/
 
     long[] binarySearchNearest(double start, long n, double val, double dN) {
         long[] out = new long[2];

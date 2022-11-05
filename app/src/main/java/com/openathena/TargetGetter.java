@@ -46,7 +46,7 @@ public class TargetGetter {
         myGeoTIFFParser.loadGeoTIFF(geofile);
     }
 
-    public double[] resolveTarget(double lat, double lon, double alt, double azimuth, double theta) throws RequestedValueOOBException{
+/*    public double[] resolveTarget(double lat, double lon, double alt, double azimuth, double theta) throws RequestedValueOOBException{
         if (myGeoTIFFParser == null) {
             throw new NullPointerException("FATAL ERROR: resolveTarget attempted before geotiff loaded");
         }
@@ -151,7 +151,7 @@ public class TargetGetter {
 
         outArr = new double[]{finalDist, curLat, curLon, curAlt, terrainAlt}; // I hate Java
         return outArr;
-    }
+    }*/
 
     public double normalize(double radAngle) {
         while (radAngle < 0) {
