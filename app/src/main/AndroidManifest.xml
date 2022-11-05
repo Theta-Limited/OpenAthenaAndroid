@@ -4,9 +4,27 @@
     package="com.openathena">
 
     <!-- we want to be able to read and access images -->
-
+<!--
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+-->
     <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Required only if your app needs to access images or photos
+     that other apps created. -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <!-- If your app doesn't need to access media files that other apps created,
+         set the "maxSdkVersion" attribute to "28" instead. -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
+
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"
+        android:minSdkVersion="30" />
+
+    
 
     <!-- starting in API 19+, WRITE is not required to read/write
          in our own application dirs
