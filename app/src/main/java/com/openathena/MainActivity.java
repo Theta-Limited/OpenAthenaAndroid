@@ -1,6 +1,5 @@
 // MainActivity.java
-// Copyright 2022
-// Bobby Krupczak, rdk@krupczak.org
+// Bobby Krupczak, rdk@krupczak.org, Matthew Krupczak, mwk@krupzak.org, et. al
 
 // main activity; launch everything from here
 
@@ -431,7 +430,7 @@ public class MainActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
            @Override
            public void run() {
-               textView.setText("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\nCopyright 2022\n");
+               textView.setText("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\nGPL-3.0, some rights reserved\n");
            }
         });
 

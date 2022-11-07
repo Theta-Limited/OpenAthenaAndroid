@@ -1,7 +1,6 @@
 // AboutActivity.java
 // OpenAthena for Android
-// Copyright 2022
-// Bobby Krupczak
+// Bobby Krupczak, Matthew Krupczak, et. al
 
 package com.openathena;
 
@@ -60,11 +59,9 @@ public class AboutActivity extends AppCompatActivity {
         // set About text
         aboutText.setText(Html.fromHtml( "OpenAthena for Android version "+versionName+"<br>"
                         + "Matthew Krupczak, Bobby Krupczak, et al.<br>"
-                        + "Copyright 2022, "
+                        + "GPL-3.0, some rights reserved "
                         + "<a href=\"https://openathena.com/\">OpenAthena.com</a> <br>"
-                        + "<br>Open Athena is a project to enable precision indirect fires that disrupt conventional combined arms warfare.  "
-                        + "This is accomplished by combining consumer rotary-wing aircraft (drones) sensor data with geospatial topography data "
-                        + "to provide the instantaneous location of target(s)<br>"
+                        + "<br>Open Athena is a project which allows consumer and professional drones to spot precise geodetic locations<br>"
                         + "<br><a href=\"https://github.com/mkrupczak3/OpenAthena\">View the project on GitHub</a><br>"
                         + "mkrupczak3/OpenAthena<br>"
                         + "<p><p><p><p>Project maintained by <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br>"

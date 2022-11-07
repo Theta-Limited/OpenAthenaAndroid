@@ -1,6 +1,5 @@
 // ActivityLog.java
-// Copyright 2022
-// Bobby Krupczak, rdk@krupczak.org
+// Bobby Krupczak, rdk@krupczak.org Matthew Krupczak, mwk@krupczak.org, et. al
 // access, display, clear the OpenAthena for Android logfile
 
 package com.openathena;
@@ -114,7 +113,7 @@ public class ActivityLog extends AppCompatActivity {
         try {
             fos = openFileOutput(MainActivity.LOG_NAME, Context.MODE_PRIVATE);
             pw = new PrintWriter(fos);
-            pw.print("OpenAthena for Android\nMatthew Krupczak, Bobby Krupczak, et al.\nCopyright 2022\n");
+            pw.print("OpenAthena for Android\nMatthew Krupczak, Bobby Krupczak, et al.\nGPL-3.0, some rights reserved\n");
             pw.close();
             fos.close();
             Log.d(TAG,"clearLogButton: reset logfile");

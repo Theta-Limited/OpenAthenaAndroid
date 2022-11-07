@@ -1,7 +1,6 @@
 // PrefsActivity.java
 // OpenAthena for Android
-// Copyright 2022
-// Bobby Krupczak
+// Bobby Krupczak, rdk@krupczak.org Matthew Krupczak, mwk@krupczak.org, et. al
 
 package com.openathena;
 
