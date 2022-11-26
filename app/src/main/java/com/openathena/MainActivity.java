@@ -32,6 +32,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -112,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
     // stolen from InterWebs
     // https://mobikul.com/pick-image-gallery-android/
-/*    private String getPathFromURI(Uri uri)
+    private String getPathFromURI(Uri uri)
     {
         String res = null;
         String[] proj = {MediaStore.Images.Media.DATA};
@@ -123,11 +124,11 @@ public class MainActivity extends AppCompatActivity {
         }
         cursor.close();
         return res;
-    }*/
+    }
 
     // stolen from https://stackoverflow.com/questions/5568874/how-to-extract-the-file-name-from-uri-returned-from-intent-action-get-content
     // modified by rdk
-/*    private String getFileName(Uri uri) {
+    private String getFileName(Uri uri) {
         String result = null;
         if (uri.getScheme().equals("content")) {
             Cursor cursor = getContentResolver().query(uri, null, null, null, null);
@@ -150,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
             //}
         }
         return result;
-    }*/
+    }
 
     // back from image selection dialog; handle it
     private void imageSelected(Uri uri)
@@ -171,26 +172,12 @@ public class MainActivity extends AppCompatActivity {
         iView.setImageURI(uri);
 */
         appendLog("Selected image "+imageUri+"\n");
-
-        GeoTIFFParser p = new GeoTIFFParser(new File(getRealPathFromURI(uri)));
+        // Android 10/11, we can't access this file directly
+        // @TODO will need to copy file into app's own package cache
+        GeoTIFFParser p = new GeoTIFFParser(new File(uri.getPath()));
 
         //appendText("Image selected "+aPath+"\n");
         //appendLog("Image selected "+aPath+"\n");
-    }
-
-    private String getRealPathFromURI(Uri contentURI) {
-        String result;
-        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
-        if (cursor == null) {
-            result = contentURI.getPath();
-        } else {
-            cursor.moveToFirst();
-            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            result = cursor.getString(idx);
-            cursor.close();
-        }
-        Log.d("info", "gotRealPathFromURI: " + result);
-        return result;
     }
 
     @Override
@@ -247,6 +234,9 @@ public class MainActivity extends AppCompatActivity {
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.d(TAG, permissions[0]);
+        Log.d(TAG, Integer.toString(grantResults[0]));
+        Log.d(TAG, Integer.toString(PackageManager.PERMISSION_GRANTED));
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(MainActivity.this, "Permissions Granted", Toast.LENGTH_SHORT).show();
         } else {
@@ -335,14 +325,17 @@ public class MainActivity extends AppCompatActivity {
     public void selectImage(View view)
     {
         Log.d(TAG,"selectImageClick started");
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+        Log.d(TAG,"READ_EXTERNAL_STORAGE: " + Integer.toString(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)));
+
+        if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED)
         {
             // Permission is not granted
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[] { Manifest.permission.READ_EXTERNAL_STORAGE } , requestNo);
+            Log.d(TAG,"Attempting to Obtain unobtained storage permissions");
+            requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE } , requestNo);
             requestNo++;
-            return;
+            // @TODO should actually end call here once Scoped Storage works properly
+            // return
         }
 
         appendLog("Going to start selecting image\n");
