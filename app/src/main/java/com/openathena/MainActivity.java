@@ -375,9 +375,9 @@ public class MainActivity extends AppCompatActivity {
         String alt = exif.getAttribute(ExifInterface.TAG_GPS_ALTITUDE);
 
         float y = 0.0f;
-        y += Float.valueOf(rationalToFloat(latArr[0]));
-        y += Float.valueOf(rationalToFloat(latArr[1])) / 60.0f;
-        y += Float.valueOf(rationalToFloat(latArr[2])) / 3600.0f;
+        y += rationalToFloat(latArr[0]);
+        y += rationalToFloat(latArr[1]) / 60.0f;
+        y += rationalToFloat(latArr[2]) / 3600.0f;
         if (latDir.equals("S"))
         {
             y = y * -1.0f;
@@ -401,8 +401,8 @@ public class MainActivity extends AppCompatActivity {
     private float rationalToFloat(String str)
     {
         String[] split = str.split("/", 2);
-        float numerator = Float.valueOf(split[0]);
-        float denominator = Float.valueOf(split[1]);
+        float numerator = Float.parseFloat(split[0]);
+        float denominator = Float.parseFloat(split[1]);
         return numerator / denominator;
     }
 
