@@ -31,6 +31,7 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
@@ -64,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
     protected String versionName;
     ImageView iView;
     Uri imageUri = null;
+    Uri demUri = null;
+    GeoTIFFParser theParser = null;
 
     ActivityResultLauncher<String> mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
                 new ActivityResultCallback<Uri>() {
@@ -76,10 +79,26 @@ public class MainActivity extends AppCompatActivity {
                             return;
 
                         //appendText("Back from chooser\n");
-                        Log.d(TAG,"back from chooser");
+                        Log.d(TAG,"back from chooser for image");
                         imageSelected(uri);
                     }
                 });
+
+    ActivityResultLauncher<String> mGetDEM = registerForActivityResult(new ActivityResultContracts.GetContent(),
+            new ActivityResultCallback<Uri>() {
+                @Override
+                public void onActivityResult(Uri uri) {
+                    // Handle the returned Uri
+                    //appendText("Back from chooser\n");
+
+                    if (uri == null)
+                        return;
+
+                    //appendText("Back from chooser\n");
+                    Log.d(TAG,"back from chooser for DEM");
+                    demSelected(uri);
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,8 +180,6 @@ public class MainActivity extends AppCompatActivity {
     // back from image selection dialog; handle it
     private void imageSelected(Uri uri)
     {
-        String aPath;
-
         // save uri for later calculation
         imageUri = uri;
 
@@ -173,16 +190,24 @@ public class MainActivity extends AppCompatActivity {
         //aPath = getPathFromURI(uri);
         //Log.d(TAG,"imageSelected: path is "+aPath);
 
-/*
         iView.setImageURI(uri);
-*/
+
         appendLog("Selected image "+imageUri+"\n");
-// Android 10/11, we can't access this file directly
-// We will copy the file into app's own package cache
+
+
+        //appendText("Image selected "+aPath+"\n");
+        //appendLog("Image selected "+aPath+"\n");
+    }
+
+    private void demSelected(Uri uri) {
+        demUri = uri;
+        appendLog("Selected DEM " + uri + "\n");
         File appCacheDir = new File(getCacheDir(), "geotiff");
         if (!appCacheDir.exists()) {
             appCacheDir.mkdirs();
         }
+        // Android 10/11, we can't access this file directly
+        // We will copy the file into app's own package cache
         File fileInCache = new File(appCacheDir, uri.getLastPathSegment());
         try (InputStream inputStream = getContentResolver().openInputStream(uri);
              OutputStream outputStream = new FileOutputStream(fileInCache)) {
@@ -202,10 +227,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         GeoTIFFParser parser = new GeoTIFFParser(fileInCache);
-
-
-        //appendText("Image selected "+aPath+"\n");
-        //appendLog("Image selected "+aPath+"\n");
+        theParser = parser;
     }
 
     @Override
@@ -353,16 +375,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"selectImageClick started");
         Log.d(TAG,"READ_EXTERNAL_STORAGE: " + Integer.toString(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)));
 
-        if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED)
-        {
-            // Permission is not granted
-            Log.d(TAG,"Attempting to Obtain unobtained storage permissions");
-            requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE } , requestNo);
-            requestNo++;
-            // @TODO should actually end call here once Scoped Storage works properly
-            // return
-        }
+        requestExternStorage();
 
         appendLog("Going to start selecting image\n");
         //appendText("selectImageClick started\n");
@@ -382,10 +395,31 @@ public class MainActivity extends AppCompatActivity {
         appendLog("Chooser started\n");
     }
 
-    public void loadDEM(View view)
+    public void selectDEM(View view)
     {
-        Log.d(TAG,"loadDEM started");
+        Log.d(TAG,"selectDEM started");
         appendLog("Going to start selecting GeoTIFF\n");
+
+        Log.d(TAG,"READ_EXTERNAL_STORAGE: " + Integer.toString(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)));
+
+        requestExternStorage();
+
+        mGetDEM.launch("image/*");
+
+    }
+
+    private void requestExternStorage() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Permission is not granted
+                Log.d(TAG, "Attempting to Obtain unobtained storage permissions");
+                requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, requestNo);
+                requestNo++;
+                // @TODO should actually end call here once Scoped Storage works properly
+                // return
+            }
+        }
     }
 
     private Float[] exifGetYXZ(ExifInterface exif)
@@ -475,5 +509,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     } // appendLog()
+
 
 }

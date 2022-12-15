@@ -52,11 +52,12 @@
     </ScrollView>
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/selectDEMButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="36dp"
         android:layout_marginTop="36dp"
+        android:onClick="selectDEM"
         android:text="@string/button_loadDEM"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
