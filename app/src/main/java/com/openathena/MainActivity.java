@@ -21,6 +21,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -41,10 +42,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 
 public class MainActivity extends AppCompatActivity {
@@ -128,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
     // stolen from https://stackoverflow.com/questions/5568874/how-to-extract-the-file-name-from-uri-returned-from-intent-action-get-content
     // modified by rdk
+    @SuppressLint("Range")
     private String getFileName(Uri uri) {
         String result = null;
         if (uri.getScheme().equals("content")) {
@@ -172,9 +177,32 @@ public class MainActivity extends AppCompatActivity {
         iView.setImageURI(uri);
 */
         appendLog("Selected image "+imageUri+"\n");
-        // Android 10/11, we can't access this file directly
-        // @TODO will need to copy file into app's own package cache
-        GeoTIFFParser p = new GeoTIFFParser(new File(uri.getPath()));
+// Android 10/11, we can't access this file directly
+// We will copy the file into app's own package cache
+        File appCacheDir = new File(getCacheDir(), "geotiff");
+        if (!appCacheDir.exists()) {
+            appCacheDir.mkdirs();
+        }
+        File fileInCache = new File(appCacheDir, uri.getLastPathSegment());
+        try (InputStream inputStream = getContentResolver().openInputStream(uri);
+             OutputStream outputStream = new FileOutputStream(fileInCache)) {
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+        } catch (FileNotFoundException e) {
+            // Handle the FileNotFoundException here
+            // For example, you can show an error message to the user
+            // or log the error to Crashlytics
+            Log.d(TAG, "FileNotFound imageSelected()");
+        } catch (IOException e) {
+            // Handle other IOException here
+            // For example, you can log the error to Crashlytics
+            e.printStackTrace();
+        }
+        GeoTIFFParser parser = new GeoTIFFParser(fileInCache);
+
 
         //appendText("Image selected "+aPath+"\n");
         //appendLog("Image selected "+aPath+"\n");
@@ -234,15 +262,13 @@ public class MainActivity extends AppCompatActivity {
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Log.d(TAG, permissions[0]);
-        Log.d(TAG, Integer.toString(grantResults[0]));
-        Log.d(TAG, Integer.toString(PackageManager.PERMISSION_GRANTED));
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(MainActivity.this, "Permissions Granted", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(MainActivity.this, "Failed to Obtain Necessary Permissions", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     @Override
     protected void onPause()
