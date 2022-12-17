@@ -210,7 +210,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void demSelected(Uri uri) {
-        demUri = uri;
         appendLog("Selected DEM " + uri + "\n");
         File appCacheDir = new File(getCacheDir(), "geotiff");
         if (!appCacheDir.exists()) {
@@ -230,12 +229,14 @@ public class MainActivity extends AppCompatActivity {
             // Handle the FileNotFoundException here
             // For example, you can show an error message to the user
             // or log the error to Crashlytics
-            Log.d(TAG, "FileNotFound imageSelected()");
+            Log.d(TAG, "FileNotFound demSelected()");
         } catch (IOException e) {
             // Handle other IOException here
             // For example, you can log the error to Crashlytics
             e.printStackTrace();
         }
+        demUri = Uri.fromFile(fileInCache);
+
         GeoTIFFParser parser = new GeoTIFFParser(fileInCache);
         theParser = parser;
         TargetGetter tgetty = new TargetGetter(parser);
