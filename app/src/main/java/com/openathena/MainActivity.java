@@ -228,6 +228,15 @@ public class MainActivity extends AppCompatActivity {
         }
         GeoTIFFParser parser = new GeoTIFFParser(fileInCache);
         theParser = parser;
+        TargetGetter tgetty = new TargetGetter(parser);
+        try {
+            double[] result = tgetty.resolveTarget(41.801d, 12.6483, 500.0d, 315.0d, 20.0d);
+            appendText("Target found at " + result[1] + ", " + result[2] + " Alt: " + result[3]);
+        } catch (RequestedValueOOBException e) {
+            Log.e(TAG, "ERROR: resolveTarget ran OOB at: " + e.OOBLat + ", " +e.OOBLon);
+            appendText("ERROR: resolveTarget ran OOB at: " + e.OOBLat + ", " +e.OOBLon);
+            appendText("Please ensure your GeoTIFF DEM file covers the drone's location!");
+        }
     }
 
     @Override

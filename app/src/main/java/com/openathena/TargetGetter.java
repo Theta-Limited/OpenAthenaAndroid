@@ -29,7 +29,6 @@ import mil.nga.tiff.*;
 
 public class TargetGetter {
     private GeoTIFFParser myGeoTIFFParser;
-    private File geofile;
     private final double INCREMENT = 1.0d;
     // private MGRS mgrs;
     // private WGS84_SK42_Translator ellipsoidTranslator
@@ -37,16 +36,18 @@ public class TargetGetter {
 
     TargetGetter() {
         myGeoTIFFParser = new GeoTIFFParser();
-        geofile = null;
     }
 
     TargetGetter(File geofile) {
         this();
-        this.geofile = geofile;
         myGeoTIFFParser.loadGeoTIFF(geofile);
     }
 
-/*    public double[] resolveTarget(double lat, double lon, double alt, double azimuth, double theta) throws RequestedValueOOBException{
+    TargetGetter(GeoTIFFParser gman) {
+        this.myGeoTIFFParser = gman;
+    }
+
+    public double[] resolveTarget(double lat, double lon, double alt, double azimuth, double theta) throws RequestedValueOOBException{
         if (myGeoTIFFParser == null) {
             throw new NullPointerException("FATAL ERROR: resolveTarget attempted before geotiff loaded");
         }
@@ -102,7 +103,7 @@ public class TargetGetter {
         double deltaZ = -1.0d * Math.sin(radTheta); // neg because direction is downward
 
         // determines by how much of travel per unit is actually horiz
-        // pythagoran theorem, deltaz^2 + deltax^2 + deltay^2 = 1
+        // pythagorean theorem, deltaz^2 + deltax^2 + deltay^2 = 1
         double horizScalar = Math.cos(radTheta);
         deltaX *= horizScalar;
         deltaY *= horizScalar;
@@ -151,7 +152,7 @@ public class TargetGetter {
 
         outArr = new double[]{finalDist, curLat, curLon, curAlt, terrainAlt}; // I hate Java
         return outArr;
-    }*/
+    }
 
     public double normalize(double radAngle) {
         while (radAngle < 0) {
@@ -212,19 +213,6 @@ public class TargetGetter {
     //  * for short distances, this is close to the straight line distance
     //  */
     // double[] inverse_haversine_accurate(double lat1, double lon1, double distance, double radAzimuth, double alt) {
-    //     if (distance < 0.0d) {
-    //         return inverse_haversine(lat1, lon1, -1.0d * distance, normalize(radAzimuth + Math.PI), alt);
-    //     }
-    //     double lat2;
-    //     double lon2;
-    //     double r = ???; // WGS84 ellipsoid radius at lat/lon
-    //
-    //     // math.stackexchange.com/a/3707243
-    //     //     runtime is not tenable for mobile devices...
-    //     lat2 = asec(((8 cos(distance/r) sec(lat1) sin6((lon1 - lon2)/2))/(4 sin^4((lon1 - lon2)/2) - 4 sin^2((lon1 - lon2)/2) + tan^2(lat1) + 1) + (4 Math.sqrt(tan^2(lat1) (4 sin^4((lon1 - lon2)/2) - 4 sin^2((lon1 - lon2)/2) - cos^2(distance/r) sec^2(lat1) + tan^2(lat1) + 1)) sin^4((lon1 - lon2)/2))/(4 sin^4((lon1 - lon2)/2) - 4 sin^2((lon1 - lon2)/2) + tan^2(lat1) + 1) - (12 cos(distance/r) sec(lat1) sin^4((lon1 - lon2)/2))/(4 sin^4((lon1 - lon2)/2) - 4 sin^2((lon1 - lon2)/2) + tan^2(lat1) + 1) - 4 cos(distance/r) sec(lat1) sin^2((lon1 - lon2)/2) - (4 Math.sqrt(tan^2(lat1) (4 sin^4((lon1 - lon2)/2) - 4 sin^2((lon1 - lon2)/2) - cos^2(distance/r) sec^2(lat1) + tan^2(lat1) + 1)) sin^2((lon1 - lon2)/2))/(4 sin^4((lon1 - lon2)/2) - 4 sin^2((lon1 - lon2)/2) + tan^2(lat1) + 1) + (2 cos(distance/r) sec(lat1) tan^2(lat1) sin^2((lon1 - lon2)/2))/(4 sin^4((lon1 - lon2)/2) - 4 sin^2((lon1 - lon2)/2) + tan^2(lat1) + 1) + (6 cos(distance/r) sec(lat1) sin^2((lon1 - lon2)/2))/(4 sin^4((lon1 - lon2)/2) - 4 sin^2((lon1 - lon2)/2) + tan^2(lat1) + 1) + 2 cos(distance/r) sec(lat1) + (tan^2(lat1) Math.sqrt(tan^2(lat1) (4 sin^4((lon1 - lon2)/2) - 4 sin^2((lon1 - lon2)/2) - cos^2(distance/r) sec^2(lat1) + tan^2(lat1) + 1)))/(4 sin^4((lon1 - lon2)/2) - 4 sin^2((lon1 - lon2)/2) + tan^2(lat1) + 1) + Math.sqrt(tan^2(lat1) (4 sin^4((lon1 - lon2)/2) - 4 sin^2((lon1 - lon2)/2) - cos^2(distance/r) sec^2(lat1) + tan^2(lat1) + 1))/(4 sin^4((lon1 - lon2)/2) - 4 sin^2((lon1 - lon2)/2) + tan^2(lat1) + 1) - (cos(distance/r) sec(lat1) tan^2(lat1))/(4 sin^4((lon1 - lon2)/2) - 4 sin^2((lon1 - lon2)/2) + tan^2(lat1) + 1) - (cos(distance/r) sec(lat1))/(4 sin^4((lon1 - lon2)/2) - 4 sin^2((lon1 - lon2)/2) + tan^2(lat1) + 1))/(cos^2(distance/r) sec^2(lat1) - tan^2(lat1)))
-    //
-    //     lon2 = lon1 + 2.0d * Math.asin(Math.sqrt(sec(lat1)*sec(lat2)*Math.pow(Math.sin(distance / (2.0d * r)), 2)-sec(lat1)*sec(lat2)*Math.pow(Math.sin((lat2 - lat1) / 2.0d), 2)));
-    // }
 
     double haversine(double lon1, double lat1, double lon2, double lat2, double alt) {
         lon1 = Math.toRadians(lon1);
@@ -274,45 +262,12 @@ public class TargetGetter {
         return Math.asin(radAngle);
     }
 
-    double sin2(double radAngle) {
-        return Math.pow(Math.sin(radAngle), 2);
-    }
-
-    double sin4(double radAngle) {
-        return Math.pow(Math.sin(radAngle), 4);
-    }
-
-    double sin6(double radAngle) {
-        return Math.pow(Math.sin(radAngle), 4);
-    }
-
     double cos(double radAngle) {
         return Math.cos(radAngle);
-    }
-
-    double cos2(double radAngle) {
-        return Math.pow(Math.cos(radAngle),2);
-    }
-
-
-
-    double tan2(double radAngle) {
-        return Math.pow(Math.tan(radAngle),2);
     }
 
     double atan2(double y, double x) {
         return Math.atan2(y, x);
     }
 
-    double sec(double radAngle) {
-        return 1.0d / Math.cos(radAngle);
-    }
-
-    double sec2(double radAngle) {
-        return Math.pow((1.0d / Math.cos(radAngle)), 2);
-    }
-
-    double asec(double radAngle) {
-        return Math.acos(1.0d / radAngle);
-    }
 }

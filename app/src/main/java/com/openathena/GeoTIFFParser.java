@@ -25,7 +25,8 @@ import mil.nga.tiff.*;
 
 public class GeoTIFFParser {
 
-    private double[] geoTransform;
+    public static String TAG = GeoTIFFParser.class.getSimpleName();
+
     private File geofile;
 
     private TIFFImage tiffImage;
@@ -33,31 +34,20 @@ public class GeoTIFFParser {
     private FileDirectory directory;
     private Rasters rasters;
 
-/*
-    private Dataset geodata;
-*/
-    // private long ncols;
-    // private long nrows;
     private geodataAxisParams xParams;
     private geodataAxisParams yParams;
 
     GeoTIFFParser() {
-/*        gdal.AllRegister();
-        gdal.SetConfigOption("gdal_FILENAME_IS_UTF8", "YES");*/
-
-        geoTransform = null;
         geofile = null;
 
         TIFFImage tiffImage = null;
         List<FileDirectory> directories = null;
         FileDirectory directory = null;
         Rasters rasters = null;
-/*
-        geodata = null;
-*/
+
     }
 
-    GeoTIFFParser(File geofile) {
+    GeoTIFFParser(File geofile) throws IllegalArgumentException{
         this();
         this.geofile = geofile;
         loadGeoTIFF(geofile);
@@ -66,7 +56,7 @@ public class GeoTIFFParser {
 
     }
 
-    public void loadGeoTIFF(File geofile) {
+    public void loadGeoTIFF(File geofile) throws IllegalArgumentException {
         this.geofile = geofile;
   /*      this.geodata = gdal.Open(geofile);
         this.geoTransform = getGeoTransform(geodata);*/
@@ -96,42 +86,34 @@ public class GeoTIFFParser {
             Log.d("info", "Samples Per Pixel: " + rasters.getSamplesPerPixel());
             Log.d("info", "Bits Per Sample: " + rasters.getBitsPerSample());
 
-            theseRasters.getPixel(0, 0);
+            Log.d("info", "0,0 is: " + theseRasters.getPixel(0, 0)[0].doubleValue() );
+
         }
 
         List<Double> pixelAxisScales = directory.getModelPixelScale();
+        if (pixelAxisScales.get(2) != 0.0d) {
+            throw new IllegalArgumentException("ERROR: failed to load a rotated or skewed GeoTIFF!");
+        }
         List<Double> tiePoint = directory.getModelTiepoint();
         Number imgWidth = directory.getImageWidth();
         Number imgHeight = directory.getImageHeight();
-        List<Long> xres = directory.getXResolution();
-        List<Long> yres = directory.getYResolution();
 
         Log.d("info", "pixelAxisScales:" + pixelAxisScales.toString());
         Log.d("info", "tiePoint: " + tiePoint);
         Log.d("info", "imgWidth: " + imgWidth );
         Log.d("info", "imgHeight: " + imgHeight);
-        Log.d("info", "xres: " + xres);
-        Log.d("info", "yres: " + yres);
 
-        // this.ncols = (long) geodata.getRasterXSize();
         this.xParams = new geodataAxisParams();
-/*        xParams.start = geoTransform[0];
-        xParams.stepwiseIncrement = geoTransform[1];*/
-/*
-        xParams.numOfSteps = (long) geodata.getRasterXSize();
-*/
-/*
-        xParams.calcEndValue();
-*/
+        this.xParams.start = tiePoint.get(3);
+        this.xParams.stepwiseIncrement = pixelAxisScales.get(0);
+        this.xParams.numOfSteps = imgWidth.longValue();
+        this.xParams.calcEndValue();
 
-        // this.nrows = (long) geodata.getRasterYSize();
         this.yParams = new geodataAxisParams();
-/*        yParams.start = geoTransform[3];
-        yParams.stepwiseIncrement = geoTransform[5];*/
-/*
-        yParams.numOfSteps = (long) geodata.getRasterYSize();
-*/
-/*        yParams.calcEndValue();*/
+        this.yParams.start = tiePoint.get(4);
+        this.yParams.stepwiseIncrement = -1.0d * pixelAxisScales.get(1);
+        this.yParams.numOfSteps = imgHeight.longValue();
+        this.yParams.calcEndValue();
     }
 
     // private double[] getDummyGeoTransform(Dataset geodata) {
@@ -172,13 +154,14 @@ public class GeoTIFFParser {
         return xParams.stepwiseIncrement;
     }
 
-/*    public double getAltFromLatLon(double lat, double lon) throws RequestedValueOOBException {
-        if (geoTransform == null || geofile == null || geodata == null || xParams == null || yParams == null) {
+    public double getAltFromLatLon(double lat, double lon) throws RequestedValueOOBException {
+        if (geofile == null || rasters == null || xParams == null || yParams == null) {
             throw new NullPointerException("getAltFromLatLon pre-req was null!");
         }
         if ( xParams.numOfSteps <= 0 || yParams.numOfSteps <= 0) {
             throw new IllegalArgumentException("getAltFromLatLon dataset was empty!");
         }
+        Log.d(TAG, "lat: " + lat + " lon: " + lon);
 
         double x0 = xParams.start;
         double x1 = xParams.end;
@@ -189,6 +172,9 @@ public class GeoTIFFParser {
         double y1 = yParams.end;
         double dy = yParams.stepwiseIncrement;
         long nrows = yParams.numOfSteps;
+
+        Log.d(TAG, "x0: " + x0 + " x1: " + x1);
+        Log.d(TAG, "y0: " + y0 + " y1: " + y1);
 
         // Out of Bounds (OOB) check
         if (( lat > y0 || y1 > lat ) || ( lon > x1 || x0 > lon)) { // note: y0 > y1 but x0 < x1 (dy is always negative)
@@ -215,15 +201,12 @@ public class GeoTIFFParser {
             yIndex = yB;
         }
 
-
-        float[] result = new float[1]; // float array of size 1 to store result
-        int[] band = {1}; // first band should be elevation data (GDAL)
         // https://gdal.org/java/org/gdal/gdal/Dataset.html#ReadRaster(int,int,int,int,int,int,int,byte%5B%5D,int%5B%5D)
         // https://gis.stackexchange.com/questions/349760/get-elevation-of-geotiff-using-gdal-bindings-in-java
-        geodata.ReadRaster((int) xIndex, (int) yIndex, 1, 1, 1, 1, 6, floatToBytes(result), band);
-        double altitudeAtLatLon = result[0];
-        return altitudeAtLatLon;
-    }*/
+//        geodata.ReadRaster((int) xIndex, (int) yIndex, 1, 1, 1, 1, 6, floatToBytes(result), band);
+        double result = rasters.getPixel((int) xIndex, (int) yIndex)[0].doubleValue();
+        return result;
+    }
 
     long[] binarySearchNearest(double start, long n, double val, double dN) {
         long[] out = new long[2];
