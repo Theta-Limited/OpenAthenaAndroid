@@ -60,6 +60,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
+import mil.nga.tiff.util.TiffException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -203,10 +207,6 @@ public class MainActivity extends AppCompatActivity {
         iView.setImageURI(uri);
 
         appendLog("Selected image "+imageUri+"\n");
-
-
-        //appendText("Image selected "+aPath+"\n");
-        //appendLog("Image selected "+aPath+"\n");
     }
 
     private void demSelected(Uri uri) {
@@ -230,24 +230,33 @@ public class MainActivity extends AppCompatActivity {
             // For example, you can show an error message to the user
             // or log the error to Crashlytics
             Log.d(TAG, "FileNotFound demSelected()");
+            return;
         } catch (IOException e) {
             // Handle other IOException here
             // For example, you can log the error to Crashlytics
             e.printStackTrace();
+            return;
         }
         demUri = Uri.fromFile(fileInCache);
 
-        GeoTIFFParser parser = new GeoTIFFParser(fileInCache);
-        theParser = parser;
-        TargetGetter tgetty = new TargetGetter(parser);
-        theTGetter = tgetty;
+        Toast.makeText(MainActivity.this, "Loading GeoTIFF. Please wait...", Toast.LENGTH_SHORT).show();
+
         try {
-            double[] result = tgetty.resolveTarget(41.801d, 12.6483, 500.0d, 315.0d, 20.0d);
-            appendText("Target found at " + result[1] + ", " + result[2] + " Alt: " + result[3]);
-        } catch (RequestedValueOOBException e) {
-            Log.e(TAG, "ERROR: resolveTarget ran OOB at: " + e.OOBLat + ", " +e.OOBLon);
-            appendText("ERROR: resolveTarget ran OOB at: " + e.OOBLat + ", " +e.OOBLon + "\n");
-            appendText("Please ensure your GeoTIFF DEM file covers the drone's location!\n");
+            GeoTIFFParser parser = new GeoTIFFParser(fileInCache);
+            theParser = parser;
+            theTGetter = new TargetGetter(parser);
+            String successOutput = "GeoTIFF DEM ";
+//            successOutput += "\"" + uri.getLastPathSegment(); + "\" ";
+            successOutput += "loaded. Size " + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
+            successOutput += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
+            successOutput += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n";
+            appendText(successOutput);
+        } catch (IllegalArgumentException e) {
+            String failureOutput = "ERROR: failed to load DEM, " + e.getMessage() + "\n";
+            appendText(failureOutput);
+        } catch (TiffException e) {
+            String failureOutput = "ERROR: failed to load DEM, not a GeoTIFF \".tif\" file.\n";
+            appendText(failureOutput);
         }
     }
 
@@ -345,8 +354,8 @@ public class MainActivity extends AppCompatActivity {
     {
         Drawable aDrawable;
         ExifInterface exif;
+        String xmp_str;
         XMPMeta xmpMeta;
-        File aFile;
         String attribs = "Exif information ---\n";
 
         clearText();
@@ -366,22 +375,11 @@ public class MainActivity extends AppCompatActivity {
             InputStream is = cr.openInputStream(imageUri);
             aDrawable = iView.getDrawable();
             exif = new ExifInterface(is);
-            appendText("Opened exif for image\n");
-//            xmpMeta = XMPMetaFactory.parse(new FileInputStream(getPathFromURI(imageUri)));
-//            appendText("parsed xmpMeta\n");
-//            XMPProperty absAltProp = xmpMeta.getProperty("", "drone-dji:AbsoluteAltitude");
-//            appendText("absAltProp: " + absAltProp);
-//            XMPIterator iterator = xmpMeta.iterator();
-//            while (iterator.hasNext()) {
-//                XMPPropertyInfo propInfo = (XMPPropertyInfo) iterator.next();
-//                String path = propInfo.getPath();
-//                if (path.equals("drone-dji:AbsoluteAltitude")) {
-//                    String value = propInfo.getValue();
-//                    Log.d(TAG, "Absolute Altitude: " + value);
-//                }
-//                iterator.skipSubtree();
-//                // iterator.skipSiblings();
-//            }
+            appendText("Opened EXIF for image\n");
+            xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
+            Log.i(TAG, "XMPString: " + xmp_str);
+            xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
+            Log.i(TAG, "parsed xmpMeta\n");
             attribs += getTagString(ExifInterface.TAG_DATETIME, exif);
             attribs += getTagString(ExifInterface.TAG_MAKE, exif);
             attribs += getTagString(ExifInterface.TAG_MODEL, exif);
@@ -392,17 +390,35 @@ public class MainActivity extends AppCompatActivity {
             attribs += "Latitude : " + y + "\n";
             attribs += "Longitude : " + x + "\n";
             attribs += "Altitude : " + z + "\n";
-            attribs += getTagString(ExifInterface.TAG_ORIENTATION, exif);
+            String gimbalYawDegree = xmpMeta.getPropertyString("http://www.dji.com/drone-dji/1.0/", "GimbalYawDegree");
+            attribs += "GimbalYawDegree: " + gimbalYawDegree + "\n";
+            String gimbalPitchDegree = xmpMeta.getPropertyString("http://www.dji.com/drone-dji/1.0/", "GimbalPitchDegree");
+            attribs += "GimbalPitchDegree: " + gimbalPitchDegree + "\n";
+            if (theTGetter != null) {
+                try {
+                    double[] result = theTGetter.resolveTarget(new Double(y), new Double(x), new Double(z), Double.parseDouble(gimbalYawDegree), Double.parseDouble(gimbalPitchDegree));
+                    attribs += "Target found at " + roundDouble(result[1]) + ", " + roundDouble(result[2]) + " Alt: " + Math.round(result[3]) + "\n";
+                } catch (RequestedValueOOBException e) {
+                    Log.e(TAG, "ERROR: resolveTarget ran OOB at: " + roundDouble(e.OOBLat) + ", " +roundDouble(e.OOBLon));
+                    attribs += "ERROR: resolveTarget ran OOB at: " + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon) + "\n";
+                    attribs += "Please ensure your GeoTIFF DEM file covers the drone's location!\n";
+                }
+            } else {
+                attribs += "Could not resolve target. Please load a GeoTIFF Digital Elevation Model \".tif\" using ⛰ button\n";
+            }
             appendText(attribs+"\n");
 
             // close file
             is.close();
             //
+        } catch (XMPException e) {
+            Log.e(TAG, e.getMessage());
+            e.printStackTrace();
         } catch (Exception e) {
             appendText("Unable to open image file to calculate: "+e+"\n");
+            appendText(e.getMessage());
+            Log.e(TAG, e.getMessage());
         }
-
-
     } // button click
 
     // select image button clicked; launch chooser and get result
@@ -501,6 +517,12 @@ public class MainActivity extends AppCompatActivity {
         float numerator = Float.parseFloat(split[0]);
         float denominator = Float.parseFloat(split[1]);
         return numerator / denominator;
+    }
+
+    private String roundDouble(double d) {
+        DecimalFormat df = new DecimalFormat("#.######");
+        df.setRoundingMode(RoundingMode.HALF_UP);
+        return df.format(d);
     }
 
     private void appendText(final String aStr)

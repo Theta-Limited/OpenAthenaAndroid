@@ -64,8 +64,8 @@ public class GeoTIFFParser {
         try {
             tiffImage = TiffReader.readTiff(geofile);
         } catch (IOException e) {
-            Log.d("IOException", "Failed to read geofile: " + e.getMessage());
-            return;
+            Log.e(TAG, "Failed to read geofile: " + e.getMessage());
+            throw new IllegalArgumentException(e.getMessage());
         }
 
         directories = tiffImage.getFileDirectories();
@@ -153,6 +153,14 @@ public class GeoTIFFParser {
     public double getXResolution() {
         return xParams.stepwiseIncrement;
     }
+    public double getYResolution() { return yParams.stepwiseIncrement; }
+    public long getNumCols() { return xParams.numOfSteps; }
+    public long getNumRows() { return yParams.numOfSteps; }
+    public double getMinLon() { return Math.min(xParams.end, xParams.start); }
+    public double getMaxLon() { return Math.max(xParams.end, xParams.start); }
+    public double getMinLat() { return Math.min(yParams.end, yParams.start); }
+    public double getMaxLat() { return Math.max(yParams.end, yParams.start); }
+
 
     public double getAltFromLatLon(double lat, double lon) throws RequestedValueOOBException {
         if (geofile == null || rasters == null || xParams == null || yParams == null) {
