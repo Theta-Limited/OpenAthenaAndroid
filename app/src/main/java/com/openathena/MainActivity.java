@@ -12,6 +12,14 @@
 
 package com.openathena;
 
+// import veraPDF fork of Adobe XMP core Java v5.1.0
+import com.adobe.xmp.XMPException;
+import com.adobe.xmp.XMPMeta;
+import com.adobe.xmp.XMPMetaFactory;
+import com.adobe.xmp.XMPIterator;
+import com.adobe.xmp.properties.XMPProperty;
+import com.adobe.xmp.properties.XMPPropertyInfo;
+
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -29,7 +37,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
-import android.media.ExifInterface;
+import androidx.exifinterface.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -43,6 +51,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
@@ -67,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     Uri imageUri = null;
     Uri demUri = null;
     GeoTIFFParser theParser = null;
+    TargetGetter theTGetter = null;
 
     ActivityResultLauncher<String> mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
                 new ActivityResultCallback<Uri>() {
@@ -229,13 +239,14 @@ public class MainActivity extends AppCompatActivity {
         GeoTIFFParser parser = new GeoTIFFParser(fileInCache);
         theParser = parser;
         TargetGetter tgetty = new TargetGetter(parser);
+        theTGetter = tgetty;
         try {
             double[] result = tgetty.resolveTarget(41.801d, 12.6483, 500.0d, 315.0d, 20.0d);
             appendText("Target found at " + result[1] + ", " + result[2] + " Alt: " + result[3]);
         } catch (RequestedValueOOBException e) {
             Log.e(TAG, "ERROR: resolveTarget ran OOB at: " + e.OOBLat + ", " +e.OOBLon);
-            appendText("ERROR: resolveTarget ran OOB at: " + e.OOBLat + ", " +e.OOBLon);
-            appendText("Please ensure your GeoTIFF DEM file covers the drone's location!");
+            appendText("ERROR: resolveTarget ran OOB at: " + e.OOBLat + ", " +e.OOBLon + "\n");
+            appendText("Please ensure your GeoTIFF DEM file covers the drone's location!\n");
         }
     }
 
@@ -333,6 +344,7 @@ public class MainActivity extends AppCompatActivity {
     {
         Drawable aDrawable;
         ExifInterface exif;
+        XMPMeta xmpMeta;
         File aFile;
         String attribs = "Exif information ---\n";
 
@@ -354,6 +366,21 @@ public class MainActivity extends AppCompatActivity {
             aDrawable = iView.getDrawable();
             exif = new ExifInterface(is);
             appendText("Opened exif for image\n");
+//            xmpMeta = XMPMetaFactory.parse(new FileInputStream(getPathFromURI(imageUri)));
+//            appendText("parsed xmpMeta\n");
+//            XMPProperty absAltProp = xmpMeta.getProperty("", "drone-dji:AbsoluteAltitude");
+//            appendText("absAltProp: " + absAltProp);
+//            XMPIterator iterator = xmpMeta.iterator();
+//            while (iterator.hasNext()) {
+//                XMPPropertyInfo propInfo = (XMPPropertyInfo) iterator.next();
+//                String path = propInfo.getPath();
+//                if (path.equals("drone-dji:AbsoluteAltitude")) {
+//                    String value = propInfo.getValue();
+//                    Log.d(TAG, "Absolute Altitude: " + value);
+//                }
+//                iterator.skipSubtree();
+//                // iterator.skipSiblings();
+//            }
             attribs += getTagString(ExifInterface.TAG_DATETIME, exif);
             attribs += getTagString(ExifInterface.TAG_MAKE, exif);
             attribs += getTagString(ExifInterface.TAG_MODEL, exif);

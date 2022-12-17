@@ -161,7 +161,7 @@ public class GeoTIFFParser {
         if ( xParams.numOfSteps <= 0 || yParams.numOfSteps <= 0) {
             throw new IllegalArgumentException("getAltFromLatLon dataset was empty!");
         }
-        Log.d(TAG, "lat: " + lat + " lon: " + lon);
+//        Log.d(TAG, "lat: " + lat + " lon: " + lon);
 
         double x0 = xParams.start;
         double x1 = xParams.end;
@@ -173,8 +173,8 @@ public class GeoTIFFParser {
         double dy = yParams.stepwiseIncrement;
         long nrows = yParams.numOfSteps;
 
-        Log.d(TAG, "x0: " + x0 + " x1: " + x1);
-        Log.d(TAG, "y0: " + y0 + " y1: " + y1);
+//        Log.d(TAG, "x0: " + x0 + " x1: " + x1);
+//        Log.d(TAG, "y0: " + y0 + " y1: " + y1);
 
         // Out of Bounds (OOB) check
         if (( lat > y0 || y1 > lat ) || ( lon > x1 || x0 > lon)) { // note: y0 > y1 but x0 < x1 (dy is always negative)
