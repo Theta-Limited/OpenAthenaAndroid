@@ -11,7 +11,7 @@ public class RequestedValueOOBException extends Exception {
 
     public RequestedValueOOBException(String errorMessage, double OOBLat, double OOBLon) {
         this(errorMessage);
-        OOBLat = OOBLat;
-        OOBLon = OOBLon;
+        this.OOBLat = OOBLat;
+        this.OOBLon = OOBLon;
     }
 }

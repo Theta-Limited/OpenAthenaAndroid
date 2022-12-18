@@ -185,7 +185,7 @@ public class GeoTIFFParser {
 //        Log.d(TAG, "y0: " + y0 + " y1: " + y1);
 
         // Out of Bounds (OOB) check
-        if (( lat > y0 || y1 > lat ) || ( lon > x1 || x0 > lon)) { // note: y0 > y1 but x0 < x1 (dy is always negative)
+        if (( lat > getMaxLat() || getMinLat() > lat ) || ( lon > getMaxLon() || getMinLon() > lon)) {
             throw new RequestedValueOOBException("getAltFromLatLon arguments out of bounds!", lat, lon);
         }
 

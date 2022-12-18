@@ -42,18 +42,26 @@
     <ScrollView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
-        android:layout_height="325dp"
+        android:layout_height="0dp"
         android:layout_marginTop="421dp"
-        android:clickable="true"
+        android:layout_marginBottom="8dp"
+        android:minHeight="48dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/textViewMGRS"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="0dp">
+        tools:ignore="DuplicateClickableBoundsCheck">
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:text="@string/openathena_for_android" />
+            android:minHeight="48dp"
+            android:scrollbars="vertical"
+            android:text="@string/openathena_for_android"
+            android:textIsSelectable="true" />
     </ScrollView>
 
     <Button
@@ -66,5 +74,23 @@
         android:text="@string/button_loadDEM"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewMGRS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:linksClickable="true"
+        android:minHeight="48dp"
+        android:onClick="copyMGRSText"
+        android:text="@string/nato_mgrs"
+        android:textIsSelectable="true"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scrollView2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

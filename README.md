@@ -1,34 +1,42 @@
 # OpenAthenaAndroid
 OpenAthena for Android
 
-# Operability
-This project is not yet stable. The main [OpenAthena project](http://OpenAthena.com) running on a PC/Mac should be used instead, until otherwise noted
+An Android port of the [OpenAthena project](http://OpenAthena.com)
 
-# Features
-This project is not designed to maintain feature parity with the main [OpenAthena project](http://OpenAthena.com).
-It is a parallel implementation of the same concept, on the Android platform to make it available
-to more users
+<a href="https://github.com/mkrupczak3/OpenAthena"><img width="540" alt="OpenAthena Drone Camera Terrain Raycast Concept Diagram" src="https://github.com/mkrupczak3/OpenAthena/raw/main/assets/OpenAthena_Concept_Diagram.png"></a>
 
-## GeoTIFF parsing:
+# Stability
+This project is not yet stable. Consider using the main [OpenAthena project](http://OpenAthena.com)running on a PC/Mac instead, until otherwise noted
 
-This app uses the open source [tiff-java library](https://github.com/ngageoint/tiff-java) maintained by the U.S. [National Geospatial Intelligence Agency](https://www.nga.mil/) to read GeoTIFF Digital Elevation Model (DEM) files, stored as a ".tif" file.
+# Operation Guide
+
+## GeoTIFF Digital Elevation Model parsing:
+
+Use of this app requires loading a GeoTIFF Digital Elevation Model (DEM) file, stored as a GeoTIFF ".tif" file.
+
+These GeoTIFF files store terrain elevation (height) for an area of the Earth. OpenAthena performs a ray-cast from a drone camera's position and orientation towards terrain. This may be used to precisely locate the subject which appears in the exact center of a given picture.
 
 For information on how to clip a GeoTIFF file of a customized area, see [this link](https://github.com/mkrupczak3/OpenAthena/blob/main/EIO_fetch_geotiff_example.md).
 
-Load the DEM file, e.g. [cobb.tif](https://github.com/mkrupczak3/OpenAthena/raw/main/src/cobb.tif) using the " ⛰" button (NOTE: during file selection, the thumbnail preview for any GeoTIFF ".tif" file will be blank. This is normal.), and the app will display the size of the file as well as its Latitude and Longitude boundaries:
+Load the DEM file, e.g. [cobb.tif](https://github.com/mkrupczak3/OpenAthena/raw/main/src/cobb.tif) using the " ⛰" button (NOTE: during file selection, the thumbnail  image preview for any GeoTIFF ".tif" file will be blank. This is normal.), and the app will display the size of the file as well as its Latitude and Longitude boundaries:
 
 
-<img width="640" alt="OpenAthena Android GeoTIFF DEM loading demo using cobb.tif" src="./assets/cobb_tif_DEM_Loading_Demo.png">
+<img width="270" alt="OpenAthena Android GeoTIFF DEM loading demo using cobb.tif" src="./assets/cobb_tif_DEM_Loading_Demo.png">
 
 
 ## JPG Drone sensor metadata parsing
 
-This prototype version can only read sensor metadata from images taken by a DJI drone. The the drones position (Latitude Longitude Altitude) and the camera gimbal's azimuth and angle of depression are obtained from XMP metadata.
+This version of the app can only read sensor metadata from images taken by a DJI drone. The the drone's position (Latitude Longitude Altitude) and its camera gimbal's azimuth and angle of depression are obtained from XMP metadata.
 
-After loading a GeoTIFF DEM using the " ⛰" button, use the "🖼" button to select a drone image containing the necessary metadata. Then press the "🧮" button to calculate the target location on the ground:
+## Locating a Target 🎯
 
+After loading a GeoTIFF DEM using the " ⛰" button (see section above), use the "🖼" button to select a drone image containing the necessary metadata.
 
-<img width="640" alt="OpenAthena Android Target Calculation demo using cobb.tif and DJI_0419.JPG" src="./assets/DJI_0419_Target_Res_Demo.png">
+<img width="270" alt="OpenAthena Android Image Selection demo using DJI_0419.JPG" src="./assets/DJI_0419_Target_Res_Demo.png">
+
+Then, press the "🧮" button to calculate the target location on the ground:
+
+<img width="270" alt="OpenAthena Android Target Calculation demo using cobb.tif and DJI_0419.JPG" src="./assets/DJI_0419_Target_Res_Demo.png">
 
 
 ## Live Telemetry from DJI-SDK

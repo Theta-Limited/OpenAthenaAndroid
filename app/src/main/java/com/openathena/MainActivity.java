@@ -25,6 +25,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -59,7 +61,12 @@ import java.io.PrintWriter;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
+// Libraries from the U.S. National Geospatial Intelligence Agency https://www.nga.mil
+import mil.nga.mgrs.grid.GridType;
 import mil.nga.tiff.util.TiffException;
+import mil.nga.mgrs.*;
+import mil.nga.grid.features.Point;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -69,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     public static int requestNo = 0;
 
     TextView textView;
+    TextView textViewMGRS;
     SharedPreferences prefs;
     SharedPreferences.Editor edit;
     protected String versionName;
@@ -123,6 +131,9 @@ public class MainActivity extends AppCompatActivity {
 
         textView = (TextView)findViewById(R.id.textView);
         textView.setMovementMethod(LinkMovementMethod.getInstance());
+        textViewMGRS = (TextView)findViewById(R.id.textViewMGRS);
+        textViewMGRS.setMovementMethod(LinkMovementMethod.getInstance());
+
         iView = (ImageView)findViewById(R.id.imageView);
 
         // try to get our version out of app/build.gradle
@@ -192,6 +203,10 @@ public class MainActivity extends AppCompatActivity {
     private void imageSelected(Uri uri)
     {
         // save uri for later calculation
+        if (imageUri != null && !uri.equals(imageUri)) {
+            clearText();
+            textViewMGRS.setText(R.string.nato_mgrs);
+        }
         imageUri = uri;
 
         //appendText("imageSelected: uri is "+uri+"\n");
@@ -203,7 +218,9 @@ public class MainActivity extends AppCompatActivity {
 
         iView.setImageURI(uri);
 
+
         appendLog("Selected image "+imageUri+"\n");
+        appendText("Selected \uD83D\uDDBC \n");
     }
 
     private void demSelected(Uri uri) {
@@ -226,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
             // Handle the FileNotFoundException here
             // For example, you can show an error message to the user
             // or log the error to Crashlytics
-            Log.d(TAG, "FileNotFound demSelected()");
+            Log.e(TAG, "FileNotFound demSelected()");
             return;
         } catch (IOException e) {
             // Handle other IOException here
@@ -244,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
             theTGetter = new TargetGetter(parser);
             String successOutput = "GeoTIFF DEM ";
 //            successOutput += "\"" + uri.getLastPathSegment(); + "\" ";
-            successOutput += "loaded. Size " + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
+            successOutput += "loaded ⛰. Size " + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
             successOutput += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
             successOutput += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n";
             appendText(successOutput);
@@ -356,13 +373,14 @@ public class MainActivity extends AppCompatActivity {
         String attribs = "Exif information ---\n";
 
         clearText();
+        textViewMGRS.setText("");
 
-        //appendText("calculateImage clicked\n");
+        appendText("Calculating \uD83E\uDDEE:\n");
         appendLog("Going to start calculation\n");
 
         if (imageUri == null) {
-            appendLog("Cannot calculate; no image selected\n");
-            appendText("Cannot calculate: no image selected\n");
+            appendLog("ERROR: Cannot calculate \uD83D\uDEAB\uD83E\uDDEE; no image \uD83D\uDEAB\uD83D\uDDBC selected\n");
+            appendText("ERROR: Cannot calculate \uD83D\uDEAB\uD83E\uDDEE: no image \uD83D\uDEAB\uD83D\uDDBC selected\n");
             return;
         }
 
@@ -397,24 +415,45 @@ public class MainActivity extends AppCompatActivity {
             attribs += "GimbalYawDegree: " + gimbalYawDegree + "\n";
             String gimbalPitchDegree = xmpMeta.getPropertyString("http://www.dji.com/drone-dji/1.0/", "GimbalPitchDegree");
             attribs += "GimbalPitchDegree: " + gimbalPitchDegree + "\n";
+            appendText(attribs);
+            attribs = "";
+            double[] result;
+            double latitude;
+            double longitude;
+            long altitude;
             if (theTGetter != null) {
                 try {
-                    double[] result = theTGetter.resolveTarget(y, x, z, Double.parseDouble(gimbalYawDegree), Double.parseDouble(gimbalPitchDegree));
-                    attribs += "Target found at " + roundDouble(result[1]) + "," + roundDouble(result[2]) + " Alt: " + Math.round(result[3]) + "\n";
-                    attribs += "<a href=\"https://maps.google.com/?q=" + roundDouble(result[1]) + "," + roundDouble(result[2]) + "\">";
-                    attribs += "maps.google.com/?q=" + roundDouble(result[1]) + "," + roundDouble(result[2]) + "</a>\n";
+                    result = theTGetter.resolveTarget(y, x, z, Double.parseDouble(gimbalYawDegree), Double.parseDouble(gimbalPitchDegree));
+                    latitude = result[1];
+                    longitude = result[2];
+                    altitude = Math.round(result[3]);
+                    attribs += "Target found at " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt: " + altitude + "m" + "\n";
+                    attribs += "<a href=\"https://maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "\">";
+                    attribs += "maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "</a>\n";
                 } catch (RequestedValueOOBException e) {
                     Log.e(TAG, "ERROR: resolveTarget ran OOB at: " + roundDouble(e.OOBLat) + ", " +roundDouble(e.OOBLon));
                     attribs += "ERROR: resolveTarget ran OOB at: " + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon) + "\n";
                     attribs += "Please ensure your GeoTIFF DEM file covers the drone's location!\n";
+                    attribs += "Your GeoTIFF's coverage ⛰:\n";
+                    attribs += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
+                    attribs += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n";
+                    appendText(attribs);
+                    return;
                 }
             } else {
                 attribs += "Could not resolve target. Please load a GeoTIFF Digital Elevation Model \".tif\" using ⛰ button\n";
+                appendText(attribs);
+                return;
             }
             attribs = attribs.replaceAll("(\r\n|\n)", "<br>"); // replace newline with HTML equivalent
             textView.append(Html.fromHtml(attribs, 0, null, null));
-//            appendText(attribs+"\n");
-
+            // Obtain NATO MGRS from mil.nga.mgrs library
+            MGRS mgrsObj = MGRS.from(new Point(longitude, latitude));
+            String mgrs1m = mgrsObj.coordinate(GridType.METER);
+            String mgrsString = "<a href=\"https://maps.google.com/?q=" + mgrs1m + "\">";
+            mgrsString += mgrs1m + "</a> ";
+            mgrsString += "Alt: " + altitude + "m";
+            textViewMGRS.setText(Html.fromHtml(mgrsString, 0, null, null));
             // close file
             is.close();
             //
@@ -422,11 +461,22 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, e.getMessage());
             e.printStackTrace();
         } catch (Exception e) {
-            appendText("Unable to open image file to calculate: "+e+"\n");
-            appendText(e.getMessage());
-            Log.e(TAG, e.getMessage());
+            appendText("Unable to open image file to calculate. Drone image \uD83D\uDDBC metadata could not be read. \n"+e+"\n");
+            e.printStackTrace();
         }
     } // button click
+
+    public void copyMGRSText(View view) {
+        String text = textViewMGRS.getText().toString();
+        text = text.replaceAll("<[^>]*>", ""); // remove HTML link tag(s)
+
+        // Copy the text to the clipboard
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("Text", text);
+        clipboard.setPrimaryClip(clip);
+
+        Toast.makeText(this, "Text copied to clipboard \uD83D\uDCCB", Toast.LENGTH_SHORT).show();
+    }
 
     // select image button clicked; launch chooser and get result
     // in callback
