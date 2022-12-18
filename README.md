@@ -23,7 +23,7 @@ Load the DEM file, e.g. [cobb.tif](https://github.com/mkrupczak3/OpenAthena/raw/
 
 ## JPG Drone sensor metadata parsing
 
-This prototype version can only read sensor metadata from images taken by a DJI drone. The lat/lon/alt location information is acquired from the less-accurate EXIF tags of the image instead of its XMP metadata, so it should not be relied on for accuracy. The camera gimbal's azimuth and angle of depression is obtained from XMP metadata.
+This prototype version can only read sensor metadata from images taken by a DJI drone. The the drones position (Latitude Longitude Altitude) and the camera gimbal's azimuth and angle of depression are obtained from XMP metadata.
 
 After loading a GeoTIFF DEM using the " ⛰" button, use the "🖼" button to select a drone image containing the necessary metadata. Then press the "🧮" button to calculate the target location on the ground:
 
