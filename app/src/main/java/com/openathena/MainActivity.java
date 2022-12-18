@@ -16,17 +16,12 @@ package com.openathena;
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.XMPMetaFactory;
-import com.adobe.xmp.XMPIterator;
-import com.adobe.xmp.properties.XMPProperty;
-import com.adobe.xmp.properties.XMPPropertyInfo;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -37,12 +32,14 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.text.Html;
 import androidx.exifinterface.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,7 +48,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
@@ -121,11 +117,12 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_main);
-        setContentView(R.layout.test_layout);
+        setContentView(R.layout.activity_main);
 
         // get our prefs that we have saved
 
         textView = (TextView)findViewById(R.id.textView);
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
         iView = (ImageView)findViewById(R.id.imageView);
 
         // try to get our version out of app/build.gradle
@@ -397,7 +394,9 @@ public class MainActivity extends AppCompatActivity {
             if (theTGetter != null) {
                 try {
                     double[] result = theTGetter.resolveTarget(new Double(y), new Double(x), new Double(z), Double.parseDouble(gimbalYawDegree), Double.parseDouble(gimbalPitchDegree));
-                    attribs += "Target found at " + roundDouble(result[1]) + ", " + roundDouble(result[2]) + " Alt: " + Math.round(result[3]) + "\n";
+                    attribs += "Target found at " + roundDouble(result[1]) + "," + roundDouble(result[2]) + " Alt: " + Math.round(result[3]) + "\n";
+                    attribs += "<a href=\"https://maps.google.com/?q=" + roundDouble(result[1]) + "," + roundDouble(result[2]) + "\">";
+                    attribs += "maps.google.com/?q=" + roundDouble(result[1]) + "," + roundDouble(result[2]) + "</a>\n";
                 } catch (RequestedValueOOBException e) {
                     Log.e(TAG, "ERROR: resolveTarget ran OOB at: " + roundDouble(e.OOBLat) + ", " +roundDouble(e.OOBLon));
                     attribs += "ERROR: resolveTarget ran OOB at: " + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon) + "\n";
@@ -406,7 +405,9 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 attribs += "Could not resolve target. Please load a GeoTIFF Digital Elevation Model \".tif\" using ⛰ button\n";
             }
-            appendText(attribs+"\n");
+            attribs = attribs.replaceAll("(\r\n|\n)", "<br>"); // replace newline with HTML equivalent
+            textView.append(Html.fromHtml(attribs, 0, null, null));
+//            appendText(attribs+"\n");
 
             // close file
             is.close();
@@ -469,8 +470,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "Attempting to Obtain unobtained storage permissions");
                 requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, requestNo);
                 requestNo++;
-                // @TODO should actually end call here once Scoped Storage works properly
-                // return
             }
         }
     }
@@ -531,6 +530,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 textView.append(aStr);
+
             }
         });
 

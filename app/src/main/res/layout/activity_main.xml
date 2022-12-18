@@ -1,64 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-      android:id="@+id/content"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:orientation="vertical">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
+    <Button
+        android:id="@+id/selectImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="36dp"
+        android:onClick="selectImage"
+        android:text="@string/button_selectImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <GridLayout
-        android:id="@+id/prefs_content"
-            android:columnCount="2"
-            android:rowCount="1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    <Button
+        android:id="@+id/calculateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="36dp"
+        android:onClick="calculateImage"
+        android:text="@string/button_calculate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/selectImageButton" />
 
-            <Button
-                android:id="@+id/connect_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="clickButton"
-                android:text="@string/test_button_text" />
-
-            <Button
-                android:id="@+id/SelectImageButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:onClick="selectImageClick"
-                android:text="SELECT IMAGE" />
-
-        <ImageView
-            android:id="@+id/ImagePreview"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_row="1"
-            android:layout_column="1"
-            android:layout_below="@id/SelectImageButton"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp" />
-
-    </GridLayout>
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="316dp"
+        android:layout_height="220dp"
+        android:layout_marginTop="144dp"
+        app:layout_constraintBottom_toTopOf="@+id/scrollView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/athena" />
 
     <ScrollView
-        android:id="@+id/phone_text_scroll"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        android:fillViewport="true">
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="325dp"
+        android:layout_marginTop="421dp"
+        android:clickable="true"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp">
 
         <TextView
-            android:id="@+id/text_view"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1.0"
-            android:contentDescription="@string/text_view_value"/>
-
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:text="@string/openathena_for_android" />
     </ScrollView>
 
-</LinearLayout>
+    <Button
+        android:id="@+id/selectDEMButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="36dp"
+        android:onClick="selectDEM"
+        android:text="@string/button_loadDEM"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-
-
+</androidx.constraintlayout.widget.ConstraintLayout>

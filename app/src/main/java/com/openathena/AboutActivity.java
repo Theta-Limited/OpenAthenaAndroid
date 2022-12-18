@@ -13,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -45,6 +46,7 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about);
 
         aboutText = (TextView)findViewById(R.id.aboutText);
+        aboutText.setMovementMethod(LinkMovementMethod.getInstance());
 
         // try to get our version out of app/build.gradle
         // versionName field
@@ -59,12 +61,12 @@ public class AboutActivity extends AppCompatActivity {
         // set About text
         aboutText.setText(Html.fromHtml( "OpenAthena for Android version "+versionName+"<br>"
                         + "Matthew Krupczak, Bobby Krupczak, et al.<br>"
-                        + "GPL-3.0, some rights reserved "
-                        + "<a href=\"https://openathena.com/\">OpenAthena.com</a> <br>"
-                        + "<br>Open Athena is a project which allows consumer and professional drones to spot precise geodetic locations<br>"
-                        + "<br><a href=\"https://github.com/mkrupczak3/OpenAthena\">View the project on GitHub</a><br>"
-                        + "mkrupczak3/OpenAthena<br>"
-                        + "<p><p><p><p>Project maintained by <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br>"
+                        + getString(R.string.GPL3Notice)
+                        + " <a href=\"https://openathena.com/\">OpenAthena.com</a> <br>"
+                        + getString(R.string.AboutSnippet)
+                        + "<br><a href=\"https://github.com/mkrupczak3/OpenAthenaAndroid\">"
+                        + getString(R.string.CallToActionSnippet)
+                        + getString(R.string.AuthorGitHubSnippet)
                 ,0,null, null)
         );
 
