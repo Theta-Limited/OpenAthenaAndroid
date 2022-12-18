@@ -380,10 +380,16 @@ public class MainActivity extends AppCompatActivity {
             attribs += getTagString(ExifInterface.TAG_DATETIME, exif);
             attribs += getTagString(ExifInterface.TAG_MAKE, exif);
             attribs += getTagString(ExifInterface.TAG_MODEL, exif);
-            Float[] yxz = exifGetYXZ(exif);
-            float y = yxz[0];
-            float x = yxz[1];
-            float z = yxz[2];
+//            // get lat lon alt from EXIF
+//            Float[] yxz = exifGetYXZ(exif);
+//            float y = yxz[0];
+//            float x = yxz[1];
+//            float z = yxz[2];
+            // get lat lon alt from XMP within EXIF
+            double y = Double.parseDouble(xmpMeta.getPropertyString("http://www.dji.com/drone-dji/1.0/", "GpsLatitude"));
+            double x = Double.parseDouble(xmpMeta.getPropertyString("http://www.dji.com/drone-dji/1.0/", "GpsLongitude"));
+            double z = Double.parseDouble(xmpMeta.getPropertyString("http://www.dji.com/drone-dji/1.0/", "AbsoluteAltitude"));
+
             attribs += "Latitude : " + y + "\n";
             attribs += "Longitude : " + x + "\n";
             attribs += "Altitude : " + z + "\n";
@@ -393,7 +399,7 @@ public class MainActivity extends AppCompatActivity {
             attribs += "GimbalPitchDegree: " + gimbalPitchDegree + "\n";
             if (theTGetter != null) {
                 try {
-                    double[] result = theTGetter.resolveTarget(new Double(y), new Double(x), new Double(z), Double.parseDouble(gimbalYawDegree), Double.parseDouble(gimbalPitchDegree));
+                    double[] result = theTGetter.resolveTarget(y, x, z, Double.parseDouble(gimbalYawDegree), Double.parseDouble(gimbalPitchDegree));
                     attribs += "Target found at " + roundDouble(result[1]) + "," + roundDouble(result[2]) + " Alt: " + Math.round(result[3]) + "\n";
                     attribs += "<a href=\"https://maps.google.com/?q=" + roundDouble(result[1]) + "," + roundDouble(result[2]) + "\">";
                     attribs += "maps.google.com/?q=" + roundDouble(result[1]) + "," + roundDouble(result[2]) + "</a>\n";

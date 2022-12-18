@@ -1,5 +1,7 @@
 package com.openathena;
 
+import android.util.Log;
+
 import com.openathena.GeoTIFFParser;
 import com.openathena.geodataAxisParams;
 import com.openathena.RequestedValueOOBException;
@@ -28,6 +30,7 @@ import com.openathena.GeoTIFFParser;
 import mil.nga.tiff.*;
 
 public class TargetGetter {
+    private static final String TAG = TargetGetter.class.getSimpleName();
     private GeoTIFFParser myGeoTIFFParser;
     private final double INCREMENT = 1.0d;
     // private MGRS mgrs;
@@ -110,7 +113,8 @@ public class TargetGetter {
 
         // meters of acceptable distance between constructed line and datapoint
         // Somewhat arbitrary. SRTM has a horizontal resolution of 30m, but vertical accuracy is often more precise
-        final double THRESHOLD = myGeoTIFFParser.getXResolution() / 4.0d;
+        double post_spacing_meters = haversine(0, lat, myGeoTIFFParser.getXResolution(), lat, alt); // meters between datapoints, from degrees
+        final double THRESHOLD = post_spacing_meters / 8.0d; // meters of acceptable distance between constructed line and datapoint. somewhat arbitrary
 
         double curLat = lat;
         double curLon = lon;
