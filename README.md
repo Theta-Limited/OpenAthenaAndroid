@@ -32,7 +32,7 @@ This version of the app can only read sensor metadata from images taken by a DJI
 
 After loading a GeoTIFF DEM using the " ⛰" button (see section above), use the "🖼" button to select a drone image containing the necessary metadata.
 
-<img width="270" alt="OpenAthena Android Image Selection demo using DJI_0419.JPG" src="./assets/DJI_0419_Target_Res_Demo.png">
+<img width="270" alt="OpenAthena Android Image Selection demo using DJI_0419.JPG" src="./assets/DJI_0419_Image_Selection_Demo.png">
 
 Then, press the "🧮" button to calculate the target location on the ground:
 
