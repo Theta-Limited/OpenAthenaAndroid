@@ -6,7 +6,7 @@ An Android port of the [OpenAthena project](http://OpenAthena.com)
 <a href="https://github.com/mkrupczak3/OpenAthena"><img width="540" alt="OpenAthena Drone Camera Terrain Raycast Concept Diagram" src="https://github.com/mkrupczak3/OpenAthena/raw/main/assets/OpenAthena_Concept_Diagram.png"></a>
 
 # Stability
-This project is not yet stable. Consider using the main [OpenAthena project](http://OpenAthena.com)running on a PC/Mac instead, until otherwise noted
+This project is not yet stable. Consider using the main [OpenAthena project](http://OpenAthena.com) running on a PC/Mac instead, until otherwise noted
 
 # Operation Guide
 
@@ -14,7 +14,7 @@ This project is not yet stable. Consider using the main [OpenAthena project](htt
 
 Use of this app requires loading a GeoTIFF Digital Elevation Model (DEM) file, stored as a GeoTIFF ".tif" file.
 
-These GeoTIFF files store terrain elevation (height) for an area of the Earth. OpenAthena performs a ray-cast from a drone camera's position and orientation towards terrain. This may be used to precisely locate the subject which appears in the exact center of a given picture.
+GeoTIFF files store terrain elevation (height) for an area of the Earth. OpenAthena performs a ray-cast from a drone camera's position and orientation towards terrain. This may be used to precisely locate the subject which appears in the exact center of a given picture.
 
 For information on how to clip a GeoTIFF file of a customized area, see [this link](https://github.com/mkrupczak3/OpenAthena/blob/main/EIO_fetch_geotiff_example.md).
 
@@ -26,7 +26,7 @@ Load the DEM file, e.g. [cobb.tif](https://github.com/mkrupczak3/OpenAthena/raw/
 
 ## JPG Drone sensor metadata parsing
 
-This version of the app can only read sensor metadata from images taken by a DJI drone. The the drone's position (Latitude Longitude Altitude) and its camera gimbal's azimuth and angle of depression are obtained from XMP metadata.
+This version of the app can only read sensor metadata from images taken by a DJI drone. The drone's position (Latitude Longitude Altitude) and its camera gimbal's azimuth and angle of depression are obtained from XMP metadata.
 
 ## Locating a Target 🎯
 
