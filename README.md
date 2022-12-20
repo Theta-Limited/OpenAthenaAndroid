@@ -1,7 +1,11 @@
-# OpenAthenaAndroid
+# OpenAthena for Android
 OpenAthena for Android
 
 An Android port of the [OpenAthena project](http://OpenAthena.com)
+
+OpenAthena allows consumer and professional drones to spot precise geodetic locations
+🖼️👨‍💻 + 🧮⛰️ = 🎯📍
+
 
 <a href="https://github.com/mkrupczak3/OpenAthena"><img width="540" alt="OpenAthena Drone Camera Terrain Raycast Concept Diagram" src="https://github.com/mkrupczak3/OpenAthena/raw/main/assets/OpenAthena_Concept_Diagram.png"></a>
 
@@ -21,7 +25,7 @@ For information on how to clip a GeoTIFF file of a customized area, see [this li
 Load the DEM file, e.g. [cobb.tif](https://github.com/mkrupczak3/OpenAthena/raw/main/src/cobb.tif) using the " ⛰" button (NOTE: during file selection, the thumbnail  image preview for any GeoTIFF ".tif" file will be blank. This is normal.), and the app will display the size of the file as well as its Latitude and Longitude boundaries:
 
 
-<img width="270" alt="OpenAthena Android GeoTIFF DEM loading demo using cobb.tif" src="./assets/cobb_tif_DEM_Loading_Demo.png">
+<img height="270" alt="OpenAthena Android GeoTIFF DEM loading demo using cobb.tif" src="./assets/cobb_tif_DEM_Loading_Demo_landscape.png">
 
 
 ## JPG Drone sensor metadata parsing
@@ -32,11 +36,11 @@ This version of the app can only read sensor metadata from images taken by a DJI
 
 After loading a GeoTIFF DEM using the " ⛰" button (see section above), use the "🖼" button to select a drone image containing the necessary metadata.
 
-<img width="270" alt="OpenAthena Android Image Selection demo using DJI_0419.JPG" src="./assets/DJI_0419_Image_Selection_Demo.png">
+<img height="270" alt="OpenAthena Android Image Selection demo using DJI_0419.JPG" src="./assets/DJI_0419_Image_Selection_Demo_landscape.png">
 
 Then, press the "🧮" button to calculate the target location on the ground:
 
-<img width="270" alt="OpenAthena Android Target Calculation demo using cobb.tif and DJI_0419.JPG" src="./assets/DJI_0419_Target_Res_Demo.png">
+<img height="270" alt="OpenAthena Android Target Calculation demo using cobb.tif and DJI_0419.JPG" src="./assets/DJI_0419_Target_Res_Demo_landscape.png">
 
 
 ## Live Telemetry from DJI-SDK

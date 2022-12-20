@@ -418,27 +418,37 @@ public class MainActivity extends AppCompatActivity {
             appendText(attribs);
             attribs = "";
             double[] result;
+            double distance;
             double latitude;
             double longitude;
             long altitude;
             if (theTGetter != null) {
                 try {
                     result = theTGetter.resolveTarget(y, x, z, Double.parseDouble(gimbalYawDegree), Double.parseDouble(gimbalPitchDegree));
+                    distance = result[0];
                     latitude = result[1];
                     longitude = result[2];
                     altitude = Math.round(result[3]);
                     attribs += "Target found at " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt: " + altitude + "m" + "\n";
+                    attribs += "Drone distance to target: " + Math.round(distance) + "m\n";
                     attribs += "<a href=\"https://maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "\">";
                     attribs += "maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "</a>\n";
                 } catch (RequestedValueOOBException e) {
-                    Log.e(TAG, "ERROR: resolveTarget ran OOB at: " + roundDouble(e.OOBLat) + ", " +roundDouble(e.OOBLon));
-                    attribs += "ERROR: resolveTarget ran OOB at: " + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon) + "\n";
-                    attribs += "Please ensure your GeoTIFF DEM file covers the drone's location!\n";
-                    attribs += "Your GeoTIFF's coverage ⛰:\n";
-                    attribs += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
-                    attribs += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n";
-                    appendText(attribs);
-                    return;
+                    if (e.isAltitudeDataBad) {
+                        Log.e(TAG, e.getMessage());
+                        attribs += e.getMessage() + "\n";
+                        appendText(attribs);
+                        return;
+                    } else {
+                        Log.e(TAG, "ERROR: resolveTarget ran OOB at: " + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon));
+                        attribs += "ERROR: resolveTarget ran OOB at: " + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon) + "\n";
+                        attribs += "Please ensure your GeoTIFF DEM file covers the drone's location!\n";
+                        attribs += "Your GeoTIFF's coverage ⛰:\n";
+                        attribs += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
+                        attribs += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n";
+                        appendText(attribs);
+                        return;
+                    }
                 }
             } else {
                 attribs += "Could not resolve target. Please load a GeoTIFF Digital Elevation Model \".tif\" using ⛰ button\n";
