@@ -50,6 +50,16 @@ public class TargetGetter {
         this.myGeoTIFFParser = gman;
     }
 
+    /**
+     * Given sensor data from a drone, performs a raycast against the DEM held by this object's GeoTIFFParser and returns the target's location as a result
+     * @param lat The latitude of the aircraft
+     * @param lon The longitude of the aircraft
+     * @param alt The altitude of the aircraft (in meters above the WGS84 reference ellipsoid)
+     * @param azimuth The direction of the aircraft's camera. 0° is North, increases clockwise
+     * @param theta The angle of depression (pitch) of the aircraft's camera. A positive value representing degrees downward from the horizon
+     * @return double[] an array containing: 0 the distance to the target 1 the last latitude value along the raycast 2 the last longitude value along the raycast 3 the last altitude value along the raycast 4 the terrain altitude of the datapoint nearest the last raycast position
+     * @throws RequestedValueOOBException Throws a RequestedValueOOBException if the raycast exceeds the coverage of the DEM held by this object's GeoTIFFParser. If the altitude of the start of the ray is already below terrain elevation data, isAltitudeBad boolean will be set to true
+     */
     public double[] resolveTarget(double lat, double lon, double alt, double azimuth, double theta) throws RequestedValueOOBException{
         if (myGeoTIFFParser == null) {
             throw new NullPointerException("FATAL ERROR: resolveTarget attempted before geotiff loaded");
@@ -162,6 +172,11 @@ public class TargetGetter {
         return outArr;
     }
 
+    /**
+     * Given an angle (in radians), returns an equivalent angle where 0 ≤ angle < 2 * π
+     * @param radAngle an angle input in Radians. May be any positive or negative number
+     * @return double the normalized value within [0, 2π)
+     */
     public double normalize(double radAngle) {
         while (radAngle < 0) {
             radAngle += 2 * Math.PI;
@@ -172,6 +187,11 @@ public class TargetGetter {
         return radAngle;
     }
 
+    /**
+     * Given an azimuth, measured starting at North and increasing clockwise, return the same angle on a Mathematical Unit Circle, starting at East and increasing counter-clockwise
+     * @param radAzimuth an angle input in Radians, in Azimuth format. 0 is North, π/2 is East, π is South, 3π/2 is West
+     * @return double an angle output in Radains, in Unit Circle format. 0 is East, π/2 is North, π is West, 3π/2 is South
+     */
     public double azimuthToUnitCircleRad(double radAzimuth) {
         double radDirection = -1.0d * radAzimuth;
         radDirection += (0.5d * Math.PI);
@@ -179,6 +199,12 @@ public class TargetGetter {
         return radDirection;
     }
 
+    /**
+     * Given a Latitude, determines the distance from the center of the WGS84 reference ellipsoid to the surface
+     * @param lat In degrees, [-90, 90]. The latitude for which to find the radius
+     * @param lon In degrees. Not used at all for this calculation
+     * @return double The radius of the WGS84 reference ellipsoid at the given Latitude, in meters
+     */
     public double radius_at_lat_lon(double lat, double lon) {
         lat = Math.toRadians(lat);
         lon = Math.toRadians(lon); // not used
@@ -191,6 +217,20 @@ public class TargetGetter {
         return r;
     }
 
+    /**
+     * Given a point, distance, and heading (azimuth format), return a new point the specified distance along the defined great circle
+     * <p>
+     *     Thanks github.com/jdeniau
+     *     for short distances, this is close to the straight line distance
+     * </p>
+     *
+     * @param lat1 The latitude of the starting point
+     * @param lon1 The longitude of the starting point
+     * @param d The distance of travel along the great circle, in meters
+     * @param radAzimuth The heading of the direction of travel for the great circle. In radians, starting North at 0° and increasing clockwise
+     * @param alt The altitude above the surface of the WGS84 reference ellipsoid, measured in meters.
+     * @return double[] A Lat/Lon pair representing the point at the end of the great circle d meters away from the starting point
+     */
     double[] inverse_haversine(double lat1, double lon1, double d /*distance*/, double radAzimuth, double alt) {
         if (d < 0.0d) {
             return inverse_haversine(lat1, lon1, -1.0d * d, normalize(radAzimuth + Math.PI), alt);
@@ -222,6 +262,20 @@ public class TargetGetter {
     //  */
     // double[] inverse_haversine_accurate(double lat1, double lon1, double distance, double radAzimuth, double alt) {
 
+
+    /**
+     * Determines the great circle distance between two Lat/Lon pairs
+     * <p>
+     *     For short distances, this is close to the straight-line distance
+     *     adapted from https://stackoverflow.com/a/4913653
+     * </p>
+     * @param lon1 The longitude of the first point, in degrees
+     * @param lat1 The latitude of the first point, in degrees
+     * @param lon2 The longitude of the second point, in degrees
+     * @param lat2 The latitude of the second point, in degrees
+     * @param alt The altitude above the surface of the WGS84 reference ellipsoid, measured in meters. Used to determine the radius of the great circle
+     * @return double The distance in meters along a great circle path between the two inputed points.
+     */
     double haversine(double lon1, double lat1, double lon2, double lat2, double alt) {
         lon1 = Math.toRadians(lon1);
         lat1 = Math.toRadians(lat1);
@@ -237,6 +291,18 @@ public class TargetGetter {
         return c * r;
     }
 
+    /**
+     * Takes two Lat/Lon pairs (a start A and a destination B) and finds the heading of the shortest direction of travel from A to B
+     * <p>
+     *     Note: this function will work with Geodetic coords of any ellipsoid, provided both pairs are of the same ellipsoid
+     *     adapted from https://stackoverflow.com/a/64747209
+     * </p>
+     * @param lon1
+     * @param lat1
+     * @param lon2
+     * @param lat2
+     * @return
+     */
     double haversine_bearing(double lon1, double lat1, double lon2, double lat2) {
         lon1 = Math.toRadians(lon1);
         lat1 = Math.toRadians(lat1);

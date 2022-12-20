@@ -51,11 +51,18 @@ public class GeoTIFFParser {
         this();
         this.geofile = geofile;
         loadGeoTIFF(geofile);
-
-
-
     }
 
+    /**
+     * Loads a GeoTIFF Digital Elevation Model geofile into the parent GeoTIFFParser object's instance
+     * <p>
+     *     This function takes in a Java file object and loads it into the parent GeoTIFFParser object.
+     *     Once loaded, the GeoTIFFParser object (via {@link com.openathena.GeoTIFFParser#getAltFromLatLon(double, double)} will be able to provide the nearest elevation value from a given latitude longitude pair
+     *
+     * </p>
+     * @param geofile a Java file object which should represent a GeoTIFF DEM
+     * @throws IllegalArgumentException if geofile cannot be read or is rotated or skewed
+     */
     public void loadGeoTIFF(File geofile) throws IllegalArgumentException {
         this.geofile = geofile;
   /*      this.geodata = gdal.Open(geofile);
@@ -116,52 +123,64 @@ public class GeoTIFFParser {
         this.yParams.calcEndValue();
     }
 
-    // private double[] getDummyGeoTransform(Dataset geodata) {
-    //     // dummy output, from Rome-30m-DEM.tif
-    //     double x0 = 12.34986111111111d;
-    //     double dx = 0.000277777777776933d;
-    //     double dxdy = 0.0d;
-    //     double y0 = 42.00013888888889d;
-    //     double dydx = 0.0d;
-    //     double dy = -0.00027777777777515666d;
+    /**
+     * Gets the spacing between X datapoints of the loaded GeoTIFF DEM
+     * @return double degrees between each datapoint along the X direction
+     */
+    public double getXResolution() { return xParams.stepwiseIncrement; }
 
-    //     double[] transformOut = new double[]{x0, dx, dxdy, y0, dydx, dy};
-    //     return transformOut;
-    // }
-
-/*
-    private double[] getGeoTransform(Dataset geodata) {
-        return geodata.GetGeoTransform();
-    }
-*/
-/*
-
-    public boolean isGeoTIFFValid() {
-        // {x0, dx, dxdy, y0, dydx, dy}
-        double dxdy = (double) this.geoTransform[2];
-        double dydx = (double) this.geoTransform[4];
-        return ((dxdy == 0.0d) && (dydx == 0.0d));
-    }
-*/
-
-    public static byte[] floatToBytes(float[] floats) {
-        byte bytes[] = new byte[Float.BYTES * floats.length];
-        ByteBuffer.wrap(bytes).asFloatBuffer().put(floats);
-        return bytes;
-    }
-
-    public double getXResolution() {
-        return xParams.stepwiseIncrement;
-    }
+    /**
+     * Gets the spacing between Y datapoints of the loaded GeoTIFF DEM
+     * @return double degrees between each datapoint along the Y direction
+     */
     public double getYResolution() { return yParams.stepwiseIncrement; }
+
+    /**
+     * Gets the number of columns (width) of the loaded GeoTIFF DEM
+     * @return long number of pixels equivalent to the DEM's width
+     */
     public long getNumCols() { return xParams.numOfSteps; }
+
+    /**
+     * Gets the number of rows (height) of the loaded GeoTIFF DEM
+     * @return long number of pixels equivalent to the DEM's height
+     */
     public long getNumRows() { return yParams.numOfSteps; }
+
+    /**
+     * Gets the minimum longitude (inclusive) covered by the loaded GeoTIFF DEM
+     * @return double the longitude of the western-most datapoint of the loaded GeoTIFF DEM
+     */
     public double getMinLon() { return Math.min(xParams.end, xParams.start); }
+
+    /**
+     * Gets the maximum longitude (inclusive) covered by the loaded GeoTIFF DEM
+     * @return double the longitude of the eastern-most datapoint of the loaded GeoTIFF DEM
+     */
     public double getMaxLon() { return Math.max(xParams.end, xParams.start); }
+
+    /**
+     * Gets the minimum latitude (inclusive) covered by the loaded GeoTIFF DEM
+     * @return double the latitude of the southern-most datapoint of the loaded GeoTIFF DEM
+     */
     public double getMinLat() { return Math.min(yParams.end, yParams.start); }
+
+    /**
+     * Gets the maximum latitude (inclusive) covered by the loaded GeoTIFF DEM
+     * @return double the latitude of the northern-most datpoint of the loaded GeoTIFF DEM
+     */
     public double getMaxLat() { return Math.max(yParams.end, yParams.start); }
 
-
+    /**
+     * Using the loaded GeoTIFF DEM, obtains the nearest elevation value for a given Lat/Lon pair
+     * <p>
+     *     This function returns the nearest elevation value to the given Lat/Lon pair, without interpolation
+     * </p>
+     * @param lat The latitude of the result desired. [-90, 90]
+     * @param lon The longitude of the result desired. [-180, 180]
+     * @return double the altitude of the terrain near the given Lat/Lon, in meters above the WGS84 reference ellipsoid
+     * @throws RequestedValueOOBException
+     */
     public double getAltFromLatLon(double lat, double lon) throws RequestedValueOOBException {
         if (geofile == null || rasters == null || xParams == null || yParams == null) {
             throw new NullPointerException("getAltFromLatLon pre-req was null!");
@@ -216,6 +235,14 @@ public class GeoTIFFParser {
         return result;
     }
 
+    /**
+     * Performs a binary search, returning indicies pointing to the two closest values to the input
+     * @param start the start value, in degrees, of an axis of the geofile
+     * @param n the number of items in an axis of the geofile
+     * @param val an input value for which to find the two closest indicies
+     * @param dN the change in value for each increment of the index along an axis of the geofile
+     * @return
+     */
     long[] binarySearchNearest(double start, long n, double val, double dN) {
         long[] out = new long[2];
         if ( n <= 0 ) { // dataset is empty
