@@ -13,14 +13,18 @@
 package com.openathena;
 
 // import veraPDF fork of Adobe XMP core Java v5.1.0
+import com.adobe.xmp.XMPConst;
+import com.adobe.xmp.XMPError;
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.XMPMetaFactory;
+import com.adobe.xmp.properties.XMPProperty;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
@@ -29,9 +33,11 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
@@ -60,6 +66,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.Locale;
+import java.util.Map;
 
 // Libraries from the U.S. National Geospatial Intelligence Agency https://www.nga.mil
 import mil.nga.mgrs.grid.GridType;
@@ -216,8 +224,20 @@ public class MainActivity extends AppCompatActivity {
         //aPath = getPathFromURI(uri);
         //Log.d(TAG,"imageSelected: path is "+aPath);
 
-        iView.setImageURI(uri);
+        AssetFileDescriptor fileDescriptor;
+        try {
+            fileDescriptor = getApplicationContext().getContentResolver().openAssetFileDescriptor(uri , "r");
+        } catch(FileNotFoundException e) {
+            return;
+        }
 
+        long filesize = fileDescriptor.getLength();
+        Log.d(TAG, "filesize: " + filesize);
+        if (filesize < 1024 * 1024 * 20) { // check if filesize is greater than 20Mb
+            iView.setImageURI(uri);
+        }  else {
+            Toast.makeText(MainActivity.this, getString(R.string.image_is_too_large_error_msg), Toast.LENGTH_SHORT).show();
+        }
 
         appendLog("Selected image "+imageUri+"\n");
         appendText(getString(R.string.image_selected_msg));
@@ -253,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
         }
         demUri = Uri.fromFile(fileInCache);
 
-        Toast.makeText(MainActivity.this, "Loading GeoTIFF. Please wait...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, getString(R.string.loading_geotiff_toast_msg), Toast.LENGTH_SHORT).show();
 
         try {
             GeoTIFFParser parser = new GeoTIFFParser(fileInCache);
@@ -368,8 +388,6 @@ public class MainActivity extends AppCompatActivity {
     {
         Drawable aDrawable;
         ExifInterface exif;
-        String xmp_str;
-        XMPMeta xmpMeta;
         String attribs = "Exif information ---\n";
 
         clearText();
@@ -390,31 +408,26 @@ public class MainActivity extends AppCompatActivity {
             InputStream is = cr.openInputStream(imageUri);
             aDrawable = iView.getDrawable();
             exif = new ExifInterface(is);
-            appendText(getString(R.string.opened_exif_for_image_msg));
-            xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
-            Log.i(TAG, "XMPString: " + xmp_str);
-            xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
+
+            double[] values = getMetadataValues(exif);
+            double y = values[0];
+            double x  = values[1];
+            double z = values[2];
+            double azimuth = values[3];
+            double theta = values[4];
+
             Log.i(TAG, "parsed xmpMeta\n");
+
+            appendText(getString(R.string.opened_exif_for_image_msg));
             attribs += getTagString(ExifInterface.TAG_DATETIME, exif);
             attribs += getTagString(ExifInterface.TAG_MAKE, exif);
             attribs += getTagString(ExifInterface.TAG_MODEL, exif);
-//            // get lat lon alt from EXIF
-//            Float[] yxz = exifGetYXZ(exif);
-//            float y = yxz[0];
-//            float x = yxz[1];
-//            float z = yxz[2];
-            // get lat lon alt from XMP within EXIF
-            double y = Double.parseDouble(xmpMeta.getPropertyString("http://www.dji.com/drone-dji/1.0/", "GpsLatitude"));
-            double x = Double.parseDouble(xmpMeta.getPropertyString("http://www.dji.com/drone-dji/1.0/", "GpsLongitude"));
-            double z = Double.parseDouble(xmpMeta.getPropertyString("http://www.dji.com/drone-dji/1.0/", "AbsoluteAltitude"));
 
             attribs += "Latitude : " + y + "\n";
             attribs += "Longitude : " + x + "\n";
             attribs += "Altitude : " + z + "\n";
-            String gimbalYawDegree = xmpMeta.getPropertyString("http://www.dji.com/drone-dji/1.0/", "GimbalYawDegree");
-            attribs += "GimbalYawDegree: " + gimbalYawDegree + "\n";
-            String gimbalPitchDegree = xmpMeta.getPropertyString("http://www.dji.com/drone-dji/1.0/", "GimbalPitchDegree");
-            attribs += "GimbalPitchDegree: " + gimbalPitchDegree + "\n";
+            attribs += "Azimuth: " + azimuth + "\n";
+            attribs += "Pitch: " + theta + "\n";
             appendText(attribs);
             attribs = "";
             double[] result;
@@ -424,7 +437,7 @@ public class MainActivity extends AppCompatActivity {
             long altitude;
             if (theTGetter != null) {
                 try {
-                    result = theTGetter.resolveTarget(y, x, z, Double.parseDouble(gimbalYawDegree), Double.parseDouble(gimbalPitchDegree));
+                    result = theTGetter.resolveTarget(y, x, z, azimuth, theta);
                     distance = result[0];
                     latitude = result[1];
                     longitude = result[2];
@@ -469,12 +482,168 @@ public class MainActivity extends AppCompatActivity {
             //
         } catch (XMPException e) {
             Log.e(TAG, e.getMessage());
+            appendText(getString(R.string.metadata_parse_error_msg)+e+"\n");
             e.printStackTrace();
         } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
             appendText(getString(R.string.metadata_parse_error_msg)+e+"\n");
             e.printStackTrace();
         }
     } // button click
+
+    private double[] getMetadataValues(ExifInterface exif) throws XMPException {
+        if (exif == null) {
+            Log.e(TAG, "ERROR: getMetadataValues failed, ExifInterface was null");
+            throw new IllegalArgumentException("ERROR: getMetadataValues failed, exif was null");
+        }
+        String make = exif.getAttribute(ExifInterface.TAG_MAKE);
+        String model = exif.getAttribute(ExifInterface.TAG_MODEL);
+        if (make == null || make.equals("")) {
+            return null;
+        }
+        make = make.toUpperCase();
+        model = model.toUpperCase();
+        switch(make) {
+            case "DJI":
+                return handleDJI(exif);
+                //break;
+            case "SKYDIO":
+                return handleSKYDIO(exif);
+                //break;
+            case "AUTEL ROBOTICS":
+                displayAutelAlert();
+                return handleAUTEL(exif);
+                //break;
+            case "PARROT":
+                if (model.contains("ANAFI")) {
+                    return handlePARROT(exif);
+                } else {
+                    Log.e(TAG, "ERROR: Parrot model " + model + " not usable at this time");
+                    throw new XMPException("ERROR: Parrot model " + model + " not usable at this time", XMPError.BADVALUE);
+                }
+                //break;
+            default:
+                Log.e(TAG, "ERROR: make " + make + " not recognized");
+                throw new XMPException("ERROR: make " + make + "not recognized", XMPError.BADXMP);
+        }
+    }
+
+    private double[] handleDJI(ExifInterface exif) throws XMPException {
+        String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
+        Log.i(TAG, "xmp_str for Make DJI: " + xmp_str);
+        XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
+
+        String schemaNS = "http://www.dji.com/drone-dji/1.0/";
+        double y = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "GpsLatitude"));
+        String longitude = xmpMeta.getPropertyString(schemaNS, "GpsLongitude");
+        if (longitude == null || longitude.equals("")) {
+            // handle a typo that occurs in certain versions of Autel drone firmware (which use drone-dji metadata format)
+            longitude = xmpMeta.getPropertyString(schemaNS, "GpsLong" + "t" + "itude");
+            if (longitude == null || longitude.equals("")) {
+                throw new XMPException("Could not parse DJI format metadata", XMPError.BADVALUE);
+            }
+        }
+        double x = Double.parseDouble(longitude);
+        double z = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "AbsoluteAltitude"));
+        double azimuth = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "GimbalYawDegree"));
+        double theta = Math.abs(Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "GimbalPitchDegree")));
+
+        double[] outArr = new double[]{y, x, z, azimuth, theta};
+        return outArr;
+    }
+
+    private double[] handleSKYDIO(ExifInterface exif) throws XMPException {
+        String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
+        Log.i(TAG, "xmp_str for Make SKYDIO: " + xmp_str);
+        XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
+        String schemaNS = "https://www.skydio.com/drone-skydio/1.0/";
+        double y = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Latitude"));
+        double x = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Longitude"));
+        double z = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "AbsoluteAltitude"));
+
+        double azimuth = Double.parseDouble(xmpMeta.getStructField(schemaNS, "CameraOrientationNED", schemaNS, "Yaw").getValue());
+        double theta = Double.parseDouble(xmpMeta.getStructField(schemaNS, "CameraOrientationNED", schemaNS, "Pitch").getValue());
+        theta = Math.abs(theta);
+
+        double[] outArr = new double[]{y, x, z, azimuth, theta};
+        return outArr;
+    }
+
+    private double[] handleAUTEL(ExifInterface exif) throws XMPException {
+        String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
+        Log.i(TAG, "xmp_str for Make AUTEL: " + xmp_str);
+        XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
+
+        boolean isNewMetadataFormat;
+        int aboutIndex = xmp_str.indexOf("rdf:about=");
+        String rdf_about = xmp_str.substring(aboutIndex + 10, aboutIndex + 24); // not perfect, should be fine though
+        Log.d(TAG, "rdf_about: " + rdf_about);
+
+        if (!rdf_about.toLowerCase().contains("autel")) {
+            isNewMetadataFormat = true;
+        } else {
+            isNewMetadataFormat = false;
+        }
+
+        double y;
+        double x;
+        double z;
+        double azimuth;
+        double theta;
+
+        if (isNewMetadataFormat) {
+            // Newer metadata uses the same format and schemaNS as DJI
+            return handleDJI(exif);
+        } else {
+            Float[] yxz = exifGetYXZ(exif);
+            y = yxz[0];
+            x = yxz[1];
+            z = yxz[2];
+
+            String schemaNS = "http://pix4d.com/camera/1.0";
+
+            azimuth = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Yaw"));
+            theta = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Pitch"));
+            // AUTEL old firmware Camera pitch 0 is down, 90 is forwards towards horizon
+            // so, we use the complement of the angle instead
+            // see: https://support.pix4d.com/hc/en-us/articles/202558969-Yaw-Pitch-Roll-and-Omega-Phi-Kappa-angles
+            theta = 90.0d - theta;
+            double[] outArr = new double[]{y, x, z, azimuth, theta};
+            return outArr;
+        }
+    }
+
+    private double[] handlePARROT(ExifInterface exif) throws XMPException {
+        double y;
+        double x;
+        double z;
+
+        Float[] yxz = exifGetYXZ(exif);
+        y = yxz[0];
+        x = yxz[1];
+        z = yxz[2];
+
+        String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
+        Log.i(TAG, "xmp_str for Make PARROT: " + xmp_str);
+        XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
+
+        String schemaNS = "http://www.parrot.com/drone-parrot/1.0/";
+
+        double azimuth = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraYawDegree"));
+        double theta = Math.abs(Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraPitchDegree")));
+        double[] outArr = new double[]{y, x, z, azimuth, theta};
+        return outArr;
+    }
+
+    private void displayAutelAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setMessage(R.string.autel_accuracy_warning_msg);
+        builder.setPositiveButton(R.string.i_understand_this_risk, (DialogInterface.OnClickListener) (dialog, which) -> {
+            assert(true);
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
 
     public void copyMGRSText(View view) {
         String text = textViewMGRS.getText().toString();

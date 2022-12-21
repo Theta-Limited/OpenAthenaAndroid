@@ -48,4 +48,8 @@
     <string name="calculating_target_msg">Calculating 🧮:\n</string>
     <string name="no_image_selected_error_msg">ERROR: Cannot calculate 🚫🧮: no image 🚫🖼 selected\n</string>
     <string name="opened_exif_for_image_msg">Opened EXIF for image\n</string>
+    <string name="autel_accuracy_warning_msg">⚠️ DANGER: Autel drones have known accuracy problems ⚠️</string>
+    <string name="i_understand_this_risk">I understand this risk</string>
+    <string name="image_is_too_large_error_msg">Image is too large to show!</string>
+    <string name="loading_geotiff_toast_msg">Loading GeoTIFF. Please wait...</string>
 </resources>
