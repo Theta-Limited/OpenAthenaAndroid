@@ -137,7 +137,7 @@ public class TargetGetter {
         }
         if (curAlt < groundAlt) {
             boolean isAltitudeBad = true;
-            throw new RequestedValueOOBException("ERROR: bad altitude or terrain data. This picture is unusable. \uD83D\uDDBC\uD83D\uDEAB\uD83E\uDDEE\uD83C\uDFAF", curLat, curLon, isAltitudeBad);
+            throw new RequestedValueOOBException("ERROR: bad altitude or terrain data. This image is unusable. \uD83D\uDDBC\uD83D\uDEAB\uD83E\uDDEE\uD83C\uDFAF", curLat, curLon, isAltitudeBad);
         }
         double altDiff = curAlt - groundAlt;
         while (altDiff > THRESHOLD) {

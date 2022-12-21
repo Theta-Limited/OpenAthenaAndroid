@@ -171,33 +171,33 @@ public class MainActivity extends AppCompatActivity {
         return res;
     }
 
-    // stolen from https://stackoverflow.com/questions/5568874/how-to-extract-the-file-name-from-uri-returned-from-intent-action-get-content
-    // modified by rdk
-    @SuppressLint("Range")
-    private String getFileName(Uri uri) {
-        String result = null;
-        if (uri.getScheme().equals("content")) {
-            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-            try {
-                if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                }
-            } finally {
-                cursor.close();
-            }
-            appendText("getFileName: using cursor thingys\n");
-        }
-        if (result == null) {
-            appendText("getFileName: using uri path\n");
-            result = uri.getPath();
-
-            //int cut = result.lastIndexOf('/');
-            //if (cut != -1) {
-              //  result = result.substring(cut + 1);
-            //}
-        }
-        return result;
-    }
+//    // stolen from https://stackoverflow.com/questions/5568874/how-to-extract-the-file-name-from-uri-returned-from-intent-action-get-content
+//    // modified by rdk
+//    @SuppressLint("Range")
+//    private String getFileName(Uri uri) {
+//        String result = null;
+//        if (uri.getScheme().equals("content")) {
+//            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+//            try {
+//                if (cursor != null && cursor.moveToFirst()) {
+//                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+//                }
+//            } finally {
+//                cursor.close();
+//            }
+//            appendText("getFileName: using cursor thingys\n");
+//        }
+//        if (result == null) {
+//            appendText("getFileName: using uri path\n");
+//            result = uri.getPath();
+//
+//            //int cut = result.lastIndexOf('/');
+//            //if (cut != -1) {
+//              //  result = result.substring(cut + 1);
+//            //}
+//        }
+//        return result;
+//    }
 
     // back from image selection dialog; handle it
     private void imageSelected(Uri uri)
@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         appendLog("Selected image "+imageUri+"\n");
-        appendText("Selected \uD83D\uDDBC \n");
+        appendText(getString(R.string.image_selected_msg));
     }
 
     private void demSelected(Uri uri) {
@@ -261,15 +261,15 @@ public class MainActivity extends AppCompatActivity {
             theTGetter = new TargetGetter(parser);
             String successOutput = "GeoTIFF DEM ";
 //            successOutput += "\"" + uri.getLastPathSegment(); + "\" ";
-            successOutput += "loaded ⛰. Size " + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
+            successOutput += getString(R.string.dem_loaded_size_is_msg) + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
             successOutput += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
             successOutput += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n";
             appendText(successOutput);
         } catch (IllegalArgumentException e) {
-            String failureOutput = "ERROR: failed to load DEM, " + e.getMessage() + "\n";
+            String failureOutput = getString(R.string.dem_load_error_generic_msg) + e.getMessage() + "\n";
             appendText(failureOutput);
         } catch (TiffException e) {
-            String failureOutput = "ERROR: failed to load DEM, not a GeoTIFF \".tif\" file.\n";
+            String failureOutput = getString(R.string.dem_load_error_tiffexception_msg);
             appendText(failureOutput);
         }
     }
@@ -375,12 +375,12 @@ public class MainActivity extends AppCompatActivity {
         clearText();
         textViewMGRS.setText("");
 
-        appendText("Calculating \uD83E\uDDEE:\n");
+        appendText(getString(R.string.calculating_target_msg));
         appendLog("Going to start calculation\n");
 
         if (imageUri == null) {
             appendLog("ERROR: Cannot calculate \uD83D\uDEAB\uD83E\uDDEE; no image \uD83D\uDEAB\uD83D\uDDBC selected\n");
-            appendText("ERROR: Cannot calculate \uD83D\uDEAB\uD83E\uDDEE: no image \uD83D\uDEAB\uD83D\uDDBC selected\n");
+            appendText(getString(R.string.no_image_selected_error_msg));
             return;
         }
 
@@ -390,7 +390,7 @@ public class MainActivity extends AppCompatActivity {
             InputStream is = cr.openInputStream(imageUri);
             aDrawable = iView.getDrawable();
             exif = new ExifInterface(is);
-            appendText("Opened EXIF for image\n");
+            appendText(getString(R.string.opened_exif_for_image_msg));
             xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
             Log.i(TAG, "XMPString: " + xmp_str);
             xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
@@ -429,21 +429,21 @@ public class MainActivity extends AppCompatActivity {
                     latitude = result[1];
                     longitude = result[2];
                     altitude = Math.round(result[3]);
-                    attribs += "Target found at " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt: " + altitude + "m" + "\n";
-                    attribs += "Drone distance to target: " + Math.round(distance) + "m\n";
+                    attribs += getString(R.string.target_found_at_msg) + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt: " + altitude + "m" + "\n";
+                    attribs += getString(R.string.drone_dist_to_target_msg) + Math.round(distance) + "m\n";
                     attribs += "<a href=\"https://maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "\">";
                     attribs += "maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "</a>\n";
                 } catch (RequestedValueOOBException e) {
                     if (e.isAltitudeDataBad) {
                         Log.e(TAG, e.getMessage());
-                        attribs += e.getMessage() + "\n";
+                        attribs += getString(R.string.bad_altitude_data_error_msg) + "\n";
                         appendText(attribs);
                         return;
                     } else {
                         Log.e(TAG, "ERROR: resolveTarget ran OOB at: " + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon));
-                        attribs += "ERROR: resolveTarget ran OOB at: " + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon) + "\n";
-                        attribs += "Please ensure your GeoTIFF DEM file covers the drone's location!\n";
-                        attribs += "Your GeoTIFF's coverage ⛰:\n";
+                        attribs += getString(R.string.resolveTarget_oob_error_msg) + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon) + "\n";
+                        attribs += getString(R.string.geotiff_coverage_reminder);
+                        attribs += getString(R.string.geotiff_coverage_precedent_message);
                         attribs += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
                         attribs += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n";
                         appendText(attribs);
@@ -451,7 +451,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             } else {
-                attribs += "Could not resolve target. Please load a GeoTIFF Digital Elevation Model \".tif\" using ⛰ button\n";
+                attribs += getString(R.string.geotiff_load_reminder_msg);
                 appendText(attribs);
                 return;
             }
@@ -471,7 +471,7 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, e.getMessage());
             e.printStackTrace();
         } catch (Exception e) {
-            appendText("Unable to open image file to calculate. Drone image \uD83D\uDDBC metadata could not be read. \n"+e+"\n");
+            appendText(getString(R.string.metadata_parse_error_msg)+e+"\n");
             e.printStackTrace();
         }
     } // button click
@@ -485,7 +485,7 @@ public class MainActivity extends AppCompatActivity {
         ClipData clip = ClipData.newPlainText("Text", text);
         clipboard.setPrimaryClip(clip);
 
-        Toast.makeText(this, "Text copied to clipboard \uD83D\uDCCB", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.text_copied_to_clipboard_msg), Toast.LENGTH_SHORT).show();
     }
 
     // select image button clicked; launch chooser and get result
