@@ -237,6 +237,7 @@ public class MainActivity extends AppCompatActivity {
             iView.setImageURI(uri);
         }  else {
             Toast.makeText(MainActivity.this, getString(R.string.image_is_too_large_error_msg), Toast.LENGTH_SHORT).show();
+            iView.setImageResource(R.drawable.athena);
         }
 
         appendLog("Selected image "+imageUri+"\n");
@@ -423,11 +424,11 @@ public class MainActivity extends AppCompatActivity {
             attribs += getTagString(ExifInterface.TAG_MAKE, exif);
             attribs += getTagString(ExifInterface.TAG_MODEL, exif);
 
-            attribs += "Latitude : " + y + "\n";
-            attribs += "Longitude : " + x + "\n";
-            attribs += "Altitude : " + z + "\n";
-            attribs += "Azimuth: " + azimuth + "\n";
-            attribs += "Pitch: " + theta + "\n";
+            attribs += "Latitude : " + roundDouble(y) + "\n";
+            attribs += "Longitude : " + roundDouble(x) + "\n";
+            attribs += "Altitude : " + Math.round(z) + "\n";
+            attribs += "Azimuth: " + roundDouble(azimuth) + "\n";
+            attribs += "Pitch: -" + roundDouble(theta) + "\n";
             appendText(attribs);
             attribs = "";
             double[] result;
@@ -442,8 +443,8 @@ public class MainActivity extends AppCompatActivity {
                     latitude = result[1];
                     longitude = result[2];
                     altitude = Math.round(result[3]);
-                    attribs += getString(R.string.target_found_at_msg) + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt: " + altitude + "m" + "\n";
-                    attribs += getString(R.string.drone_dist_to_target_msg) + Math.round(distance) + "m\n";
+                    attribs += getString(R.string.target_found_at_msg) + " " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt: " + altitude + "m" + "\n";
+                    attribs += getString(R.string.drone_dist_to_target_msg) + " " + Math.round(distance) + "m\n";
                     attribs += "<a href=\"https://maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "\">";
                     attribs += "maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "</a>\n";
                 } catch (RequestedValueOOBException e) {
