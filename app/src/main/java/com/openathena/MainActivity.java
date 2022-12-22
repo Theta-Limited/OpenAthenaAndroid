@@ -162,6 +162,46 @@ public class MainActivity extends AppCompatActivity {
         textView.setText("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\n GPL-3.0, some rights reserved\n");
         appendLog("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\n GPL-3.0, some rights reserved\n");
 
+        if (savedInstanceState != null) {
+            CharSequence textRestore = savedInstanceState.getCharSequence("textview");
+            if (textRestore != null) {
+                textView.setText(textRestore);
+            }
+            CharSequence mgrsRestore = savedInstanceState.getCharSequence("mgrs");
+            if (mgrsRestore != null) {
+                textViewMGRS.setText(mgrsRestore);
+            }
+            String storedUriString = savedInstanceState.getString("imageUri");
+            if (storedUriString != null) {
+                imageUri = Uri.parse(storedUriString);
+                iView.setImageURI(imageUri);
+            }
+            String storedDEMUriString = savedInstanceState.getString("demUri");
+            Log.d(TAG, "loaded demUri: " + storedDEMUriString);
+            if (storedDEMUriString != null) {
+                demUri = Uri.parse(storedDEMUriString);
+                demSelected(demUri);
+            }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle saveInstanceState) {
+        Log.d(TAG,"onSaveInstanceState started");
+        super.onSaveInstanceState(saveInstanceState);
+        if (textView != null) {
+            saveInstanceState.putCharSequence("textview", textView.getText());
+        }
+        if (textViewMGRS != null) {
+            saveInstanceState.putCharSequence("mgrs", textViewMGRS.getText());
+        }
+        if (imageUri != null) {
+            saveInstanceState.putString("imageUri", imageUri.toString());
+        }
+        if (demUri != null) {
+            Log.d(TAG, "saved demUri: " + demUri.toString());
+            saveInstanceState.putString("demUri", demUri.toString());
+        }
     }
 
     // stolen from InterWebs
@@ -246,6 +286,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void demSelected(Uri uri) {
         appendLog("Selected DEM " + uri + "\n");
+        Toast.makeText(MainActivity.this, getString(R.string.loading_geotiff_toast_msg), Toast.LENGTH_SHORT).show();
+
         File appCacheDir = new File(getCacheDir(), "geotiff");
         if (!appCacheDir.exists()) {
             appCacheDir.mkdirs();
@@ -253,28 +295,29 @@ public class MainActivity extends AppCompatActivity {
         // Android 10/11, we can't access this file directly
         // We will copy the file into app's own package cache
         File fileInCache = new File(appCacheDir, uri.getLastPathSegment());
-        try (InputStream inputStream = getContentResolver().openInputStream(uri);
-             OutputStream outputStream = new FileOutputStream(fileInCache)) {
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
+        if (!isCacheUri(uri)) {
+            try (InputStream inputStream = getContentResolver().openInputStream(uri);
+                 OutputStream outputStream = new FileOutputStream(fileInCache)) {
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+            } catch (FileNotFoundException e) {
+                // Handle the FileNotFoundException here
+                // For example, you can show an error message to the user
+                // or log the error to Crashlytics
+                Log.e(TAG, "FileNotFound demSelected()");
+                return;
+            } catch (IOException e) {
+                // Handle other IOException here
+                // For example, you can log the error to Crashlytics
+                e.printStackTrace();
+                return;
             }
-        } catch (FileNotFoundException e) {
-            // Handle the FileNotFoundException here
-            // For example, you can show an error message to the user
-            // or log the error to Crashlytics
-            Log.e(TAG, "FileNotFound demSelected()");
-            return;
-        } catch (IOException e) {
-            // Handle other IOException here
-            // For example, you can log the error to Crashlytics
-            e.printStackTrace();
-            return;
         }
         demUri = Uri.fromFile(fileInCache);
 
-        Toast.makeText(MainActivity.this, getString(R.string.loading_geotiff_toast_msg), Toast.LENGTH_SHORT).show();
 
         try {
             GeoTIFFParser parser = new GeoTIFFParser(fileInCache);
@@ -288,11 +331,21 @@ public class MainActivity extends AppCompatActivity {
             appendText(successOutput);
         } catch (IllegalArgumentException e) {
             String failureOutput = getString(R.string.dem_load_error_generic_msg) + e.getMessage() + "\n";
+            e.printStackTrace();
             appendText(failureOutput);
         } catch (TiffException e) {
             String failureOutput = getString(R.string.dem_load_error_tiffexception_msg);
+            e.printStackTrace();
             appendText(failureOutput);
         }
+    }
+
+    private boolean isCacheUri(Uri uri) {
+
+        File cacheDir = getCacheDir();
+        String cachePath = cacheDir.getAbsolutePath();
+        String uriPath = uri.getPath();
+        return uriPath.startsWith(cachePath);
     }
 
     @Override
