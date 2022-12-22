@@ -32,18 +32,18 @@
     <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p>Project maintained by <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br>]]></string>
     <string name="CallToActionSnippet"><![CDATA[View the project on GitHub</a><br>]]></string>
     <string name="nato_mgrs">NATO MGRS</string>
-    <string name="bad_altitude_data_error_msg">ERROR: bad altitude or terrain data. This image is unusable. 🖼🚫🧮🎯</string>
-    <string name="target_found_at_msg">\"Target found at \"</string>
-    <string name="drone_dist_to_target_msg">\"Drone distance to target: \"</string>
-    <string name="resolveTarget_oob_error_msg">\"ERROR: resolveTarget ran OOB at: \"</string>
+    <string name="bad_altitude_data_error_msg">ERROR: bad altitude or terrain data. This image is unusable. 🖼🚫🎯</string>
+    <string name="target_found_at_msg">Target found at </string>
+    <string name="drone_dist_to_target_msg">Drone distance to target:</string>
+    <string name="resolveTarget_oob_error_msg">ERROR: resolveTarget ran OOB at:</string>
     <string name="geotiff_coverage_reminder">Please ensure your GeoTIFF DEM file covers the drone\'s location!\n</string>
     <string name="geotiff_coverage_precedent_message">Your GeoTIFF\'s coverage ⛰:\n</string>
     <string name="geotiff_load_reminder_msg">Could not resolve target. Please load a GeoTIFF Digital Elevation Model \".tif\" using ⛰ button\n</string>
     <string name="metadata_parse_error_msg">Unable to open image file to calculate. Drone image 🖼 metadata could not be read. \n</string>
     <string name="text_copied_to_clipboard_msg">Text copied to clipboard 📋</string>
     <string name="image_selected_msg">Selected 🖼 \n</string>
-    <string name="dem_loaded_size_is_msg">\"loaded ⛰. Size \"</string>
-    <string name="dem_load_error_generic_msg">\"ERROR: failed to load DEM, \"</string>
+    <string name="dem_loaded_size_is_msg">loaded ⛰. Size </string>
+    <string name="dem_load_error_generic_msg">ERROR: failed to load DEM, </string>
     <string name="dem_load_error_tiffexception_msg">ERROR: failed to load DEM, not a GeoTIFF \".tif\" file.\n</string>
     <string name="calculating_target_msg">Calculating 🧮:\n</string>
     <string name="no_image_selected_error_msg">ERROR: Cannot calculate 🚫🧮: no image 🚫🖼 selected\n</string>
