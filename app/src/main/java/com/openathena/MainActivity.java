@@ -40,6 +40,7 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.text.Html;
 import androidx.exifinterface.media.ExifInterface;
 import android.net.Uri;
@@ -288,6 +289,31 @@ public class MainActivity extends AppCompatActivity {
         appendLog("Selected DEM " + uri + "\n");
         Toast.makeText(MainActivity.this, getString(R.string.loading_geotiff_toast_msg), Toast.LENGTH_SHORT).show();
 
+        Handler myHandler = new Handler();
+        new Thread(new Runnable() { // Holy mother of Java
+            @Override
+            public void run() {
+                Exception e = loadDEMnewThread(uri);
+                myHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (e == null) {
+                            String successOutput = "GeoTIFF DEM ";
+//            successOutput += "\"" + uri.getLastPathSegment(); + "\" ";
+                            successOutput += getString(R.string.dem_loaded_size_is_msg) + " " + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
+                            successOutput += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
+                            successOutput += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n";
+                            appendText(successOutput);
+                        } else {
+                            appendText(e.getMessage());
+                        }
+                    }
+                });
+            }
+        }).start();
+    }
+
+    private Exception loadDEMnewThread(Uri uri) {
         File appCacheDir = new File(getCacheDir(), "geotiff");
         if (!appCacheDir.exists()) {
             appCacheDir.mkdirs();
@@ -308,35 +334,29 @@ public class MainActivity extends AppCompatActivity {
                 // For example, you can show an error message to the user
                 // or log the error to Crashlytics
                 Log.e(TAG, "FileNotFound demSelected()");
-                return;
+                return e;
             } catch (IOException e) {
                 // Handle other IOException here
                 // For example, you can log the error to Crashlytics
                 e.printStackTrace();
-                return;
+                return e;
             }
         }
         demUri = Uri.fromFile(fileInCache);
-
 
         try {
             GeoTIFFParser parser = new GeoTIFFParser(fileInCache);
             theParser = parser;
             theTGetter = new TargetGetter(parser);
-            String successOutput = "GeoTIFF DEM ";
-//            successOutput += "\"" + uri.getLastPathSegment(); + "\" ";
-            successOutput += getString(R.string.dem_loaded_size_is_msg) + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
-            successOutput += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
-            successOutput += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n";
-            appendText(successOutput);
+            return null;
         } catch (IllegalArgumentException e) {
-            String failureOutput = getString(R.string.dem_load_error_generic_msg) + e.getMessage() + "\n";
+            String failureOutput = getString(R.string.dem_load_error_generic_msg);
             e.printStackTrace();
-            appendText(failureOutput);
+            return new Exception(failureOutput + "\n");
         } catch (TiffException e) {
             String failureOutput = getString(R.string.dem_load_error_tiffexception_msg);
             e.printStackTrace();
-            appendText(failureOutput);
+            return new Exception(failureOutput + "\n");
         }
     }
 
