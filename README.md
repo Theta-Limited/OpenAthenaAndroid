@@ -26,9 +26,9 @@ Load the DEM file, e.g. [cobb.tif](https://github.com/mkrupczak3/OpenAthena/raw/
 <img width="586" alt="OpenAthena Android GeoTIFF DEM loading demo using cobb.tif" src="./assets/cobb_tif_DEM_Loading_Demo_landscape.png">
 
 
-## JPG Drone sensor metadata parsing
+## Automatic drone image metadata extraction
 
-This app is compatible with images taken by select models of DJI, Skydio, Autel, and Parrot aircraft. and The drone's position (Latitude Longitude Altitude) and its camera gimbal's azimuth and angle of depression are automatically obtained from XMP metadata.
+This app is compatible with images taken by select models of DJI, Skydio, Autel, and Parrot aircraft. The drone's position and its camera's orientation are automatically extracted from metadata embeded within the image.
 
 ## Locating a Target 🎯
 
