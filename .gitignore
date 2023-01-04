@@ -16,6 +16,9 @@ captures/
 app/release
 app/release/*
 output.json
+local.properties
+android/local.properties
+.android/local.properties
 
 # IntelliJ
 *.iml
