@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
     public static String TAG = MainActivity.class.getSimpleName();
     public final static String LOG_NAME = "openathena.log";
     public static int requestNo = 0;
+    public static int dangerousAutelAwarenessCount;
 
     TextView textView;
     TextView textViewMGRS;
@@ -131,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         Log.d(TAG,"onCreate started");
+        dangerousAutelAwarenessCount = 0;
 
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_main);
@@ -254,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
         // save uri for later calculation
         if (imageUri != null && !uri.equals(imageUri)) {
             clearText();
-            textViewMGRS.setText(R.string.nato_mgrs);
+            textViewMGRS.setText(R.string.nato_mgrs_1m);
         }
         imageUri = uri;
 
@@ -585,7 +587,9 @@ public class MainActivity extends AppCompatActivity {
                 return handleSKYDIO(exif);
                 //break;
             case "AUTEL ROBOTICS":
-                displayAutelAlert();
+                if (dangerousAutelAwarenessCount < 3) {
+                    displayAutelAlert();
+                }
                 return handleAUTEL(exif);
                 //break;
             case "PARROT":
@@ -597,13 +601,18 @@ public class MainActivity extends AppCompatActivity {
                 }
                 //break;
             default:
-                Log.e(TAG, "ERROR: make " + make + " not recognized");
-                throw new XMPException("ERROR: make " + make + "not recognized", XMPError.BADXMP);
+                Log.e(TAG, "ERROR: make " + make + " not usable at this time");
+                throw new XMPException("ERROR: make " + make + "not usable at this time", XMPError.BADXMP);
         }
     }
 
     private double[] handleDJI(ExifInterface exif) throws XMPException {
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
+        if (xmp_str == null) {
+            throw new XMPException("ERROR: XMP tag not found within EXIF", XMPError.BADXMP);
+        } if (xmp_str.trim().equals("")) {
+            throw new XMPException("ERROR: XMP tag found but was empty!", XMPError.BADVALUE);
+        }
         Log.i(TAG, "xmp_str for Make DJI: " + xmp_str);
         XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
 
@@ -628,6 +637,11 @@ public class MainActivity extends AppCompatActivity {
 
     private double[] handleSKYDIO(ExifInterface exif) throws XMPException {
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
+        if (xmp_str == null) {
+            throw new XMPException("ERROR: XMP tag not found within EXIF", XMPError.BADXMP);
+        } if (xmp_str.trim().equals("")) {
+            throw new XMPException("ERROR: XMP tag found but was empty!", XMPError.BADVALUE);
+        }
         Log.i(TAG, "xmp_str for Make SKYDIO: " + xmp_str);
         XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
         String schemaNS = "https://www.skydio.com/drone-skydio/1.0/";
@@ -645,6 +659,11 @@ public class MainActivity extends AppCompatActivity {
 
     private double[] handleAUTEL(ExifInterface exif) throws XMPException {
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
+        if (xmp_str == null) {
+            throw new XMPException("ERROR: XMP tag not found within EXIF", XMPError.BADXMP);
+        } if (xmp_str.trim().equals("")) {
+            throw new XMPException("ERROR: XMP tag found but was empty!", XMPError.BADVALUE);
+        }
         Log.i(TAG, "xmp_str for Make AUTEL: " + xmp_str);
         XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
 
@@ -698,6 +717,11 @@ public class MainActivity extends AppCompatActivity {
         z = yxz[2];
 
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
+        if (xmp_str == null) {
+            throw new XMPException("ERROR: XMP tag not found within EXIF", XMPError.BADXMP);
+        } if (xmp_str.trim().equals("")) {
+            throw new XMPException("ERROR: XMP tag found but was empty!", XMPError.BADVALUE);
+        }
         Log.i(TAG, "xmp_str for Make PARROT: " + xmp_str);
         XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
 
@@ -713,7 +737,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setMessage(R.string.autel_accuracy_warning_msg);
         builder.setPositiveButton(R.string.i_understand_this_risk, (DialogInterface.OnClickListener) (dialog, which) -> {
-            assert(true);
+            dangerousAutelAwarenessCount += 1;
         });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
