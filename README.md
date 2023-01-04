@@ -1,9 +1,9 @@
-# OpenAthena for Android
-OpenAthena for Android
+# OpenAthena™ for Android
+OpenAthena™ for Android
 
-An Android port of the [OpenAthena project](http://OpenAthena.com)
+An Android port of the [OpenAthena™ project](http://OpenAthena.com)
 
-OpenAthena allows consumer and professional drones to spot precise geodetic locations
+OpenAthena™ allows consumer and professional drones to spot precise geodetic locations
 
 🖼️👨‍💻 + 🧮⛰️ = 🎯📍
 
@@ -16,14 +16,14 @@ OpenAthena allows consumer and professional drones to spot precise geodetic loca
 
 Use of this app requires loading a GeoTIFF Digital Elevation Model (DEM) file, stored as a GeoTIFF ".tif" file.
 
-GeoTIFF files store terrain elevation (height) for an area of the Earth. OpenAthena performs a ray-cast from a drone camera's position and orientation towards terrain. This may be used to precisely locate the subject which appears in the exact center of a given picture.
+GeoTIFF files store terrain elevation (height) for an area of the Earth. OpenAthena™ performs a ray-cast from a drone camera's position and orientation towards terrain. This may be used to precisely locate the subject which appears in the exact center of a given picture.
 
 For information on how to clip a GeoTIFF file of a customized area, see [this link](https://github.com/mkrupczak3/OpenAthena/blob/main/EIO_fetch_geotiff_example.md).
 
 Load the DEM file, e.g. [cobb.tif](https://github.com/mkrupczak3/OpenAthena/raw/main/src/cobb.tif) using the " ⛰" button (NOTE: during file selection, the thumbnail  image preview for any GeoTIFF ".tif" file will be blank. This is normal.), and the app will display the size of the file as well as its Latitude and Longitude boundaries:
 
 
-<img width="586" alt="OpenAthena Android GeoTIFF DEM loading demo using cobb.tif" src="./assets/cobb_tif_DEM_Loading_Demo_landscape.png">
+<img width="586" alt="OpenAthena™ Android GeoTIFF DEM loading demo using cobb.tif" src="./assets/cobb_tif_DEM_Loading_Demo_landscape.png">
 
 
 ## Automatic drone image metadata extraction
@@ -34,11 +34,11 @@ This app is compatible with images taken by select models of DJI, Skydio, Autel,
 
 After loading a GeoTIFF DEM using the " ⛰" button (see section above), use the "🖼" button to select a drone image containing the necessary metadata.
 
-<img width="586" alt="OpenAthena Android Image Selection demo using DJI_0419.JPG" src="./assets/DJI_0419_Image_Selection_Demo_landscape.png">
+<img width="586" alt="OpenAthena™ Android Image Selection demo using DJI_0419.JPG" src="./assets/DJI_0419_Image_Selection_Demo_landscape.png">
 
 Then, press the "🧮" button to calculate the target location on the ground:
 
-<img width="586" alt="OpenAthena Android Target Calculation demo using cobb.tif and DJI_0419.JPG" src="./assets/DJI_0419_Target_Res_Demo_landscape.png">
+<img width="586" alt="OpenAthena™ Android Target Calculation demo using cobb.tif and DJI_0419.JPG" src="./assets/DJI_0419_Target_Res_Demo_landscape.png">
 
 
 ## Live Telemetry from DJI-SDK
