@@ -59,7 +59,7 @@ public class AboutActivity extends AppCompatActivity {
         }
 
         // set About text
-        aboutText.setText(Html.fromHtml( "OpenAthena for Android version "+versionName+"<br>"
+        aboutText.setText(Html.fromHtml( "OpenAthena™ for Android version "+versionName+"<br>"
                         + "Matthew Krupczak, Bobby Krupczak, et al.<br>"
                         + getString(R.string.GPL3Notice)
                         + " <a href=\"https://openathena.com/\">OpenAthena.com</a> <br>"

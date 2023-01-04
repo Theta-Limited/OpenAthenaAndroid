@@ -160,8 +160,8 @@ public class MainActivity extends AppCompatActivity {
         // open logfile for logging?  No, only open when someone calls
         // append
 
-        textView.setText("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\n GPL-3.0, some rights reserved\n");
-        appendLog("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\n GPL-3.0, some rights reserved\n");
+        textView.setText("OpenAthena™ for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\n GPL-3.0, some rights reserved\n");
+        appendLog("OpenAthena™ for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\n GPL-3.0, some rights reserved\n");
 
         if (savedInstanceState != null) {
             CharSequence textRestore = savedInstanceState.getCharSequence("textview");
@@ -851,7 +851,7 @@ public class MainActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
            @Override
            public void run() {
-               textView.setText("OpenAthena for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\nGPL-3.0, some rights reserved\n");
+               textView.setText("OpenAthena™ for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\nGPL-3.0, some rights reserved\n");
            }
         });
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">OpenAthena for Android</string>
+    <string name="app_name">OpenAthena™ for Android</string>
 
     <string name="next">Next</string>
     <string name="previous">Previous</string>
@@ -12,7 +12,7 @@
     <string name="button_loadDEM">⛰️</string>
 
     <string name="text_view_value">ChangeMe</string>
-    <string name="log_text_view_value">OpenAthena for Android . . . </string>
+    <string name="log_text_view_value">OpenAthena™ for Android . . . </string>
     <string name="test_button_text">Calculate</string>
     <string name="enter_host">Filename</string>
 
@@ -21,14 +21,14 @@
     <string name="save_prefs_text">Save</string>
     <string name="reset_prefs_text">Reset</string>
 
-    <string name="title_activity_log">OpenAthena for Android Log</string>
-    <string name="title_activity_prefs">OpenAthena for Android Settings</string>
-    <string name="title_activity_about">About OpenAthena for Android</string>
+    <string name="title_activity_log">OpenAthena™ for Android Log</string>
+    <string name="title_activity_prefs">OpenAthena™ for Android Settings</string>
+    <string name="title_activity_about">About OpenAthena™ for Android</string>
 
     <string name="clear_button_text">Clear Log</string>
-    <string name="openathena_for_android">OpenAthena for Android</string>
+    <string name="openathena_for_android">OpenAthena™ for Android</string>
     <string name="GPL3Notice">GPL-3.0, some rights reserved</string>
-    <string name="AboutSnippet"><![CDATA[<br>OpenAthena for Android is a project which allows consumer and professional drones to spot precise geodetic locations<br>]]></string>
+    <string name="AboutSnippet"><![CDATA[<br>OpenAthena™ for Android is a project which allows consumer and professional drones to spot precise geodetic locations<br>]]></string>
     <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p>Project maintained by <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br>]]></string>
     <string name="CallToActionSnippet"><![CDATA[View the project on GitHub</a><br>]]></string>
     <string name="nato_mgrs">NATO MGRS</string>
