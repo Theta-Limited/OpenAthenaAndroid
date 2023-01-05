@@ -85,7 +85,7 @@
         android:linksClickable="true"
         android:minHeight="48dp"
         android:onClick="copyMGRSText"
-        android:text="@string/nato_mgrs"
+        android:text="@string/nato_mgrs_1m"
         android:textIsSelectable="true"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
