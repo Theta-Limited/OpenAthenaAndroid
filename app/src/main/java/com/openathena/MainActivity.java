@@ -13,22 +13,18 @@
 package com.openathena;
 
 // import veraPDF fork of Adobe XMP core Java v5.1.0
-import com.adobe.xmp.XMPConst;
 import com.adobe.xmp.XMPError;
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.XMPMetaFactory;
-import com.adobe.xmp.properties.XMPProperty;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ContentResolver;
@@ -47,7 +43,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.OpenableColumns;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
@@ -67,8 +62,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.Locale;
-import java.util.Map;
 
 // Libraries from the U.S. National Geospatial Intelligence Agency https://www.nga.mil
 import mil.nga.mgrs.grid.GridType;
@@ -77,16 +70,15 @@ import mil.nga.mgrs.*;
 import mil.nga.grid.features.Point;
 
 
-public class MainActivity extends AppCompatActivity {
-
-    public final static String PREFS_NAME = "openathena.preferences";
+public class MainActivity extends AthenaActivity {
     public static String TAG = MainActivity.class.getSimpleName();
+    public final static String PREFS_NAME = "openathena.preferences";
     public final static String LOG_NAME = "openathena.log";
     public static int requestNo = 0;
     public static int dangerousAutelAwarenessCount;
 
     TextView textView;
-    TextView textViewMGRS;
+    TextView textViewTargetCoord;
     SharedPreferences prefs;
     SharedPreferences.Editor edit;
     protected String versionName;
@@ -130,20 +122,23 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         Log.d(TAG,"onCreate started");
-        dangerousAutelAwarenessCount = 0;
 
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_main);
         setContentView(R.layout.activity_main);
 
+        radioGroup = null;
+        restorePrefOutputMode();
+
+        dangerousAutelAwarenessCount = 0;
+
         // get our prefs that we have saved
 
         textView = (TextView)findViewById(R.id.textView);
         textView.setMovementMethod(LinkMovementMethod.getInstance());
-        textViewMGRS = (TextView)findViewById(R.id.textViewMGRS);
-        textViewMGRS.setMovementMethod(LinkMovementMethod.getInstance());
+        textViewTargetCoord = (TextView)findViewById(R.id.textViewTargetCoord);
+        textViewTargetCoord.setMovementMethod(LinkMovementMethod.getInstance());
 
         iView = (ImageView)findViewById(R.id.imageView);
 
@@ -172,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
             }
             CharSequence mgrsRestore = savedInstanceState.getCharSequence("mgrs");
             if (mgrsRestore != null) {
-                textViewMGRS.setText(mgrsRestore);
+                textViewTargetCoord.setText(mgrsRestore);
             }
             String storedUriString = savedInstanceState.getString("imageUri");
             if (storedUriString != null) {
@@ -195,8 +190,8 @@ public class MainActivity extends AppCompatActivity {
         if (textView != null) {
             saveInstanceState.putCharSequence("textview", textView.getText());
         }
-        if (textViewMGRS != null) {
-            saveInstanceState.putCharSequence("mgrs", textViewMGRS.getText());
+        if (textViewTargetCoord != null) {
+            saveInstanceState.putCharSequence("mgrs", textViewTargetCoord.getText());
         }
         if (imageUri != null) {
             saveInstanceState.putString("imageUri", imageUri.toString());
@@ -256,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
         // save uri for later calculation
         if (imageUri != null && !uri.equals(imageUri)) {
             clearText();
-            textViewMGRS.setText(R.string.nato_mgrs_1m);
+            textViewTargetCoord.setText(R.string.nato_mgrs_1m);
         }
         imageUri = uri;
 
@@ -303,8 +298,21 @@ public class MainActivity extends AppCompatActivity {
                             String successOutput = "GeoTIFF DEM ";
 //            successOutput += "\"" + uri.getLastPathSegment(); + "\" ";
                             successOutput += getString(R.string.dem_loaded_size_is_msg) + " " + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
-                            successOutput += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
-                            successOutput += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n";
+                            if (!outputModeIsSlavic()) {
+                                successOutput += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
+                                successOutput += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n";
+                            } else {
+                                try {
+                                    // Believe me, I don't like this either....
+                                    successOutput += roundDouble(CoordTranslator.toCK42Lat(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ lat (CK-42) ≤ " + roundDouble(CoordTranslator.toCK42Lat(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n";
+                                    successOutput += roundDouble(CoordTranslator.toCK42Lon(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ lon (CK-42) ≤ " + roundDouble(CoordTranslator.toCK42Lon(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n";
+                                } catch (RequestedValueOOBException e) { // This shouldn't happen, may be possible though if GeoTIFF file is very small
+                                    // revert to WGS84 if CK-42 conversion has failed
+                                    successOutput += getString(R.string.wgs84_ck42_conversion_fail_warning);
+                                    successOutput += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
+                                    successOutput += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n";
+                                }
+                            }
                             appendText(successOutput);
                         } else {
                             appendText(e.getMessage());
@@ -417,6 +425,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         Log.d(TAG,"onResume started");
         super.onResume();
+        restorePrefOutputMode();
     }
 
     @Override
@@ -467,7 +476,7 @@ public class MainActivity extends AppCompatActivity {
         String attribs = "Exif information ---\n";
 
         clearText();
-        textViewMGRS.setText("");
+        textViewTargetCoord.setText("");
 
         appendText(getString(R.string.calculating_target_msg));
         appendLog("Going to start calculation\n");
@@ -499,11 +508,18 @@ public class MainActivity extends AppCompatActivity {
             attribs += getTagString(ExifInterface.TAG_MAKE, exif);
             attribs += getTagString(ExifInterface.TAG_MODEL, exif);
 
-            attribs += "Latitude : " + roundDouble(y) + "\n";
-            attribs += "Longitude : " + roundDouble(x) + "\n";
-            attribs += "Altitude : " + Math.round(z) + "\n";
-            attribs += "Azimuth: " + roundDouble(azimuth) + "\n";
-            attribs += "Pitch: -" + roundDouble(theta) + "\n";
+            if (!outputModeIsSlavic()) {
+                attribs += "Latitude : " + roundDouble(y) + "\n";
+                attribs += "Longitude : " + roundDouble(x) + "\n";
+                attribs += "Altitude : " + Math.round(z) + "\n";
+            } else {
+                attribs += "Latitude (WGS84): " + roundDouble(y) + "\n";
+                attribs += "Longitude (WGS84): " + roundDouble(x) + "\n";
+                attribs += "Altitude (WGS84): " + Math.round(z) + "\n";
+            }
+
+            attribs += getString(R.string.attribute_text_drone_azimuth) + " " + roundDouble(azimuth) + "\n";
+            attribs += getString(R.string.attribute_text_drone_camera_pitch) + " -" + roundDouble(theta) + "\n";
             appendText(attribs);
             attribs = "";
             double[] result;
@@ -511,17 +527,46 @@ public class MainActivity extends AppCompatActivity {
             double latitude;
             double longitude;
             long altitude;
+
+            double latCK42;
+            double lonCK42;
+            long altCK42;
+
+            long GK_zone;
+            long GK_northing;
+            long GK_easting;
             if (theTGetter != null) {
                 try {
                     result = theTGetter.resolveTarget(y, x, z, azimuth, theta);
                     distance = result[0];
                     latitude = result[1];
                     longitude = result[2];
+                    double altitudeDouble = result[3];
+                    latCK42 = CoordTranslator.toCK42Lat(latitude, longitude, altitudeDouble);
+                    lonCK42 = CoordTranslator.toCK42Lon(latitude, longitude, altitudeDouble);
+                    // Note: This altitude calculation assumes the SK42 and WGS84 ellipsoid have the exact same center
+                    //     This is not totally correct, but in practice is close enough to the actual value
+                    //     @TODO Could be refined at a later time with better math
+                    //     See: https://gis.stackexchange.com/a/88499
+                    altCK42 = Math.round(altitudeDouble - CoordTranslator.fromCK42Alt(latCK42, lonCK42, 0.0d));
+
+                    long[] GK_conversion_results = CoordTranslator.fromCK42toCK42_GK(latCK42, lonCK42);
+                    GK_zone = GK_conversion_results[0];
+                    GK_northing = GK_conversion_results[1];
+                    GK_easting = GK_conversion_results[2];
+
                     altitude = Math.round(result[3]);
-                    attribs += getString(R.string.target_found_at_msg) + " " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt: " + altitude + "m" + "\n";
+                    if (!outputModeIsSlavic()) {
+                        attribs += getString(R.string.target_found_at_msg) + ": " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt: " + altitude + "m" + "\n";
+                    } else {
+                        attribs += getString(R.string.target_found_at_msg) + " (WGS84): " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt: " + altitude + "m" + "\n";
+                        attribs += getString(R.string.target_found_at_msg) + " (CK-42): " + roundDouble(latCK42) + "," + roundDouble(lonCK42) + " Alt: " + altCK42 + "m" + "\n";
+                    }
                     attribs += getString(R.string.drone_dist_to_target_msg) + " " + Math.round(distance) + "m\n";
-                    attribs += "<a href=\"https://maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "\">";
-                    attribs += "maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "</a>\n";
+                    if (!outputModeIsSlavic()) { // to avoid confusion with WGS84, no Google Maps link is provided when outputModeIsSlavic()
+                        attribs += "<a href=\"https://maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "\">";
+                        attribs += "maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "</a>\n";
+                    }
                 } catch (RequestedValueOOBException e) {
                     if (e.isAltitudeDataBad) {
                         Log.e(TAG, e.getMessage());
@@ -529,12 +574,28 @@ public class MainActivity extends AppCompatActivity {
                         appendText(attribs);
                         return;
                     } else {
-                        Log.e(TAG, "ERROR: resolveTarget ran OOB at: " + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon));
-                        attribs += getString(R.string.resolveTarget_oob_error_msg) + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon) + "\n";
+                        Log.e(TAG, "ERROR: resolveTarget ran OOB at (WGS84): " + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon));
+                        if (!outputModeIsSlavic()) {
+                            attribs += getString(R.string.resolveTarget_oob_error_msg) + ":" + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon) + "\n";
+                        } else {
+                            attribs += getString(R.string.resolveTarget_oob_error_msg) + " (CK-42):" + roundDouble(CoordTranslator.toCK42Lat(e.OOBLat, e.OOBLon, z)) + ", " + roundDouble(CoordTranslator.toCK42Lon(e.OOBLat, e.OOBLon, z)) + "\n";
+                        }
                         attribs += getString(R.string.geotiff_coverage_reminder);
                         attribs += getString(R.string.geotiff_coverage_precedent_message);
-                        attribs += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
-                        attribs += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n";
+                        if (!outputModeIsSlavic()) {
+                            attribs += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
+                            attribs += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n";
+                        } else {
+                            try {
+                                // Believe me, I don't like this either....
+                                attribs += roundDouble(CoordTranslator.toCK42Lat(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ lat (CK-42) ≤ " + roundDouble(CoordTranslator.toCK42Lat(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n";
+                                attribs += roundDouble(CoordTranslator.toCK42Lon(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ lon (CK-42) ≤ " + roundDouble(CoordTranslator.toCK42Lon(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n";
+                            } catch (RequestedValueOOBException e_OOB) { // This shouldn't happen, may be possible though if GeoTIFF file is very small
+                                // revert to WGS84 if CK-42 conversion has failed
+                                attribs += getString(R.string.wgs84_ck42_conversion_fail_warning);
+                                attribs += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
+                                attribs += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n";
+                            }                        }
                         appendText(attribs);
                         return;
                     }
@@ -549,10 +610,46 @@ public class MainActivity extends AppCompatActivity {
             // Obtain NATO MGRS from mil.nga.mgrs library
             MGRS mgrsObj = MGRS.from(new Point(longitude, latitude));
             String mgrs1m = mgrsObj.coordinate(GridType.METER);
-            String mgrsString = "<a href=\"https://maps.google.com/?q=" + mgrs1m + "\">";
-            mgrsString += mgrs1m + "</a> ";
-            mgrsString += "Alt: " + altitude + "m";
-            textViewMGRS.setText(Html.fromHtml(mgrsString, 0, null, null));
+            String mgrs10m = mgrsObj.coordinate(GridType.TEN_METER);
+            String mgrs100m = mgrsObj.coordinate(GridType.HUNDRED_METER);
+            String targetCoordString;
+            if (!outputModeIsSlavic()) {
+                targetCoordString = "<a href=\"https://maps.google.com/?q=";
+                if (outputModeIsMGRS()) {
+                    targetCoordString += mgrs1m; // use MGRS 1m for maps link, even if on 10m or 100m mode
+                } else {
+                    targetCoordString += roundDouble(latitude) + "," + roundDouble(longitude); // otherwise just use normal WGS84
+                }
+                targetCoordString += "\">"; // close start of href tag
+                if (outputModeIsMGRS()) {
+                    switch(outputMode) {
+                        case MGRS1m:
+                            targetCoordString += mgrs1m;
+                            break;
+                        case MGRS10m:
+                            targetCoordString += mgrs10m;
+                            break;
+                        case MGRS100m:
+                            targetCoordString += mgrs100m;
+                            break;
+                        default:
+                            throw new RuntimeException("Program entered an inoperable state due to outputMode"); // this shouldn't ever happen
+                    }
+                } else {
+                    targetCoordString += roundDouble(latitude) + ", " + roundDouble(longitude);
+                }
+                targetCoordString += "</a> "; // end href tag
+                targetCoordString += "Alt: " + altitude + "m";
+            } else { // to avoid confusion with WGS84, no Google Maps link is provided when outputModeIsSlavic()
+                if (outputMode == outputModes.CK42Geodetic) {
+                    targetCoordString = "(CK-42) " + roundDouble(latCK42) + ", " + roundDouble(lonCK42) + " Alt: " + altCK42 + "m" + "<br>";
+                } else if (outputMode == outputModes.CK42GaussKrüger) {
+                    targetCoordString = "(CK-42) [Gauss-Krüger] " + getString(R.string.gk_zone_text) + " " + GK_zone + "<br>" + getString(R.string.gk_northing_text) + " " + GK_northing + "<br>" + getString(R.string.gk_easting_text) + " " + GK_easting;
+                } else {
+                    throw new RuntimeException("Program entered an inoperable state due to outputMode"); // this shouldn't ever happen
+                }
+            }
+            textViewTargetCoord.setText(Html.fromHtml(targetCoordString, 0, null, null));
             // close file
             is.close();
             //
@@ -744,7 +841,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void copyMGRSText(View view) {
-        String text = textViewMGRS.getText().toString();
+        String text = textViewTargetCoord.getText().toString();
         text = text.replaceAll("<[^>]*>", ""); // remove HTML link tag(s)
 
         // Copy the text to the clipboard

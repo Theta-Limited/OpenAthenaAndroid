@@ -8,21 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.openathena.databinding.ActivityPrefsBinding;
+import android.widget.RadioGroup;
 
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
@@ -31,20 +21,72 @@ import java.io.PrintWriter;
 // log file (local storage) XXX
 
 
-public class PrefsActivity extends AppCompatActivity {
+public class PrefsActivity extends AthenaActivity {
 
     public static String TAG = PrefsActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG,"onCreate started");
-
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_prefs);
+
+        radioGroup = (RadioGroup) findViewById(R.id.outputModeRadioGroup);
+        // Listener which changes outputMode when a radio button is selected
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.radioButtonWGS84:
+                        if (outputMode != outputModes.WGS84) {
+                            setOutputMode(outputModes.WGS84);
+                        }
+                        break;
+                    case R.id.radioButtonMGRS1m:
+                        if (outputMode != outputModes.MGRS1m) {
+                            setOutputMode(outputModes.MGRS1m);
+                        }
+                        break;
+                    case R.id.radioButtonMGRS10m:
+                        if (outputMode != outputModes.MGRS10m) {
+                            setOutputMode(outputModes.MGRS10m);
+                        }
+                        break;
+                    case R.id.radioButtonMGRS100m:
+                        if (outputMode != outputModes.MGRS100m) {
+                            setOutputMode(outputModes.MGRS100m);
+                        }
+                        break;
+                    case R.id.radioButtonCK42Geodetic:
+                        if (outputMode != outputModes.CK42Geodetic) {
+                            setOutputMode(outputModes.CK42Geodetic);
+                        }
+                        break;
+                    case R.id.radioButtonCK42GaussKrüger:
+                        if (outputMode != outputModes.CK42GaussKrüger) {
+                            setOutputMode(outputModes.CK42GaussKrüger);
+                        }
+                        break;
+                    default:
+                        setOutputMode(-1); // should never happen
+                }
+            }
+        });
+
+        restorePrefOutputMode();
+    } // end onCreate()
+
+    @Override
+    protected void onSaveInstanceState(Bundle saveInstanceState) {
+        super.onSaveInstanceState(saveInstanceState);
+        if (outputMode != null) {
+            saveInstanceState.putInt("outputMode", outputMode.ordinal());
+        }
     }
 
-        @Override
+
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -115,16 +157,16 @@ public class PrefsActivity extends AppCompatActivity {
 
     } // onDestroy()
 
-    public void prefsSave(View view)
-    {
-        appendLog("Saving preferences/settings\n");
-
-    }
+//    public void prefsSave(View view)
+//    {
+//        appendLog("Saving preferences/settings\n");
+//
+//    }
 
     public void prefsReset(View view)
     {
-        appendLog("Resetting preferences/settings\n");
-
+        appendLog("Resetting settings \uD83D\uDD04\n");
+        setOutputMode(outputModes.WGS84);
     }
 
     private void appendLog(String str)

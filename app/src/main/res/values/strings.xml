@@ -34,7 +34,7 @@
     <string name="bad_altitude_data_error_msg">ERROR: bad altitude or terrain data. This image is unusable. 🖼🚫🎯</string>
     <string name="target_found_at_msg">Target found at </string>
     <string name="drone_dist_to_target_msg">Drone distance to target:</string>
-    <string name="resolveTarget_oob_error_msg">ERROR: resolveTarget ran OOB at:</string>
+    <string name="resolveTarget_oob_error_msg">ERROR: resolveTarget ran OOB at</string>
     <string name="geotiff_coverage_reminder">Please ensure your GeoTIFF DEM file covers the drone\'s location!\n</string>
     <string name="geotiff_coverage_precedent_message">Your GeoTIFF\'s coverage ⛰:\n</string>
     <string name="geotiff_load_reminder_msg">Could not resolve target. Please load a GeoTIFF Digital Elevation Model \".tif\" using ⛰ button\n</string>
@@ -64,4 +64,10 @@
     <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
     <string name="ck_42_gauss_kruger_tooltip">An alternative geodetic system using the Krasovsky 1940 ellipsoid. A longitudinal ZONE (in 6° increments, possible values 1-60 inclusive), Northing defined by X value, and Easting defined by Y value describe an exact position on Earth</string>
     <string name="target_output_mode_title">🎯 Output Mode:</string>
+    <string name="gk_northing_text">Northing:</string>
+    <string name="gk_easting_text">Easting:</string>
+    <string name="gk_zone_text">ZONE:</string>
+    <string name="attribute_text_drone_azimuth">Azimuth:</string>
+    <string name="attribute_text_drone_camera_pitch">Pitch:</string>
+    <string name="wgs84_ck42_conversion_fail_warning">⚠️WARNING: values are in WGS84, not CK-42 ⚠\n</string>
 </resources>

@@ -13,15 +13,12 @@
         android:id="@+id/textViewOutputModeTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="64dp"
         android:text="@string/target_output_mode_title"
-        android:textAlignment="center"
+        android:textAlignment="textStart"
         android:textColor="@android:color/primary_text_light_nodisable"
         android:textSize="34sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.532"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,14 +26,14 @@
         android:id="@+id/outputModeRadioGroup"
         android:layout_width="249dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toTopOf="@+id/reset_prefs_button"
+        android:layout_marginEnd="64dp"
+        android:isScrollContainer="true"
+        android:scrollIndicators="right"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewOutputModeTitle">
+        app:layout_constraintTop_toTopOf="parent">
 
         <RadioButton
             android:id="@+id/radioButtonWGS84"
@@ -99,11 +96,11 @@
         android:id="@+id/reset_prefs_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="80dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="48dp"
         android:onClick="prefsReset"
         android:text="@string/reset_prefs_text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewOutputModeTitle" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

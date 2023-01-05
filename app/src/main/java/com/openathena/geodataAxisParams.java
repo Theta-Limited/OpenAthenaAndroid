@@ -6,6 +6,6 @@ class geodataAxisParams {
     long numOfSteps;
 
     public void calcEndValue() {
-        end = start + stepwiseIncrement * numOfSteps;
+        end = start + stepwiseIncrement * (numOfSteps - 1);
     }
 }
