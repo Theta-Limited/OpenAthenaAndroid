@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 public abstract class AthenaActivity extends AppCompatActivity {
 
@@ -24,6 +25,8 @@ public abstract class AthenaActivity extends AppCompatActivity {
 
     protected static PrefsActivity.outputModes outputMode;
     static RadioGroup radioGroup;
+    protected TextView textViewTargetCoord;
+    protected boolean isTargetCoordDisplayed;
 
     public void setOutputMode(int mode) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -36,6 +39,12 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 if (radioGroup != null && radioGroup.getVisibility() == View.VISIBLE) {
                     radioGroup.check(R.id.radioButtonWGS84);
                 }
+                if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
+                    if(!isTargetCoordDisplayed) {
+                        textViewTargetCoord.setText(getString(R.string.wgs84_standard_lat_lon));
+                        isTargetCoordDisplayed = false;
+                    }
+                }
                 Log.i(TAG, "Output mode set to WGS84");
                 break;
             case 1:
@@ -44,6 +53,12 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 outputMode = PrefsActivity.outputModes.MGRS1m; // NATO Military Grid Ref, 1m square area
                 if (radioGroup != null && radioGroup.getVisibility() == View.VISIBLE) {
                     radioGroup.check(R.id.radioButtonMGRS1m);
+                }
+                if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
+                    if(!isTargetCoordDisplayed) {
+                        textViewTargetCoord.setText(getString(R.string.nato_mgrs_1m));
+                        isTargetCoordDisplayed = false;
+                    }
                 }
                 Log.i(TAG, "Output mode changed to MGRS1m");
                 break;
@@ -54,6 +69,12 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 if (radioGroup != null && radioGroup.getVisibility() == View.VISIBLE) {
                     radioGroup.check(R.id.radioButtonMGRS10m);
                 }
+                if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
+                    if(!isTargetCoordDisplayed) {
+                        textViewTargetCoord.setText(getString(R.string.nato_mgrs_10m));
+                        isTargetCoordDisplayed = false;
+                    }
+                }
                 Log.i(TAG, "Output mode changed to MGRS10m");
                 break;
             case 3:
@@ -62,6 +83,12 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 outputMode= PrefsActivity.outputModes.MGRS100m; // NATO Military Grid Ref, 100m square area
                 if (radioGroup != null && radioGroup.getVisibility() == View.VISIBLE) {
                     radioGroup.check(R.id.radioButtonMGRS100m);
+                }
+                if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
+                    if(!isTargetCoordDisplayed) {
+                        textViewTargetCoord.setText(getString(R.string.nato_mgrs_100m));
+                        isTargetCoordDisplayed = false;
+                    }
                 }
                 Log.i(TAG, "Output mode changed to MGRS100m");
                 break;
@@ -72,6 +99,12 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 if (radioGroup != null && radioGroup.getVisibility() == View.VISIBLE) {
                     radioGroup.check(R.id.radioButtonCK42Geodetic);
                 }
+                if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
+                    if(!isTargetCoordDisplayed) {
+                        textViewTargetCoord.setText(getString(R.string.ck_42_lat_lon));
+                        isTargetCoordDisplayed = false;
+                    }
+                }
                 Log.i(TAG, "Output mode changed to CK42Geodetic");
                 break;
             case 5:
@@ -81,7 +114,13 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 if (radioGroup != null && radioGroup.getVisibility() == View.VISIBLE) {
                     radioGroup.check(R.id.radioButtonCK42GaussKrüger);
                 }
-                Log.i(TAG, "Output mode changed to CK42GaussKrüger");
+                if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
+                    if(!isTargetCoordDisplayed) {
+                        textViewTargetCoord.setText(getString(R.string.ck_42_gauss_kruger_n_e));
+                        isTargetCoordDisplayed = false;
+                    }
+                }
+                Log.i(TAG, "Output mode changed to CK42 GaussKrüger");
                 break;
             default:
                 Log.e(TAG, "ERROR: unrecognized value for output mode: " + mode + ". reverting to WGS84...");

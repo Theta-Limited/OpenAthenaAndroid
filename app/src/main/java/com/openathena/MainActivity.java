@@ -78,7 +78,6 @@ public class MainActivity extends AthenaActivity {
     public static int dangerousAutelAwarenessCount;
 
     TextView textView;
-    TextView textViewTargetCoord;
     SharedPreferences prefs;
     SharedPreferences.Editor edit;
     protected String versionName;
@@ -129,7 +128,6 @@ public class MainActivity extends AthenaActivity {
         setContentView(R.layout.activity_main);
 
         radioGroup = null;
-        restorePrefOutputMode();
 
         dangerousAutelAwarenessCount = 0;
 
@@ -165,9 +163,9 @@ public class MainActivity extends AthenaActivity {
             if (textRestore != null) {
                 textView.setText(textRestore);
             }
-            CharSequence mgrsRestore = savedInstanceState.getCharSequence("mgrs");
-            if (mgrsRestore != null) {
-                textViewTargetCoord.setText(mgrsRestore);
+            CharSequence textViewTargetCoordRestore = savedInstanceState.getCharSequence("textViewTargetCoord");
+            if (textViewTargetCoordRestore != null) {
+                textViewTargetCoord.setText(textViewTargetCoordRestore);
             }
             String storedUriString = savedInstanceState.getString("imageUri");
             if (storedUriString != null) {
@@ -180,7 +178,10 @@ public class MainActivity extends AthenaActivity {
                 demUri = Uri.parse(storedDEMUriString);
                 demSelected(demUri);
             }
+            isTargetCoordDisplayed = savedInstanceState.getBoolean("isTargetCoordDisplayed");
         }
+
+        restorePrefOutputMode(); // restore the outputMode from persistent settings
     }
 
     @Override
@@ -191,8 +192,9 @@ public class MainActivity extends AthenaActivity {
             saveInstanceState.putCharSequence("textview", textView.getText());
         }
         if (textViewTargetCoord != null) {
-            saveInstanceState.putCharSequence("mgrs", textViewTargetCoord.getText());
+            saveInstanceState.putCharSequence("textViewTargetCoord", textViewTargetCoord.getText());
         }
+        saveInstanceState.putBoolean("isTargetCoordDisplayed", isTargetCoordDisplayed);
         if (imageUri != null) {
             saveInstanceState.putString("imageUri", imageUri.toString());
         }
@@ -251,7 +253,8 @@ public class MainActivity extends AthenaActivity {
         // save uri for later calculation
         if (imageUri != null && !uri.equals(imageUri)) {
             clearText();
-            textViewTargetCoord.setText(R.string.nato_mgrs_1m);
+            isTargetCoordDisplayed = false;
+            restorePrefOutputMode(); // reset textViewTargetCoord to mode descriptor
         }
         imageUri = uri;
 
@@ -425,7 +428,9 @@ public class MainActivity extends AthenaActivity {
     protected void onResume() {
         Log.d(TAG,"onResume started");
         super.onResume();
-        restorePrefOutputMode();
+        if (!isTargetCoordDisplayed) {
+            restorePrefOutputMode(); // reset the textViewTargetCoord display
+        }
     }
 
     @Override
@@ -644,12 +649,13 @@ public class MainActivity extends AthenaActivity {
                 if (outputMode == outputModes.CK42Geodetic) {
                     targetCoordString = "(CK-42) " + roundDouble(latCK42) + ", " + roundDouble(lonCK42) + " Alt: " + altCK42 + "m" + "<br>";
                 } else if (outputMode == outputModes.CK42GaussKrüger) {
-                    targetCoordString = "(CK-42) [Gauss-Krüger] " + getString(R.string.gk_zone_text) + " " + GK_zone + "<br>" + getString(R.string.gk_northing_text) + " " + GK_northing + "<br>" + getString(R.string.gk_easting_text) + " " + GK_easting;
+                    targetCoordString = "(CK-42) [Gauss-Krüger] " + getString(R.string.gk_zone_text) + " " + GK_zone + "<br>" + getString(R.string.gk_northing_text) + " " + GK_northing + "<br>" + getString(R.string.gk_easting_text) + " " + GK_easting + "<br>" + "Alt:" + " " + altCK42 + "m";
                 } else {
                     throw new RuntimeException("Program entered an inoperable state due to outputMode"); // this shouldn't ever happen
                 }
             }
             textViewTargetCoord.setText(Html.fromHtml(targetCoordString, 0, null, null));
+            isTargetCoordDisplayed = true;
             // close file
             is.close();
             //
@@ -840,7 +846,7 @@ public class MainActivity extends AthenaActivity {
         alertDialog.show();
     }
 
-    public void copyMGRSText(View view) {
+    public void copyTargetCoordText(View view) {
         String text = textViewTargetCoord.getText().toString();
         text = text.replaceAll("<[^>]*>", ""); // remove HTML link tag(s)
 

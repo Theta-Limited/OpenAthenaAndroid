@@ -22,75 +22,85 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <RadioGroup
-        android:id="@+id/outputModeRadioGroup"
-        android:layout_width="249dp"
+    <ScrollView
+        android:id="@+id/outputModesScrollView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="64dp"
-        android:isScrollContainer="true"
-        android:scrollIndicators="right"
+        android:fadeScrollbars="false"
         android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbarSize="8dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewOutputModeTitle"
         app:layout_constraintTop_toTopOf="parent">
 
-        <RadioButton
-            android:id="@+id/radioButtonWGS84"
-            android:layout_width="match_parent"
+        <RadioGroup
+            android:id="@+id/outputModeRadioGroup"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="@string/wgs84_standard_lat_lon"
-            android:textSize="20sp"
-            android:tooltipText="@string/wgs84_tooltip" />
+            android:isScrollContainer="true"
+            android:scrollIndicators="right"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:scrollbars="vertical">
 
-        <RadioButton
-            android:id="@+id/radioButtonMGRS1m"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="@string/nato_mgrs_1m"
-            android:textSize="20sp"
-            android:tooltipText="@string/nato_mgrs_1m_tooltip" />
+            <RadioButton
+                android:id="@+id/radioButtonWGS84"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/wgs84_standard_lat_lon"
+                android:textSize="20sp"
+                android:tooltipText="@string/wgs84_tooltip" />
 
-        <RadioButton
-            android:id="@+id/radioButtonMGRS10m"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="@string/nato_mgrs_10m"
-            android:textSize="20sp"
-            android:tooltipText="@string/nato_mgrs_10m_tooltip" />
+            <RadioButton
+                android:id="@+id/radioButtonMGRS1m"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/nato_mgrs_1m"
+                android:textSize="20sp"
+                android:tooltipText="@string/nato_mgrs_1m_tooltip" />
 
-        <RadioButton
-            android:id="@+id/radioButtonMGRS100m"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="@string/nato_mgrs_100m"
-            android:textSize="20sp"
-            android:tooltipText="@string/nato_mgrs_100m_tooltip" />
+            <RadioButton
+                android:id="@+id/radioButtonMGRS10m"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/nato_mgrs_10m"
+                android:textSize="20sp"
+                android:tooltipText="@string/nato_mgrs_10m_tooltip" />
 
-        <RadioButton
-            android:id="@+id/radioButtonCK42Geodetic"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="@string/ck_42_lat_lon"
-            android:textSize="20sp"
-            android:tooltipText="@string/ck_42_geodetic_tooltip" />
+            <RadioButton
+                android:id="@+id/radioButtonMGRS100m"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/nato_mgrs_100m"
+                android:textSize="20sp"
+                android:tooltipText="@string/nato_mgrs_100m_tooltip" />
 
-        <RadioButton
-            android:id="@+id/radioButtonCK42GaussKrüger"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:padding="16dp"
-            android:text="@string/ck_42_gauss_kruger_n_e"
-            android:textSize="20sp"
-            android:tooltipText="@string/ck_42_gauss_kruger_tooltip" />
+            <RadioButton
+                android:id="@+id/radioButtonCK42Geodetic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/ck_42_lat_lon"
+                android:textSize="20sp"
+                android:tooltipText="@string/ck_42_geodetic_tooltip" />
 
-    </RadioGroup>
+            <RadioButton
+                android:id="@+id/radioButtonCK42GaussKrüger"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:padding="16dp"
+                android:text="@string/ck_42_gauss_kruger_n_e"
+                android:textSize="20sp"
+                android:tooltipText="@string/ck_42_gauss_kruger_tooltip" />
+
+        </RadioGroup>
+    </ScrollView>
 
     <Button
         android:id="@+id/reset_prefs_button"
