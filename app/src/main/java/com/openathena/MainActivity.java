@@ -661,8 +661,12 @@ public class MainActivity extends AthenaActivity {
             //
         } catch (XMPException e) {
             Log.e(TAG, e.getMessage());
-            appendText(getString(R.string.metadata_parse_error_msg)+e+"\n");
+            appendText(getString(R.string.metadata_parse_error_msg) + e + "\n");
             e.printStackTrace();
+        } catch (MissingDataException e) {
+            Log.e(TAG, e.getMessage());
+            appendText(e.getMessage() + "\n");
+            e.getStackTrace();
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             appendText(getString(R.string.metadata_parse_error_msg)+e+"\n");
@@ -670,7 +674,7 @@ public class MainActivity extends AthenaActivity {
         }
     } // button click
 
-    private double[] getMetadataValues(ExifInterface exif) throws XMPException {
+    private double[] getMetadataValues(ExifInterface exif) throws XMPException, MissingDataException {
         if (exif == null) {
             Log.e(TAG, "ERROR: getMetadataValues failed, ExifInterface was null");
             throw new IllegalArgumentException("ERROR: getMetadataValues failed, exif was null");
@@ -709,7 +713,7 @@ public class MainActivity extends AthenaActivity {
         }
     }
 
-    private double[] handleDJI(ExifInterface exif) throws XMPException {
+    private double[] handleDJI(ExifInterface exif) throws XMPException, MissingDataException{
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
         if (xmp_str == null) {
             throw new XMPException("ERROR: XMP tag not found within EXIF", XMPError.BADXMP);
@@ -720,19 +724,51 @@ public class MainActivity extends AthenaActivity {
         XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
 
         String schemaNS = "http://www.dji.com/drone-dji/1.0/";
-        double y = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "GpsLatitude"));
+        String latitude = xmpMeta.getPropertyString(schemaNS, "GpsLatitude");
+        double y;
+        if (latitude != null) {
+            y = Double.parseDouble(latitude);
+        } else {
+            throw new MissingDataException(getString(R.string.missing_data_exception_latitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.LATITUDE);
+        }
         String longitude = xmpMeta.getPropertyString(schemaNS, "GpsLongitude");
         if (longitude == null || longitude.equals("")) {
-            // handle a typo that occurs in certain versions of Autel drone firmware (which use drone-dji metadata format)
+            // handle a typo "GpsLongtitude" that occurs in certain versions of Autel drone firmware (which use drone-dji metadata format)
             longitude = xmpMeta.getPropertyString(schemaNS, "GpsLong" + "t" + "itude");
             if (longitude == null || longitude.equals("")) {
-                throw new XMPException("Could not parse DJI format metadata", XMPError.BADVALUE);
+                throw new MissingDataException(getString(R.string.missing_data_exception_longitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.LATITUDE);
             }
         }
         double x = Double.parseDouble(longitude);
-        double z = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "AbsoluteAltitude"));
-        double azimuth = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "GimbalYawDegree"));
-        double theta = Math.abs(Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "GimbalPitchDegree")));
+
+        double z;
+        String altitude = xmpMeta.getPropertyString(schemaNS, "AbsoluteAltitude");
+        if (altitude != null) {
+            z = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "AbsoluteAltitude"));
+        } else {
+            throw new MissingDataException(getString(R.string.missing_data_exception_altitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALTITUDE);
+        }
+
+        double azimuth;
+        String gimbalYawDegree = xmpMeta.getPropertyString(schemaNS, "GimbalYawDegree");
+        if (gimbalYawDegree != null) {
+            azimuth = Double.parseDouble(gimbalYawDegree);
+        } else {
+            throw new MissingDataException(getString(R.string.missing_data_exception_azimuth_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.AZIMUTH);
+        }
+
+        double theta;
+        String gimbalPitchDegree = xmpMeta.getPropertyString(schemaNS, "GimbalPitchDegree");
+        if (gimbalPitchDegree != null) {
+            theta = Math.abs(Double.parseDouble(gimbalPitchDegree));
+        } else {
+            throw new MissingDataException(getString(R.string.missing_data_exception_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
+        }
+
+        // safety check: if metadata azimuth and theta are zero, it's extremely likely the metadata is invalid
+        if (Math.abs(Double.compare(azimuth, 0.0d)) <= 0.001d && Math.abs(Double.compare(theta, 0.0d)) <= 0.001d) {
+            throw new MissingDataException(getString(R.string.missing_data_exception_altitude_and_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
+        }
 
         double[] outArr = new double[]{y, x, z, azimuth, theta};
         return outArr;
@@ -760,7 +796,7 @@ public class MainActivity extends AthenaActivity {
         return outArr;
     }
 
-    private double[] handleAUTEL(ExifInterface exif) throws XMPException {
+    private double[] handleAUTEL(ExifInterface exif) throws XMPException, MissingDataException{
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
         if (xmp_str == null) {
             throw new XMPException("ERROR: XMP tag not found within EXIF", XMPError.BADXMP);

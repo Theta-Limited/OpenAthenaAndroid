@@ -20,7 +20,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
         MGRS10m,
         MGRS100m,
         CK42Geodetic,
-        CK42GaussKrüger,
+        CK42GaussKrüger
     }
 
     protected static PrefsActivity.outputModes outputMode;
