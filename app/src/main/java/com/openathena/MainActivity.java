@@ -381,6 +381,7 @@ public class MainActivity extends AthenaActivity {
                             progressBar.setVisibility(View.GONE);
                         } else {
                             appendText(e.getMessage());
+                            progressBar.setVisibility(View.GONE);
                         }
                     }
                 });
