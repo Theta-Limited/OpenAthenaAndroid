@@ -38,7 +38,7 @@
     <string name="geotiff_coverage_reminder">Please ensure your GeoTIFF DEM file covers the drone\'s location!\n</string>
     <string name="geotiff_coverage_precedent_message">Your GeoTIFF\'s coverage ⛰:\n</string>
     <string name="geotiff_load_reminder_msg">Could not resolve target. Please load a GeoTIFF Digital Elevation Model \".tif\" using ⛰ button\n</string>
-    <string name="metadata_parse_error_msg">Unable to open image file to calculate. Drone image 🖼 metadata could not be read. \n</string>
+    <string name="metadata_parse_error_msg">Unable to open image file to calculate. Drone image 🖼 metadata is either missing or unusable. Is this a drone image? \n</string>
     <string name="text_copied_to_clipboard_msg">Text copied to clipboard 📋</string>
     <string name="image_selected_msg">Selected 🖼 \n</string>
     <string name="dem_loaded_size_is_msg">loaded ⛰. Size </string>
