@@ -1,5 +1,6 @@
 package com.openathena;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +29,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
     protected TextView textViewTargetCoord;
     protected boolean isTargetCoordDisplayed;
 
+    @SuppressLint("SetTextI18n")
     public void setOutputMode(int mode) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
@@ -41,7 +43,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 }
                 if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
                     if(!isTargetCoordDisplayed) {
-                        textViewTargetCoord.setText(getString(R.string.wgs84_standard_lat_lon));
+                        textViewTargetCoord.setText("\uD83C\uDFAF " + getString(R.string.wgs84_standard_lat_lon));
                         isTargetCoordDisplayed = false;
                     }
                 }
@@ -56,7 +58,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 }
                 if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
                     if(!isTargetCoordDisplayed) {
-                        textViewTargetCoord.setText(getString(R.string.nato_mgrs_1m));
+                        textViewTargetCoord.setText("\uD83C\uDFAF " + getString(R.string.nato_mgrs_1m));
                         isTargetCoordDisplayed = false;
                     }
                 }
@@ -71,7 +73,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 }
                 if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
                     if(!isTargetCoordDisplayed) {
-                        textViewTargetCoord.setText(getString(R.string.nato_mgrs_10m));
+                        textViewTargetCoord.setText("\uD83C\uDFAF " + getString(R.string.nato_mgrs_10m));
                         isTargetCoordDisplayed = false;
                     }
                 }
@@ -86,7 +88,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 }
                 if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
                     if(!isTargetCoordDisplayed) {
-                        textViewTargetCoord.setText(getString(R.string.nato_mgrs_100m));
+                        textViewTargetCoord.setText("\uD83C\uDFAF " + getString(R.string.nato_mgrs_100m));
                         isTargetCoordDisplayed = false;
                     }
                 }
@@ -101,7 +103,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 }
                 if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
                     if(!isTargetCoordDisplayed) {
-                        textViewTargetCoord.setText(getString(R.string.ck_42_lat_lon));
+                        textViewTargetCoord.setText("\uD83C\uDFAF " + getString(R.string.ck_42_lat_lon));
                         isTargetCoordDisplayed = false;
                     }
                 }
@@ -116,7 +118,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 }
                 if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
                     if(!isTargetCoordDisplayed) {
-                        textViewTargetCoord.setText(getString(R.string.ck_42_gauss_kruger_n_e));
+                        textViewTargetCoord.setText("\uD83C\uDFAF " + getString(R.string.ck_42_gauss_kruger_n_e));
                         isTargetCoordDisplayed = false;
                     }
                 }

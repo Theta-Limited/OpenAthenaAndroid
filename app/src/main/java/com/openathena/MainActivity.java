@@ -48,7 +48,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,12 +80,20 @@ public class MainActivity extends AthenaActivity {
     public static int dangerousAutelAwarenessCount;
 
     TextView textView;
-    SharedPreferences prefs;
-    SharedPreferences.Editor edit;
-    protected String versionName;
     ImageView iView;
+
+    ProgressBar progressBar;
+
+    Button buttonSelectDEM;
+    Button buttonSelectImage;
+    Button buttonCalculate;
+
+    protected String versionName;
     Uri imageUri = null;
+    boolean isImageLoaded;
     Uri demUri = null;
+    boolean isDEMLoaded;
+
     GeoTIFFParser theParser = null;
     TargetGetter theTGetter = null;
 
@@ -129,7 +139,19 @@ public class MainActivity extends AthenaActivity {
 
         radioGroup = null;
 
+        progressBar = (ProgressBar)  findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
+
+        buttonSelectDEM = (Button) findViewById(R.id.selectDEMButton); // ⛰
+        buttonSelectImage = (Button) findViewById(R.id.selectImageButton); // ð
+        buttonCalculate = (Button) findViewById(R.id.calculateButton); // ð
+        setButtonReady(buttonSelectDEM, true);
+        setButtonReady(buttonSelectImage, false);
+        setButtonReady(buttonCalculate, false);
+
         dangerousAutelAwarenessCount = 0;
+        isImageLoaded = false;
+        isDEMLoaded = false;
 
         // get our prefs that we have saved
 
@@ -155,7 +177,7 @@ public class MainActivity extends AthenaActivity {
         // open logfile for logging?  No, only open when someone calls
         // append
 
-        textView.setText("OpenAthena™ for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\n GPL-3.0, some rights reserved\n");
+        clearText();
         appendLog("OpenAthena™ for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\n GPL-3.0, some rights reserved\n");
 
         if (savedInstanceState != null) {
@@ -170,6 +192,7 @@ public class MainActivity extends AthenaActivity {
             String storedUriString = savedInstanceState.getString("imageUri");
             if (storedUriString != null) {
                 imageUri = Uri.parse(storedUriString);
+                isImageLoaded = true;
                 iView.setImageURI(imageUri);
             }
             String storedDEMUriString = savedInstanceState.getString("demUri");
@@ -204,20 +227,38 @@ public class MainActivity extends AthenaActivity {
         }
     }
 
-    // stolen from InterWebs
-    // https://mobikul.com/pick-image-gallery-android/
-    private String getPathFromURI(Uri uri)
-    {
-        String res = null;
-        String[] proj = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query(uri, proj, null, null, null);
-        if (cursor.moveToFirst()) {
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            res = cursor.getString(column_index);
-        }
-        cursor.close();
-        return res;
+    public void setButtonReady(Button aButton, boolean isItReady) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                float enabled = 1.0f;
+                float disabled = 0.5f;
+
+                if (isItReady) {
+                    aButton.setAlpha(enabled);
+                    aButton.setClickable(true);
+                } else {
+                    aButton.setAlpha(disabled);
+                    aButton.setClickable(false);
+                }
+            }
+        });
     }
+
+//    // stolen from InterWebs
+//    // https://mobikul.com/pick-image-gallery-android/
+//    private String getPathFromURI(Uri uri)
+//    {
+//        String res = null;
+//        String[] proj = {MediaStore.Images.Media.DATA};
+//        Cursor cursor = getContentResolver().query(uri, proj, null, null, null);
+//        if (cursor.moveToFirst()) {
+//            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+//            res = cursor.getString(column_index);
+//        }
+//        cursor.close();
+//        return res;
+//    }
 
 //    // stolen from https://stackoverflow.com/questions/5568874/how-to-extract-the-file-name-from-uri-returned-from-intent-action-get-content
 //    // modified by rdk
@@ -252,9 +293,11 @@ public class MainActivity extends AthenaActivity {
     {
         // save uri for later calculation
         if (imageUri != null && !uri.equals(imageUri)) {
-            clearText();
+            clearText(); // clear attributes textView
             isTargetCoordDisplayed = false;
             restorePrefOutputMode(); // reset textViewTargetCoord to mode descriptor
+
+            isImageLoaded = false;
         }
         imageUri = uri;
 
@@ -269,27 +312,40 @@ public class MainActivity extends AthenaActivity {
         try {
             fileDescriptor = getApplicationContext().getContentResolver().openAssetFileDescriptor(uri , "r");
         } catch(FileNotFoundException e) {
+            imageUri = null;
             return;
         }
 
         long filesize = fileDescriptor.getLength();
         Log.d(TAG, "filesize: " + filesize);
-        if (filesize < 1024 * 1024 * 20) { // check if filesize is greater than 20Mb
+        if (filesize < 1024 * 1024 * 20) { // check if filesize below 20Mb
             iView.setImageURI(uri);
-        }  else {
+        }  else { // otherwise:
             Toast.makeText(MainActivity.this, getString(R.string.image_is_too_large_error_msg), Toast.LENGTH_SHORT).show();
-            iView.setImageResource(R.drawable.athena);
+            iView.setImageResource(R.drawable.athena); // put up placeholder icon
         }
 
         appendLog("Selected image "+imageUri+"\n");
         appendText(getString(R.string.image_selected_msg));
+
+        isImageLoaded = true;
+        setButtonReady(buttonCalculate, true);
     }
 
     private void demSelected(Uri uri) {
         appendLog("Selected DEM " + uri + "\n");
+
+        isDEMLoaded = false;
+        setButtonReady(buttonSelectDEM, false);
+        setButtonReady(buttonCalculate, false);
+
         Toast.makeText(MainActivity.this, getString(R.string.loading_geotiff_toast_msg), Toast.LENGTH_SHORT).show();
 
+        progressBar.setVisibility(View.VISIBLE);
+
         Handler myHandler = new Handler();
+
+        // Load GeoTIFF in a new thread, this is a long-running task
         new Thread(new Runnable() { // Holy mother of Java
             @Override
             public void run() {
@@ -303,20 +359,26 @@ public class MainActivity extends AthenaActivity {
                             successOutput += getString(R.string.dem_loaded_size_is_msg) + " " + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
                             if (!outputModeIsSlavic()) {
                                 successOutput += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
-                                successOutput += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n";
+                                successOutput += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n\n";
                             } else {
                                 try {
                                     // Believe me, I don't like this either....
                                     successOutput += roundDouble(CoordTranslator.toCK42Lat(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ lat (CK-42) ≤ " + roundDouble(CoordTranslator.toCK42Lat(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n";
-                                    successOutput += roundDouble(CoordTranslator.toCK42Lon(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ lon (CK-42) ≤ " + roundDouble(CoordTranslator.toCK42Lon(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n";
+                                    successOutput += roundDouble(CoordTranslator.toCK42Lon(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ lon (CK-42) ≤ " + roundDouble(CoordTranslator.toCK42Lon(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n\n";
                                 } catch (RequestedValueOOBException e) { // This shouldn't happen, may be possible though if GeoTIFF file is very small
                                     // revert to WGS84 if CK-42 conversion has failed
                                     successOutput += getString(R.string.wgs84_ck42_conversion_fail_warning);
                                     successOutput += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
-                                    successOutput += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n";
+                                    successOutput += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n\n";
                                 }
                             }
                             appendText(successOutput);
+                            isDEMLoaded = true;
+                            setButtonReady(buttonSelectImage, true);
+                            if (isImageLoaded) {
+                                setButtonReady(buttonCalculate, true);
+                            }
+                            progressBar.setVisibility(View.GONE);
                         } else {
                             appendText(e.getMessage());
                         }
@@ -335,23 +397,35 @@ public class MainActivity extends AthenaActivity {
         // We will copy the file into app's own package cache
         File fileInCache = new File(appCacheDir, uri.getLastPathSegment());
         if (!isCacheUri(uri)) {
-            try (InputStream inputStream = getContentResolver().openInputStream(uri);
-                 OutputStream outputStream = new FileOutputStream(fileInCache)) {
-                byte[] buffer = new byte[4096];
-                int bytesRead;
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, bytesRead);
+            try {
+                try (InputStream inputStream = getContentResolver().openInputStream(uri);
+                     OutputStream outputStream = new FileOutputStream(fileInCache)) {
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                } catch (FileNotFoundException e) {
+                    // Handle the FileNotFoundException here
+                    // For example, you can show an error message to the user
+                    // or log the error to Crashlytics
+                    Log.e(TAG, "FileNotFound demSelected()");
+                    throw e;
+                } catch (IOException e) {
+                    // Handle other IOException here
+                    // For example, you can log the error to Crashlytics
+                    e.printStackTrace();
+                    throw e;
+                } finally {
+                    setButtonReady(buttonSelectDEM, true);
                 }
-            } catch (FileNotFoundException e) {
-                // Handle the FileNotFoundException here
-                // For example, you can show an error message to the user
-                // or log the error to Crashlytics
-                Log.e(TAG, "FileNotFound demSelected()");
-                return e;
-            } catch (IOException e) {
-                // Handle other IOException here
-                // For example, you can log the error to Crashlytics
-                e.printStackTrace();
+            } catch (Exception e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
                 return e;
             }
         }
@@ -370,6 +444,8 @@ public class MainActivity extends AthenaActivity {
             String failureOutput = getString(R.string.dem_load_error_tiffexception_msg);
             e.printStackTrace();
             return new Exception(failureOutput + "\n");
+        } finally {
+            setButtonReady(buttonSelectDEM, true);
         }
     }
 
@@ -589,7 +665,7 @@ public class MainActivity extends AthenaActivity {
                         attribs += getString(R.string.geotiff_coverage_precedent_message);
                         if (!outputModeIsSlavic()) {
                             attribs += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
-                            attribs += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n";
+                            attribs += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n\n";
                         } else {
                             try {
                                 // Believe me, I don't like this either....
@@ -599,7 +675,7 @@ public class MainActivity extends AthenaActivity {
                                 // revert to WGS84 if CK-42 conversion has failed
                                 attribs += getString(R.string.wgs84_ck42_conversion_fail_warning);
                                 attribs += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
-                                attribs += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n";
+                                attribs += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n\n";
                             }                        }
                         appendText(attribs);
                         return;
@@ -883,15 +959,17 @@ public class MainActivity extends AthenaActivity {
     }
 
     public void copyTargetCoordText(View view) {
-        String text = textViewTargetCoord.getText().toString();
-        text = text.replaceAll("<[^>]*>", ""); // remove HTML link tag(s)
+        if (isTargetCoordDisplayed) {
+            String text = textViewTargetCoord.getText().toString();
+            text = text.replaceAll("<[^>]*>", ""); // remove HTML link tag(s)
 
-        // Copy the text to the clipboard
-        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("Text", text);
-        clipboard.setPrimaryClip(clip);
+            // Copy the text to the clipboard
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("Text", text);
+            clipboard.setPrimaryClip(clip);
 
-        Toast.makeText(this, getString(R.string.text_copied_to_clipboard_msg), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.text_copied_to_clipboard_msg), Toast.LENGTH_SHORT).show();
+        }
     }
 
     // select image button clicked; launch chooser and get result
@@ -1014,7 +1092,12 @@ public class MainActivity extends AthenaActivity {
         runOnUiThread(new Runnable() {
            @Override
            public void run() {
-               textView.setText("OpenAthena™ for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\nGPL-3.0, some rights reserved\n");
+               String placeholderText = "OpenAthena™ for Android version "+versionName+"\n\n";
+               placeholderText += "Step 1: load a Digital Elevation Model (DEM) \u26F0\n";
+               placeholderText += "Step 2: load a Drone Image \uD83D\uDDBC\n";
+               placeholderText += "Step 3: press the \uD83E\uDDEE button to calculate\n";
+               placeholderText += "Step 4: obtain your target location below \uD83C\uDFAF\n\n";
+               textView.setText(placeholderText);
            }
         });
 
