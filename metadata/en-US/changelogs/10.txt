@@ -1,0 +1,1 @@
+* fix a small user interface bug where progress bar would fail to hide if selected DEM is invalid
