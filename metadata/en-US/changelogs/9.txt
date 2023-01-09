@@ -1,0 +1,7 @@
+* The load image "🖼" button is disabled until a Digital Elevation Model (DEM) is loaded with the "⛰" button
+
+* The calculate "🧮" button is disabled until both a DEM and image are loaded
+
+* Loading a DEM will now show a progress bar until the process completes
+
+* Usage instructions are now displayed to the user as a short prompt on startup

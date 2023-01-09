@@ -1,0 +1,9 @@
+* fix #9 display a specific error message if drone is incompatible (e.g. the DJI Mini 2)
+
+* add feature #10 , letting you choose between Lat/Lon (WGS84), NATO MGRS 1m, 10m, 100m, or CK-42 Система координат or CK-42 Система координат Gauss-Krüger gridref for Target Output Mode 🎯
+
+* fix an off-by-one error in the calculation of maxLat and maxLon covered by the loaded GeoTIFF file
+
+* Improve User Interface throughout the app
+
+* Improve documentation

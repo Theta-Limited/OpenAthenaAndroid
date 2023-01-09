@@ -1,0 +1,5 @@
+OpenAthena™ is a project which allows consumer and professional drones to spot precise locations through their images. This is accomplished by combining their sensor metadata with an offline-ready Digital Elevation Model to provide the instant location of what is being observed
+
+🖼️👨‍💻 + 🧮⛰️ = 🎯📍
+
+Please see https://OpenAthena.com for more information
