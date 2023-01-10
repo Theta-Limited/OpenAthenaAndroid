@@ -77,6 +77,12 @@ Finally, press the "🧮" button to re-calculate the target location according t
 **TBD**
 
 # Contributing
+## UI language translation
+If you speak another language in addition to English, please consider contributing to the UI translation using the link below. The insights of a native-speaker are the only way to provide a good user experience for the program in a given language:
 
+[https://www.transifex.com/krupczakorg/openathena-for-android/](https://www.transifex.com/krupczakorg/openathena-for-android/)
+
+
+## Code
 If you're interested in contributing to this project, feel free to make a fork. This project will
 follow the [fork and pull model](https://reflectoring.io/github-fork-and-pull/) for third-party contributors
