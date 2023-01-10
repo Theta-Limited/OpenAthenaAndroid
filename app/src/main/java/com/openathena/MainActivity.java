@@ -786,7 +786,7 @@ public class MainActivity extends AthenaActivity {
                 //break;
             default:
                 Log.e(TAG, "ERROR: make " + make + " not usable at this time");
-                throw new XMPException("ERROR: make " + make + "not usable at this time", XMPError.BADXMP);
+                throw new XMPException("ERROR: make " + make + " not usable at this time", XMPError.BADXMP);
         }
     }
 
