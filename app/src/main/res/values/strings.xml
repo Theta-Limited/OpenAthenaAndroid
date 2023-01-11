@@ -76,4 +76,6 @@
     <string name="missing_data_exception_azimuth_error_msg">ERROR: Azimuth not found in XMP metadata! This drone is incompatible with OpenAthena! 😭</string>
     <string name="missing_data_exception_theta_error_msg">ERROR: Camera Pitch not found in XMP metadata! This drone is incompatible with OpenAthena! 😭</string>
     <string name="missing_data_exception_altitude_and_theta_error_msg">ERROR: Camera Pitch metadata found, but was invalid! This drone is incompatible with OpenAthena! 😭</string>
+    <string name="latitude_label_short">lat</string>
+    <string name="longitude_label_short">lon</string>
 </resources>
