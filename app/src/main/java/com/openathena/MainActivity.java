@@ -357,22 +357,8 @@ public class MainActivity extends AthenaActivity {
                             String successOutput = "GeoTIFF DEM ";
 //            successOutput += "\"" + uri.getLastPathSegment(); + "\" ";
                             successOutput += getString(R.string.dem_loaded_size_is_msg) + " " + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
-                            if (!outputModeIsSlavic()) {
-                                successOutput += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
-                                successOutput += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n\n";
-                            } else {
-                                try {
-                                    // Believe me, I don't like this either....
-                                    successOutput += roundDouble(CoordTranslator.toCK42Lat(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ lat (CK-42) ≤ " + roundDouble(CoordTranslator.toCK42Lat(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n";
-                                    successOutput += roundDouble(CoordTranslator.toCK42Lon(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ lon (CK-42) ≤ " + roundDouble(CoordTranslator.toCK42Lon(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n\n";
-                                } catch (RequestedValueOOBException e) { // This shouldn't happen, may be possible though if GeoTIFF file is very small
-                                    // revert to WGS84 if CK-42 conversion has failed
-                                    successOutput += getString(R.string.wgs84_ck42_conversion_fail_warning);
-                                    successOutput += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
-                                    successOutput += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n\n";
-                                }
-                            }
                             appendText(successOutput);
+                            printGeoTIFFBounds();
                             isDEMLoaded = true;
                             setButtonReady(buttonSelectImage, true);
                             if (isImageLoaded) {
@@ -664,21 +650,8 @@ public class MainActivity extends AthenaActivity {
                         }
                         attribs += getString(R.string.geotiff_coverage_reminder);
                         attribs += getString(R.string.geotiff_coverage_precedent_message);
-                        if (!outputModeIsSlavic()) {
-                            attribs += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
-                            attribs += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n\n";
-                        } else {
-                            try {
-                                // Believe me, I don't like this either....
-                                attribs += roundDouble(CoordTranslator.toCK42Lat(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ lat (CK-42) ≤ " + roundDouble(CoordTranslator.toCK42Lat(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n";
-                                attribs += roundDouble(CoordTranslator.toCK42Lon(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ lon (CK-42) ≤ " + roundDouble(CoordTranslator.toCK42Lon(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n";
-                            } catch (RequestedValueOOBException e_OOB) { // This shouldn't happen, may be possible though if GeoTIFF file is very small
-                                // revert to WGS84 if CK-42 conversion has failed
-                                attribs += getString(R.string.wgs84_ck42_conversion_fail_warning);
-                                attribs += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
-                                attribs += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n\n";
-                            }                        }
                         appendText(attribs);
+                        printGeoTIFFBounds();
                         return;
                     }
                 }
@@ -750,6 +723,26 @@ public class MainActivity extends AthenaActivity {
             e.printStackTrace();
         }
     } // button click
+
+    private void printGeoTIFFBounds() {
+        String attribs = "";
+        if (!outputModeIsSlavic()) {
+            attribs += roundDouble(theParser.getMinLat()) + " ≤ " + getString(R.string.latitude_label_short) + " ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
+            attribs += roundDouble(theParser.getMinLon()) + " ≤ " + getString(R.string.longitude_label_short) + " ≤ " + roundDouble(theParser.getMaxLon()) + "\n\n";
+        } else {
+            try {
+                // Believe me, I don't like this either....
+                attribs += roundDouble(CoordTranslator.toCK42Lat(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ " + getString(R.string.latitude_label_short) + " " + "(CK-42)" + " ≤ " + roundDouble(CoordTranslator.toCK42Lat(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n";
+                attribs += roundDouble(CoordTranslator.toCK42Lon(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ " + getString(R.string.longitude_label_short) + " " + "(CK-42)" + " ≤ " + roundDouble(CoordTranslator.toCK42Lon(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n\n";
+            } catch (RequestedValueOOBException e_OOB) { // This shouldn't happen, may be possible though if GeoTIFF file is very small
+                // revert to WGS84 if CK-42 conversion has failed
+                attribs += getString(R.string.wgs84_ck42_conversion_fail_warning);
+                attribs += roundDouble(theParser.getMinLat()) + " ≤ " + getString(R.string.latitude_label_short) + " ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
+                attribs += roundDouble(theParser.getMinLon()) + " ≤ " + getString(R.string.longitude_label_short) + " ≤ " + roundDouble(theParser.getMaxLon()) + "\n\n";
+            }
+        }
+        appendText(attribs);
+    }
 
     private double[] getMetadataValues(ExifInterface exif) throws XMPException, MissingDataException {
         if (exif == null) {
