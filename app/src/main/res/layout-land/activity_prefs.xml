@@ -17,7 +17,7 @@
         android:layout_marginTop="64dp"
         android:text="@string/target_output_mode_title"
         android:textAlignment="textStart"
-        android:textColor="@android:color/primary_text_light_nodisable"
+        android:textColor="?attr/actionMenuTextColor"
         android:textSize="34sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

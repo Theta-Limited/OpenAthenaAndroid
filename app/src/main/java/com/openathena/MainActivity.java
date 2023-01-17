@@ -329,7 +329,9 @@ public class MainActivity extends AthenaActivity {
         appendText(getString(R.string.image_selected_msg));
 
         isImageLoaded = true;
-        setButtonReady(buttonCalculate, true);
+        if (isDEMLoaded) {
+            setButtonReady(buttonCalculate, true);
+        }
     }
 
     private void demSelected(Uri uri) {
