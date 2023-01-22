@@ -15,6 +15,7 @@
         android:layout_marginEnd="24dp"
         android:onClick="selectImage"
         android:text="@string/button_selectImage"
+        android:textSize="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/scrollView2"
         app:layout_constraintTop_toBottomOf="@+id/selectDEMButton" />
@@ -28,6 +29,7 @@
         android:layout_marginEnd="24dp"
         android:onClick="calculateImage"
         android:text="@string/button_calculate"
+        android:textSize="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/scrollView2"
         app:layout_constraintTop_toBottomOf="@+id/selectImageButton" />
@@ -84,7 +86,9 @@
             android:minHeight="48dp"
             android:scrollbars="vertical"
             android:text="@string/openathena_for_android"
-            android:textIsSelectable="true" />
+            android:textColor="?attr/actionMenuTextColor"
+            android:textIsSelectable="true"
+            android:textSize="18dp" />
     </ScrollView>
 
     <Button
@@ -96,6 +100,7 @@
         android:layout_marginEnd="24dp"
         android:onClick="selectDEM"
         android:text="@string/button_loadDEM"
+        android:textSize="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/scrollView2"
         app:layout_constraintTop_toTopOf="parent" />
@@ -112,6 +117,7 @@
         android:minHeight="48dp"
         android:onClick="copyTargetCoordText"
         android:text="@string/nato_mgrs_1m"
+        android:textColor="?attr/actionMenuTextColor"
         android:textIsSelectable="true"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"

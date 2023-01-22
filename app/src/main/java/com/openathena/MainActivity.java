@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ContentResolver;
@@ -337,11 +338,10 @@ public class MainActivity extends AthenaActivity {
     private void demSelected(Uri uri) {
         appendLog("Selected DEM " + uri + "\n");
 
-        isDEMLoaded = false;
+        //    isDEMLoaded = false;
         setButtonReady(buttonSelectDEM, false);
         setButtonReady(buttonCalculate, false);
 
-        Toast.makeText(MainActivity.this, getString(R.string.loading_geotiff_toast_msg), Toast.LENGTH_SHORT).show();
 
         progressBar.setVisibility(View.VISIBLE);
 
@@ -409,16 +409,18 @@ public class MainActivity extends AthenaActivity {
                     setButtonReady(buttonSelectDEM, true);
                 }
             } catch (Exception e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
                 return e;
             }
         }
         demUri = Uri.fromFile(fileInCache);
+
+        // GeoTIFF is loading
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MainActivity.this, getString(R.string.loading_geotiff_toast_msg), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         try {
             GeoTIFFParser parser = new GeoTIFFParser(fileInCache);
@@ -430,6 +432,13 @@ public class MainActivity extends AthenaActivity {
             e.printStackTrace();
             return new Exception(failureOutput + "\n");
         } catch (TiffException e) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(MainActivity.this, "ERROR: wrong filetype. Please select a GeoTIFF file ending in \".tif\"", Toast.LENGTH_LONG).show();
+                }
+            });
             String failureOutput = getString(R.string.dem_load_error_tiffexception_msg);
             e.printStackTrace();
             return new Exception(failureOutput + "\n");
