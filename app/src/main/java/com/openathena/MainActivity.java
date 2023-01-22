@@ -414,13 +414,13 @@ public class MainActivity extends AthenaActivity {
         }
         demUri = Uri.fromFile(fileInCache);
 
-        // GeoTIFF is loading
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(MainActivity.this, getString(R.string.loading_geotiff_toast_msg), Toast.LENGTH_SHORT).show();
-            }
-        });
+//        // GeoTIFF is loading
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Toast.makeText(MainActivity.this, getString(R.string.loading_geotiff_toast_msg), Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
         try {
             GeoTIFFParser parser = new GeoTIFFParser(fileInCache);
