@@ -327,7 +327,7 @@ public class MainActivity extends AthenaActivity {
         }
 
         appendLog("Selected image "+imageUri+"\n");
-        appendText(getString(R.string.image_selected_msg));
+        appendText(getString(R.string.image_selected_msg) + "\n");
 
         isImageLoaded = true;
         if (isDEMLoaded) {
@@ -630,9 +630,8 @@ public class MainActivity extends AthenaActivity {
                     altCK42 = Math.round(altitudeDouble - CoordTranslator.fromCK42Alt(latCK42, lonCK42, 0.0d));
 
                     long[] GK_conversion_results = CoordTranslator.fromCK42toCK42_GK(latCK42, lonCK42);
-                    GK_zone = GK_conversion_results[0];
-                    GK_northing = GK_conversion_results[1];
-                    GK_easting = GK_conversion_results[2];
+                    GK_northing = GK_conversion_results[0];
+                    GK_easting = GK_conversion_results[1];
 
                     altitude = Math.round(result[3]);
                     if (!outputModeIsSlavic()) {
@@ -644,7 +643,7 @@ public class MainActivity extends AthenaActivity {
                     attribs += getString(R.string.drone_dist_to_target_msg) + " " + Math.round(distance) + "m\n";
                     if (!outputModeIsSlavic()) { // to avoid confusion with WGS84, no Google Maps link is provided when outputModeIsSlavic()
                         attribs += "<a href=\"https://maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "\">";
-                        attribs += "maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "</a>\n";
+                        attribs += "maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "</a>\n\n";
                     }
                 } catch (RequestedValueOOBException e) {
                     if (e.isAltitudeDataBad) {
@@ -710,7 +709,7 @@ public class MainActivity extends AthenaActivity {
                 if (outputMode == outputModes.CK42Geodetic) {
                     targetCoordString = "(CK-42) " + roundDouble(latCK42) + ", " + roundDouble(lonCK42) + " Alt: " + altCK42 + "m" + "<br>";
                 } else if (outputMode == outputModes.CK42GaussKrüger) {
-                    targetCoordString = "(CK-42) [Gauss-Krüger] " + getString(R.string.gk_zone_text) + " " + GK_zone + "<br>" + getString(R.string.gk_northing_text) + " " + GK_northing + "<br>" + getString(R.string.gk_easting_text) + " " + GK_easting + "<br>" + "Alt:" + " " + altCK42 + "m";
+                    targetCoordString = "(CK-42) [Gauss-Krüger] " + "<br>" + getString(R.string.gk_northing_text) + " " + GK_northing + "<br>" + getString(R.string.gk_easting_text) + " " + GK_easting + "<br>" + "Alt:" + " " + altCK42 + "m\n";
                 } else {
                     throw new RuntimeException("Program entered an inoperable state due to outputMode"); // this shouldn't ever happen
                 }

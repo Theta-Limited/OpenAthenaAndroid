@@ -60,9 +60,7 @@ public class CK42_Gauss_Krüger_Translator {
         double N = I+II* Math.pow(Lon-Lon0,2)+III* Math.pow(Lon-Lon0,4)+IIIA* Math.pow(Lon-Lon0,6);
         double E = E0+IV*(Lon-Lon0)+V* Math.pow(Lon-Lon0,3)+VI* Math.pow(Lon-Lon0,5);
 
-        E -= zone * 1e6; // subtract the zone number back out from the Easting reference
-
-        long[] outArr = new long[]{(long) zone, (long) N, (long) E};
+        long[] outArr = new long[]{(long) N, (long) E};
         return outArr;
     }
 
