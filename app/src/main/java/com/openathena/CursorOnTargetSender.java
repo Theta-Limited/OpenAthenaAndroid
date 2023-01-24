@@ -114,7 +114,7 @@ public class CursorOnTargetSender {
             serializer.startDocument(null, false);
             serializer.startTag("", "event");
             serializer.attribute("", "version", "2.0");
-            serializer.attribute("", "uid", "J-01334");
+            serializer.attribute("", "uid", uid);
             serializer.attribute("", "type", "a-u-O-A-4-A"); // target type unknown
             serializer.attribute("", "time", imageISO);
             serializer.attribute("", "start", nowAsISO);
