@@ -31,7 +31,10 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import android.util.Xml;
-import java.io.StringWriter;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 
 public class CursorOnTargetSender {
 
@@ -61,7 +64,7 @@ public class CursorOnTargetSender {
 
         String xmlString = buildCoT(uidString, imageISO, nowAsISO, fiveMinutesFromNowISO, Double.toString(lat), Double.toString(lon), ce, Double.toString(hae), le);
 
-        // @TODO send xmlString to udp://127.0.0.1:6969
+        deliverUDP(xmlString);
     }
 
     /**
@@ -142,4 +145,23 @@ public class CursorOnTargetSender {
         return header + xml;
     }
 
+    private static void deliverUDP(String xml) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String message = xml;
+                    InetAddress address = InetAddress.getByName("127.0.0.1");
+                    int port = 6969; // This is the real port DoD's ATAK uses. lulz
+
+                    DatagramSocket socket = new DatagramSocket();
+                    DatagramPacket packet = new DatagramPacket(message.getBytes(), message.length(), address, port);
+                    socket.send(packet);
+                    socket.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
 }
