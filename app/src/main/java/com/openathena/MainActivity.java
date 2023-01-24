@@ -709,7 +709,9 @@ public class MainActivity extends AthenaActivity {
                 if (outputMode == outputModes.CK42Geodetic) {
                     targetCoordString = "(CK-42) " + roundDouble(latCK42) + ", " + roundDouble(lonCK42) + " Alt: " + altCK42 + "m" + "<br>";
                 } else if (outputMode == outputModes.CK42GaussKrüger) {
-                    targetCoordString = "(CK-42) [Gauss-Krüger] " + "<br>" + getString(R.string.gk_northing_text) + " " + GK_northing + "<br>" + getString(R.string.gk_easting_text) + " " + GK_easting + "<br>" + "Alt:" + " " + altCK42 + "m\n";
+                    String northing_string = makeGKHumanReadable(GK_northing);
+                    String easting_string = makeGKHumanReadable(GK_easting);
+                    targetCoordString = "(CK-42) [Gauss-Krüger] " + "<br>" + getString(R.string.gk_northing_text) + " " + northing_string + "<br>" + getString(R.string.gk_easting_text) + " " + easting_string + "<br>" + "Alt:" + " " + altCK42 + "m\n";
                 } else {
                     throw new RuntimeException("Program entered an inoperable state due to outputMode"); // this shouldn't ever happen
                 }
@@ -733,6 +735,18 @@ public class MainActivity extends AthenaActivity {
             e.printStackTrace();
         }
     } // button click
+
+    private String makeGKHumanReadable(long GK) {
+        String human_readable;
+        if (GK >= 10000000) {
+            human_readable = Long.toString(GK);
+        } else { // If value is not at least 5 digits, pad with leading zeros
+            human_readable = Long.toString(GK + 10000000);
+            human_readable = human_readable.substring(1);
+        }
+        human_readable = human_readable.substring(0, human_readable.length() - 5) + "-" + human_readable.substring(human_readable.length() - 5);
+        return human_readable;
+    }
 
     private void printGeoTIFFBounds() {
         String attribs = "";
