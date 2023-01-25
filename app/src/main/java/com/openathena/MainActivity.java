@@ -605,6 +605,7 @@ public class MainActivity extends AthenaActivity {
             double distance;
             double latitude;
             double longitude;
+            double altitudeDouble;
             long altitude;
 
             double latCK42;
@@ -620,7 +621,7 @@ public class MainActivity extends AthenaActivity {
                     distance = result[0];
                     latitude = result[1];
                     longitude = result[2];
-                    double altitudeDouble = result[3];
+                    altitudeDouble = result[3];
                     latCK42 = CoordTranslator.toCK42Lat(latitude, longitude, altitudeDouble);
                     lonCK42 = CoordTranslator.toCK42Lon(latitude, longitude, altitudeDouble);
                     // Note: This altitude calculation assumes the SK42 and WGS84 ellipsoid have the exact same center
@@ -721,6 +722,9 @@ public class MainActivity extends AthenaActivity {
             // close file
             is.close();
             //
+            // send CoT message to udp://127.0.0.1:6969
+            //     e.g. for use with DoD's ATAK app
+            CursorOnTargetSender.sendCoT(latitude, longitude, altitudeDouble, theta, exif.getAttribute(ExifInterface.TAG_DATETIME));
         } catch (XMPException e) {
             Log.e(TAG, e.getMessage());
             appendText(getString(R.string.metadata_parse_error_msg) + e + "\n");
@@ -730,7 +734,7 @@ public class MainActivity extends AthenaActivity {
             appendText(e.getMessage() + "\n");
             e.getStackTrace();
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+//            Log.e(TAG, e.getMessage());
             appendText(getString(R.string.metadata_parse_error_msg)+e+"\n");
             e.printStackTrace();
         }
