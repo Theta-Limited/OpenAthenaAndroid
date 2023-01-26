@@ -724,7 +724,7 @@ public class MainActivity extends AthenaActivity {
             //
             // send CoT message to udp://127.0.0.1:6969
             //     e.g. for use with DoD's ATAK app
-            CursorOnTargetSender.sendCoT(latitude, longitude, altitudeDouble, theta, exif.getAttribute(ExifInterface.TAG_DATETIME));
+            CursorOnTargetSender.sendCoT(this, latitude, longitude, altitudeDouble, theta, exif.getAttribute(ExifInterface.TAG_DATETIME));
         } catch (XMPException e) {
             Log.e(TAG, e.getMessage());
             appendText(getString(R.string.metadata_parse_error_msg) + e + "\n");
