@@ -49,7 +49,7 @@ Then, press the "🧮" button to calculate the target location on the ground:
 
 When the "🧮" button is pressed, OpenAthena will automatically send a multicast packet to udp://239.2.3.1:6969 . Under default settings, this will cause a marker to show up in ATAK at the target location:
 
-<img width="586" alt="OpenAthena for Android triggers a waypoint to show in Android Team Awarness Kit at the calculated location" src="ATAK_OpenAthena_CoT_Demo_landscape.png">
+<img width="586" alt="OpenAthena for Android triggers a waypoint to show in Android Team Awarness Kit at the calculated location" src="./assets/ATAK_OpenAthena_CoT_Demo_landscape.png">
 
 Change the marker to its appropriate type (friend, suspect, hostile) then send the target to other networked users.
 
