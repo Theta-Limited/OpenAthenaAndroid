@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ContentResolver;
@@ -178,7 +179,7 @@ public class MainActivity extends AthenaActivity {
         // append
 
         clearText();
-        appendLog("OpenAthena™ for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\n GPL-3.0, some rights reserved\n");
+//        appendLog("OpenAthena™ for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\n GPL-3.0, some rights reserved\n");
 
         if (savedInstanceState != null) {
             CharSequence textRestore = savedInstanceState.getCharSequence("textview");
@@ -325,21 +326,22 @@ public class MainActivity extends AthenaActivity {
             iView.setImageResource(R.drawable.athena); // put up placeholder icon
         }
 
-        appendLog("Selected image "+imageUri+"\n");
-        appendText(getString(R.string.image_selected_msg));
+//        appendLog("Selected image "+imageUri+"\n");
+        appendText(getString(R.string.image_selected_msg) + "\n");
 
         isImageLoaded = true;
-        setButtonReady(buttonCalculate, true);
+        if (isDEMLoaded) {
+            setButtonReady(buttonCalculate, true);
+        }
     }
 
     private void demSelected(Uri uri) {
-        appendLog("Selected DEM " + uri + "\n");
+//        appendLog("Selected DEM " + uri + "\n");
 
-        isDEMLoaded = false;
+        //    isDEMLoaded = false;
         setButtonReady(buttonSelectDEM, false);
         setButtonReady(buttonCalculate, false);
 
-        Toast.makeText(MainActivity.this, getString(R.string.loading_geotiff_toast_msg), Toast.LENGTH_SHORT).show();
 
         progressBar.setVisibility(View.VISIBLE);
 
@@ -357,22 +359,8 @@ public class MainActivity extends AthenaActivity {
                             String successOutput = "GeoTIFF DEM ";
 //            successOutput += "\"" + uri.getLastPathSegment(); + "\" ";
                             successOutput += getString(R.string.dem_loaded_size_is_msg) + " " + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
-                            if (!outputModeIsSlavic()) {
-                                successOutput += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
-                                successOutput += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n\n";
-                            } else {
-                                try {
-                                    // Believe me, I don't like this either....
-                                    successOutput += roundDouble(CoordTranslator.toCK42Lat(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ lat (CK-42) ≤ " + roundDouble(CoordTranslator.toCK42Lat(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n";
-                                    successOutput += roundDouble(CoordTranslator.toCK42Lon(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ lon (CK-42) ≤ " + roundDouble(CoordTranslator.toCK42Lon(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n\n";
-                                } catch (RequestedValueOOBException e) { // This shouldn't happen, may be possible though if GeoTIFF file is very small
-                                    // revert to WGS84 if CK-42 conversion has failed
-                                    successOutput += getString(R.string.wgs84_ck42_conversion_fail_warning);
-                                    successOutput += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
-                                    successOutput += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n\n";
-                                }
-                            }
                             appendText(successOutput);
+                            printGeoTIFFBounds();
                             isDEMLoaded = true;
                             setButtonReady(buttonSelectImage, true);
                             if (isImageLoaded) {
@@ -421,16 +409,18 @@ public class MainActivity extends AthenaActivity {
                     setButtonReady(buttonSelectDEM, true);
                 }
             } catch (Exception e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
                 return e;
             }
         }
         demUri = Uri.fromFile(fileInCache);
+
+//        // GeoTIFF is loading
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Toast.makeText(MainActivity.this, getString(R.string.loading_geotiff_toast_msg), Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
         try {
             GeoTIFFParser parser = new GeoTIFFParser(fileInCache);
@@ -442,6 +432,13 @@ public class MainActivity extends AthenaActivity {
             e.printStackTrace();
             return new Exception(failureOutput + "\n");
         } catch (TiffException e) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(MainActivity.this, "ERROR: wrong filetype. Please select a GeoTIFF file ending in \".tif\"", Toast.LENGTH_LONG).show();
+                }
+            });
             String failureOutput = getString(R.string.dem_load_error_tiffexception_msg);
             e.printStackTrace();
             return new Exception(failureOutput + "\n");
@@ -491,12 +488,12 @@ public class MainActivity extends AthenaActivity {
             return true;
         }
 
-        if (id == R.id.action_log) {
-            intent = new Intent(getApplicationContext(),ActivityLog.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
-            return true;
-        }
+//        if (id == R.id.action_log) {
+//            intent = new Intent(getApplicationContext(),ActivityLog.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//            startActivity(intent);
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -561,10 +558,10 @@ public class MainActivity extends AthenaActivity {
         textViewTargetCoord.setText("");
 
         appendText(getString(R.string.calculating_target_msg));
-        appendLog("Going to start calculation\n");
+//        appendLog("Going to start calculation\n");
 
         if (imageUri == null) {
-            appendLog("ERROR: Cannot calculate \uD83D\uDEAB\uD83E\uDDEE; no image \uD83D\uDEAB\uD83D\uDDBC selected\n");
+//            appendLog("ERROR: Cannot calculate \uD83D\uDEAB\uD83E\uDDEE; no image \uD83D\uDEAB\uD83D\uDDBC selected\n");
             appendText(getString(R.string.no_image_selected_error_msg));
             return;
         }
@@ -608,6 +605,7 @@ public class MainActivity extends AthenaActivity {
             double distance;
             double latitude;
             double longitude;
+            double altitudeDouble;
             long altitude;
 
             double latCK42;
@@ -623,7 +621,7 @@ public class MainActivity extends AthenaActivity {
                     distance = result[0];
                     latitude = result[1];
                     longitude = result[2];
-                    double altitudeDouble = result[3];
+                    altitudeDouble = result[3];
                     latCK42 = CoordTranslator.toCK42Lat(latitude, longitude, altitudeDouble);
                     lonCK42 = CoordTranslator.toCK42Lon(latitude, longitude, altitudeDouble);
                     // Note: This altitude calculation assumes the SK42 and WGS84 ellipsoid have the exact same center
@@ -633,9 +631,8 @@ public class MainActivity extends AthenaActivity {
                     altCK42 = Math.round(altitudeDouble - CoordTranslator.fromCK42Alt(latCK42, lonCK42, 0.0d));
 
                     long[] GK_conversion_results = CoordTranslator.fromCK42toCK42_GK(latCK42, lonCK42);
-                    GK_zone = GK_conversion_results[0];
-                    GK_northing = GK_conversion_results[1];
-                    GK_easting = GK_conversion_results[2];
+                    GK_northing = GK_conversion_results[0];
+                    GK_easting = GK_conversion_results[1];
 
                     altitude = Math.round(result[3]);
                     if (!outputModeIsSlavic()) {
@@ -647,7 +644,7 @@ public class MainActivity extends AthenaActivity {
                     attribs += getString(R.string.drone_dist_to_target_msg) + " " + Math.round(distance) + "m\n";
                     if (!outputModeIsSlavic()) { // to avoid confusion with WGS84, no Google Maps link is provided when outputModeIsSlavic()
                         attribs += "<a href=\"https://maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "\">";
-                        attribs += "maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "</a>\n";
+                        attribs += "maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "</a>\n\n";
                     }
                 } catch (RequestedValueOOBException e) {
                     if (e.isAltitudeDataBad) {
@@ -664,21 +661,8 @@ public class MainActivity extends AthenaActivity {
                         }
                         attribs += getString(R.string.geotiff_coverage_reminder);
                         attribs += getString(R.string.geotiff_coverage_precedent_message);
-                        if (!outputModeIsSlavic()) {
-                            attribs += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
-                            attribs += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n\n";
-                        } else {
-                            try {
-                                // Believe me, I don't like this either....
-                                attribs += roundDouble(CoordTranslator.toCK42Lat(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ lat (CK-42) ≤ " + roundDouble(CoordTranslator.toCK42Lat(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n";
-                                attribs += roundDouble(CoordTranslator.toCK42Lon(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ lon (CK-42) ≤ " + roundDouble(CoordTranslator.toCK42Lon(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n";
-                            } catch (RequestedValueOOBException e_OOB) { // This shouldn't happen, may be possible though if GeoTIFF file is very small
-                                // revert to WGS84 if CK-42 conversion has failed
-                                attribs += getString(R.string.wgs84_ck42_conversion_fail_warning);
-                                attribs += roundDouble(theParser.getMinLat()) + " ≤ lat ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
-                                attribs += roundDouble(theParser.getMinLon()) + " ≤ lon ≤ " + roundDouble(theParser.getMaxLon()) + "\n\n";
-                            }                        }
                         appendText(attribs);
+                        printGeoTIFFBounds();
                         return;
                     }
                 }
@@ -726,7 +710,9 @@ public class MainActivity extends AthenaActivity {
                 if (outputMode == outputModes.CK42Geodetic) {
                     targetCoordString = "(CK-42) " + roundDouble(latCK42) + ", " + roundDouble(lonCK42) + " Alt: " + altCK42 + "m" + "<br>";
                 } else if (outputMode == outputModes.CK42GaussKrüger) {
-                    targetCoordString = "(CK-42) [Gauss-Krüger] " + getString(R.string.gk_zone_text) + " " + GK_zone + "<br>" + getString(R.string.gk_northing_text) + " " + GK_northing + "<br>" + getString(R.string.gk_easting_text) + " " + GK_easting + "<br>" + "Alt:" + " " + altCK42 + "m";
+                    String northing_string = makeGKHumanReadable(GK_northing);
+                    String easting_string = makeGKHumanReadable(GK_easting);
+                    targetCoordString = "(CK-42) [Gauss-Krüger] " + "<br>" + getString(R.string.gk_northing_text) + " " + northing_string + "<br>" + getString(R.string.gk_easting_text) + " " + easting_string + "<br>" + "Alt:" + " " + altCK42 + "m\n";
                 } else {
                     throw new RuntimeException("Program entered an inoperable state due to outputMode"); // this shouldn't ever happen
                 }
@@ -736,6 +722,9 @@ public class MainActivity extends AthenaActivity {
             // close file
             is.close();
             //
+            // send CoT message to udp://127.0.0.1:6969
+            //     e.g. for use with DoD's ATAK app
+            CursorOnTargetSender.sendCoT(this, latitude, longitude, altitudeDouble, theta, exif.getAttribute(ExifInterface.TAG_DATETIME));
         } catch (XMPException e) {
             Log.e(TAG, e.getMessage());
             appendText(getString(R.string.metadata_parse_error_msg) + e + "\n");
@@ -745,11 +734,43 @@ public class MainActivity extends AthenaActivity {
             appendText(e.getMessage() + "\n");
             e.getStackTrace();
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+//            Log.e(TAG, e.getMessage());
             appendText(getString(R.string.metadata_parse_error_msg)+e+"\n");
             e.printStackTrace();
         }
     } // button click
+
+    private String makeGKHumanReadable(long GK) {
+        String human_readable;
+        if (GK >= 10000000) {
+            human_readable = Long.toString(GK);
+        } else { // If value is not at least 5 digits, pad with leading zeros
+            human_readable = Long.toString(GK + 10000000);
+            human_readable = human_readable.substring(1);
+        }
+        human_readable = human_readable.substring(0, human_readable.length() - 5) + "-" + human_readable.substring(human_readable.length() - 5);
+        return human_readable;
+    }
+
+    private void printGeoTIFFBounds() {
+        String attribs = "";
+        if (!outputModeIsSlavic()) {
+            attribs += roundDouble(theParser.getMinLat()) + " ≤ " + getString(R.string.latitude_label_short) + " ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
+            attribs += roundDouble(theParser.getMinLon()) + " ≤ " + getString(R.string.longitude_label_short) + " ≤ " + roundDouble(theParser.getMaxLon()) + "\n\n";
+        } else {
+            try {
+                // Believe me, I don't like this either....
+                attribs += roundDouble(CoordTranslator.toCK42Lat(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ " + getString(R.string.latitude_label_short) + " " + "(CK-42)" + " ≤ " + roundDouble(CoordTranslator.toCK42Lat(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n";
+                attribs += roundDouble(CoordTranslator.toCK42Lon(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ " + getString(R.string.longitude_label_short) + " " + "(CK-42)" + " ≤ " + roundDouble(CoordTranslator.toCK42Lon(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n\n";
+            } catch (RequestedValueOOBException e_OOB) { // This shouldn't happen, may be possible though if GeoTIFF file is very small
+                // revert to WGS84 if CK-42 conversion has failed
+                attribs += getString(R.string.wgs84_ck42_conversion_fail_warning);
+                attribs += roundDouble(theParser.getMinLat()) + " ≤ " + getString(R.string.latitude_label_short) + " ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
+                attribs += roundDouble(theParser.getMinLon()) + " ≤ " + getString(R.string.longitude_label_short) + " ≤ " + roundDouble(theParser.getMaxLon()) + "\n\n";
+            }
+        }
+        appendText(attribs);
+    }
 
     private double[] getMetadataValues(ExifInterface exif) throws XMPException, MissingDataException {
         if (exif == null) {
@@ -982,7 +1003,7 @@ public class MainActivity extends AthenaActivity {
 
         requestExternStorage();
 
-        appendLog("Going to start selecting image\n");
+//        appendLog("Going to start selecting image\n");
         //appendText("selectImageClick started\n");
 
         //Intent i = new Intent();
@@ -997,13 +1018,13 @@ public class MainActivity extends AthenaActivity {
         // StartActivityForResult(Intent.createChooser(i, "Select Picture"), SELECT_PICTURE);
 
         //appendText("Chooser started\n");
-        appendLog("Chooser started\n");
+//        appendLog("Chooser started\n");
     }
 
     public void selectDEM(View view)
     {
         Log.d(TAG,"selectDEM started");
-        appendLog("Going to start selecting GeoTIFF\n");
+//        appendLog("Going to start selecting GeoTIFF\n");
 
         Log.d(TAG,"READ_EXTERNAL_STORAGE: " + Integer.toString(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)));
 

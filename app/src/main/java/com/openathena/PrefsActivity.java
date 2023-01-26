@@ -120,12 +120,12 @@ public class PrefsActivity extends AthenaActivity {
             return true;
         }
 
-        if (id == R.id.action_log) {
-            intent = new Intent(getApplicationContext(),ActivityLog.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
-            return true;
-        }
+//        if (id == R.id.action_log) {
+//            intent = new Intent(getApplicationContext(),ActivityLog.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//            startActivity(intent);
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }

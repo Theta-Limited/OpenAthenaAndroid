@@ -18,9 +18,4 @@
         android:orderInCategory="100"
         app:showAsAction="never" />
 
-    <item android:id="@+id/action_log"
-        android:title="Log"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
-
 </menu>
