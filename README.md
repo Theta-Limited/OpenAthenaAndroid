@@ -12,6 +12,8 @@ OpenAthena™ allows consumer and professional drones to spot precise geodetic l
 
 # Operation Guide
 
+<img width="586" alt="OpenAthena Android splash screen demo" src="./assets/App_Open_Demo_landscape.png">
+
 ## Obtain a GeoTIFF Digital Elevation Model:
 
 Use of this app requires loading a GeoTIFF Digital Elevation Model (DEM) file, stored as a GeoTIFF ".tif" file.
@@ -42,6 +44,14 @@ Then, press the "🧮" button to calculate the target location on the ground:
 
 <img width="586" alt="OpenAthena™ Android Target Calculation demo using cobb.tif and DJI_0419.JPG, output mode WGS84" src="./assets/DJI_0419_Target_Res_Demo_landscape.png">
 
+
+## [ATAK](https://en.wikipedia.org/wiki/Android_Team_Awareness_Kit) Cursor on Target
+
+When the "🧮" button is pressed, OpenAthena will automatically send a multicast packet to udp://239.2.3.1:6969 . Under default settings, this will cause a marker to show up in ATAK at the target location:
+
+<img width="586" alt="OpenAthena for Android triggers a waypoint to show in Android Team Awarness Kit at the calculated location" src="./assets/ATAK_OpenAthena_CoT_Demo_landscape.png">
+
+Change the marker to its appropriate type (friend, suspect, hostile) then send the target to other networked users.
 
 # Application Settings (optional) ⚙:
 
