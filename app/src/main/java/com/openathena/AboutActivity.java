@@ -110,12 +110,12 @@ public class AboutActivity extends AppCompatActivity {
             return true;
         }
 
-        if (id == R.id.action_log) {
-            intent = new Intent(getApplicationContext(),ActivityLog.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
-            return true;
-        }
+//        if (id == R.id.action_log) {
+//            intent = new Intent(getApplicationContext(),ActivityLog.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//            startActivity(intent);
+//            return true;
+//        }
 
         // don't do anything if about is selected as we are already there
 

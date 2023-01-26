@@ -179,7 +179,7 @@ public class MainActivity extends AthenaActivity {
         // append
 
         clearText();
-        appendLog("OpenAthena™ for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\n GPL-3.0, some rights reserved\n");
+//        appendLog("OpenAthena™ for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\n GPL-3.0, some rights reserved\n");
 
         if (savedInstanceState != null) {
             CharSequence textRestore = savedInstanceState.getCharSequence("textview");
@@ -326,7 +326,7 @@ public class MainActivity extends AthenaActivity {
             iView.setImageResource(R.drawable.athena); // put up placeholder icon
         }
 
-        appendLog("Selected image "+imageUri+"\n");
+//        appendLog("Selected image "+imageUri+"\n");
         appendText(getString(R.string.image_selected_msg) + "\n");
 
         isImageLoaded = true;
@@ -336,7 +336,7 @@ public class MainActivity extends AthenaActivity {
     }
 
     private void demSelected(Uri uri) {
-        appendLog("Selected DEM " + uri + "\n");
+//        appendLog("Selected DEM " + uri + "\n");
 
         //    isDEMLoaded = false;
         setButtonReady(buttonSelectDEM, false);
@@ -488,12 +488,12 @@ public class MainActivity extends AthenaActivity {
             return true;
         }
 
-        if (id == R.id.action_log) {
-            intent = new Intent(getApplicationContext(),ActivityLog.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
-            return true;
-        }
+//        if (id == R.id.action_log) {
+//            intent = new Intent(getApplicationContext(),ActivityLog.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//            startActivity(intent);
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -558,10 +558,10 @@ public class MainActivity extends AthenaActivity {
         textViewTargetCoord.setText("");
 
         appendText(getString(R.string.calculating_target_msg));
-        appendLog("Going to start calculation\n");
+//        appendLog("Going to start calculation\n");
 
         if (imageUri == null) {
-            appendLog("ERROR: Cannot calculate \uD83D\uDEAB\uD83E\uDDEE; no image \uD83D\uDEAB\uD83D\uDDBC selected\n");
+//            appendLog("ERROR: Cannot calculate \uD83D\uDEAB\uD83E\uDDEE; no image \uD83D\uDEAB\uD83D\uDDBC selected\n");
             appendText(getString(R.string.no_image_selected_error_msg));
             return;
         }
@@ -1003,7 +1003,7 @@ public class MainActivity extends AthenaActivity {
 
         requestExternStorage();
 
-        appendLog("Going to start selecting image\n");
+//        appendLog("Going to start selecting image\n");
         //appendText("selectImageClick started\n");
 
         //Intent i = new Intent();
@@ -1018,13 +1018,13 @@ public class MainActivity extends AthenaActivity {
         // StartActivityForResult(Intent.createChooser(i, "Select Picture"), SELECT_PICTURE);
 
         //appendText("Chooser started\n");
-        appendLog("Chooser started\n");
+//        appendLog("Chooser started\n");
     }
 
     public void selectDEM(View view)
     {
         Log.d(TAG,"selectDEM started");
-        appendLog("Going to start selecting GeoTIFF\n");
+//        appendLog("Going to start selecting GeoTIFF\n");
 
         Log.d(TAG,"READ_EXTERNAL_STORAGE: " + Integer.toString(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)));
 
