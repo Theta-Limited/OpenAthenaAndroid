@@ -72,7 +72,6 @@ import mil.nga.tiff.util.TiffException;
 import mil.nga.mgrs.*;
 import mil.nga.grid.features.Point;
 
-
 public class MainActivity extends AthenaActivity {
     public static String TAG = MainActivity.class.getSimpleName();
     public final static String PREFS_NAME = "openathena.preferences";
@@ -95,6 +94,7 @@ public class MainActivity extends AthenaActivity {
     Uri demUri = null;
     boolean isDEMLoaded;
 
+    MetadataExtractor theMeta = null;
     GeoTIFFParser theParser = null;
     TargetGetter theTGetter = null;
 
@@ -154,6 +154,8 @@ public class MainActivity extends AthenaActivity {
         isImageLoaded = false;
         isDEMLoaded = false;
 
+        theMeta = new MetadataExtractor(this);
+
         // get our prefs that we have saved
 
         textView = (TextView)findViewById(R.id.textView);
@@ -190,12 +192,29 @@ public class MainActivity extends AthenaActivity {
             if (textViewTargetCoordRestore != null) {
                 textViewTargetCoord.setText(textViewTargetCoordRestore);
             }
+
             String storedUriString = savedInstanceState.getString("imageUri");
             if (storedUriString != null) {
                 imageUri = Uri.parse(storedUriString);
                 isImageLoaded = true;
-                iView.setImageURI(imageUri);
+                AssetFileDescriptor fileDescriptor = null;
+                try {
+                    fileDescriptor = getApplicationContext().getContentResolver().openAssetFileDescriptor(imageUri , "r");
+                } catch(FileNotFoundException e) {
+                    imageUri = null;
+                    isImageLoaded = false;
+                }
+                if (imageUri != null) {
+                    long filesize = fileDescriptor.getLength();
+                    if (filesize < 1024 * 1024 * 20) { // check if filesize below 20Mb
+                        iView.setImageURI(imageUri);
+                    }  else { // otherwise:
+                        Toast.makeText(MainActivity.this, getString(R.string.image_is_too_large_error_msg), Toast.LENGTH_SHORT).show();
+                        iView.setImageResource(R.drawable.athena); // put up placeholder icon
+                    }
+                }
             }
+
             String storedDEMUriString = savedInstanceState.getString("demUri");
             Log.d(TAG, "loaded demUri: " + storedDEMUriString);
             if (storedDEMUriString != null) {
@@ -245,49 +264,6 @@ public class MainActivity extends AthenaActivity {
             }
         });
     }
-
-//    // stolen from InterWebs
-//    // https://mobikul.com/pick-image-gallery-android/
-//    private String getPathFromURI(Uri uri)
-//    {
-//        String res = null;
-//        String[] proj = {MediaStore.Images.Media.DATA};
-//        Cursor cursor = getContentResolver().query(uri, proj, null, null, null);
-//        if (cursor.moveToFirst()) {
-//            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-//            res = cursor.getString(column_index);
-//        }
-//        cursor.close();
-//        return res;
-//    }
-
-//    // stolen from https://stackoverflow.com/questions/5568874/how-to-extract-the-file-name-from-uri-returned-from-intent-action-get-content
-//    // modified by rdk
-//    @SuppressLint("Range")
-//    private String getFileName(Uri uri) {
-//        String result = null;
-//        if (uri.getScheme().equals("content")) {
-//            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-//            try {
-//                if (cursor != null && cursor.moveToFirst()) {
-//                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-//                }
-//            } finally {
-//                cursor.close();
-//            }
-//            appendText("getFileName: using cursor thingys\n");
-//        }
-//        if (result == null) {
-//            appendText("getFileName: using uri path\n");
-//            result = uri.getPath();
-//
-//            //int cut = result.lastIndexOf('/');
-//            //if (cut != -1) {
-//              //  result = result.substring(cut + 1);
-//            //}
-//        }
-//        return result;
-//    }
 
     // back from image selection dialog; handle it
     private void imageSelected(Uri uri)
@@ -414,14 +390,6 @@ public class MainActivity extends AthenaActivity {
         }
         demUri = Uri.fromFile(fileInCache);
 
-//        // GeoTIFF is loading
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                Toast.makeText(MainActivity.this, getString(R.string.loading_geotiff_toast_msg), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
         try {
             GeoTIFFParser parser = new GeoTIFFParser(fileInCache);
             theParser = parser;
@@ -436,7 +404,7 @@ public class MainActivity extends AthenaActivity {
                 @Override
                 public void run() {
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(MainActivity.this, "ERROR: wrong filetype. Please select a GeoTIFF file ending in \".tif\"", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, R.string.wrong_filetype_toast_error_msg, Toast.LENGTH_LONG).show();
                 }
             });
             String failureOutput = getString(R.string.dem_load_error_tiffexception_msg);
@@ -448,7 +416,6 @@ public class MainActivity extends AthenaActivity {
     }
 
     private boolean isCacheUri(Uri uri) {
-
         File cacheDir = getCacheDir();
         String cachePath = cacheDir.getAbsolutePath();
         String uriPath = uri.getPath();
@@ -488,13 +455,6 @@ public class MainActivity extends AthenaActivity {
             return true;
         }
 
-//        if (id == R.id.action_log) {
-//            intent = new Intent(getApplicationContext(),ActivityLog.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//            startActivity(intent);
-//            return true;
-//        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -513,9 +473,9 @@ public class MainActivity extends AthenaActivity {
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(MainActivity.this, "Permissions Granted", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, getString(R.string.permissions_toast_success_msg), Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(MainActivity.this, "Failed to Obtain Necessary Permissions", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, getString(R.string.permissions_toast_error_msg), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -541,12 +501,6 @@ public class MainActivity extends AthenaActivity {
         super.onDestroy();
 
     } // onDestroy()
-
-    // http://android-er.blogspot.com/2009/12/read-exif-information-in-jpeg-file.html
-    private String getTagString(String tag, ExifInterface exif)
-    {
-        return(tag + " : " + exif.getAttribute(tag) + "\n");
-    }
 
     public void calculateImage(View view)
     {
@@ -583,18 +537,18 @@ public class MainActivity extends AthenaActivity {
             Log.i(TAG, "parsed xmpMeta\n");
 
             appendText(getString(R.string.opened_exif_for_image_msg));
-            attribs += getTagString(ExifInterface.TAG_DATETIME, exif);
-            attribs += getTagString(ExifInterface.TAG_MAKE, exif);
-            attribs += getTagString(ExifInterface.TAG_MODEL, exif);
+            attribs += theMeta.getTagString(ExifInterface.TAG_DATETIME, exif);
+            attribs += theMeta.getTagString(ExifInterface.TAG_MAKE, exif);
+            attribs += theMeta.getTagString(ExifInterface.TAG_MODEL, exif);
 
             if (!outputModeIsSlavic()) {
-                attribs += "Latitude : " + roundDouble(y) + "\n";
-                attribs += "Longitude : " + roundDouble(x) + "\n";
-                attribs += "Altitude : " + Math.round(z) + "\n";
+                attribs += getString(R.string.latitude_label_long) + " "+ roundDouble(y) + "\n";
+                attribs += getString(R.string.longitude_label_long) + " " + roundDouble(x) + "\n";
+                attribs += getString(R.string.altitude_label_long) + " " + Math.round(z) + "\n";
             } else {
-                attribs += "Latitude (WGS84): " + roundDouble(y) + "\n";
-                attribs += "Longitude (WGS84): " + roundDouble(x) + "\n";
-                attribs += "Altitude (WGS84): " + Math.round(z) + "\n";
+                attribs += getString(R.string.latitude_wgs84_label_long) + " " + roundDouble(y) + "\n";
+                attribs += getString(R.string.longitude_wgs84_label_long) + " " + roundDouble(x) + "\n";
+                attribs += getString(R.string.altiude_wgs84_label_long) + " " + Math.round(z) + "\n";
             }
 
             attribs += getString(R.string.attribute_text_drone_azimuth) + " " + roundDouble(azimuth) + "\n";
@@ -705,14 +659,14 @@ public class MainActivity extends AthenaActivity {
                     targetCoordString += roundDouble(latitude) + ", " + roundDouble(longitude);
                 }
                 targetCoordString += "</a> "; // end href tag
-                targetCoordString += "Alt: " + altitude + "m";
+                targetCoordString += getString(R.string.altitude_label_short) + " " + altitude + "m";
             } else { // to avoid confusion with WGS84, no Google Maps link is provided when outputModeIsSlavic()
                 if (outputMode == outputModes.CK42Geodetic) {
                     targetCoordString = "(CK-42) " + roundDouble(latCK42) + ", " + roundDouble(lonCK42) + " Alt: " + altCK42 + "m" + "<br>";
                 } else if (outputMode == outputModes.CK42GaussKrüger) {
                     String northing_string = makeGKHumanReadable(GK_northing);
                     String easting_string = makeGKHumanReadable(GK_easting);
-                    targetCoordString = "(CK-42) [Gauss-Krüger] " + "<br>" + getString(R.string.gk_northing_text) + " " + northing_string + "<br>" + getString(R.string.gk_easting_text) + " " + easting_string + "<br>" + "Alt:" + " " + altCK42 + "m\n";
+                    targetCoordString = "(CK-42) [Gauss-Krüger] " + "<br>" + getString(R.string.gk_northing_text) + " " + northing_string + "<br>" + getString(R.string.gk_easting_text) + " " + easting_string + "<br>" + getString(R.string.altitude_label_short) + " " + altCK42 + "m\n";
                 } else {
                     throw new RuntimeException("Program entered an inoperable state due to outputMode"); // this shouldn't ever happen
                 }
@@ -722,7 +676,7 @@ public class MainActivity extends AthenaActivity {
             // close file
             is.close();
             //
-            // send CoT message to udp://127.0.0.1:6969
+            // send CoT message to udp://239.2.3.1:6969
             //     e.g. for use with DoD's ATAK app
             CursorOnTargetSender.sendCoT(this, latitude, longitude, altitudeDouble, theta, exif.getAttribute(ExifInterface.TAG_DATETIME));
         } catch (XMPException e) {
@@ -735,7 +689,7 @@ public class MainActivity extends AthenaActivity {
             e.getStackTrace();
         } catch (Exception e) {
 //            Log.e(TAG, e.getMessage());
-            appendText(getString(R.string.metadata_parse_error_msg)+e+"\n");
+            appendText(getString(R.string.metadata_parse_error_msg)+e+"\n\n");
             e.printStackTrace();
         }
     } // button click
@@ -792,9 +746,7 @@ public class MainActivity extends AthenaActivity {
                 return handleSKYDIO(exif);
                 //break;
             case "AUTEL ROBOTICS":
-                if (dangerousAutelAwarenessCount < 3) {
-                    displayAutelAlert();
-                }
+                displayAutelAlert();
                 return handleAUTEL(exif);
                 //break;
             case "PARROT":
@@ -802,21 +754,21 @@ public class MainActivity extends AthenaActivity {
                     return handlePARROT(exif);
                 } else {
                     Log.e(TAG, "ERROR: Parrot model " + model + " not usable at this time");
-                    throw new XMPException("ERROR: Parrot model " + model + " not usable at this time", XMPError.BADVALUE);
+                    throw new XMPException(getString(R.string.parrot_model_prefix_error_msg) + model + getString(R.string.not_usable_at_this_time_error_msg), XMPError.BADVALUE);
                 }
                 //break;
             default:
-                Log.e(TAG, "ERROR: make " + make + " not usable at this time");
-                throw new XMPException("ERROR: make " + make + " not usable at this time", XMPError.BADXMP);
+                Log.e(TAG, getString(R.string.make_prefix_error_msg) + " " + make + " " + getString(R.string.not_usable_at_this_time_error_msg));
+                throw new XMPException(getString(R.string.make_prefix_error_msg) + " " + make + " " + getString(R.string.not_usable_at_this_time_error_msg), XMPError.BADXMP);
         }
     }
 
     private double[] handleDJI(ExifInterface exif) throws XMPException, MissingDataException{
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
         if (xmp_str == null) {
-            throw new XMPException("ERROR: XMP tag not found within EXIF", XMPError.BADXMP);
+            throw new MissingDataException(getString(R.string.xmp_missing_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
         } if (xmp_str.trim().equals("")) {
-            throw new XMPException("ERROR: XMP tag found but was empty!", XMPError.BADVALUE);
+            throw new MissingDataException(getString(R.string.xmp_empty_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
         }
         Log.i(TAG, "xmp_str for Make DJI: " + xmp_str);
         XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
@@ -872,23 +824,49 @@ public class MainActivity extends AthenaActivity {
         return outArr;
     }
 
-    private double[] handleSKYDIO(ExifInterface exif) throws XMPException {
+    private double[] handleSKYDIO(ExifInterface exif) throws XMPException, MissingDataException {
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
         if (xmp_str == null) {
-            throw new XMPException("ERROR: XMP tag not found within EXIF", XMPError.BADXMP);
+            throw new MissingDataException(getString(R.string.xmp_missing_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
         } if (xmp_str.trim().equals("")) {
-            throw new XMPException("ERROR: XMP tag found but was empty!", XMPError.BADVALUE);
+            throw new MissingDataException(getString(R.string.xmp_empty_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
         }
         Log.i(TAG, "xmp_str for Make SKYDIO: " + xmp_str);
         XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
         String schemaNS = "https://www.skydio.com/drone-skydio/1.0/";
-        double y = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Latitude"));
-        double x = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Longitude"));
-        double z = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "AbsoluteAltitude"));
 
-        double azimuth = Double.parseDouble(xmpMeta.getStructField(schemaNS, "CameraOrientationNED", schemaNS, "Yaw").getValue());
-        double theta = Double.parseDouble(xmpMeta.getStructField(schemaNS, "CameraOrientationNED", schemaNS, "Pitch").getValue());
-        theta = Math.abs(theta);
+        double y; double x; double z; double azimuth; double theta;
+
+        try {
+            y = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Latitude"));
+        } catch (NumberFormatException nfe) {
+            throw new MissingDataException(getString(R.string.missing_data_exception_latitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.LATITUDE);
+        }
+
+        try {
+            x = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Longitude"));
+        } catch (NumberFormatException nfe) {
+            throw new MissingDataException(getString(R.string.missing_data_exception_longitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.LONGITUDE);
+        }
+
+        try {
+            z = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "AbsoluteAltitude"));
+        } catch (NumberFormatException nfe) {
+            throw new MissingDataException(getString(R.string.missing_data_exception_altitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALTITUDE);
+        }
+
+        try {
+            azimuth = Double.parseDouble(xmpMeta.getStructField(schemaNS, "CameraOrientationNED", schemaNS, "Yaw").getValue());
+        } catch (NumberFormatException nfe) {
+            throw new MissingDataException(getString(R.string.missing_data_exception_altitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.AZIMUTH);
+        }
+
+        try {
+            theta = Double.parseDouble(xmpMeta.getStructField(schemaNS, "CameraOrientationNED", schemaNS, "Pitch").getValue());
+            theta = Math.abs(theta);
+        } catch (NumberFormatException nfe) {
+            throw new MissingDataException(getString(R.string.missing_data_exception_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
+        }
 
         double[] outArr = new double[]{y, x, z, azimuth, theta};
         return outArr;
@@ -897,9 +875,9 @@ public class MainActivity extends AthenaActivity {
     private double[] handleAUTEL(ExifInterface exif) throws XMPException, MissingDataException{
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
         if (xmp_str == null) {
-            throw new XMPException("ERROR: XMP tag not found within EXIF", XMPError.BADXMP);
+            throw new MissingDataException(getString(R.string.xmp_missing_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
         } if (xmp_str.trim().equals("")) {
-            throw new XMPException("ERROR: XMP tag found but was empty!", XMPError.BADVALUE);
+            throw new MissingDataException(getString(R.string.xmp_empty_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
         }
         Log.i(TAG, "xmp_str for Make AUTEL: " + xmp_str);
         XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
@@ -925,15 +903,24 @@ public class MainActivity extends AthenaActivity {
             // Newer metadata uses the same format and schemaNS as DJI
             return handleDJI(exif);
         } else {
-            Float[] yxz = exifGetYXZ(exif);
+            Float[] yxz = theMeta.exifGetYXZ(exif);
             y = yxz[0];
             x = yxz[1];
             z = yxz[2];
 
             String schemaNS = "http://pix4d.com/camera/1.0";
 
-            azimuth = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Yaw"));
-            theta = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Pitch"));
+            try {
+                azimuth = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Yaw"));
+            } catch (NumberFormatException nfe) {
+                throw new MissingDataException(getString(R.string.missing_data_exception_azimuth_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.AZIMUTH);
+            }
+
+            try {
+                theta = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Pitch"));
+            } catch (NumberFormatException nfe) {
+                throw new MissingDataException(getString(R.string.missing_data_exception_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
+            }
             // AUTEL old firmware Camera pitch 0 is down, 90 is forwards towards horizon
             // so, we use the complement of the angle instead
             // see: https://support.pix4d.com/hc/en-us/articles/202558969-Yaw-Pitch-Roll-and-Omega-Phi-Kappa-angles
@@ -943,41 +930,55 @@ public class MainActivity extends AthenaActivity {
         }
     }
 
-    private double[] handlePARROT(ExifInterface exif) throws XMPException {
+    private double[] handlePARROT(ExifInterface exif) throws XMPException, MissingDataException{
         double y;
         double x;
         double z;
+        double azimuth;
+        double theta;
 
-        Float[] yxz = exifGetYXZ(exif);
+        Float[] yxz = theMeta.exifGetYXZ(exif);
         y = yxz[0];
         x = yxz[1];
         z = yxz[2];
 
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
         if (xmp_str == null) {
-            throw new XMPException("ERROR: XMP tag not found within EXIF", XMPError.BADXMP);
+            throw new MissingDataException(getString(R.string.xmp_missing_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
         } if (xmp_str.trim().equals("")) {
-            throw new XMPException("ERROR: XMP tag found but was empty!", XMPError.BADVALUE);
+            throw new MissingDataException(getString(R.string.xmp_empty_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
         }
         Log.i(TAG, "xmp_str for Make PARROT: " + xmp_str);
         XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
 
         String schemaNS = "http://www.parrot.com/drone-parrot/1.0/";
 
-        double azimuth = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraYawDegree"));
-        double theta = Math.abs(Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraPitchDegree")));
+        try {
+            azimuth = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraYawDegree"));
+        } catch (NumberFormatException nfe) {
+            throw new MissingDataException(getString(R.string.missing_data_exception_azimuth_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.AZIMUTH);
+        }
+
+        try {
+            theta = Math.abs(Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraPitchDegree")));
+        } catch (NumberFormatException nfe) {
+            throw new MissingDataException(getString(R.string.missing_data_exception_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
+        }
+
         double[] outArr = new double[]{y, x, z, azimuth, theta};
         return outArr;
     }
 
-    private void displayAutelAlert() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setMessage(R.string.autel_accuracy_warning_msg);
-        builder.setPositiveButton(R.string.i_understand_this_risk, (DialogInterface.OnClickListener) (dialog, which) -> {
-            dangerousAutelAwarenessCount += 1;
-        });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+    public void displayAutelAlert() {
+        if (dangerousAutelAwarenessCount < 3) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setMessage(R.string.autel_accuracy_warning_msg);
+            builder.setPositiveButton(R.string.i_understand_this_risk, (DialogInterface.OnClickListener) (dialog, which) -> {
+                dangerousAutelAwarenessCount += 1;
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
     }
 
     public void copyTargetCoordText(View view) {
@@ -1046,49 +1047,6 @@ public class MainActivity extends AthenaActivity {
         }
     }
 
-    private Float[] exifGetYXZ(ExifInterface exif)
-    {
-        String latDir = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
-        latDir = latDir.toUpperCase();
-        String latRaw = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
-        String[] latArr = latRaw.split(",", 3);
-        String lonDir = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
-        lonDir = lonDir.toUpperCase();
-        String lonRaw = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
-        String[] lonArr = lonRaw.split(",", 3);
-        String alt = exif.getAttribute(ExifInterface.TAG_GPS_ALTITUDE);
-
-        float y = 0.0f;
-        y += rationalToFloat(latArr[0]);
-        y += rationalToFloat(latArr[1]) / 60.0f;
-        y += rationalToFloat(latArr[2]) / 3600.0f;
-        if (latDir.equals("S"))
-        {
-            y = y * -1.0f;
-        }
-
-        float x = 0.0f;
-        x += rationalToFloat(lonArr[0]);
-        x += rationalToFloat(lonArr[1]) / 60.0f;
-        x += rationalToFloat(lonArr[2]) / 3600.0f;
-        if (lonDir.equals("W"))
-        {
-            x = x * -1.0f;
-        }
-
-        float z = rationalToFloat(alt);
-
-        Float[] arrOut = {y, x, z};
-        return(arrOut);
-    }
-
-    private float rationalToFloat(String str)
-    {
-        String[] split = str.split("/", 2);
-        float numerator = Float.parseFloat(split[0]);
-        float denominator = Float.parseFloat(split[1]);
-        return numerator / denominator;
-    }
 
     private String roundDouble(double d) {
         DecimalFormat df = new DecimalFormat("#.######");
@@ -1114,11 +1072,11 @@ public class MainActivity extends AthenaActivity {
         runOnUiThread(new Runnable() {
            @Override
            public void run() {
-               String placeholderText = "OpenAthena™ for Android version "+versionName+"\n\n";
-               placeholderText += "Step 1: load a Digital Elevation Model (DEM) \u26F0\n";
-               placeholderText += "Step 2: load a Drone Image \uD83D\uDDBC\n";
-               placeholderText += "Step 3: press the \uD83E\uDDEE button to calculate\n";
-               placeholderText += "Step 4: obtain your target location below \uD83C\uDFAF\n\n";
+               String placeholderText = getString(R.string.openathena_for_android) +  getString(R.string.version_word) + versionName + "\n\n";
+               placeholderText += getString(R.string.step_1_load_a_DEM) + " \u26F0\n";
+               placeholderText += getString(R.string.step_2_load_drone_image) + " \uD83D\uDDBC\n";
+               placeholderText += getString(R.string.step_3_press_calculate) + " \uD83E\uDDEE\n";
+               placeholderText += getString(R.string.step_4_obtain_target) + " \uD83C\uDFAF\n\n";
                textView.setText(placeholderText);
            }
         });

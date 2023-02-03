@@ -11,7 +11,8 @@ public class MissingDataException extends Exception{
         LONGITUDE,
         ALTITUDE,
         AZIMUTH,
-        THETA
+        THETA,
+        ALL
     }
 
     public dataSources dataSource;
