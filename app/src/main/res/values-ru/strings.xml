@@ -1,0 +1,102 @@
+<resources>
+    <string name="app_name">OpenAthena™ для Android</string>
+
+    <string name="next">Следующий</string>
+    <string name="previous">Предыдущий</string>
+
+    <string name="action_prefs">Настройки</string>
+    <string name="action_settings">Настройки</string>
+
+    <string name="button_selectImage">🖼️</string>
+    <string name="button_calculate">🧮</string>
+    <string name="button_loadDEM">⛰️</string>
+
+    <string name="text_view_value">ChangeMe</string>
+    <string name="log_text_view_value">OpenAthena™ для Android. . .</string>
+    <string name="test_button_text">Рассчитать</string>
+    <string name="enter_host">Имя файла</string>
+
+    <string name="finish_button_text">возвращаться</string>
+
+    <string name="save_prefs_text">💾</string>
+    <string name="reset_prefs_text">Перезагрузить</string>
+
+    <string name="title_activity_log">Журнал OpenAthena™ для Android</string>
+    <string name="title_activity_prefs">Настройки OpenAthena™ для Android</string>
+    <string name="title_activity_about">Об OpenAthena™ для Android</string>
+
+    <string name="clear_button_text">Очистить журнал</string>
+    <string name="openathena_for_android">OpenAthena™ для Android</string>
+    <string name="GPL3Notice">GPL-3.0, некоторые права защищены</string>
+    <string name="AboutSnippet"><![CDATA[<br>OpenAthena™ для Android — это проект, который позволяет дронам определять точные геодезические координаты.<br>]]></string>
+    <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p>Проект поддерживается <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br>]]></string>
+    <string name="CallToActionSnippet"><![CDATA[View the project on GitHub</a><br> ]]></string>
+    <string name="bad_altitude_data_error_msg">ОШИБКА: неверные данные о высоте или местности. Это изображение непригодно для использования. 🖼🚫🎯</string>
+    <string name="target_found_at_msg">Цель обнаружена на</string>
+    <string name="drone_dist_to_target_msg">Расстояние дрона до цели:</string>
+    <string name="resolveTarget_oob_error_msg">ОШИБКА: вычисление цели выходит за пределы на</string>
+    <string name="geotiff_coverage_reminder">Пожалуйста, убедитесь, что ваш файл GeoTIFF DEM соответствует местоположению дрона!\n</string>
+    <string name="geotiff_coverage_precedent_message">Область вашего GeoTIFF⛰:\n</string>
+    <string name="geotiff_load_reminder_msg">Не удалось рассчитать цель. Пожалуйста, загрузите цифровую модель рельефа GeoTIFF \".tif\" с помощью кнопки ⛰\n</string>
+    <string name="metadata_parse_error_msg">Не удалось открыть файл изображения для расчета. Метаданные изображения дрона отсутствуют или непригодны для использования. Это фото с дрона? \n</string>
+    <string name="text_copied_to_clipboard_msg">Текст скопирован в буфер обмена 📋</string>
+    <string name="image_selected_msg">Изображение было выбрано 🖼 \n</string>
+    <string name="dem_loaded_size_is_msg">загружен ⛰. Размер</string>
+    <string name="dem_load_error_generic_msg">ОШИБКА: не удалось загрузить карту рельефа DEM,</string>
+    <string name="dem_load_error_tiffexception_msg">ОШИБКА: не удалось загрузить карту рельефа DEM, а не файл GeoTIFF \".tif\".\n</string>
+    <string name="calculating_target_msg">Расчет 🧮:\n</string>
+    <string name="no_image_selected_error_msg">ОШИБКА: Невозможно рассчитать 🚫🧮: изображение 🚫🖼 не выбрано\n</string>
+    <string name="opened_exif_for_image_msg">Открыт EXIF для изображения\n</string>
+    <string name="autel_accuracy_warning_msg">⚠️ ОПАСНО: дроны Autel имеют известные проблемы с точностью ⚠️</string>
+    <string name="i_understand_this_risk">Я понимаю этот риск</string>
+    <string name="image_is_too_large_error_msg">Изображение слишком большое для показа!</string>
+    <string name="loading_geotiff_toast_msg">Загрузка GeoTIFF. Пожалуйста, подождите...</string>
+    <string name="wgs84_standard_lat_lon">WGS84 (умолчанию)\n широта, долгота</string>
+    <string name="wgs84_tooltip">Широко используемый стандарт для описания широты и долготы местоположения на Земле.</string>
+    <string name="nato_mgrs_1m">НАТО MGRS 1м</string>
+    <string name="nato_mgrs_10m">НАТО MGRS  10м</string>
+    <string name="nato_mgrs_100m">НАТО MGRS 100м</string>
+    <string name="nato_mgrs_1m_tooltip">Стандарт военной системы координат НАТО. Описывает площадь Земли площадью 1 метр².</string>
+    <string name="nato_mgrs_10m_tooltip">Стандарт военной системы координат НАТО. Описывает площадь Земли площадью 10м².</string>
+    <string name="nato_mgrs_100m_tooltip">Стандарт военной системы координат НАТО. Описывает площадь Земли площадью 100м².</string>
+    <string name="ck_42_lat_lon">CK-42 Красовский\nLat, Lon</string>
+    <string name="ck_42_geodetic_tooltip">Альтернативная геодезическая система с использованием эллипсоида Красовского 1940 года. Обычно используется в странах бывшего Варшавского договора.</string>
+    <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
+    <string name="ck_42_gauss_kruger_tooltip">Альтернативная геодезическая система с использованием эллипсоида Красовского 1940 года. Продольная ЗОНА (с шагом 6°, возможные значения от 1 до 60 включительно), направление на север, определяемое значением X, и направление на восток, определяемое значением Y, описывают точное положение на Земле.</string>
+    <string name="target_output_mode_title">🎯 Режим вывода:</string>
+    <string name="gk_northing_text">на север:</string>
+    <string name="gk_easting_text">на восток</string>
+    <string name="gk_zone_text">ZONE:</string>
+    <string name="attribute_text_drone_azimuth">Азимут:</string>
+    <string name="attribute_text_drone_camera_pitch">Тангаж камеры:</string>
+    <string name="wgs84_ck42_conversion_fail_warning">⚠️ВНИМАНИЕ: значения указаны в WGS84, а не в CK-42 ⚠️\n</string>
+    <string name="missing_data_exception_latitude_error_msg">ОШИБКА: метаданные Локатора не найдены! Этот дрон несовместим с OpenAthena! 😭</string>
+    <string name="missing_data_exception_longitude_error_msg">ОШИБКА: метаданные долготы не найдены! Этот дрон несовместим с OpenAthena! 😭</string>
+    <string name="missing_data_exception_altitude_error_msg">ОШИБКА: метаданные высоты не найдены! Этот дрон несовместим с OpenAthena! 😭</string>
+    <string name="missing_data_exception_azimuth_error_msg">ОШИБКА: метаданные азимута не найдены! Этот дрон несовместим с OpenAthena! 😭</string>
+    <string name="missing_data_exception_theta_error_msg">ОШИБКА: метаданные тангаж камеры не найдены! Этот дрон несовместим с OpenAthena! 😭</string>
+    <string name="missing_data_exception_altitude_and_theta_error_msg">ОШИБКА: Метаданные тангаж камеры найдены, но недействительны! Этот дрон несовместим с OpenAthena! 😭</string>
+    <string name="latitude_label_short">широта</string>
+    <string name="longitude_label_short">долгота</string>
+    <string name="altitude_label_short">Высота:</string>
+    <string name="cot_remarks">Сгенерировано OpenAthena для Android на основе телеметрии sUAS</string>
+    <string name="version_word">версия</string>
+    <string name="step_1_load_a_DEM">Шаг 1: загрузите цифровую модель рельефа (DEM)</string>
+    <string name="step_2_load_drone_image">Шаг 2: загрузите образ дрона.</string>
+    <string name="step_3_press_calculate">Шаг 3: нажмите эту кнопку, чтобы рассчитать:</string>
+    <string name="step_4_obtain_target">Шаг 4: получите ваше целевое местоположение ниже</string>
+    <string name="wrong_filetype_toast_error_msg">ОШИБКА: неверный тип файла. Пожалуйста, выберите файл GeoTIFF, оканчивающийся на \".tif\"</string>
+    <string name="permissions_toast_success_msg">Разрешения предоставлены</string>
+    <string name="permissions_toast_error_msg">Не удалось получить необходимые разрешения</string>
+    <string name="latitude_label_long">Широта :</string>
+    <string name="longitude_label_long">Долгота :</string>
+    <string name="altitude_label_long">Высота:</string>
+    <string name="latitude_wgs84_label_long">Широта (WGS84):</string>
+    <string name="longitude_wgs84_label_long">Долгота (WGS84):</string>
+    <string name="altiude_wgs84_label_long">Высота (WGS84):</string>
+    <string name="make_prefix_error_msg">ОШИБКА: марка</string>
+    <string name="not_usable_at_this_time_error_msg">не используется в этой версии</string>
+    <string name="parrot_model_prefix_error_msg">ОШИБКА: модель Parrot</string>
+    <string name="xmp_missing_error_msg">ОШИБКА: Метаданные XMP не найдены!</string>
+    <string name="xmp_empty_error_msg">ОШИБКА: Метаданные XMP найдены, но пусты!</string>
+</resources>
