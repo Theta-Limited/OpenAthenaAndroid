@@ -1,0 +1,102 @@
+<resources>
+    <string name="app_name">OpenAthena™ для Android</string>
+
+    <string name="next">Далі:</string>
+    <string name="previous">Попередній</string>
+
+    <string name="action_prefs">Налаштування</string>
+    <string name="action_settings">Налаштування</string>
+
+    <string name="button_selectImage">🖼️</string>
+    <string name="button_calculate">🧮</string>
+    <string name="button_loadDEM">⛰️</string>
+
+    <string name="text_view_value">ChangeMe</string>
+    <string name="log_text_view_value">OpenAthena™ для Android. . .</string>
+    <string name="test_button_text">Обчислити</string>
+    <string name="enter_host">Ім\'я файлу</string>
+
+    <string name="finish_button_text">Повертайся</string>
+
+    <string name="save_prefs_text">💾</string>
+    <string name="reset_prefs_text">Скинути</string>
+
+    <string name="title_activity_log">Журнал OpenAthena™ для Android</string>
+    <string name="title_activity_prefs">Налаштування OpenAthena™ для Android</string>
+    <string name="title_activity_about">Про OpenAthena™ для Android</string>
+
+    <string name="clear_button_text">Очистити журнал</string>
+    <string name="openathena_for_android">OpenAthena™ для Android</string>
+    <string name="GPL3Notice">GPL-3.0, деякі права захищено</string>
+    <string name="AboutSnippet"><![CDATA[<br> OpenAthena™ для Android – це проект, який дозволяє споживачам і професійним дронам визначати точні геодезичні місця<br> ]]></string>
+    <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> Проект підтримується <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br> ]]></string>
+    <string name="CallToActionSnippet"><![CDATA[Переглянути проект на GitHub</a><br> ]]></string>
+    <string name="bad_altitude_data_error_msg">ПОМИЛКА: неправильні дані про висоту або місцевість. Це зображення непридатне для використання. 🖼🚫🎯</string>
+    <string name="target_found_at_msg">Ціль знайдено на</string>
+    <string name="drone_dist_to_target_msg">Відстань дрона до цілі:</string>
+    <string name="resolveTarget_oob_error_msg">ПОМИЛКА: обчислення вийшли за межі на</string>
+    <string name="geotiff_coverage_reminder">Будь ласка, переконайтеся, що ваш файл GeoTIFF DEM охоплює місцезнаходження дрона!\n</string>
+    <string name="geotiff_coverage_precedent_message">Область вашого GeoTIFF ⛰:\n</string>
+    <string name="geotiff_load_reminder_msg">Не вдалося обчислити ціль. Виберіть цифрову модель рельєфу GeoTIFF у форматі \".tif\", використовуючи кнопку ⛰\n</string>
+    <string name="metadata_parse_error_msg">Неможливо відкрити файл зображення для обчислення. Метадані зображення дрона 🖼 відсутні або непридатні для використання. Це зображення дрона? \n</string>
+    <string name="text_copied_to_clipboard_msg">Текст скопійовано в буфер обміну 📋</string>
+    <string name="image_selected_msg">Вибрано зображення 🖼 \n</string>
+    <string name="dem_loaded_size_is_msg">було завантажено ⛰. Розмір є</string>
+    <string name="dem_load_error_generic_msg">ПОМИЛКА: не вдалося завантажити модель рельєфу DEM,</string>
+    <string name="dem_load_error_tiffexception_msg">ПОМИЛКА: не вдалося завантажити DEM, це не файл GeoTIFF \".tif\".\n</string>
+    <string name="calculating_target_msg">Oбчислення 🧮:\n</string>
+    <string name="no_image_selected_error_msg">ПОМИЛКА: Неможливо обчислити 🚫🧮: зображення 🚫🖼 не вибрано\n</string>
+    <string name="opened_exif_for_image_msg">Відкрито EXIF для зображення\n</string>
+    <string name="autel_accuracy_warning_msg">⚠️ НЕБЕЗПЕКА: дрони Autel мають відомі проблеми з точністю ⚠️</string>
+    <string name="i_understand_this_risk">Я розумію цей ризик</string>
+    <string name="image_is_too_large_error_msg">Зображення завелике для показу!</string>
+    <string name="loading_geotiff_toast_msg">Завантаження GeoTIFF. Будь ласка, зачекайте...</string>
+    <string name="wgs84_standard_lat_lon">WGS84 (замовчуванням)\nширота, довгота</string>
+    <string name="wgs84_tooltip">Широко використовуваний стандарт для опису широти і довготи на Землі</string>
+    <string name="nato_mgrs_1m">HATO MGRS 1m</string>
+    <string name="nato_mgrs_10m">HATO MGRS 10m</string>
+    <string name="nato_mgrs_100m">HATO MGRS 100m</string>
+    <string name="nato_mgrs_1m_tooltip">Стандарт військової координатної системи НАТО. Описує площу Землі площею 1 метр²</string>
+    <string name="nato_mgrs_10m_tooltip">Стандарт військової координатної системи НАТО. Описує площу Землі площею 10 метрів²</string>
+    <string name="nato_mgrs_100m_tooltip">Стандарт військової координатної системи НАТО. Описує площу Землі площею 100 метрів²</string>
+    <string name="ck_42_lat_lon">CK-42 Красовский\nLat, Lon</string>
+    <string name="ck_42_geodetic_tooltip">Альтернативна геодезична система з використанням еліпсоїда Красовського 1940 року. Зазвичай використовується в країнах колишнього Варшавського договору</string>
+    <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
+    <string name="ck_42_gauss_kruger_tooltip">Альтернативна геодезична система з використанням еліпсоїда Красовського 1940 року. Поздовжня ЗОНА (із кроком 6°, можливі значення 1-60 включно), напрямок на північ, визначений значенням X, і схід, визначений значенням Y, описують точне положення на Землі</string>
+    <string name="target_output_mode_title">🎯 Режим виведення:</string>
+    <string name="gk_northing_text">На північ:</string>
+    <string name="gk_easting_text">Hа схід</string>
+    <string name="gk_zone_text">ZONE:</string>
+    <string name="attribute_text_drone_azimuth">Азимут:</string>
+    <string name="attribute_text_drone_camera_pitch">Тангаж камера:</string>
+    <string name="wgs84_ck42_conversion_fail_warning">⚠️УВАГА: значення наведено в WGS84, а не CK-42 ⚠\n</string>
+    <string name="missing_data_exception_latitude_error_msg">ПОМИЛКА: метадані Latitude не знайдено! Цей дрон несумісний з OpenAthena! 😭</string>
+    <string name="missing_data_exception_longitude_error_msg">ПОМИЛКА: метадані довготи не знайдено! Цей дрон несумісний з OpenAthena! 😭</string>
+    <string name="missing_data_exception_altitude_error_msg">ПОМИЛКА: метадані висоти не знайдено! Цей дрон несумісний з OpenAthena! 😭</string>
+    <string name="missing_data_exception_azimuth_error_msg">ПОМИЛКА: метадані азимута не знайдено! Цей дрон несумісний з OpenAthena! 😭</string>
+    <string name="missing_data_exception_theta_error_msg">ПОМИЛКА: метадані тангаж камери не знайдено! Цей дрон несумісний з OpenAthena! 😭</string>
+    <string name="missing_data_exception_altitude_and_theta_error_msg">ПОМИЛКА: Метадані тангаж камери знайдено, але вони недійсні! Цей дрон несумісний з OpenAthena! 😭</string>
+    <string name="latitude_label_short">широта</string>
+    <string name="longitude_label_short">довгота</string>
+    <string name="altitude_label_short">висота:</string>
+    <string name="cot_remarks">Згенеровано OpenAthena для Android із даних sUAS</string>
+    <string name="version_word">версія</string>
+    <string name="step_1_load_a_DEM">Крок 1: завантажте цифрову модель рельєфу (DEM)</string>
+    <string name="step_2_load_drone_image">Крок 2: завантажте зображення дрона</string>
+    <string name="step_3_press_calculate">Крок 3: натисніть цю кнопку, щоб обчислити:</string>
+    <string name="step_4_obtain_target">Крок 4: отримайте цільове розташування нижче</string>
+    <string name="wrong_filetype_toast_error_msg">ПОМИЛКА: неправильний тип файлу. Виберіть файл GeoTIFF із розширенням \".tif\"</string>
+    <string name="permissions_toast_success_msg">Дозволи надано</string>
+    <string name="permissions_toast_error_msg">Не вдалося отримати необхідні дозволи</string>
+    <string name="latitude_label_long">Широта:</string>
+    <string name="longitude_label_long">Довгота :</string>
+    <string name="altitude_label_long">Висота:</string>
+    <string name="latitude_wgs84_label_long">Широта (WGS84):</string>
+    <string name="longitude_wgs84_label_long">Довгота (WGS84):</string>
+    <string name="altiude_wgs84_label_long">Висота (WGS84):</string>
+    <string name="make_prefix_error_msg">ПОМИЛКА: марка</string>
+    <string name="not_usable_at_this_time_error_msg">не можна використовувати в цій версії</string>
+    <string name="parrot_model_prefix_error_msg">ПОМИЛКА: модель Parrot</string>
+    <string name="xmp_missing_error_msg">ПОМИЛКА: метадані XMP не знайдено!</string>
+    <string name="xmp_empty_error_msg">ПОМИЛКА: метадані XMP знайдено, але вони порожні!</string>
+</resources>
