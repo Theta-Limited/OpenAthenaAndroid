@@ -80,9 +80,9 @@
     <string name="longitude_label_short">经度</string>
     <string name="altitude_label_short">高度</string>
     <string name="cot_remarks">由 OpenAthena for Android 根据小型无人机数据生成</string>
-    <string name="version_word">“ 版本”</string>
-    <string name="step_1_load_a_DEM">“第 1 步：加载数字高程模型 (DEM)”</string>
-    <string name="step_2_load_drone_image">“第 2 步：加载无人机图像”</string>
+    <string name="version_word">版本</string>
+    <string name="step_1_load_a_DEM">第 1 步：加载数字高程模型 (DEM)</string>
+    <string name="step_2_load_drone_image">第 2 步：加载无人机图像</string>
     <string name="step_3_press_calculate">第 3 步：按此按钮计算：</string>
     <string name="step_4_obtain_target">第 4 步：在下方获取您的目标位置</string>
     <string name="wrong_filetype_toast_error_msg">错误：错误的文件类型。请选择以 “.tif” 结尾的 GeoTIFF 文件</string>
@@ -91,12 +91,12 @@
     <string name="latitude_label_long">纬度 :</string>
     <string name="longitude_label_long">经度 :</string>
     <string name="altitude_label_long">海拔高度：</string>
-    <string name="latitude_wgs84_label_long">“纬度 (WGS84)：”</string>
-    <string name="longitude_wgs84_label_long">经度 (WGS84)：</string>
+    <string name="latitude_wgs84_label_long">纬度 (WGS84):</string>
+    <string name="longitude_wgs84_label_long">经度 (WGS84):</string>
     <string name="altiude_wgs84_label_long">海拔高度（WGS84）：</string>
-    <string name="make_prefix_error_msg">错误：这个牌子</string>
+    <string name="make_prefix_error_msg">错误：品牌 </string>
     <string name="not_usable_at_this_time_error_msg">它不可用</string>
-    <string name="parrot_model_prefix_error_msg">错误：PARROT 无人机模型 </string>
+    <string name="parrot_model_prefix_error_msg">错误：PARROT模型 </string>
     <string name="xmp_missing_error_msg">错误：找不到 XMP 元数据！</string>
     <string name="xmp_empty_error_msg">错误：找到 XMP 元数据但为空！</string>
 </resources>
