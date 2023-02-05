@@ -1,0 +1,102 @@
+<resources>
+    <string name="app_name">OpenAthena™ pour Android</string>
+
+    <string name="next">Prochain</string>
+    <string name="previous">Précédent</string>
+
+    <string name="action_prefs">Paramètres</string>
+    <string name="action_settings">Paramètres</string>
+
+    <string name="button_selectImage">🖼️</string>
+    <string name="button_calculate">🧮</string>
+    <string name="button_loadDEM">⛰️</string>
+
+    <string name="text_view_value">ChangeMe</string>
+    <string name="log_text_view_value">OpenAthena™ pour Android . . .</string>
+    <string name="test_button_text">Calculer</string>
+    <string name="enter_host">Nom de fichier</string>
+
+    <string name="finish_button_text">Réintégrer</string>
+
+    <string name="save_prefs_text">💾</string>
+    <string name="reset_prefs_text">Réinitialiser</string>
+
+    <string name="title_activity_log">Journal OpenAthena™ pour Android</string>
+    <string name="title_activity_prefs">Paramètres OpenAthena™ pour Android</string>
+    <string name="title_activity_about">Informations sur OpenAthena™ pour Android</string>
+
+    <string name="clear_button_text">Réinitialiser le journal</string>
+    <string name="openathena_for_android">OpenAthena™ pour Android</string>
+    <string name="GPL3Notice">GPL-3.0, certains droits réservés</string>
+    <string name="AboutSnippet"><![CDATA[<br> OpenAthena™ pour Android est un projet qui permet aux drones grand public et professionnels de repérer des emplacements géodésiques précis<br> ]]>;</string>
+    <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> Projet maintenu par <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br> ]]>;</string>
+    <string name="CallToActionSnippet"><![CDATA[Voir le projet sur GitHub ]]> </string>
+    <string name="bad_altitude_data_error_msg">ERREUR : mauvaises données d\'altitude ou de terrain. Cette image est inutilisable. 🖼🚫🎯</string>
+    <string name="target_found_at_msg">Cible trouvée à</string>
+    <string name="drone_dist_to_target_msg">Distance du drone à la cible :</string>
+    <string name="resolveTarget_oob_error_msg">ERREUR : résoluTarget a dépassé les limites à</string>
+    <string name="geotiff_coverage_reminder">Veuillez vous assurer que votre fichier GeoTIFF DEM couvre l\'emplacement du drone !\n</string>
+    <string name="geotiff_coverage_precedent_message">Couverture de votre GeoTIFF ⛰ :\n</string>
+    <string name="geotiff_load_reminder_msg">Impossible de résoudre la cible. Veuillez charger un modèle d\'élévation numérique GeoTIFF \"tif\" à l\'aide du bouton ⛰\n</string>
+    <string name="metadata_parse_error_msg">Impossible d\'ouvrir le fichier image à calculer. Les métadonnées de l\'image du drone 🖼 sont manquantes ou inutilisables. Est-ce une image de drone ? \n</string>
+    <string name="text_copied_to_clipboard_msg">Texte copié dans le presse-papiers 📋</string>
+    <string name="image_selected_msg">Vous avez choisi une image 🖼 \n</string>
+    <string name="dem_loaded_size_is_msg">a été chargé. La taille est </string>
+    <string name="dem_load_error_generic_msg">ERREUR : échec du chargement du DEM,</string>
+    <string name="dem_load_error_tiffexception_msg">ERREUR : échec du chargement du DEM, pas un fichier GeoTIFF \".tif\". \n</string>
+    <string name="calculating_target_msg">Calcule 🧮 :\n</string>
+    <string name="no_image_selected_error_msg">ERREUR : Impossible de calculer 🚫🧮 : aucune image 🚫🖼 sélectionnée\n</string>
+    <string name="opened_exif_for_image_msg">EXIF ouvert pour l\'image\n</string>
+    <string name="autel_accuracy_warning_msg">⚠️ DANGER : Les drones Autel ont connu des problèmes de précision ⚠️</string>
+    <string name="i_understand_this_risk">Je comprends ce risque</string>
+    <string name="image_is_too_large_error_msg">L\'image est trop grande pour être affichée !</string>
+    <string name="loading_geotiff_toast_msg">Chargement de GeoTIFF. S\'il vous plaît, attendez...</string>
+    <string name="wgs84_standard_lat_lon">WGS84 (par défaut)\nLat, Lon</string>
+    <string name="wgs84_tooltip">La norme largement utilisée pour décrire un emplacement latitude longitude sur Terre</string>
+    <string name="nato_mgrs_1m">OTAN MGRS 1m</string>
+    <string name="nato_mgrs_10m">OTAN MGRS 10m</string>
+    <string name="nato_mgrs_100m">OTAN MGRS 100m</string>
+    <string name="nato_mgrs_1m_tooltip">La norme du système de référence de grille militaire de l;OTAN. Décrit une zone de 1 mètre² de la Terre</string>
+    <string name="nato_mgrs_10m_tooltip">La norme du système de référence de grille militaire de l\'OTAN. Décrit une zone de 10 mètres² de la Terre</string>
+    <string name="nato_mgrs_100m_tooltip">La norme du système de référence de grille militaire de l\'OTAN. Décrit une zone de 100 mètres² de la Terre</string>
+    <string name="ck_42_lat_lon">CK-42 Красовский\nLat, Lon</string>
+    <string name="ck_42_geodetic_tooltip">Un système géodésique alternatif utilisant l\'ellipsoïde de Krasovsky 1940. Couramment utilisé dans les anciens pays du pacte de Varsovie</string>
+    <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
+    <string name="ck_42_gauss_kruger_tooltip">Un système géodésique alternatif utilisant l\'ellipsoïde de Krasovsky 1940. Une ZONE longitudinale (par incréments de 6°, valeurs possibles de 1 à 60 inclus), l;ordonnée définie par la valeur X et l\'abscisse définie par la valeur Y décrivent une position exacte sur Terre</string>
+    <string name="target_output_mode_title">🎯 Méthode de sortie :</string>
+    <string name="gk_northing_text">Abscisse :</string>
+    <string name="gk_easting_text">Ordonnée :</string>
+    <string name="gk_zone_text">ZONE:</string>
+    <string name="attribute_text_drone_azimuth">Azimut:</string>
+    <string name="attribute_text_drone_camera_pitch">Tangage de la camera:</string>
+    <string name="wgs84_ck42_conversion_fail_warning">⚠️ATTENTION : les valeurs sont en WGS84, pas en CK-42 ⚠\n</string>
+    <string name="missing_data_exception_latitude_error_msg">ERREUR : métadonnées de latitude introuvables ! Ce drone est incompatible avec OpenAthena ! 😭</string>
+    <string name="missing_data_exception_longitude_error_msg">ERREUR : métadonnées de longitude introuvables ! Ce drone est incompatible avec OpenAthena ! 😭</string>
+    <string name="missing_data_exception_altitude_error_msg">ERREUR : métadonnées d\'altitude introuvables ! Ce drone est incompatible avec OpenAthena ! 😭</string>
+    <string name="missing_data_exception_azimuth_error_msg">ERREUR : métadonnées d\'azimut introuvables ! Ce drone est incompatible avec OpenAthena ! 😭</string>
+    <string name="missing_data_exception_theta_error_msg">ERREUR : les métadonnées du tangage de la caméra sont introuvables ! Ce drone est incompatible avec OpenAthena ! 😭</string>
+    <string name="missing_data_exception_altitude_and_theta_error_msg">ERREUR : les métadonnées du tangage de la caméra ont été trouvées, mais elles n\'étaient pas valides ! Ce drone est incompatible avec OpenAthena ! 😭</string>
+    <string name="latitude_label_short">lat</string>
+    <string name="longitude_label_short">lon</string>
+    <string name="altitude_label_short">Alt:</string>
+    <string name="cot_remarks">Généré par OpenAthena pour Android à partir des données sUAS</string>
+    <string name="version_word">version</string>
+    <string name="step_1_load_a_DEM">Étape 1 : charger un modèle numérique d\'élévation (DEM)</string>
+    <string name="step_2_load_drone_image">Étape 2 : choisissez une image de drone</string>
+    <string name="step_3_press_calculate">Étape 3 : appuyez sur ce bouton pour calculer :</string>
+    <string name="step_4_obtain_target">Étape 4 : obtenez votre emplacement cible ci-dessous</string>
+    <string name="wrong_filetype_toast_error_msg">ERREUR : type de fichier incorrect. Veuillez sélectionner un fichier GeoTIFF se terminant \".tif\"</string>
+    <string name="permissions_toast_success_msg">Autorisations Accordées</string>
+    <string name="permissions_toast_error_msg">Échec de l\'obtention des autorisations nécessaires</string>
+    <string name="latitude_label_long">Latitude :</string>
+    <string name="longitude_label_long">Longitude :</string>
+    <string name="altitude_label_long">Altitude :</string>
+    <string name="latitude_wgs84_label_long">Latitude (WGS84): </string>
+    <string name="longitude_wgs84_label_long">Longitude (WGS84): </string>
+    <string name="altiude_wgs84_label_long">Altitude (WGS84): </string>
+    <string name="make_prefix_error_msg">ERREUR : marque </string>
+    <string name="not_usable_at_this_time_error_msg">n\'est pas utilisable dans cette version</string>
+    <string name="parrot_model_prefix_error_msg">ERREUR : modèle Parrot </string>
+    <string name="xmp_missing_error_msg">ERREUR : métadonnées XMP introuvables !</string>
+    <string name="xmp_empty_error_msg">ERREUR : les métadonnées XMP ont été trouvées, mais elles étaient vides !</string>
+</resources>
