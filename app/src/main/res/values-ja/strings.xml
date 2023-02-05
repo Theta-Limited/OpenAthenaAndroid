@@ -1,0 +1,102 @@
+<resources>
+    <string name="app_name">Android 用 「OpenAthena™」</string>
+
+    <string name="next">次</string>
+    <string name="previous">前</string>
+
+    <string name="action_prefs">設定</string>
+    <string name="action_settings">設定</string>
+
+    <string name="button_selectImage">🖼️</string>
+    <string name="button_calculate">🧮</string>
+    <string name="button_loadDEM">⛰️</string>
+
+    <string name="text_view_value">ChangeMe</string>
+    <string name="log_text_view_value">Android 用 「OpenAthena™」. . .</string>
+    <string name="test_button_text">計算する</string>
+    <string name="enter_host">ファイル名</string>
+
+    <string name="finish_button_text">返る</string>
+
+    <string name="save_prefs_text">💾</string>
+    <string name="reset_prefs_text">リセット</string>
+
+    <string name="title_activity_log">Android 用「OpenAthena™」 ログ</string>
+    <string name="title_activity_prefs">Android 用「OpenAthena™」設定</string>
+    <string name="title_activity_about">Android 用「OpenAthena™」 について</string>
+
+    <string name="clear_button_text">ログをクリア</string>
+    <string name="openathena_for_android">Android 用「OpenAthena™」</string>
+    <string name="GPL3Notice">GPL-3.0、一部権作権所有</string>
+    <string name="AboutSnippet"><![CDATA[<br> Android 用「OpenAthena™」 は、消費者向けおよびプロ向けのドローンが正確な測地位置を計算できるようにするプロジェクトです。<br> ]]></string>
+    <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a>によって維持されているプロジェクト<br>]]></string>
+    <string name="CallToActionSnippet"><![CDATA[GitHub でプロジェクトを表示する</a><br> ]]></string>
+    <string name="bad_altitude_data_error_msg">エラー: 高度または地形データが正しくありません。 この画像は使用不可です。 🖼🚫🎯</string>
+    <string name="target_found_at_msg">で見つかったターゲット</string>
+    <string name="drone_dist_to_target_msg">ドローンのターゲットまでの距離:</string>
+    <string name="resolveTarget_oob_error_msg">誤り: ターゲットの計算が範囲外になりました</string>
+    <string name="geotiff_coverage_reminder">GeoTIFF DEM ファイルがドローンの位置をカバーしていることを確認してください!\n</string>
+    <string name="geotiff_coverage_precedent_message">GeoTIFF の対象エリア ⛰:\n</string>
+    <string name="geotiff_load_reminder_msg">ターゲットを解決できませんでした。 ⛰ ボタンを使用して GeoTIFF デジタル標高モデル「.tif」をロードしてください\n</string>
+    <string name="metadata_parse_error_msg">計算するイメージ ファイルを開くことができません。ドローンの画像 🖼 メタデータが見つからないか、使用できません。これはドローンの画像ですか？ \n</string>
+    <string name="text_copied_to_clipboard_msg">クリップボードにコピーされたテキスト 📋</string>
+    <string name="image_selected_msg">画像が選択されました🖼 \n</string>
+    <string name="dem_loaded_size_is_msg">ロードされました。⛰ サイズ</string>
+    <string name="dem_load_error_generic_msg">誤り: DEM の読み込みに失敗しました。</string>
+    <string name="dem_load_error_tiffexception_msg">誤り: DEM のロードに失敗しました。GeoTIFF「.tif」ファイルではありませんでした。\n</string>
+    <string name="calculating_target_msg">計算中 🧮:\n</string>
+    <string name="no_image_selected_error_msg">誤り: 計算できません 🚫🧮: 画像 🚫🖼 が選択されていません\n</string>
+    <string name="opened_exif_for_image_msg">画像の EXIF を開きました\n</string>
+    <string name="autel_accuracy_warning_msg">⚠️ 危険: Autel ドローンには既知の精度の問題があります ⚠️</string>
+    <string name="i_understand_this_risk">私はこのリスクを理解しています</string>
+    <string name="image_is_too_large_error_msg">画像が大きすぎて表示できません!</string>
+    <string name="loading_geotiff_toast_msg">GeoTIFF を読み込んでいます。お待ちください...</string>
+    <string name="wgs84_standard_lat_lon">WGS84 (デフォルト)\n緯度、経度</string>
+    <string name="wgs84_tooltip">地球上の緯度経度の位置を記述するために広く使用されている標準</string>
+    <string name="nato_mgrs_1m">NATO MGRS 1m</string>
+    <string name="nato_mgrs_10m">NATO MGRS 10m</string>
+    <string name="nato_mgrs_100m">NATO MGRS 100m</string>
+    <string name="nato_mgrs_1m_tooltip">NATO ミリタリー グリッド参照システム標準。地球の 1 メートル² の面積を表します</string>
+    <string name="nato_mgrs_10m_tooltip">NATO ミリタリー グリッド参照システム標準。地球の 10 メートル ² の面積を表します</string>
+    <string name="nato_mgrs_100m_tooltip">NATO ミリタリー グリッド参照システム標準。地球の 100 メートル ² の面積を表します</string>
+    <string name="ck_42_lat_lon">CK-42 Красовский\nLat, Lon</string>
+    <string name="ck_42_geodetic_tooltip">Krasovsky 1940 楕円体を使用した代替測地系。旧ワルシャワ協定国で一般的に使用されている</string>
+    <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
+    <string name="ck_42_gauss_kruger_tooltip">Krasovsky 1940 楕円体を使用した代替測地系。縦方向の ZONE (6° 刻み、可能な値は 1 ～ 60 を含む)、X 値で定義される北座標、および Y 値で定義される東座標は、地球上の正確な位置を表します。</string>
+    <string name="target_output_mode_title">🎯 出力モード:</string>
+    <string name="gk_northing_text">N:</string>
+    <string name="gk_easting_text">E:</string>
+    <string name="gk_zone_text">ZONE:</string>
+    <string name="attribute_text_drone_azimuth">方位角:</string>
+    <string name="attribute_text_drone_camera_pitch">カメラのピッチ:</string>
+    <string name="wgs84_ck42_conversion_fail_warning">⚠️警告: 値は CK-42 ではなく WGS84 です ⚠️\n</string>
+    <string name="missing_data_exception_latitude_error_msg">誤り: Latitude メタデータが見つかりません!このドローンは OpenAthena と互換性がありません! 😭</string>
+    <string name="missing_data_exception_longitude_error_msg">誤り: 経度のメタデータが見つかりません!このドローンは 「OpenAthena」 と互換性がありません! 😭</string>
+    <string name="missing_data_exception_altitude_error_msg">誤り: 高度のメタデータが見つかりません!このドローンは 「OpenAthena」 と互換性がありません! 😭</string>
+    <string name="missing_data_exception_azimuth_error_msg">誤り: 方位メタデータが見つかりません!このドローンは 「OpenAthena」 と互換性がありません! 😭</string>
+    <string name="missing_data_exception_theta_error_msg">誤り: カメラ ピッチのメタデータが見つかりません!このドローンは 「OpenAthena」と互換性がありません! 😭</string>
+    <string name="missing_data_exception_altitude_and_theta_error_msg">エラー: カメラ ピッチのメタデータが見つかりましたが、無効でした!このドローンは 「OpenAthena」 と互換性がありません! 😭</string>
+    <string name="latitude_label_short">緯度</string>
+    <string name="longitude_label_short">経度</string>
+    <string name="altitude_label_short">高度:</string>
+    <string name="cot_remarks">sUAS データから Android 用の 「OpenAthena」 によって生成されます</string>
+    <string name="version_word">バージョン</string>
+    <string name="step_1_load_a_DEM">ステップ 1: デジタル標高モデル (DEM) をロードする</string>
+    <string name="step_2_load_drone_image">ステップ 2: ドローン イメージをロードする</string>
+    <string name="step_3_press_calculate">ステップ 3: このボタンを押して計算します。</string>
+    <string name="step_4_obtain_target">ステップ 4: 以下の目的地を取得する</string>
+    <string name="wrong_filetype_toast_error_msg">誤り: ファイルタイプが間違っています。 「.tif」で終わる GeoTIFF ファイルを選択してください</string>
+    <string name="permissions_toast_success_msg">付与される権限</string>
+    <string name="permissions_toast_error_msg">必要な権限を取得できませんでした</string>
+    <string name="latitude_label_long">緯度 ：</string>
+    <string name="longitude_label_long">経度 :</string>
+    <string name="altitude_label_long">高度 :</string>
+    <string name="latitude_wgs84_label_long">緯度 (WGS84):</string>
+    <string name="longitude_wgs84_label_long">経度 (WGS84):</string>
+    <string name="altiude_wgs84_label_long">高度 (WGS84):</string>
+    <string name="make_prefix_error_msg">誤り: ドローン 種</string>
+    <string name="not_usable_at_this_time_error_msg">このバージョンでは利用できません</string>
+    <string name="parrot_model_prefix_error_msg">誤り: ドローン 種 「Parrot」</string>
+    <string name="xmp_missing_error_msg">誤り: XMP メタデータが見つかりません!</string>
+    <string name="xmp_empty_error_msg">誤り: XMP メタデータが見つかりましたが、空でした!</string>
+</resources>
