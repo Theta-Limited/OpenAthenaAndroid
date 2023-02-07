@@ -5,6 +5,8 @@
     <string name="previous">前</string>
 
     <string name="action_prefs">設定</string>
+    <string name="action_calculate">計算する</string>
+    <string name="action_about_openathena">「OpenAthena」について</string>
     <string name="action_settings">設定</string>
 
     <string name="button_selectImage">🖼️</string>
@@ -25,10 +27,13 @@
     <string name="title_activity_prefs">Android 用「OpenAthena™」設定</string>
     <string name="title_activity_about">Android 用「OpenAthena™」 について</string>
 
+
+
     <string name="clear_button_text">ログをクリア</string>
     <string name="openathena_for_android">Android 用「OpenAthena™」</string>
     <string name="GPL3Notice">GPL-3.0、一部権作権所有</string>
     <string name="AboutSnippet"><![CDATA[<br> Android 用「OpenAthena™」 は、消費者向けおよびプロ向けのドローンが正確な測地位置を計算できるようにするプロジェクトです。<br> ]]></string>
+    <string name="about_software_libraries_used">使用したソフトウェア ライブラリ:</string>
     <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a>によって維持されているプロジェクト<br>]]></string>
     <string name="CallToActionSnippet"><![CDATA[GitHub でプロジェクトを表示する</a><br> ]]></string>
     <string name="bad_altitude_data_error_msg">エラー: 高度または地形データが正しくありません。 この画像は使用不可です。 🖼🚫🎯</string>
