@@ -5,6 +5,8 @@
     <string name="previous">上一个</string>
 
     <string name="action_prefs">设置</string>
+    <string name="action_calculate">计算</string>
+    <string name="action_about_openathena">关于 OpenAthena</string>
     <string name="action_settings">设置</string>
 
     <string name="button_selectImage">🖼️</string>
@@ -25,10 +27,13 @@
     <string name="title_activity_prefs">Android 版 OpenAthena™ 设置</string>
     <string name="title_activity_about">关于安卓版 OpenAthena™</string>
 
+
+
     <string name="clear_button_text">清除日志</string>
     <string name="openathena_for_android">Android 版 OpenAthena™</string>
     <string name="GPL3Notice">GPL-3.0，保留部分权利</string>
     <string name="AboutSnippet"><![CDATA[<br> Android 版 OpenAthena™ 是一个允许消费者和专业无人机确定精确大地测量位置的项目<br>]]></string>
+    <string name="about_software_libraries_used">使用的软件库：</string>
     <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p>由<a href=\"https://github.com/mkrupczak3\">mkrupczak3</a>维护的项目<br>]]></string>
     <string name="CallToActionSnippet"><![CDATA[在GitHub 上查看本项目</a><br>]]></string>
     <string name="bad_altitude_data_error_msg">错误：高度或地形数据错误。此图像无法使用。 🖼🚫🎯</string>
