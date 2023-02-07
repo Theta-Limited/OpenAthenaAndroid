@@ -32,9 +32,9 @@
     <string name="clear_button_text">초기화 로그</string>
     <string name="openathena_for_android">Android용 OpenAthena™</string>
     <string name="GPL3Notice">GPL-3.0, 일부 권리 보유</string>
-    <string name="AboutSnippet"><![CDATA[<br> Android용 OpenAthena™는 소비자 및 전문 드론이 정확한 측지 위치를 찾을 수 있도록 하는 프로젝트입니다.<br> ]]></string>
+    <string name="AboutSnippet"><![CDATA[<br> Android용 OpenAthena™는 소비자 및 전문 드론이 정확한 측지 위치를 찾을 수 있도록 하는 프로젝트입니다.<br>]]></string>
     <string name="about_software_libraries_used">사용된 소프트웨어 라이브러리:</string>
-    <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a> 이 관리하는 프로젝트<br> ]]></string>
+    <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a> 이 관리하는 프로젝트<br>]]></string>
     <string name="CallToActionSnippet"><![CDATA[GitHub에서 프로젝트 보기</a><br> ]]></string>
     <string name="bad_altitude_data_error_msg">오류: 고도 또는 지형 데이터가 잘못되었습니다. 이 이미지는 유효하지 않습니다. 🖼🚫🎯</string>
     <string name="target_found_at_msg">다음에서 찾은 대상</string>
