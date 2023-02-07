@@ -67,7 +67,7 @@ public class AboutActivity extends AppCompatActivity {
                         + "<br><a href=\"https://github.com/mkrupczak3/OpenAthenaAndroid\">"
                         + getString(R.string.CallToActionSnippet)
                         + getString(R.string.AuthorGitHubSnippet)
-                        + "<br><br> Software libraries used:<br>"
+                        + "<br><br> " + getString(R.string.about_software_libraries_used) + "<br>"
                         + "<a href=\"https://github.com/ngageoint/tiff-java\">ngageoint/tiff-java</a> MIT license<br>"
                         + "<a href=\"https://github.com/ngageoint/mgrs-android/\">ngageoint/mgrs-android</a> MIT license<br>"
                         + "<a href=\"https://github.com/veraPDF/veraPDF-xmp\">veraPDF/veraPDF-xmp</a> Adobe Community license<br>"
