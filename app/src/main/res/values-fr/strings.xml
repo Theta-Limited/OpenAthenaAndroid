@@ -5,6 +5,8 @@
     <string name="previous">Précédent</string>
 
     <string name="action_prefs">Paramètres</string>
+    <string name="action_calculate">Calculer</string>
+    <string name="action_about_openathena">À propos</string>
     <string name="action_settings">Paramètres</string>
 
     <string name="button_selectImage">🖼️</string>
@@ -25,12 +27,15 @@
     <string name="title_activity_prefs">Paramètres OpenAthena™ pour Android</string>
     <string name="title_activity_about">Informations sur OpenAthena™ pour Android</string>
 
+
+
     <string name="clear_button_text">Réinitialiser le journal</string>
     <string name="openathena_for_android">OpenAthena™ pour Android</string>
     <string name="GPL3Notice">GPL-3.0, certains droits réservés</string>
-    <string name="AboutSnippet"><![CDATA[<br> OpenAthena™ pour Android est un projet qui permet aux drones grand public et professionnels de repérer des emplacements géodésiques précis<br> ]]></string>
-    <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> Projet maintenu par <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br>]]></string>
-    <string name="CallToActionSnippet"><![CDATA[Voir le projet sur GitHub]]></string>
+    <string name="AboutSnippet"><![CDATA[<br> OpenAthena™ pour Android est un projet qui permet aux drones grand public et professionnels de repérer des emplacements géodésiques précis<br> ]]>;</string>
+    <string name="about_software_libraries_used">Librairies logicielles utilisées:</string>
+    <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> Projet maintenu par <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br> ]]>;</string>
+    <string name="CallToActionSnippet"><![CDATA[Voir le projet sur GitHub ]]> </string>
     <string name="bad_altitude_data_error_msg">ERREUR : mauvaises données d\'altitude ou de terrain. Cette image est inutilisable. 🖼🚫🎯</string>
     <string name="target_found_at_msg">Cible trouvée à</string>
     <string name="drone_dist_to_target_msg">Distance du drone à la cible :</string>
@@ -56,13 +61,13 @@
     <string name="nato_mgrs_1m">OTAN MGRS 1m</string>
     <string name="nato_mgrs_10m">OTAN MGRS 10m</string>
     <string name="nato_mgrs_100m">OTAN MGRS 100m</string>
-    <string name="nato_mgrs_1m_tooltip">La norme du système de référence de grille militaire de l\'OTAN. Décrit une zone de 1 mètre² de la Terre</string>
+    <string name="nato_mgrs_1m_tooltip">La norme du système de référence de grille militaire de l;OTAN. Décrit une zone de 1 mètre² de la Terre</string>
     <string name="nato_mgrs_10m_tooltip">La norme du système de référence de grille militaire de l\'OTAN. Décrit une zone de 10 mètres² de la Terre</string>
     <string name="nato_mgrs_100m_tooltip">La norme du système de référence de grille militaire de l\'OTAN. Décrit une zone de 100 mètres² de la Terre</string>
     <string name="ck_42_lat_lon">CK-42 Красовский\nLat, Lon</string>
     <string name="ck_42_geodetic_tooltip">Un système géodésique alternatif utilisant l\'ellipsoïde de Krasovsky 1940. Couramment utilisé dans les anciens pays du pacte de Varsovie</string>
     <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
-    <string name="ck_42_gauss_kruger_tooltip">Un système géodésique alternatif utilisant l\'ellipsoïde de Krasovsky 1940. Une ZONE longitudinale (par incréments de 6°, valeurs possibles de 1 à 60 inclus), l\'ordonnée définie par la valeur X et l\'abscisse définie par la valeur Y décrivent une position exacte sur Terre</string>
+    <string name="ck_42_gauss_kruger_tooltip">Un système géodésique alternatif utilisant l\'ellipsoïde de Krasovsky 1940. Une ZONE longitudinale (par incréments de 6°, valeurs possibles de 1 à 60 inclus), l;ordonnée définie par la valeur X et l\'abscisse définie par la valeur Y décrivent une position exacte sur Terre</string>
     <string name="target_output_mode_title">🎯 Méthode de sortie :</string>
     <string name="gk_northing_text">Abscisse :</string>
     <string name="gk_easting_text">Ordonnée :</string>
