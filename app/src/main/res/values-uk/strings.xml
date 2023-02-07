@@ -5,6 +5,8 @@
     <string name="previous">Попередній</string>
 
     <string name="action_prefs">Налаштування</string>
+    <string name="action_calculate">Обчислити</string>
+    <string name="action_about_openathena">Про OpenAthena</string>
     <string name="action_settings">Налаштування</string>
 
     <string name="button_selectImage">🖼️</string>
@@ -25,10 +27,13 @@
     <string name="title_activity_prefs">Налаштування OpenAthena™ для Android</string>
     <string name="title_activity_about">Про OpenAthena™ для Android</string>
 
+
+
     <string name="clear_button_text">Очистити журнал</string>
     <string name="openathena_for_android">OpenAthena™ для Android</string>
     <string name="GPL3Notice">GPL-3.0, деякі права захищено</string>
     <string name="AboutSnippet"><![CDATA[<br> OpenAthena™ для Android – це проект, який дозволяє споживачам і професійним дронам визначати точні геодезичні місця<br> ]]></string>
+    <string name="about_software_libraries_used">Використані програмні бібліотеки:</string>
     <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> Проект підтримується <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br> ]]></string>
     <string name="CallToActionSnippet"><![CDATA[Переглянути проект на GitHub</a><br> ]]></string>
     <string name="bad_altitude_data_error_msg">ПОМИЛКА: неправильні дані про висоту або місцевість. Це зображення непридатне для використання. 🖼🚫🎯</string>
