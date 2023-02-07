@@ -65,6 +65,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 // Libraries from the U.S. National Geospatial Intelligence Agency https://www.nga.mil
 import mil.nga.mgrs.grid.GridType;
@@ -1049,7 +1050,9 @@ public class MainActivity extends AthenaActivity {
 
 
     private String roundDouble(double d) {
-        DecimalFormat df = new DecimalFormat("#.######");
+        DecimalFormatSymbols decimalSymbols = DecimalFormatSymbols.getInstance();
+        decimalSymbols.setDecimalSeparator('.');
+        DecimalFormat df = new DecimalFormat("#.######", decimalSymbols);
         df.setRoundingMode(RoundingMode.HALF_UP);
         return df.format(d);
     }
@@ -1072,7 +1075,7 @@ public class MainActivity extends AthenaActivity {
         runOnUiThread(new Runnable() {
            @Override
            public void run() {
-               String placeholderText = getString(R.string.openathena_for_android) +  getString(R.string.version_word) + versionName + "\n\n";
+               String placeholderText = getString(R.string.openathena_for_android) +  " " + getString(R.string.version_word) + " " + versionName + "\n\n";
                placeholderText += getString(R.string.step_1_load_a_DEM) + " \u26F0\n";
                placeholderText += getString(R.string.step_2_load_drone_image) + " \uD83D\uDDBC\n";
                placeholderText += getString(R.string.step_3_press_calculate) + " \uD83E\uDDEE\n";

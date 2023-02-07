@@ -4,12 +4,12 @@
     tools:context="org.krupczak.nettest.MainActivity">
 
     <item android:id="@+id/action_calculate"
-        android:title="Calculate"
+        android:title="@string/action_calculate"
         android:orderInCategory="100"
         app:showAsAction="never" />
 
     <item android:id="@+id/action_about"
-        android:title="About OpenAthena"
+        android:title="@string/action_about_openathena"
         android:orderInCategory="100"
         app:showAsAction="never" />
 
