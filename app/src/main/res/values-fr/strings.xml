@@ -56,7 +56,7 @@
     <string name="i_understand_this_risk">Je comprends ce risque</string>
     <string name="image_is_too_large_error_msg">L\'image est trop grande pour être affichée !</string>
     <string name="loading_geotiff_toast_msg">Chargement de GeoTIFF. S\'il vous plaît, attendez...</string>
-    <string name="wgs84_standard_lat_lon">WGS84 (par défaut)\nLat, Lon</string>
+    <string name="wgs84_standard_lat_lon">WGS84 (défaut)\nLat, Lon</string>
     <string name="wgs84_tooltip">La norme largement utilisée pour décrire un emplacement latitude longitude sur Terre</string>
     <string name="nato_mgrs_1m">OTAN MGRS 1m</string>
     <string name="nato_mgrs_10m">OTAN MGRS 10m</string>
