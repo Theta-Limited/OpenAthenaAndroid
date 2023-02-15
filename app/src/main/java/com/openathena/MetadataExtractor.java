@@ -317,31 +317,46 @@ public class MetadataExtractor {
         return(arrOut);
     }
 
-//    public static float[] getIntrinsicMatrixFromExif(ExifInterface exif) {
-//        float[] intrinsicMatrix = new float[9];
-//
-//        // Get focal length in millimeters
-//        float focalLength = exif.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH, 0);
-//
+    public static float[] getIntrinsicMatrixFromExif(ExifInterface exif) {
+        float[] intrinsicMatrix = new float[9];
+
+        // Get focal length in millimeters
+        float focalLength = (float) exif.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH, -1.0f);
+        float focalLength35mmEquiv = (float) exif.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM, -1.0f);
+
 //        // Get sensor width in millimeters
 //        float sensorWidth = lookup("sensor_width");
 //
 //        // Get sensor height in millimeters
 //        float sensorHeight = lookup("sensor_height");
-//
-//        // Calculate the horizontal and vertical sensor resolutions
-//        float horizontalResolution = sensorWidth / exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, 0);
-//        float verticalResolution = sensorHeight / exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, 0);
-//
-//        // Calculate the intrinsic matrix elements
-//        intrinsicMatrix[0] = focalLength / horizontalResolution;
-//        intrinsicMatrix[4] = focalLength / verticalResolution;
-//        intrinsicMatrix[2] = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, 0) / 2;
-//        intrinsicMatrix[5] = exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, 0) / 2;
-//        intrinsicMatrix[8] = 1;
-//
-//        return intrinsicMatrix;
-//    }
+
+        // Calculate the horizontal and vertical sensor resolutions
+        float imageWidth = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, 0);
+        float imageHeight = exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, 0); // Image Height
+
+        float aspectRatio = imageWidth / imageHeight;
+        // This calculation assumes linear relationship, which may not be the case. Needs testing
+        float focalEquivSensorHeight = (1.0f / aspectRatio) * 36.0f; // may be adversely effected by digital crop, needs testing
+
+        // Calculate the intrinsic matrix elements
+        float alpha_x = imageWidth * focalLength35mmEquiv / 36.0f;
+        intrinsicMatrix[0] = alpha_x;
+
+        intrinsicMatrix[1] = 0.0f; // gamma, the skew coefficient between the x and the y axis, and is often 0.
+
+        float alpha_y = imageHeight * focalLength35mmEquiv / focalEquivSensorHeight;
+        intrinsicMatrix[4] = alpha_y;
+
+        // principal point
+        intrinsicMatrix[2] = imageWidth / 2.0f; // cx
+        intrinsicMatrix[3] = 0.0f;
+        intrinsicMatrix[5] = imageHeight / 2.0f; // cy
+        intrinsicMatrix[6] = 0.0f;
+        intrinsicMatrix[7] = 0.0f;
+        intrinsicMatrix[8] = 1.0f;
+
+        return intrinsicMatrix;
+    }
 
     public float rationalToFloat(String str)
     {
