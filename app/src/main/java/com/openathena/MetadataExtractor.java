@@ -10,6 +10,8 @@ import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.XMPMetaFactory;
 
+import java.io.IOException;
+
 public class MetadataExtractor {
     private static final String TAG = "MetadataExtractor";
     private MainActivity parent;
@@ -314,6 +316,32 @@ public class MetadataExtractor {
         Float[] arrOut = {y, x, z};
         return(arrOut);
     }
+
+//    public static float[] getIntrinsicMatrixFromExif(ExifInterface exif) {
+//        float[] intrinsicMatrix = new float[9];
+//
+//        // Get focal length in millimeters
+//        float focalLength = exif.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH, 0);
+//
+//        // Get sensor width in millimeters
+//        float sensorWidth = lookup("sensor_width");
+//
+//        // Get sensor height in millimeters
+//        float sensorHeight = lookup("sensor_height");
+//
+//        // Calculate the horizontal and vertical sensor resolutions
+//        float horizontalResolution = sensorWidth / exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, 0);
+//        float verticalResolution = sensorHeight / exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, 0);
+//
+//        // Calculate the intrinsic matrix elements
+//        intrinsicMatrix[0] = focalLength / horizontalResolution;
+//        intrinsicMatrix[4] = focalLength / verticalResolution;
+//        intrinsicMatrix[2] = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, 0) / 2;
+//        intrinsicMatrix[5] = exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, 0) / 2;
+//        intrinsicMatrix[8] = 1;
+//
+//        return intrinsicMatrix;
+//    }
 
     public float rationalToFloat(String str)
     {
