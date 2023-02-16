@@ -552,6 +552,20 @@ public class MainActivity extends AthenaActivity {
             attribs += "cx: " + intrinsics[2] + "\n";
             attribs += "cy: " + intrinsics[5] + "\n";
 
+            double[] relativeRay;
+            relativeRay = new double[] {0.0d, 0.0d};
+//            try {
+//                relativeRay = theMeta.getRayAnglesFromImgPixel(selection_x, selection_y, exif);
+//            } catch (Exception e) {
+//                relativeRay = new double[] {0.0d, 0.0d};
+//            }
+
+            double azimuthOffset = relativeRay[0];
+            double thetaOffset = relativeRay[1];
+
+            azimuth += azimuthOffset;
+            theta += thetaOffset;
+
             if (!outputModeIsSlavic()) {
                 attribs += getString(R.string.latitude_label_long) + " "+ roundDouble(y) + "\n";
                 attribs += getString(R.string.longitude_label_long) + " " + roundDouble(x) + "\n";

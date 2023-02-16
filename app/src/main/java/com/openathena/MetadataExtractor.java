@@ -394,9 +394,12 @@ public class MetadataExtractor {
         rayZ /= rayLength;
 
         // calc ray angles
-        float azimuth = (float) Math.atan2(rayX, rayZ);
-        float elevation = (float) Math.atan2(rayY, Math.sqrt(rayX * rayX + rayZ * rayZ));
-        Log.d(TAG, "Pixel (" + x + ", " + y + ") -> Ray (" + Math.toDegrees(azimuth) + ", " + Math.toDegrees(elevation) + ")");
+        double azimuth =  Math.atan2(rayX, rayZ);
+        double elevation =  Math.atan2(rayY, Math.sqrt(rayX * rayX + rayZ * rayZ));
+        azimuth = Math.toDegrees(azimuth);
+        elevation = Math.toDegrees(elevation);
+
+        Log.d(TAG, "Pixel (" + x + ", " + y + ") -> Ray (" + azimuth + ", " + elevation + ")");
         return new double[] {azimuth, elevation};
     }
 
