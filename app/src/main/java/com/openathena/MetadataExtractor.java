@@ -350,8 +350,8 @@ public class MetadataExtractor {
         float aspectRatio = imageWidth / imageHeight;
 
         // This calculation assumes linear relationship, which may not be the case. Needs testing
-        float focalEquivSensorHeight = (1.0f / aspectRatio) * 36.0f; // may be adversely effected by digital crop, needs testing
-        // Log.d(TAG, "focalEquivSensorHeight: " + focalEquivSensorHeight);
+        float sensorHeight = imageHeight * 36.0f / focalLength35mmEquiv;
+        Log.d(TAG, "sensorHeight: " + sensorHeight);
 
         // Calculate the intrinsic matrix elements
         float alpha_x = imageWidth * focalLength35mmEquiv / 36.0f;
@@ -359,7 +359,7 @@ public class MetadataExtractor {
 
         intrinsicMatrix[1] = 0.0f; // gamma, the skew coefficient between the x and the y axis, and is often 0.
 
-        float alpha_y = imageHeight * focalLength35mmEquiv / focalEquivSensorHeight;
+        float alpha_y = sensorHeight / imageHeight;
         intrinsicMatrix[4] = alpha_y;
 
         // principal point
