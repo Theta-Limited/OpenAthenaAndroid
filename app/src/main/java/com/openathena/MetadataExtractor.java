@@ -317,7 +317,7 @@ public class MetadataExtractor {
         return(arrOut);
     }
 
-    public static float[] getIntrinsicMatrixFromExif(ExifInterface exif) {
+    public static float[] getIntrinsicMatrixFromExif(ExifInterface exif) throws Exception{
         float[] intrinsicMatrix = new float[9];
 
         // Get focal length in millimeters
@@ -325,14 +325,14 @@ public class MetadataExtractor {
         float focalLength35mmEquiv = (float) exif.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM, -1.0f);
 
         if (/*focalLength == -1.0f || focalLength == 0.0f ||*/ focalLength35mmEquiv == -1.0f || focalLength35mmEquiv == 0.0f) {
-            throw new RuntimeException("focal length could not be determined");
+            throw new Exception("focal length could not be determined");
         }
 
         String digitalZoomRational = exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO);
         if (digitalZoomRational != null && !digitalZoomRational.equals("")) {
             float digitalZoomRatio = rationalToFloat(exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO));
             if (Math.abs(digitalZoomRatio) > 0.000f && Math.abs(digitalZoomRatio - 1.0f) > 0.000f) {
-                throw new RuntimeException("digital zoom detected. Not supported in this version");
+                throw new Exception("digital zoom detected. Not supported in this version");
             }
         }
 
@@ -371,6 +371,33 @@ public class MetadataExtractor {
         intrinsicMatrix[8] = 1.0f;
 
         return intrinsicMatrix;
+    }
+
+    public static double[] getRayAnglesFromImgPixel(int x, int y, ExifInterface exifInterface) throws Exception {
+        float[] intrinsics = getIntrinsicMatrixFromExif(exifInterface); // may throw Exception
+
+        float fx = intrinsics[0];
+        float fy = intrinsics[4];
+        float cx = Math.round(intrinsics[2]);
+        float cy = Math.round(intrinsics[5]);
+
+        // calculate ray angles
+        float pixelX = x - cx;
+        float pixelY = y - cy;
+        float rayX = pixelX / fx;
+        float rayY = pixelY / fy;
+        float rayZ = 1.0f;
+
+        float rayLength = (float) Math.sqrt(rayX * rayX + rayY * rayY + rayZ * rayZ);
+        rayX /= rayLength;
+        rayY /= rayLength;
+        rayZ /= rayLength;
+
+        // calc ray angles
+        float azimuth = (float) Math.atan2(rayX, rayZ);
+        float elevation = (float) Math.atan2(rayY, Math.sqrt(rayX * rayX + rayZ * rayZ));
+        Log.d(TAG, "Pixel (" + x + ", " + y + ") -> Ray (" + Math.toDegrees(azimuth) + ", " + Math.toDegrees(elevation) + ")");
+        return new double[] {azimuth, elevation};
     }
 
     public static float rationalToFloat(String str)
