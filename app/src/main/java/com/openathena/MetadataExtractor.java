@@ -407,12 +407,7 @@ public class MetadataExtractor {
     {
         String[] split = str.split("/", 2);
         float numerator = Float.parseFloat(split[0]);
-        float denominator;
-        if (split.length > 1) {
-            denominator = Float.parseFloat(split[1]);
-        } else {
-            denominator = 1.0f;
-        }
+        float denominator = Float.parseFloat(split[1]);
         return numerator / denominator;
     }
 }
