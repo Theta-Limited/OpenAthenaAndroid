@@ -14,14 +14,14 @@ import java.io.IOException;
 
 public class MetadataExtractor {
     private static final String TAG = "MetadataExtractor";
-    private MainActivity parent;
+    private static MainActivity parent;
 
-    protected MetadataExtractor(MainActivity parent) {
+    protected MetadataExtractor(MainActivity caller) {
         super();
-        this.parent = parent;
+        parent = caller;
     }
 
-    public double[] getMetadataValues(ExifInterface exif) throws XMPException, MissingDataException {
+    public static double[] getMetadataValues(ExifInterface exif) throws XMPException, MissingDataException {
         if (exif == null) {
             Log.e(TAG, "ERROR: getMetadataValues failed, ExifInterface was null");
             throw new IllegalArgumentException("ERROR: getMetadataValues failed, exif was null");
@@ -58,7 +58,7 @@ public class MetadataExtractor {
         }
     }
 
-    public double[] handleDJI(ExifInterface exif) throws XMPException, MissingDataException{
+    public static double[] handleDJI(ExifInterface exif) throws XMPException, MissingDataException{
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
         if (xmp_str == null) {
             throw new MissingDataException(parent.getString(R.string.xmp_missing_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
@@ -119,7 +119,7 @@ public class MetadataExtractor {
         return outArr;
     }
 
-    public double[] handleSKYDIO(ExifInterface exif) throws XMPException, MissingDataException {
+    public static double[] handleSKYDIO(ExifInterface exif) throws XMPException, MissingDataException {
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
         if (xmp_str == null) {
             throw new MissingDataException(parent.getString(R.string.xmp_missing_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
@@ -167,7 +167,7 @@ public class MetadataExtractor {
         return outArr;
     }
 
-    public double[] handleAUTEL(ExifInterface exif) throws XMPException, MissingDataException{
+    public static double[] handleAUTEL(ExifInterface exif) throws XMPException, MissingDataException{
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
         if (xmp_str == null) {
             throw new MissingDataException(parent.getString(R.string.xmp_missing_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
@@ -225,7 +225,7 @@ public class MetadataExtractor {
         }
     }
 
-    public double[] handlePARROT(ExifInterface exif) throws XMPException, MissingDataException{
+    public static double[] handlePARROT(ExifInterface exif) throws XMPException, MissingDataException{
         double y;
         double x;
         double z;
@@ -265,12 +265,12 @@ public class MetadataExtractor {
     }
 
     // http://android-er.blogspot.com/2009/12/read-exif-information-in-jpeg-file.html
-    public String getTagString(String tag, ExifInterface exif)
+    public static String getTagString(String tag, ExifInterface exif)
     {
         return(tag + " : " + exif.getAttribute(tag) + "\n");
     }
 
-    public Float[] exifGetYXZ(ExifInterface exif) throws MissingDataException
+    public static Float[] exifGetYXZ(ExifInterface exif) throws MissingDataException
     {
         String latDir = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
         String latRaw = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
@@ -321,9 +321,22 @@ public class MetadataExtractor {
         float[] intrinsicMatrix = new float[9];
 
         // Get focal length in millimeters
-        float focalLength = (float) exif.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH, -1.0f);
+//        float focalLength = (float) exif.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH, -1.0f);
         float focalLength35mmEquiv = (float) exif.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM, -1.0f);
 
+        if (/*focalLength == -1.0f || focalLength == 0.0f ||*/ focalLength35mmEquiv == -1.0f || focalLength35mmEquiv == 0.0f) {
+            throw new RuntimeException("focal length could not be determined");
+        }
+
+        String digitalZoomRational = exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO);
+        if (digitalZoomRational != null && !digitalZoomRational.equals("")) {
+            float digitalZoomRatio = rationalToFloat(exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO));
+            if (Math.abs(digitalZoomRatio) > 0.000f && Math.abs(digitalZoomRatio - 1.0f) > 0.000f) {
+                throw new RuntimeException("digital zoom detected. Not supported in this version");
+            }
+        }
+
+        // lookup sensor size from compendium
 //        // Get sensor width in millimeters
 //        float sensorWidth = lookup("sensor_width");
 //
@@ -335,8 +348,10 @@ public class MetadataExtractor {
         float imageHeight = exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, 0); // Image Height
 
         float aspectRatio = imageWidth / imageHeight;
+
         // This calculation assumes linear relationship, which may not be the case. Needs testing
         float focalEquivSensorHeight = (1.0f / aspectRatio) * 36.0f; // may be adversely effected by digital crop, needs testing
+        // Log.d(TAG, "focalEquivSensorHeight: " + focalEquivSensorHeight);
 
         // Calculate the intrinsic matrix elements
         float alpha_x = imageWidth * focalLength35mmEquiv / 36.0f;
@@ -358,7 +373,7 @@ public class MetadataExtractor {
         return intrinsicMatrix;
     }
 
-    public float rationalToFloat(String str)
+    public static float rationalToFloat(String str)
     {
         String[] split = str.split("/", 2);
         float numerator = Float.parseFloat(split[0]);
