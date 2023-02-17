@@ -542,6 +542,7 @@ public class MainActivity extends AthenaActivity {
             attribs += theMeta.getTagString(ExifInterface.TAG_MAKE, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_MODEL, exif);
 
+            attribs += theMeta.getTagString(ExifInterface.TAG_FOCAL_LENGTH, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_DIGITAL_ZOOM_RATIO, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif);
@@ -555,7 +556,7 @@ public class MainActivity extends AthenaActivity {
             double[] relativeRay;
             relativeRay = new double[] {0.0d, 0.0d};
 //            try {
-//                relativeRay = theMeta.getRayAnglesFromImgPixel(960, 1704, exif);
+//                relativeRay = theMeta.getRayAnglesFromImgPixel(3264, 600, exif);
 //            } catch (Exception e) {
 //                relativeRay = new double[] {0.0d, 0.0d};
 //            }
