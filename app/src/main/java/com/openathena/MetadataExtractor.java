@@ -29,13 +29,12 @@ public class MetadataExtractor {
     private static void genCCDMap() {
         HashMap<String, double[]> djiMap = new HashMap<String, double[]>();
 
-//        djiMap.put("FC2204", new double[]{6.17d, 4.55d});
-        djiMap.put("FC2204", new double[]{6.3d, 4.7d});
+        djiMap.put("FC2204", new double[]{0.001575d, 0.0015666667d});
         mfnMap.put("DJI", djiMap);
 
         HashMap<String, double[]> skydioMap = new HashMap<String, double[]>();
-        skydioMap.put("2", new double[]{6.3116d, 4.9228d});
-        skydioMap.put("2+", new double[]{6.3116d, 4.9228d});
+        skydioMap.put("2", new double[]{0.0015373281d, 0.0015339426d});
+        skydioMap.put("2+", new double[]{0.0015373281d, 0.0015339426d});
 
         mfnMap.put("SKYDIO", skydioMap);
     }
@@ -336,8 +335,8 @@ public class MetadataExtractor {
         return(arrOut);
     }
 
-    public static float[] getIntrinsicMatrixFromExif(ExifInterface exif) throws Exception {
-        float[] intrinsicMatrix = new float[9];
+    public static double[] getIntrinsicMatrixFromExif(ExifInterface exif) throws Exception {
+        double[] intrinsicMatrix = new double[9];
         String make = exif.getAttribute(ExifInterface.TAG_MAKE);
         String model = exif.getAttribute(ExifInterface.TAG_MODEL);
         make = make.toUpperCase();
@@ -345,10 +344,10 @@ public class MetadataExtractor {
 
         HashMap<String, double[]> mfn = mfnMap.get(make);
         if (mfn != null) {
-            double[] ccdDimensions = mfn.get(model);
-            if (ccdDimensions != null) {
-                Log.d(TAG, "found ccd dimensions: " + ccdDimensions[0] + ", " + ccdDimensions[1]);
-                return getIntrinsicMatrixFromKnownCCD(exif, ccdDimensions);
+            double[] pixelDimensions = mfn.get(model);
+            if (pixelDimensions != null) {
+                Log.d(TAG, "found pixel dimensions (mm) from table lookup: " + pixelDimensions[0] + ", " + pixelDimensions[1]);
+                return getIntrinsicMatrixFromKnownCCD(exif, pixelDimensions);
             } else {
                 return getIntrinsicMatrixFromExif35mm(exif);
             }
@@ -357,16 +356,16 @@ public class MetadataExtractor {
         }
     }
 
-    public static float[] getIntrinsicMatrixFromKnownCCD(ExifInterface exif, double[] ccdDimensions) throws Exception {
+    protected static double[] getIntrinsicMatrixFromKnownCCD(ExifInterface exif, double[] pixelDimensions) throws Exception {
         if (exif == null) {
             throw new IllegalArgumentException("Failed to get intrinsics, ExifInterface was null!");
         }
-        if (ccdDimensions == null) {
+        if (pixelDimensions == null) {
             Log.e(TAG, "Failed to calculate intrinsics, ccdDimensions was null!");
             Log.e(TAG, "Warning: reverting to calc from 35mm mode");
             return getIntrinsicMatrixFromExif35mm(exif);
         }
-        if (ccdDimensions.length != 2) {
+        if (pixelDimensions.length != 2) {
             Log.e(TAG, "Failed to calculate intrinsics, ccdDimensions was invalid!");
             Log.e(TAG, "Warning: reverting to calc from 35mm mode");
             return getIntrinsicMatrixFromExif35mm(exif);
@@ -379,49 +378,48 @@ public class MetadataExtractor {
             return getIntrinsicMatrixFromExif35mm(exif);
         }
 
-        float focalLength = rationalToFloat(focalRational);
-        if (focalLength == -1.0f || focalLength == 0.0f) {
+        double focalLength = rationalToFloat(focalRational);
+        if (focalLength == -1.0d || focalLength == 0.0d) {
             throw new Exception("focal length could not be determined");
         }
 
-        float sensorWidth = (float) ccdDimensions[0];
-        float sensorHeight = (float) ccdDimensions[1];
+        double mmWidthPerPixel = pixelDimensions[0];
+        double mmHeightPerPixel = pixelDimensions[1];
+        double pixelAspectRatio = mmWidthPerPixel / mmHeightPerPixel;
 
-        float imageWidth = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, -1);
-        float imageHeight = exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, -1); // Image Height
-        if (imageWidth <= 0.0f || imageHeight <= 0.0f) {
+        double imageWidth = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, -1);
+        double imageHeight = exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, -1); // Image Height
+        if (imageWidth <= 0.0d || imageHeight <= 0.0d) {
             throw new Exception("could not determine width and height of image!");
         }
 
-        float alpha_x = imageWidth * focalLength / sensorWidth;
-        float alpha_y = imageHeight * focalLength / sensorHeight;
+        double alpha_x = focalLength / mmWidthPerPixel; // focal length in pixel units
+        double alpha_y = alpha_x / pixelAspectRatio; // focal length in pixel units, for the homogenous y axis in the image frame
 
-        float[] intrinsicMatrix = new float[9];
+        double[] intrinsicMatrix = new double[9];
         intrinsicMatrix[0] = alpha_x;
-        intrinsicMatrix[1] = 0.0f; // gamma, the skew coefficient between the x and the y axis, and is often 0.
-        intrinsicMatrix[2] = imageWidth / 2.0f; // cx
-        intrinsicMatrix[3] = 0.0f;
+        intrinsicMatrix[1] = 0.0d; // gamma, the skew coefficient between the x and the y axis, and is often 0.
+        intrinsicMatrix[2] = imageWidth / 2.0d; // cx
+        intrinsicMatrix[3] = 0.0d;
         intrinsicMatrix[4] = alpha_y;
-        intrinsicMatrix[5] = imageHeight / 2.0f; // cy
-        intrinsicMatrix[6] = 0.0f;
-        intrinsicMatrix[7] = 0.0f;
-        intrinsicMatrix[8] = 1.0f;
+        intrinsicMatrix[5] = imageHeight / 2.0d; // cy
+        intrinsicMatrix[6] = 0.0d;
+        intrinsicMatrix[7] = 0.0d;
+        intrinsicMatrix[8] = 1.0d;
 
         return intrinsicMatrix;
     }
 
-    public static float[] getIntrinsicMatrixFromExif35mm(ExifInterface exif) throws Exception{
+    protected static double[] getIntrinsicMatrixFromExif35mm(ExifInterface exif) throws Exception{
         if (exif == null) {
             throw new IllegalArgumentException("Failed to get intrinsics, ExifInterface was null!");
         }
 
-        float[] intrinsicMatrix = new float[9];
+        double[] intrinsicMatrix = new double[9];
 
-        // Get focal length in millimeters
-//        float focalLength = (float) exif.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH, -1.0f);
-        float focalLength35mmEquiv = (float) exif.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM, -1.0f);
+        double focalLength35mmEquiv = exif.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM, -1.0d);
 
-        if (/*focalLength == -1.0f || focalLength == 0.0f ||*/ focalLength35mmEquiv == -1.0f || focalLength35mmEquiv == 0.0f) {
+        if (focalLength35mmEquiv == -1.0d || focalLength35mmEquiv == 0.0d) {
             throw new Exception("focal length could not be determined");
         }
 
@@ -433,76 +431,50 @@ public class MetadataExtractor {
             }
         }
 
-        // lookup sensor size from compendium
-//        // Get sensor width in millimeters
-//        float sensorWidth = lookup("sensor_width");
-//
-//        // Get sensor height in millimeters
-//        float sensorHeight = lookup("sensor_height");
-
-        // Calculate the horizontal and vertical sensor resolutions
-        float imageWidth = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, 0);
-        float imageHeight = exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, 0); // Image Height
-        if (imageWidth <= 0.0f || imageHeight <= 0.0f) {
+        double imageWidth = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, 0);
+        double imageHeight = exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, 0); // Image Height
+        if (imageWidth <= 0.0d || imageHeight <= 0.0d) {
             throw new Exception("could not determine width and height of image!");
         }
 
-        float aspectRatio = imageWidth / imageHeight;
-
-        // This calculation assumes linear relationship, which may not be the case. Needs testing
-        float focalEquivSensorHeight = (1.0f / aspectRatio) * 36.0f; // may be adversely effected by digital crop, needs testing
-        // Log.d(TAG, "focalEquivSensorHeight: " + focalEquivSensorHeight);
+        // calculate aspect ratio
+        double aspectRatio = imageWidth / imageHeight;
 
         // Calculate the intrinsic matrix elements
-        float alpha_x = imageWidth * focalLength35mmEquiv / 36.0f;
+        double alpha_x = imageWidth * focalLength35mmEquiv / 36.0d;
         intrinsicMatrix[0] = alpha_x;
 
         intrinsicMatrix[1] = 0.0f; // gamma, the skew coefficient between the x and the y axis, and is often 0.
 
-        float alpha_y = imageHeight * focalLength35mmEquiv / focalEquivSensorHeight;
-        // float alpha_y = alpha_x * (1.0f / aspectRatio); // WRONG
+        double alpha_y = alpha_x / aspectRatio;
 
         intrinsicMatrix[4] = alpha_y;
 
         // principal point
-        intrinsicMatrix[2] = imageWidth / 2.0f; // cx
-        intrinsicMatrix[3] = 0.0f;
-        intrinsicMatrix[5] = imageHeight / 2.0f; // cy
-        intrinsicMatrix[6] = 0.0f;
-        intrinsicMatrix[7] = 0.0f;
-        intrinsicMatrix[8] = 1.0f;
+        intrinsicMatrix[2] = imageWidth / 2.0d; // cx
+        intrinsicMatrix[3] = 0.0d;
+        intrinsicMatrix[5] = imageHeight / 2.0d; // cy
+        intrinsicMatrix[6] = 0.0d;
+        intrinsicMatrix[7] = 0.0d;
+        intrinsicMatrix[8] = 1.0d;
 
         return intrinsicMatrix;
     }
 
     public static double[] getRayAnglesFromImgPixel(int x, int y, ExifInterface exifInterface) throws Exception {
-        float[] intrinsics = getIntrinsicMatrixFromExif(exifInterface); // may throw Exception
+        double[] intrinsics = getIntrinsicMatrixFromExif(exifInterface); // may throw Exception
 
-        float fx = intrinsics[0];
-        float fy = intrinsics[4];
-        float cx = Math.round(intrinsics[2]);
-        float cy = Math.round(intrinsics[5]);
+        double fx = intrinsics[0];
+        double fy = intrinsics[4];
+        double cx = intrinsics[2];
+        double cy = intrinsics[5];
 
         // calculate ray angles
-        float pixelX = x - cx;
-        float pixelY = y - cy;
-        float rayX = pixelX / fx;
-        float rayY = pixelY / fy;
-        float rayZ = 1.0f;
-
-        float rayLength = (float) Math.sqrt(rayX * rayX + rayY * rayY + rayZ * rayZ);
-        rayX /= rayLength;
-        rayY /= rayLength;
-        rayZ /= rayLength;
-
-        // calc ray angles
-//        double azimuth =  Math.atan2(rayX, rayZ);
-//        double elevation =  Math.atan2(rayY, Math.sqrt(rayX * rayX + rayZ * rayZ));
+        double pixelX = x - cx;
+        double pixelY = y - cy;
 
         double azimuth = Math.atan2(pixelX, fx);
-        double elevation = Math.atan2(pixelY, Math.sqrt(fy*fy + fx*fx));
-//        double elevation = Math.atan2(pixelY, fy);
-
+        double elevation = Math.atan2(pixelY, fy);
 
         azimuth = Math.toDegrees(azimuth);
         elevation = Math.toDegrees(elevation);

@@ -124,7 +124,7 @@ public class TargetGetter {
         // meters of acceptable distance between constructed line and datapoint
         // Somewhat arbitrary. SRTM has a horizontal resolution of 30m, but vertical accuracy is often more precise
         double post_spacing_meters = haversine(0, lat, myGeoTIFFParser.getXResolution(), lat, alt); // meters between datapoints, from degrees
-        final double THRESHOLD = post_spacing_meters / 8.0d; // meters of acceptable distance between constructed line and datapoint. somewhat arbitrary
+        final double THRESHOLD = post_spacing_meters / 16.0d; // meters of acceptable distance between constructed line and datapoint. somewhat arbitrary
 
         double curLat = lat;
         double curLon = lon;
