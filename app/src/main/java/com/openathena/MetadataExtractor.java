@@ -29,12 +29,17 @@ public class MetadataExtractor {
     private static void genCCDMap() {
         HashMap<String, double[]> djiMap = new HashMap<String, double[]>();
 
-        djiMap.put("FC2204", new double[]{0.001575d, 0.0015666667d});
+//        djiMap.put("FC2204", new double[]{0.001575d, 0.0015666667d});
+        djiMap.put("FC2204", new double[]{0.001565d, 0.0015666667d});
+
         mfnMap.put("DJI", djiMap);
 
         HashMap<String, double[]> skydioMap = new HashMap<String, double[]>();
-        skydioMap.put("2", new double[]{0.0015373281d, 0.0015339426d});
-        skydioMap.put("2+", new double[]{0.0015373281d, 0.0015339426d});
+//        skydioMap.put("2", new double[]{0.0015373281d, 0.0015339426d});
+//        skydioMap.put("2+", new double[]{0.0015373281d, 0.0015339426d});
+
+        skydioMap.put("2", new double[]{0.0015433925d, 0.0015460526d});
+        skydioMap.put("2+", new double[]{0.0015433925d, 0.0015460526d});
 
         mfnMap.put("SKYDIO", skydioMap);
     }
@@ -439,6 +444,7 @@ public class MetadataExtractor {
 
         // calculate aspect ratio
         double aspectRatio = imageWidth / imageHeight;
+//        double aspectRatio = 4.0d/3.0d;
 
         // Calculate the intrinsic matrix elements
         double alpha_x = imageWidth * focalLength35mmEquiv / 36.0d;
