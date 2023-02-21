@@ -26,20 +26,32 @@ public class MetadataExtractor {
         genCCDMap();
     }
 
+    /**
+     * Generates a nested map which can be indexed into by make, then model
+     * The double[2] stored in the map represents the width and height, in mm, of a pixel on the device's specific ccd sensor
+     * This is used for intrinsics calculation, and allows the focal length to be converted from mm to pixel units
+     * <p>
+     *     See also:
+     *     https://towardsdatascience.com/camera-intrinsic-matrix-with-example-in-python-d79bf2478c12
+     *     https://www.djzphoto.com/blog/2018/12/5/dji-drone-quick-specs-amp-comparison-page
+     *     https://support.skydio.com/hc/en-us/articles/5338292379803-Comparing-Skydio-2-and-Skydio-2-
+     *     https://commonlands.com/blogs/technical/cmos-sensor-size
+     *
+     * </p>
+     */
     private static void genCCDMap() {
         HashMap<String, double[]> djiMap = new HashMap<String, double[]>();
 
-//        djiMap.put("FC2204", new double[]{0.001575d, 0.0015666667d});
-        djiMap.put("FC2204", new double[]{0.001565d, 0.0015666667d});
+        // ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("FC2204", new double[]{6.26d/4000.0d, 4.7d/3000.0d});
 
         mfnMap.put("DJI", djiMap);
 
         HashMap<String, double[]> skydioMap = new HashMap<String, double[]>();
-//        skydioMap.put("2", new double[]{0.0015373281d, 0.0015339426d});
-//        skydioMap.put("2+", new double[]{0.0015373281d, 0.0015339426d});
 
-        skydioMap.put("2", new double[]{0.0015433925d, 0.0015460526d});
-        skydioMap.put("2+", new double[]{0.0015433925d, 0.0015460526d});
+        // ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        skydioMap.put("2", new double[]{6.26d/4056.0d, 4.7d/3040.0d});
+        skydioMap.put("2+", skydioMap.get("2"));
 
         mfnMap.put("SKYDIO", skydioMap);
     }
