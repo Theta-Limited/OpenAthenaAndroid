@@ -44,15 +44,17 @@ public class MetadataExtractor {
     private static void genCCDMap() {
         HashMap<String, double[]> djiMap = new HashMap<String, double[]>();
 
-        // ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC2204", new double[]{6.26d/4000.0d, 4.7d/3000.0d});
+        // DJI Mavic 2 Zoom
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("FC2204", new double[]{6.26d/4000.0d, 4.7d/3000.0d, 4000.0d, 3000.0d});
 
         mfnMap.put("DJI", djiMap);
 
         HashMap<String, double[]> skydioMap = new HashMap<String, double[]>();
 
-        // ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        skydioMap.put("2", new double[]{6.26d/4056.0d, 4.7d/3040.0d});
+        // Skydio 2 and 2+
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        skydioMap.put("2", new double[]{6.26d/4056.0d, 4.7d/3040.0d, 4056.0d, 3040.0d});
         skydioMap.put("2+", skydioMap.get("2"));
 
         mfnMap.put("SKYDIO", skydioMap);
@@ -126,7 +128,7 @@ public class MetadataExtractor {
         double z;
         String altitude = xmpMeta.getPropertyString(schemaNS, "AbsoluteAltitude");
         if (altitude != null) {
-            z = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "AbsoluteAltitude"));
+            z = Double.parseDouble(altitude);
         } else {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_altitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALTITUDE);
         }
@@ -135,6 +137,7 @@ public class MetadataExtractor {
         String gimbalYawDegree = xmpMeta.getPropertyString(schemaNS, "GimbalYawDegree");
         if (gimbalYawDegree != null) {
             azimuth = Double.parseDouble(gimbalYawDegree);
+            azimuth = azimuth % 360.0d;
         } else {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_azimuth_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.AZIMUTH);
         }
@@ -189,6 +192,7 @@ public class MetadataExtractor {
 
         try {
             azimuth = Double.parseDouble(xmpMeta.getStructField(schemaNS, "CameraOrientationNED", schemaNS, "Yaw").getValue());
+            azimuth = azimuth % 360.0d;
         } catch (NumberFormatException nfe) {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_altitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.AZIMUTH);
         }
@@ -244,6 +248,7 @@ public class MetadataExtractor {
 
             try {
                 azimuth = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Yaw"));
+                azimuth = azimuth % 360.0d;
             } catch (NumberFormatException nfe) {
                 throw new MissingDataException(parent.getString(R.string.missing_data_exception_azimuth_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.AZIMUTH);
             }
@@ -287,6 +292,7 @@ public class MetadataExtractor {
 
         try {
             azimuth = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraYawDegree"));
+            azimuth = azimuth % 360.0d;
         } catch (NumberFormatException nfe) {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_azimuth_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.AZIMUTH);
         }
@@ -513,6 +519,9 @@ public class MetadataExtractor {
 
     public static float rationalToFloat(String str)
     {
+        if (str == null) {
+            return 0.0f;
+        }
         String[] split = str.split("/", 2);
         float numerator = Float.parseFloat(split[0]);
         float denominator;
