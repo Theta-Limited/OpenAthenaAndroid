@@ -419,6 +419,8 @@ public class MetadataExtractor {
         double mmWidthPerPixel = pixelDimensions[0];
         double mmHeightPerPixel = pixelDimensions[1];
         double pixelAspectRatio = mmWidthPerPixel / mmHeightPerPixel;
+        double ccdPixelWidth = pixelDimensions[2];
+        double ccdPixelHeight = pixelDimensions[3];
 
         double imageWidth = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, -1);
         double imageHeight = exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, -1); // Image Height
@@ -426,8 +428,12 @@ public class MetadataExtractor {
             throw new Exception("could not determine width and height of image!");
         }
 
+        double scaleRatio = imageWidth / ccdPixelWidth;
+
         double alpha_x = focalLength / mmWidthPerPixel; // focal length in pixel units
+        alpha_x = alpha_x * scaleRatio; // scale down if image is scaled down
         double alpha_y = alpha_x / pixelAspectRatio; // focal length equivalent in pixel units, for the homogenous y axis in the image frame
+        alpha_y = alpha_y * scaleRatio; // use the x-axis scale ratio because y axis is often cropped (and not EXIF tagged appropriately) and x axis usually isn't
 
         double[] intrinsicMatrix = new double[9];
         intrinsicMatrix[0] = alpha_x;
