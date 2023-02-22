@@ -28,7 +28,9 @@ public class MetadataExtractor {
 
     /**
      * Generates a nested map which can be indexed into by make, then model
-     * The double[2] stored in the map represents the width and height, in mm, of a pixel on the device's specific ccd sensor
+     * The double[2] stored in the map represents the width and height, in mm, of a pixel
+     * on the device's specific ccd/cmos sensor.
+     *
      * This is used for intrinsics calculation, and allows the focal length to be converted from mm to pixel units
      * <p>
      *     See also:
