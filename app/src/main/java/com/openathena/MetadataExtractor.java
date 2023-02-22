@@ -390,7 +390,7 @@ public class MetadataExtractor {
             Log.e(TAG, "Warning: reverting to calc from 35mm mode");
             return getIntrinsicMatrixFromExif35mm(exif);
         }
-        if (pixelDimensions.length != 2) {
+        if (pixelDimensions.length < 2) {
             Log.e(TAG, "Failed to calculate intrinsics, ccdDimensions was invalid!");
             Log.e(TAG, "Warning: reverting to calc from 35mm mode");
             return getIntrinsicMatrixFromExif35mm(exif);

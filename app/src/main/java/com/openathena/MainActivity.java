@@ -548,10 +548,10 @@ public class MainActivity extends AthenaActivity {
             attribs += theMeta.getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_IMAGE_LENGTH, exif);
             double[] intrinsics = theMeta.getIntrinsicMatrixFromExif(exif);
-            attribs += "fx: " + intrinsics[0] + "\n";
-            attribs += "fy: " + intrinsics[4] + "\n";
-            attribs += "cx: " + intrinsics[2] + "\n";
-            attribs += "cy: " + intrinsics[5] + "\n";
+            attribs += "focal length (pixels): " + intrinsics[0] + "\n";
+//            attribs += "fy: " + intrinsics[4] + "\n";
+//            attribs += "cx: " + intrinsics[2] + "\n";
+//            attribs += "cy: " + intrinsics[5] + "\n";
 
             double[] relativeRay;
             relativeRay = new double[] {0.0d, 0.0d};
