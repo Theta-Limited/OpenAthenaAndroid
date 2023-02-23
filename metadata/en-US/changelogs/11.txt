@@ -1,0 +1,1 @@
+Main Activity code cleanup
