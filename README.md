@@ -12,6 +12,12 @@ OpenAthena™ allows consumer and professional drones to spot precise geodetic l
 
 <a href="https://play.google.com/store/apps/details?id=com.openathena"><img width="586" alt="OpenAthena Android splash screen demo" src="./assets/App_Open_Demo_landscape.png"></a>
 
+<img width="586" alt="OpenAthena™ Android Target Calculation demo using cobb.tif and DJI_0419.JPG, output mode WGS84" src="./assets/DJI_0419_Target_Res_Demo_landscape.png">
+
+<img width="586" alt="OpenAthena Android DJI_0419.JPG target shown in Google Maps satellite view" src="./assets/0419_maps_screenshot.png">
+
+<img width="586" alt="OpenAthena for Android triggers a waypoint to show in Android Team Awarness Kit at the calculated location" src="./assets/ATAK_OpenAthena_CoT_Demo_landscape.png">
+
 <a href='https://play.google.com/store/apps/details?id=com.openathena&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img width="216" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
 
 # Operation Guide
@@ -50,7 +56,7 @@ Then, press the "🧮" button to calculate the target location on the ground:
 
 You can now tap on the result display box to copy the result text to your clipboard:
 
-<img width="586" alt="OpenAthena Android DJI_0419.JPG target location text copied to clipboard" src="./src/0419_text_copied_to_clipboard.png">
+<img width="586" alt="OpenAthena Android DJI_0419.JPG target location text copied to clipboard" src="./assets/0419_text_copied_to_clipboard.png">
 
 Alternatively, you may open the position in the Google Maps app by cliking on the blue hyperlink:
 
