@@ -1,0 +1,1 @@
+New feature: any point in an image may be selected
