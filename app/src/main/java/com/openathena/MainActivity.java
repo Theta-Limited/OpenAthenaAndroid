@@ -528,7 +528,7 @@ public class MainActivity extends AthenaActivity {
             aDrawable = iView.getDrawable();
             exif = new ExifInterface(is);
 
-            double[] values = getMetadataValues(exif);
+            double[] values = theMeta.getMetadataValues(exif);
             double y = values[0];
             double x  = values[1];
             double z = values[2];
@@ -541,6 +541,31 @@ public class MainActivity extends AthenaActivity {
             attribs += theMeta.getTagString(ExifInterface.TAG_DATETIME, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_MAKE, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_MODEL, exif);
+
+            attribs += theMeta.getTagString(ExifInterface.TAG_FOCAL_LENGTH, exif);
+            attribs += theMeta.getTagString(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM, exif);
+            attribs += theMeta.getTagString(ExifInterface.TAG_DIGITAL_ZOOM_RATIO, exif);
+            attribs += theMeta.getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif);
+            attribs += theMeta.getTagString(ExifInterface.TAG_IMAGE_LENGTH, exif);
+            double[] intrinsics = theMeta.getIntrinsicMatrixFromExif(exif);
+            attribs += "focal length (pixels): " + intrinsics[0] + "\n";
+//            attribs += "fy: " + intrinsics[4] + "\n";
+//            attribs += "cx: " + intrinsics[2] + "\n";
+//            attribs += "cy: " + intrinsics[5] + "\n";
+
+            double[] relativeRay;
+            relativeRay = new double[] {0.0d, 0.0d};
+//            try {
+//                relativeRay = theMeta.getRayAnglesFromImgPixel(3264, 600, exif);
+//            } catch (Exception e) {
+//                relativeRay = new double[] {0.0d, 0.0d};
+//            }
+
+            double azimuthOffset = relativeRay[0];
+            double thetaOffset = relativeRay[1];
+
+            azimuth += azimuthOffset;
+            theta += thetaOffset;
 
             if (!outputModeIsSlavic()) {
                 attribs += getString(R.string.latitude_label_long) + " "+ roundDouble(y) + "\n";
@@ -725,249 +750,6 @@ public class MainActivity extends AthenaActivity {
             }
         }
         appendText(attribs);
-    }
-
-    private double[] getMetadataValues(ExifInterface exif) throws XMPException, MissingDataException {
-        if (exif == null) {
-            Log.e(TAG, "ERROR: getMetadataValues failed, ExifInterface was null");
-            throw new IllegalArgumentException("ERROR: getMetadataValues failed, exif was null");
-        }
-        String make = exif.getAttribute(ExifInterface.TAG_MAKE);
-        String model = exif.getAttribute(ExifInterface.TAG_MODEL);
-        if (make == null || make.equals("")) {
-            return null;
-        }
-        make = make.toUpperCase();
-        model = model.toUpperCase();
-        switch(make) {
-            case "DJI":
-                return handleDJI(exif);
-                //break;
-            case "SKYDIO":
-                return handleSKYDIO(exif);
-                //break;
-            case "AUTEL ROBOTICS":
-                displayAutelAlert();
-                return handleAUTEL(exif);
-                //break;
-            case "PARROT":
-                if (model.contains("ANAFI")) {
-                    return handlePARROT(exif);
-                } else {
-                    Log.e(TAG, "ERROR: Parrot model " + model + " not usable at this time");
-                    throw new XMPException(getString(R.string.parrot_model_prefix_error_msg) + model + getString(R.string.not_usable_at_this_time_error_msg), XMPError.BADVALUE);
-                }
-                //break;
-            default:
-                Log.e(TAG, getString(R.string.make_prefix_error_msg) + " " + make + " " + getString(R.string.not_usable_at_this_time_error_msg));
-                throw new XMPException(getString(R.string.make_prefix_error_msg) + " " + make + " " + getString(R.string.not_usable_at_this_time_error_msg), XMPError.BADXMP);
-        }
-    }
-
-    private double[] handleDJI(ExifInterface exif) throws XMPException, MissingDataException{
-        String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
-        if (xmp_str == null) {
-            throw new MissingDataException(getString(R.string.xmp_missing_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
-        } if (xmp_str.trim().equals("")) {
-            throw new MissingDataException(getString(R.string.xmp_empty_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
-        }
-        Log.i(TAG, "xmp_str for Make DJI: " + xmp_str);
-        XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
-
-        String schemaNS = "http://www.dji.com/drone-dji/1.0/";
-        String latitude = xmpMeta.getPropertyString(schemaNS, "GpsLatitude");
-        double y;
-        if (latitude != null) {
-            y = Double.parseDouble(latitude);
-        } else {
-            throw new MissingDataException(getString(R.string.missing_data_exception_latitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.LATITUDE);
-        }
-        String longitude = xmpMeta.getPropertyString(schemaNS, "GpsLongitude");
-        if (longitude == null || longitude.equals("")) {
-            // handle a typo "GpsLongtitude" that occurs in certain versions of Autel drone firmware (which use drone-dji metadata format)
-            longitude = xmpMeta.getPropertyString(schemaNS, "GpsLong" + "t" + "itude");
-            if (longitude == null || longitude.equals("")) {
-                throw new MissingDataException(getString(R.string.missing_data_exception_longitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.LATITUDE);
-            }
-        }
-        double x = Double.parseDouble(longitude);
-
-        double z;
-        String altitude = xmpMeta.getPropertyString(schemaNS, "AbsoluteAltitude");
-        if (altitude != null) {
-            z = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "AbsoluteAltitude"));
-        } else {
-            throw new MissingDataException(getString(R.string.missing_data_exception_altitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALTITUDE);
-        }
-
-        double azimuth;
-        String gimbalYawDegree = xmpMeta.getPropertyString(schemaNS, "GimbalYawDegree");
-        if (gimbalYawDegree != null) {
-            azimuth = Double.parseDouble(gimbalYawDegree);
-        } else {
-            throw new MissingDataException(getString(R.string.missing_data_exception_azimuth_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.AZIMUTH);
-        }
-
-        double theta;
-        String gimbalPitchDegree = xmpMeta.getPropertyString(schemaNS, "GimbalPitchDegree");
-        if (gimbalPitchDegree != null) {
-            theta = Math.abs(Double.parseDouble(gimbalPitchDegree));
-        } else {
-            throw new MissingDataException(getString(R.string.missing_data_exception_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
-        }
-
-        // safety check: if metadata azimuth and theta are zero, it's extremely likely the metadata is invalid
-        if (Math.abs(Double.compare(azimuth, 0.0d)) <= 0.001d && Math.abs(Double.compare(theta, 0.0d)) <= 0.001d) {
-            throw new MissingDataException(getString(R.string.missing_data_exception_altitude_and_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
-        }
-
-        double[] outArr = new double[]{y, x, z, azimuth, theta};
-        return outArr;
-    }
-
-    private double[] handleSKYDIO(ExifInterface exif) throws XMPException, MissingDataException {
-        String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
-        if (xmp_str == null) {
-            throw new MissingDataException(getString(R.string.xmp_missing_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
-        } if (xmp_str.trim().equals("")) {
-            throw new MissingDataException(getString(R.string.xmp_empty_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
-        }
-        Log.i(TAG, "xmp_str for Make SKYDIO: " + xmp_str);
-        XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
-        String schemaNS = "https://www.skydio.com/drone-skydio/1.0/";
-
-        double y; double x; double z; double azimuth; double theta;
-
-        try {
-            y = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Latitude"));
-        } catch (NumberFormatException nfe) {
-            throw new MissingDataException(getString(R.string.missing_data_exception_latitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.LATITUDE);
-        }
-
-        try {
-            x = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Longitude"));
-        } catch (NumberFormatException nfe) {
-            throw new MissingDataException(getString(R.string.missing_data_exception_longitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.LONGITUDE);
-        }
-
-        try {
-            z = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "AbsoluteAltitude"));
-        } catch (NumberFormatException nfe) {
-            throw new MissingDataException(getString(R.string.missing_data_exception_altitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALTITUDE);
-        }
-
-        try {
-            azimuth = Double.parseDouble(xmpMeta.getStructField(schemaNS, "CameraOrientationNED", schemaNS, "Yaw").getValue());
-        } catch (NumberFormatException nfe) {
-            throw new MissingDataException(getString(R.string.missing_data_exception_altitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.AZIMUTH);
-        }
-
-        try {
-            theta = Double.parseDouble(xmpMeta.getStructField(schemaNS, "CameraOrientationNED", schemaNS, "Pitch").getValue());
-            theta = Math.abs(theta);
-        } catch (NumberFormatException nfe) {
-            throw new MissingDataException(getString(R.string.missing_data_exception_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
-        }
-
-        double[] outArr = new double[]{y, x, z, azimuth, theta};
-        return outArr;
-    }
-
-    private double[] handleAUTEL(ExifInterface exif) throws XMPException, MissingDataException{
-        String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
-        if (xmp_str == null) {
-            throw new MissingDataException(getString(R.string.xmp_missing_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
-        } if (xmp_str.trim().equals("")) {
-            throw new MissingDataException(getString(R.string.xmp_empty_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
-        }
-        Log.i(TAG, "xmp_str for Make AUTEL: " + xmp_str);
-        XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
-
-        boolean isNewMetadataFormat;
-        int aboutIndex = xmp_str.indexOf("rdf:about=");
-        String rdf_about = xmp_str.substring(aboutIndex + 10, aboutIndex + 24); // not perfect, should be fine though
-        Log.d(TAG, "rdf_about: " + rdf_about);
-
-        if (!rdf_about.toLowerCase().contains("autel")) {
-            isNewMetadataFormat = true;
-        } else {
-            isNewMetadataFormat = false;
-        }
-
-        double y;
-        double x;
-        double z;
-        double azimuth;
-        double theta;
-
-        if (isNewMetadataFormat) {
-            // Newer metadata uses the same format and schemaNS as DJI
-            return handleDJI(exif);
-        } else {
-            Float[] yxz = theMeta.exifGetYXZ(exif);
-            y = yxz[0];
-            x = yxz[1];
-            z = yxz[2];
-
-            String schemaNS = "http://pix4d.com/camera/1.0";
-
-            try {
-                azimuth = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Yaw"));
-            } catch (NumberFormatException nfe) {
-                throw new MissingDataException(getString(R.string.missing_data_exception_azimuth_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.AZIMUTH);
-            }
-
-            try {
-                theta = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Pitch"));
-            } catch (NumberFormatException nfe) {
-                throw new MissingDataException(getString(R.string.missing_data_exception_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
-            }
-            // AUTEL old firmware Camera pitch 0 is down, 90 is forwards towards horizon
-            // so, we use the complement of the angle instead
-            // see: https://support.pix4d.com/hc/en-us/articles/202558969-Yaw-Pitch-Roll-and-Omega-Phi-Kappa-angles
-            theta = 90.0d - theta;
-            double[] outArr = new double[]{y, x, z, azimuth, theta};
-            return outArr;
-        }
-    }
-
-    private double[] handlePARROT(ExifInterface exif) throws XMPException, MissingDataException{
-        double y;
-        double x;
-        double z;
-        double azimuth;
-        double theta;
-
-        Float[] yxz = theMeta.exifGetYXZ(exif);
-        y = yxz[0];
-        x = yxz[1];
-        z = yxz[2];
-
-        String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
-        if (xmp_str == null) {
-            throw new MissingDataException(getString(R.string.xmp_missing_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
-        } if (xmp_str.trim().equals("")) {
-            throw new MissingDataException(getString(R.string.xmp_empty_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
-        }
-        Log.i(TAG, "xmp_str for Make PARROT: " + xmp_str);
-        XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
-
-        String schemaNS = "http://www.parrot.com/drone-parrot/1.0/";
-
-        try {
-            azimuth = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraYawDegree"));
-        } catch (NumberFormatException nfe) {
-            throw new MissingDataException(getString(R.string.missing_data_exception_azimuth_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.AZIMUTH);
-        }
-
-        try {
-            theta = Math.abs(Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraPitchDegree")));
-        } catch (NumberFormatException nfe) {
-            throw new MissingDataException(getString(R.string.missing_data_exception_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
-        }
-
-        double[] outArr = new double[]{y, x, z, azimuth, theta};
-        return outArr;
     }
 
     public void displayAutelAlert() {
