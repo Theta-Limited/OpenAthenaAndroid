@@ -409,18 +409,22 @@ public class MetadataExtractor {
         }
 
         String digitalZoomRational = exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO);
+        float digitalZoomRatio = 1.0f;
         if (digitalZoomRational != null && !digitalZoomRational.equals("")) {
-            float digitalZoomRatio = rationalToFloat(exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO));
-            if (Math.abs(digitalZoomRatio) > 0.000f && Math.abs(digitalZoomRatio - 1.0f) > 0.000f) {
-                throw new Exception("digital zoom detected. Not supported in this version");
+            digitalZoomRatio = rationalToFloat(exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO));
+//            if (Math.abs(digitalZoomRatio) > 0.000f && Math.abs(digitalZoomRatio - 1.0f) > 0.000f) {
+//                throw new Exception("digital zoom detected. Not supported in this version");
+//            }
+            if (digitalZoomRatio < 1.0f) {
+                digitalZoomRatio = 1.0f;
             }
         }
 
         double mmWidthPerPixel = pixelDimensions[0];
         double mmHeightPerPixel = pixelDimensions[1];
         double pixelAspectRatio = mmWidthPerPixel / mmHeightPerPixel;
-        double ccdPixelWidth = pixelDimensions[2];
-        double ccdPixelHeight = pixelDimensions[3];
+        double ccdWidthPixels = pixelDimensions[2];
+        double ccdHeightPixels = pixelDimensions[3];
 
         double imageWidth = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, -1);
         double imageHeight = exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, -1); // Image Height
@@ -428,7 +432,7 @@ public class MetadataExtractor {
             throw new Exception("could not determine width and height of image!");
         }
 
-        double scaleRatio = imageWidth / ccdPixelWidth;
+        double scaleRatio = imageWidth * digitalZoomRatio / ccdWidthPixels; // ratio current size : original size, measured on x axis
 
         double alpha_x = focalLength / mmWidthPerPixel; // focal length in pixel units
         alpha_x = alpha_x * scaleRatio; // scale down if image is scaled down
@@ -463,10 +467,14 @@ public class MetadataExtractor {
         }
 
         String digitalZoomRational = exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO);
+        float digitalZoomRatio = 1.0f;
         if (digitalZoomRational != null && !digitalZoomRational.equals("")) {
-            float digitalZoomRatio = rationalToFloat(exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO));
-            if (Math.abs(digitalZoomRatio) > 0.000f && Math.abs(digitalZoomRatio - 1.0f) > 0.000f) {
-                throw new Exception("digital zoom detected. Not supported in this version");
+            digitalZoomRatio = rationalToFloat(exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO));
+//            if (Math.abs(digitalZoomRatio) > 0.000f && Math.abs(digitalZoomRatio - 1.0f) > 0.000f) {
+//                throw new Exception("Digital zoom detected. Not supported in this version");
+//            }
+            if (digitalZoomRatio < 1.0f) {
+                digitalZoomRatio = 1.0f;
             }
         }
 
@@ -478,15 +486,16 @@ public class MetadataExtractor {
 
         // calculate aspect ratio
 //        double aspectRatio = imageWidth / imageHeight; // This will be WRONG if the image is auto-cropped, which is commonly done to make a 16:9 picture from a 4:3 sensor
-        double aspectRatio = 4.0d/3.0d; // This will be WRONG if the sensor is not 4:3! e.g: APS-C or Full-frame 3:2
+        // note that this represents the aspect ratio of the CCD, not the image!
+        double ccdAspectRatio = 4.0d/3.0d; // This will be WRONG if the sensor is not 4:3! e.g: APS-C or Full-frame 3:2
 
         // Calculate the intrinsic matrix elements
-        double alpha_x = imageWidth * focalLength35mmEquiv / 36.0d; // focal length, in pixel units
+        double alpha_x = (imageWidth * digitalZoomRatio) * focalLength35mmEquiv / 36.0d; // focal length, in pixel units
         intrinsicMatrix[0] = alpha_x;
 
         intrinsicMatrix[1] = 0.0f; // gamma, the skew coefficient between the x and the y axis, and is often 0.
 
-        double alpha_y = alpha_x / aspectRatio;
+        double alpha_y = alpha_x / ccdAspectRatio;
 
         intrinsicMatrix[4] = alpha_y;
 
