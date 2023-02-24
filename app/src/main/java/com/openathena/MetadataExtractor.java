@@ -28,8 +28,8 @@ public class MetadataExtractor {
 
     /**
      * Generates a nested map which can be indexed into by make, then model
-     * The double[2] stored in the map represents the width and height, in mm, of a pixel
-     * on the device's specific ccd/cmos sensor.
+     * The double[4] stored in the map represents the width and height, in mm, of a pixel and the width-pixels and height-pixels
+     * of the device's specific ccd/cmos sensor.
      *
      * This is used for intrinsics calculation, and allows the focal length to be converted from mm to pixel units
      * <p>
@@ -374,9 +374,11 @@ public class MetadataExtractor {
                 Log.i(TAG, "found pixel dimensions (mm) from table lookup: " + pixelDimensions[0] + ", " + pixelDimensions[1]);
                 return getIntrinsicMatrixFromKnownCCD(exif, pixelDimensions);
             } else {
+                Log.i(TAG, "Camera make and model not recognized. Guestimating intrinsics from exif...");
                 return getIntrinsicMatrixFromExif35mm(exif);
             }
         } else {
+            Log.i(TAG, "Camera make and model not recognized. Guestimating intrinsics from exif...");
             return getIntrinsicMatrixFromExif35mm(exif);
         }
     }
