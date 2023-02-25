@@ -43,20 +43,87 @@ public class MetadataExtractor {
      */
     private static void genCCDMap() {
         HashMap<String, double[]> djiMap = new HashMap<String, double[]>();
+        HashMap<String, double[]> skydioMap = new HashMap<String, double[]>();
+        HashMap<String, double[]> hasselbladMap = new HashMap<String, double[]>(); // Mavic 3 and Mavic 2 Pro camera is of different make than drone
+
+        // DJI Mavic Pro / Mavic Pro Platinum
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("FC220", new double[]{6.3d/4000.0d, 4.7d/3000.0d, 4000.0d, 3000.0d});
+
+        // DJI Phantom 4 Pro, Phantom 4 Pro v2.0, Phantom 4 Advanced
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("FC330", new double[]{13.2d/5472.0d, 8.8d/3648.0d, 5472.0d, 3648.0d});
+
+        // DJI Phantom 3 SE
+        djiMap.put("FC300C", new double[]{6.3d/4000.0d, 4.7d/3000.0d, 4000.0d, 3000.0d});
+
+        // DJI Mini and DJI Mini 2
+        // ^ UNKNOWN    ^Mini 2 METADATA NOT COMPATIBLE WITH OPENATHENA
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("FC7303", new double[]{6.3d/4000.0d, 4.7d/3000.0d, 4000.0d, 3000.0d});
+
+        // DJI Mini 3 Pro // METADATA NOT COMPATIBLE WITH OPENATHENA
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("FC3582", new double[]{9.7d/8064.0d, 7.3d/6048.0d, 8064.0d, 6048.0d});
 
         // DJI Mavic 2 Zoom
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("FC2204", new double[]{6.26d/4000.0d, 4.7d/3000.0d, 4000.0d, 3000.0d});
 
-        mfnMap.put("DJI", djiMap);
+        // DJI Mavic 2 Pro
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        hasselbladMap.put("L1D-20C", new double[]{13.2d/5472.0d, 8.8d/3648.0d, 5472.0d, 3648.0d});
 
-        HashMap<String, double[]> skydioMap = new HashMap<String, double[]>();
+        // DJI Mavic 3 Main Hasselblad Camera
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        hasselbladMap.put("L2D-20C", new double[]{17.3d/5280.0d, 13.0d/3956.0d, 5280.0d, 3956.0d});
+
+        // DJI Mavic 3 Telephoto Camera
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("FC4170", new double[]{6.4d/4000.0d, 4.8d/3000.0d, 4000.0d, 3000.0d});
+
+        // DJI Mavic Air 1
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("FC2103", new double[]{6.3d/4056.0d, 4.7d/3040.0d, 4056.0d, 3040.0d});
+
+        // DJI Mavic Air 2 // UNKNOWN COMPATIBILITY
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("FC3170", new double[]{6.4d/8000.0d, 4.8d/6000.0d, 8000.0d, 6000.0d});
+
+        // DJI Mavic Air 2S // METADATA NOT COMPATIBLE WITH OPENATHENA
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("FC3411", new double[]{13.2d/5472.0d, 8.8d/3648.0d, 5472.0d, 3648.0d});
+
+        // DJI Zenmuse X4S (Inspire 2)
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("FC6510", new double[]{13.2d/5472.0d, 8.8d/3648.0d, 5472.0d, 3648.0d});
+
+        // DJI Zenmuse X5 (Inspire 1)
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("FC550", new double[]{17.3d/4608.0d, 13.0d/3456.0d, 4608.0d, 3456.0d});
+        // DJI Zenmuse X5R (Inspire 1)
+        djiMap.put("FC550RAW", djiMap.get("FC550"));
+        djiMap.put("FC550R", djiMap.get("FC550"));
+
+        // DJI Zenmuse X5S (Inspire 2)
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("FC6520", new double[]{17.3d/5280.0d, 13.0d/3956.0d, 5280.0d, 3956.0d});
+
+        // DJI Zenmuse X7 (Inspire 2)
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("FC6540", new double[]{23.5d/6016.0d, 15.7d/4008.0d, 6016.0d, 4008.0d});
+
+        // DJI Spark
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("FC1102", new double[]{6.3d/3968.0d, 4.7d/2976.0d, 3968.0d, 2976.0d});
 
         // Skydio 2 and 2+
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         skydioMap.put("2", new double[]{6.26d/4056.0d, 4.7d/3040.0d, 4056.0d, 3040.0d});
         skydioMap.put("2+", skydioMap.get("2"));
 
+        mfnMap.put("DJI", djiMap);
+        mfnMap.put("HASSELBLAD", hasselbladMap);
         mfnMap.put("SKYDIO", skydioMap);
     }
 

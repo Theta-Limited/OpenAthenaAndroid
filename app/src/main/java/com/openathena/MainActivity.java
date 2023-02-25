@@ -556,7 +556,7 @@ public class MainActivity extends AthenaActivity {
             double[] relativeRay;
             relativeRay = new double[] {0.0d, 0.0d};
 //            try {
-//                relativeRay = theMeta.getRayAnglesFromImgPixel(3264, 600, exif);
+//                relativeRay = theMeta.getRayAnglesFromImgPixel(2138, 1732, exif);
 //            } catch (Exception e) {
 //                relativeRay = new double[] {0.0d, 0.0d};
 //            }
