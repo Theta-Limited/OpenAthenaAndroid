@@ -45,6 +45,17 @@ public class MetadataExtractor {
         HashMap<String, double[]> djiMap = new HashMap<String, double[]>();
         HashMap<String, double[]> skydioMap = new HashMap<String, double[]>();
         HashMap<String, double[]> hasselbladMap = new HashMap<String, double[]>(); // Mavic 3 and Mavic 2 Pro camera is of different make than drone
+        HashMap<String, double[]> autelMap = new HashMap<String, double[]>();
+        HashMap<String, double[]> parrotMap = new HashMap<String, double[]>();
+
+        //  ____         _____      ______
+        // /\  _`\      /\___ \    /\__  _\
+        // \ \ \/\ \    \/__/\ \   \/_/\ \/
+        //  \ \ \ \ \      _\ \ \     \ \ \
+        //   \ \ \_\ \    /\ \_\ \     \_\ \__
+        //    \ \____/    \ \____/     /\_____\
+        //     \/___/      \/___/      \/_____/
+
 
         // DJI Mavic Pro / Mavic Pro Platinum
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
@@ -117,14 +128,68 @@ public class MetadataExtractor {
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("FC1102", new double[]{6.3d/3968.0d, 4.7d/2976.0d, 3968.0d, 2976.0d});
 
+        //  ____    __                  __
+        // /\  _`\ /\ \                /\ \  __
+        // \ \,\L\_\ \ \/'\   __  __   \_\ \/\_\    ___
+        //  \/_\__ \\ \ , <  /\ \/\ \  /'_` \/\ \  / __`\
+        //   /\ \L\ \ \ \\`\\ \ \_\ \/\ \L\ \ \ \/\ \L\ \
+        //   \ `\____\ \_\ \_\/`____ \ \___,_\ \_\ \____/
+        //    \/_____/\/_/\/_/`/___/> \/__,_ /\/_/\/___/
+        //                       /\___/
+        //                       \/__/
+
+
+        // Skydio R1
+        // rare 2018 model
+        // I couldn't find specs online for the camera sensor, but I will assume it's a Sony IMX577
+        // Could be WRONG
+        skydioMap.put("R1", new double[]{6.26d/4056.0d, 4.7d/3040.0d, 4056.0d, 3040.0d})
+
         // Skydio 2 and 2+
+        // Sony IMX577 1/2.3” 12.3MP CMOS
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         skydioMap.put("2", new double[]{6.26d/4056.0d, 4.7d/3040.0d, 4056.0d, 3040.0d});
         skydioMap.put("2+", skydioMap.get("2"));
 
+        // Skydio X2, X2E, X2D
+        // Sony IMX577 1/2.3” 12.3MP CMOS (same as Skydio 2 and 2+)
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        skydioMap.put("X2", new double[]{6.26d/4056.0d, 4.7d/3040.0d, 4056.0d, 3040.0d});
+        skydioMap.put("X2E", skydioMap.get("X2")); // X2 Enterprise
+        skydioMap.put("X2D", skydioMap.get("X2")); // X2 Defense
+
+        // ______           __           ___       ____            __              __
+        // /\  _  \         /\ \__       /\_ \     /\  _`\         /\ \            /\ \__  __
+        // \ \ \L\ \  __  __\ \ ,_\    __\//\ \    \ \ \L\ \    ___\ \ \____    ___\ \ ,_\/\_\    ___    ____
+        //  \ \  __ \/\ \/\ \\ \ \/  /'__`\\ \ \    \ \ ,  /   / __`\ \ '__`\  / __`\ \ \/\/\ \  /'___\ /',__\
+        //   \ \ \/\ \ \ \_\ \\ \ \_/\  __/ \_\ \_   \ \ \\ \ /\ \L\ \ \ \L\ \/\ \L\ \ \ \_\ \ \/\ \__//\__, `\
+        //    \ \_\ \_\ \____/ \ \__\ \____\/\____\   \ \_\ \_\ \____/\ \_,__/\ \____/\ \__\\ \_\ \____\/\____/
+        //     \/_/\/_/\/___/   \/__/\/____/\/____/    \/_/\/ /\/___/  \/___/  \/___/  \/__/ \/_/\/____/\/___/
+
+        // Autel EVO II camera
+        // WARNING: AUTEL METADATA IS BAD QUALITY
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        autelMap.put("XT701", new double[]{6.40d/8000.0d, 4.80d/6000.0d, 8000.0d, 6000.0d});
+
+        // Autel EVO II Pro camera
+        // Sony IMX383 CMOS sensor
+        // https://commonlands.com/blogs/technical/cmos-sensor-size
+        // https://www.sony-semicon.com/files/62/pdf/p-13_IMX383-AAQK_Flyer.pdf
+        // WARNING: AUTEL METADATA IS BAD QUALITY
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        autelMap.put("XT705", new double[]{13.31d/5472.0d, 8.88d/3648.0d, 5472.0d, 3648.0d});
+
+        // Autel EVO II v2 and EVO II DUAL camera
+        // unnamed 1/2" CMOS 4:3 sensor
+        autelMap.put("XT709", new double[]{6.40d/8000.0d, 4.80d/6000.0d, 8000.0d, 6000.0d});
+        
         mfnMap.put("DJI", djiMap);
         mfnMap.put("HASSELBLAD", hasselbladMap);
         mfnMap.put("SKYDIO", skydioMap);
+        mfnMap.put("AUTEL ROBOTICS", autelMap);
+        mfnMap.put("AUTEL", autelMap);
+        mfnMap.put("PARROT", parrotMap);
+
     }
 
     public static double[] getMetadataValues(ExifInterface exif) throws XMPException, MissingDataException {
