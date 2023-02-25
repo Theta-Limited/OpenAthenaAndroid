@@ -35,6 +35,8 @@ public class MetadataExtractor {
      * <p>
      *     See also:
      *     https://towardsdatascience.com/camera-intrinsic-matrix-with-example-in-python-d79bf2478c12
+     *     https://www.digicamdb.com/sensor-sizes/
+     *     https://en.wikipedia.org/wiki/Image_sensor_format
      *     https://www.djzphoto.com/blog/2018/12/5/dji-drone-quick-specs-amp-comparison-page
      *     https://support.skydio.com/hc/en-us/articles/5338292379803-Comparing-Skydio-2-and-Skydio-2-
      *     https://commonlands.com/blogs/technical/cmos-sensor-size
@@ -56,22 +58,22 @@ public class MetadataExtractor {
         //    \ \____/    \ \____/     /\_____\
         //     \/___/      \/___/      \/_____/
 
-
         // DJI Mavic Pro / Mavic Pro Platinum
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC220", new double[]{6.3d/4000.0d, 4.7d/3000.0d, 4000.0d, 3000.0d});
+        djiMap.put("FC220", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
 
         // DJI Phantom 4 Pro, Phantom 4 Pro v2.0, Phantom 4 Advanced
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("FC330", new double[]{13.2d/5472.0d, 8.8d/3648.0d, 5472.0d, 3648.0d});
 
         // DJI Phantom 3 SE
-        djiMap.put("FC300C", new double[]{6.3d/4000.0d, 4.7d/3000.0d, 4000.0d, 3000.0d});
+        djiMap.put("FC300C", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
 
         // DJI Mini and DJI Mini 2
         // ^ UNKNOWN    ^Mini 2 METADATA NOT COMPATIBLE WITH OPENATHENA
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC7303", new double[]{6.3d/4000.0d, 4.7d/3000.0d, 4000.0d, 3000.0d});
+        djiMap.put("FC7303", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
+        //djiMap.put("FC7303", new double[]{6.16d/4000.0d, 4.62d/3000.0d, 4000.0d, 3000.0d});
 
         // DJI Mini 3 Pro // METADATA NOT COMPATIBLE WITH OPENATHENA
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
@@ -79,7 +81,8 @@ public class MetadataExtractor {
 
         // DJI Mavic 2 Zoom
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC2204", new double[]{6.26d/4000.0d, 4.7d/3000.0d, 4000.0d, 3000.0d});
+        //djiMap.put("FC2204", new double[]{6.26d/4000.0d, 4.7d/3000.0d, 4000.0d, 3000.0d});
+        djiMap.put("FC2204", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
 
         // DJI Mavic 2 Pro
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
@@ -95,7 +98,7 @@ public class MetadataExtractor {
 
         // DJI Mavic Air 1
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC2103", new double[]{6.3d/4056.0d, 4.7d/3040.0d, 4056.0d, 3040.0d});
+        djiMap.put("FC2103", new double[]{6.17d/4056.0d, 4.55d/3040.0d, 4056.0d, 3040.0d});
 
         // DJI Mavic Air 2 // UNKNOWN COMPATIBILITY
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
@@ -126,7 +129,8 @@ public class MetadataExtractor {
 
         // DJI Spark
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC1102", new double[]{6.3d/3968.0d, 4.7d/2976.0d, 3968.0d, 2976.0d});
+        djiMap.put("FC1102", new double[]{6.17d/3968.0d, 4.55d/2976.0d, 3968.0d, 2976.0d});
+        //djiMap.put("FC1102", new double[]{6.16d/3968.0d, 4.62d/2976.0d, 3968.0d, 2976.0d});
 
         //  ____    __                  __
         // /\  _`\ /\ \                /\ \  __
@@ -143,22 +147,22 @@ public class MetadataExtractor {
         // rare 2018 model
         // I couldn't find specs online for the camera sensor, but I will assume it's a Sony IMX577
         // Could be WRONG
-        skydioMap.put("R1", new double[]{6.26d/4056.0d, 4.7d/3040.0d, 4056.0d, 3040.0d})
+        skydioMap.put("R1", new double[]{6.16d/4056.0d, 4.62d/3040.0d, 4056.0d, 3040.0d});
 
         // Skydio 2 and 2+
         // Sony IMX577 1/2.3” 12.3MP CMOS
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        skydioMap.put("2", new double[]{6.26d/4056.0d, 4.7d/3040.0d, 4056.0d, 3040.0d});
+        skydioMap.put("2", new double[]{6.16d/4056.0d, 4.62d/3040.0d, 4056.0d, 3040.0d});
         skydioMap.put("2+", skydioMap.get("2"));
 
         // Skydio X2, X2E, X2D
         // Sony IMX577 1/2.3” 12.3MP CMOS (same as Skydio 2 and 2+)
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        skydioMap.put("X2", new double[]{6.26d/4056.0d, 4.7d/3040.0d, 4056.0d, 3040.0d});
+        skydioMap.put("X2", new double[]{6.16d/4056.0d, 4.62d/3040.0d, 4056.0d, 3040.0d});
         skydioMap.put("X2E", skydioMap.get("X2")); // X2 Enterprise
         skydioMap.put("X2D", skydioMap.get("X2")); // X2 Defense
 
-        // ______           __           ___       ____            __              __
+        //  ______           __           ___       ____            __              __
         // /\  _  \         /\ \__       /\_ \     /\  _`\         /\ \            /\ \__  __
         // \ \ \L\ \  __  __\ \ ,_\    __\//\ \    \ \ \L\ \    ___\ \ \____    ___\ \ ,_\/\_\    ___    ____
         //  \ \  __ \/\ \/\ \\ \ \/  /'__`\\ \ \    \ \ ,  /   / __`\ \ '__`\  / __`\ \ \/\/\ \  /'___\ /',__\
@@ -177,12 +181,32 @@ public class MetadataExtractor {
         // https://www.sony-semicon.com/files/62/pdf/p-13_IMX383-AAQK_Flyer.pdf
         // WARNING: AUTEL METADATA IS BAD QUALITY
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        autelMap.put("XT705", new double[]{13.31d/5472.0d, 8.88d/3648.0d, 5472.0d, 3648.0d});
+        autelMap.put("XT705", new double[]{13.2d/5472.0d, 8.8d/3648.0d, 5472.0d, 3648.0d});
 
         // Autel EVO II v2 and EVO II DUAL camera
         // unnamed 1/2" CMOS 4:3 sensor
         autelMap.put("XT709", new double[]{6.40d/8000.0d, 4.80d/6000.0d, 8000.0d, 6000.0d});
-        
+
+        //   ____                              __
+        // /\  _`\                           /\ \__
+        // \ \ \L\ \ __     _ __   _ __   ___\ \ ,_\
+        //  \ \ ,__/'__`\  /\`'__\/\`'__\/ __`\ \ \/
+        //   \ \ \/\ \L\.\_\ \ \/ \ \ \//\ \L\ \ \ \_
+        //    \ \_\ \__/.\_\\ \_\  \ \_\\ \____/\ \__\
+        //     \/_/\/__/\/_/ \/_/   \/_/ \/___/  \/__/
+
+        parrotMap.put("ANAFI", new double[]{5.90d/5344.0d, 4.43d/4016.0d, 5344.0d, 4016.0d});
+        parrotMap.put("ANAFIAI", parrotMap.get("ANAFI"));
+        parrotMap.put("ANAFI AI", parrotMap.get("ANAFI"));
+        parrotMap.put("ANAFI_AI", parrotMap.get("ANAFI"));
+        parrotMap.put("ANAFIUSA", parrotMap.get("ANAFI"));
+        parrotMap.put("ANAFI USA", parrotMap.get("ANAFI"));
+        parrotMap.put("ANAFI_USA", parrotMap.get("ANAFI"));
+
+        parrotMap.put("BEBOP2", new double[]{6.16/4096.0d, 4.62/3072.0d, 4096.0d, 3072.0d});
+        parrotMap.put("BEBOP 2", parrotMap.get("BEBOP2"));
+        parrotMap.put("BEBOP_2", parrotMap.get("BEBOP2"));
+
         mfnMap.put("DJI", djiMap);
         mfnMap.put("HASSELBLAD", hasselbladMap);
         mfnMap.put("SKYDIO", skydioMap);
