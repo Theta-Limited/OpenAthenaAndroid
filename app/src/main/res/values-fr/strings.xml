@@ -32,9 +32,9 @@
     <string name="clear_button_text">Réinitialiser le journal</string>
     <string name="openathena_for_android">OpenAthena™ pour Android</string>
     <string name="GPL3Notice">GPL-3.0, certains droits réservés</string>
-    <string name="AboutSnippet"><![CDATA[<br> OpenAthena™ pour Android est un projet qui permet aux drones grand public et professionnels de repérer des emplacements géodésiques précis<br>]]></string>
+    <string name="AboutSnippet"><![CDATA[<br> OpenAthena™ pour Android est un projet qui permet aux drones grand public et professionnels de repérer des emplacements géodésiques précis<br> ]]>;</string>
     <string name="about_software_libraries_used">Librairies logicielles utilisées:</string>
-    <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> Projet maintenu par <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br>]]></string>
+    <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> Projet maintenu par <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br> ]]>;</string>
     <string name="CallToActionSnippet"><![CDATA[Voir le projet sur GitHub ]]> </string>
     <string name="bad_altitude_data_error_msg">ERREUR : mauvaises données d\'altitude ou de terrain. Cette image est inutilisable. 🖼🚫🎯</string>
     <string name="target_found_at_msg">Cible trouvée à</string>
@@ -56,7 +56,7 @@
     <string name="i_understand_this_risk">Je comprends ce risque</string>
     <string name="image_is_too_large_error_msg">L\'image est trop grande pour être affichée !</string>
     <string name="loading_geotiff_toast_msg">Chargement de GeoTIFF. S\'il vous plaît, attendez...</string>
-    <string name="wgs84_standard_lat_lon">WGS84 (défaut)\nLat, Lon</string>
+    <string name="wgs84_standard_lat_lon">WGS84 (par défaut)\nLat, Lon</string>
     <string name="wgs84_tooltip">La norme largement utilisée pour décrire un emplacement latitude longitude sur Terre</string>
     <string name="nato_mgrs_1m">OTAN MGRS 1m</string>
     <string name="nato_mgrs_10m">OTAN MGRS 10m</string>
@@ -104,4 +104,7 @@
     <string name="parrot_model_prefix_error_msg">ERREUR : modèle Parrot </string>
     <string name="xmp_missing_error_msg">ERREUR : métadonnées XMP introuvables !</string>
     <string name="xmp_empty_error_msg">ERREUR : les métadonnées XMP ont été trouvées, mais elles étaient vides !</string>
+    <string name="focal_length_label">distance focale (pixels):</string>
+    <string name="azimuth_offset_label">Décalage d\'azimut pour le point sélectionné :</string>
+    <string name="pitch_offset_label">Décalage de tangage pour le point sélectionné :</string>
 </resources>
