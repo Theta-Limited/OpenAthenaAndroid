@@ -50,10 +50,11 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
 
                     if (parent.isImageLoaded && parent.isDEMLoaded) {
                         parent.calculateImage(yahweh, false);
+                        theMarker = new Marker((int) event.getX(), (int) event.getY());
+                        yahweh.invalidate();
                     }
                 }
-                theMarker = new Marker((int) event.getX(), (int) event.getY());
-                yahweh.invalidate();
+
                 return true;
             }
 

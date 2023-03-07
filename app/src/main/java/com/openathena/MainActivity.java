@@ -353,32 +353,29 @@ public class MainActivity extends AthenaActivity {
         Handler myHandler = new Handler();
 
         // Load GeoTIFF in a new thread, this is a long-running task
-        new Thread(new Runnable() { // Holy mother of Java
-            @Override
-            public void run() {
-                Exception e = loadDEMnewThread(uri);
-                myHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (e == null) {
-                            String successOutput = "GeoTIFF DEM ";
+        new Thread(() -> {
+            Exception e = loadDEMnewThread(uri);
+            myHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (e == null) {
+                        String successOutput = "GeoTIFF DEM ";
 //            successOutput += "\"" + uri.getLastPathSegment(); + "\" ";
-                            successOutput += getString(R.string.dem_loaded_size_is_msg) + " " + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
-                            appendText(successOutput);
-                            printGeoTIFFBounds();
-                            isDEMLoaded = true;
-                            setButtonReady(buttonSelectImage, true);
-                            if (isImageLoaded) {
-                                setButtonReady(buttonCalculate, true);
-                            }
-                            progressBar.setVisibility(View.GONE);
-                        } else {
-                            appendText(e.getMessage());
-                            progressBar.setVisibility(View.GONE);
+                        successOutput += getString(R.string.dem_loaded_size_is_msg) + " " + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
+                        appendText(successOutput);
+                        printGeoTIFFBounds();
+                        isDEMLoaded = true;
+                        setButtonReady(buttonSelectImage, true);
+                        if (isImageLoaded) {
+                            setButtonReady(buttonCalculate, true);
                         }
+                        progressBar.setVisibility(View.GONE);
+                    } else {
+                        appendText(e.getMessage());
+                        progressBar.setVisibility(View.GONE);
                     }
-                });
-            }
+                }
+            });
         }).start();
     }
 
@@ -484,25 +481,15 @@ public class MainActivity extends AthenaActivity {
     protected void onPause()
     {
         Log.d(TAG,"onPause started");
-        //appendText("onPause\n");
         super.onPause();
-
     }
 
     @Override
     protected void onDestroy()
     {
         Log.d(TAG,"onDestroy started");
-        //appendText("onDestroy\n");
-        // do whatever here
-
-        // no need to close logfile; its closed after each use
-
         super.onDestroy();
-
     }
-
-
 
     // overloaded, called by button press
     public void calculateImage(View view) {
@@ -554,7 +541,7 @@ public class MainActivity extends AthenaActivity {
             attribs += theMeta.getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_IMAGE_LENGTH, exif);
             double[] intrinsics = theMeta.getIntrinsicMatrixFromExif(exif);
-            attribs += "focal length (pixels): " + Math.round(intrinsics[0]) + "\n";
+            attribs += getString(R.string.focal_length_label) + Math.round(intrinsics[0]) + "\n";
 //            attribs += "fy: " + intrinsics[4] + "\n";
 //            attribs += "cx: " + intrinsics[2] + "\n";
 //            attribs += "cy: " + intrinsics[5] + "\n";
@@ -566,19 +553,20 @@ public class MainActivity extends AthenaActivity {
                     throw new NoSuchFieldException("no point was selected");
                 } else {
                     relativeRay = theMeta.getRayAnglesFromImgPixel(selection_x, selection_y, exif);
-                    attribs += "Azimuth offset for selected point: " + Math.round(relativeRay[0]) + "°\n";
-                    attribs += "Pitch offset for selected point: " + -1 * Math.round(relativeRay[1]) + "°\n";
+
                 }
             } catch (Exception e) {
                 relativeRay = new double[] {0.0d, 0.0d};
-                String infoStr = getString(R.string.using_principal_point_info_msg);
-                e.printStackTrace();
-                Log.i(TAG, infoStr);
-                attribs+= infoStr + "\n";
+                iView.theMarker = null;
+                iView.invalidate();
+                Log.i(TAG, "No point was selected in image. Using principal point (center) for calculation.");
             }
 
             double azimuthOffset = relativeRay[0];
             double thetaOffset = relativeRay[1];
+
+            attribs += getString(R.string.azimuth_offset_label) + Math.round(azimuthOffset) + "°\n";
+            attribs += getString(R.string.pitch_offset_label) + -1 * Math.round(thetaOffset) + "°\n";
 
             azimuth += azimuthOffset;
             theta += thetaOffset;
@@ -848,7 +836,6 @@ public class MainActivity extends AthenaActivity {
         }
     }
 
-
     private String roundDouble(double d) {
         DecimalFormatSymbols decimalSymbols = DecimalFormatSymbols.getInstance();
         decimalSymbols.setDecimalSeparator('.');
@@ -906,6 +893,5 @@ public class MainActivity extends AthenaActivity {
         }
 
     } // appendLog()
-
 
 }
