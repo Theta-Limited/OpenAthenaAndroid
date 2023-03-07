@@ -36,6 +36,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.text.Html;
@@ -48,6 +51,7 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -81,7 +85,7 @@ public class MainActivity extends AthenaActivity {
     public static int dangerousAutelAwarenessCount;
 
     TextView textView;
-    ImageView iView;
+    MarkableImageView iView;
 
     ProgressBar progressBar;
 
@@ -90,10 +94,7 @@ public class MainActivity extends AthenaActivity {
     Button buttonCalculate;
 
     protected String versionName;
-    Uri imageUri = null;
-    boolean isImageLoaded;
-    Uri demUri = null;
-    boolean isDEMLoaded;
+
 
     MetadataExtractor theMeta = null;
     GeoTIFFParser theParser = null;
@@ -164,7 +165,7 @@ public class MainActivity extends AthenaActivity {
         textViewTargetCoord = (TextView)findViewById(R.id.textViewTargetCoord);
         textViewTargetCoord.setMovementMethod(LinkMovementMethod.getInstance());
 
-        iView = (ImageView)findViewById(R.id.imageView);
+        iView = (MarkableImageView) findViewById(R.id.imageView);
 
         // try to get our version out of app/build.gradle
         // versionName field
@@ -228,6 +229,27 @@ public class MainActivity extends AthenaActivity {
         restorePrefOutputMode(); // restore the outputMode from persistent settings
     }
 
+    public int[] getImageDimensionsFromUri(Uri imageUri) {
+        try {
+            ContentResolver cr = getContentResolver();
+            InputStream is = cr.openInputStream(imageUri);
+            ExifInterface exif = new ExifInterface(is);
+            int width = exif.getAttributeInt( ExifInterface.TAG_IMAGE_WIDTH, -1);
+            int height = exif.getAttributeInt( ExifInterface.TAG_IMAGE_LENGTH, -1);
+            if (width < 0 || height < 0) {
+                return null;
+            } else {
+                cx = width / 2; // x coordinate of the principal point (center) of the image. Measured from Top-Left corner
+                cy = height / 2; // y coordinate of the principal point (center) of the image. Measured from Top-Left corner
+                return new int[] {width, height};
+            }
+        } catch (IOException ioe) {
+            Log.e(TAG, "Failed to obtain image dimensions from EXIF metadata!");
+            ioe.printStackTrace();
+            return null;
+        }
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle saveInstanceState) {
         Log.d(TAG,"onSaveInstanceState started");
@@ -276,6 +298,11 @@ public class MainActivity extends AthenaActivity {
             restorePrefOutputMode(); // reset textViewTargetCoord to mode descriptor
 
             isImageLoaded = false;
+            iView.theMarker = null;
+            selection_x = -1;
+            selection_y = -1;
+            cx = -1;
+            cy = -1;
         }
         imageUri = uri;
 
@@ -306,6 +333,7 @@ public class MainActivity extends AthenaActivity {
 //        appendLog("Selected image "+imageUri+"\n");
         appendText(getString(R.string.image_selected_msg) + "\n");
 
+        getImageDimensionsFromUri(imageUri); // updates cx and cy to that of new image
         isImageLoaded = true;
         if (isDEMLoaded) {
             setButtonReady(buttonCalculate, true);
@@ -325,32 +353,29 @@ public class MainActivity extends AthenaActivity {
         Handler myHandler = new Handler();
 
         // Load GeoTIFF in a new thread, this is a long-running task
-        new Thread(new Runnable() { // Holy mother of Java
-            @Override
-            public void run() {
-                Exception e = loadDEMnewThread(uri);
-                myHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (e == null) {
-                            String successOutput = "GeoTIFF DEM ";
+        new Thread(() -> {
+            Exception e = loadDEMnewThread(uri);
+            myHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (e == null) {
+                        String successOutput = "GeoTIFF DEM ";
 //            successOutput += "\"" + uri.getLastPathSegment(); + "\" ";
-                            successOutput += getString(R.string.dem_loaded_size_is_msg) + " " + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
-                            appendText(successOutput);
-                            printGeoTIFFBounds();
-                            isDEMLoaded = true;
-                            setButtonReady(buttonSelectImage, true);
-                            if (isImageLoaded) {
-                                setButtonReady(buttonCalculate, true);
-                            }
-                            progressBar.setVisibility(View.GONE);
-                        } else {
-                            appendText(e.getMessage());
-                            progressBar.setVisibility(View.GONE);
+                        successOutput += getString(R.string.dem_loaded_size_is_msg) + " " + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
+                        appendText(successOutput);
+                        printGeoTIFFBounds();
+                        isDEMLoaded = true;
+                        setButtonReady(buttonSelectImage, true);
+                        if (isImageLoaded) {
+                            setButtonReady(buttonCalculate, true);
                         }
+                        progressBar.setVisibility(View.GONE);
+                    } else {
+                        appendText(e.getMessage());
+                        progressBar.setVisibility(View.GONE);
                     }
-                });
-            }
+                }
+            });
         }).start();
     }
 
@@ -431,35 +456,6 @@ public class MainActivity extends AthenaActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        Intent intent;
-
-        int id = item.getItemId();
-
-        // don't do anything if user chooses Calculate; we're already there.
-
-        if (id == R.id.action_prefs) {
-            intent = new Intent(getApplicationContext(), PrefsActivity.class);
-            // https://stackoverflow.com/questions/8688099/android-switch-to-activity-without-restarting-it
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
-            return true;
-        }
-
-        if (id == R.id.action_about) {
-            intent = new Intent(getApplicationContext(),AboutActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     protected void onResume() {
         Log.d(TAG,"onResume started");
         super.onResume();
@@ -485,25 +481,22 @@ public class MainActivity extends AthenaActivity {
     protected void onPause()
     {
         Log.d(TAG,"onPause started");
-        //appendText("onPause\n");
         super.onPause();
-
-    } // onPause()
+    }
 
     @Override
     protected void onDestroy()
     {
         Log.d(TAG,"onDestroy started");
-        //appendText("onDestroy\n");
-        // do whatever here
-
-        // no need to close logfile; its closed after each use
-
         super.onDestroy();
+    }
 
-    } // onDestroy()
+    // overloaded, called by button press
+    public void calculateImage(View view) {
+        calculateImage(view, true);
+    }
 
-    public void calculateImage(View view)
+    public void calculateImage(View view, boolean shouldISendCoT)
     {
         Drawable aDrawable;
         ExifInterface exif;
@@ -548,21 +541,32 @@ public class MainActivity extends AthenaActivity {
             attribs += theMeta.getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_IMAGE_LENGTH, exif);
             double[] intrinsics = theMeta.getIntrinsicMatrixFromExif(exif);
-            attribs += "focal length (pixels): " + intrinsics[0] + "\n";
+            attribs += getString(R.string.focal_length_label) + Math.round(intrinsics[0]) + "\n";
 //            attribs += "fy: " + intrinsics[4] + "\n";
 //            attribs += "cx: " + intrinsics[2] + "\n";
 //            attribs += "cy: " + intrinsics[5] + "\n";
 
             double[] relativeRay;
             relativeRay = new double[] {0.0d, 0.0d};
-//            try {
-//                relativeRay = theMeta.getRayAnglesFromImgPixel(3264, 600, exif);
-//            } catch (Exception e) {
-//                relativeRay = new double[] {0.0d, 0.0d};
-//            }
+            try {
+                if (selection_x < 0 || selection_y < 0 || cx <= 0 || cy <= 0) {
+                    throw new NoSuchFieldException("no point was selected");
+                } else {
+                    relativeRay = theMeta.getRayAnglesFromImgPixel(selection_x, selection_y, exif);
+
+                }
+            } catch (Exception e) {
+                relativeRay = new double[] {0.0d, 0.0d};
+                iView.theMarker = null;
+                iView.invalidate();
+                Log.i(TAG, "No point was selected in image. Using principal point (center) for calculation.");
+            }
 
             double azimuthOffset = relativeRay[0];
             double thetaOffset = relativeRay[1];
+
+            attribs += getString(R.string.azimuth_offset_label) + Math.round(azimuthOffset) + "°\n";
+            attribs += getString(R.string.pitch_offset_label) + -1 * Math.round(thetaOffset) + "°\n";
 
             azimuth += azimuthOffset;
             theta += thetaOffset;
@@ -577,8 +581,8 @@ public class MainActivity extends AthenaActivity {
                 attribs += getString(R.string.altiude_wgs84_label_long) + " " + Math.round(z) + "\n";
             }
 
-            attribs += getString(R.string.attribute_text_drone_azimuth) + " " + roundDouble(azimuth) + "\n";
-            attribs += getString(R.string.attribute_text_drone_camera_pitch) + " -" + roundDouble(theta) + "\n";
+            attribs += getString(R.string.attribute_text_drone_azimuth) + " " + Math.round(azimuth) + "\n";
+            attribs += getString(R.string.attribute_text_drone_camera_pitch) + " -" + Math.round(theta) + "\n";
             appendText(attribs);
             attribs = "";
             double[] result;
@@ -704,7 +708,9 @@ public class MainActivity extends AthenaActivity {
             //
             // send CoT message to udp://239.2.3.1:6969
             //     e.g. for use with DoD's ATAK app
-            CursorOnTargetSender.sendCoT(this, latitude, longitude, altitudeDouble, theta, exif.getAttribute(ExifInterface.TAG_DATETIME));
+            if (shouldISendCoT) {
+                CursorOnTargetSender.sendCoT(this, latitude, longitude, altitudeDouble, theta, exif.getAttribute(ExifInterface.TAG_DATETIME));
+            }
         } catch (XMPException e) {
             Log.e(TAG, e.getMessage());
             appendText(getString(R.string.metadata_parse_error_msg) + e + "\n");
@@ -830,7 +836,6 @@ public class MainActivity extends AthenaActivity {
         }
     }
 
-
     private String roundDouble(double d) {
         DecimalFormatSymbols decimalSymbols = DecimalFormatSymbols.getInstance();
         decimalSymbols.setDecimalSeparator('.');
@@ -888,6 +893,5 @@ public class MainActivity extends AthenaActivity {
         }
 
     } // appendLog()
-
 
 }
