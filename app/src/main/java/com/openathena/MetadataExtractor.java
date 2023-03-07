@@ -81,7 +81,7 @@ public class MetadataExtractor {
 
         // DJI Mavic 2 Zoom
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        //djiMap.put("FC2204", new double[]{6.26d/4000.0d, 4.7d/3000.0d, 4000.0d, 3000.0d});
+        //     djiMap.put("FC2204", new double[]{6.26d/4000.0d, 4.7d/3000.0d, 4000.0d, 3000.0d});
         djiMap.put("FC2204", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
 
         // DJI Mavic 2 Pro
@@ -171,7 +171,6 @@ public class MetadataExtractor {
         //     \/_/\/_/\/___/   \/__/\/____/\/____/    \/_/\/ /\/___/  \/___/  \/___/  \/__/ \/_/\/____/\/___/
 
         // Autel EVO II camera
-        // WARNING: AUTEL METADATA IS BAD QUALITY
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         autelMap.put("XT701", new double[]{6.40d/8000.0d, 4.80d/6000.0d, 8000.0d, 6000.0d});
 
@@ -179,7 +178,6 @@ public class MetadataExtractor {
         // Sony IMX383 CMOS sensor
         // https://commonlands.com/blogs/technical/cmos-sensor-size
         // https://www.sony-semicon.com/files/62/pdf/p-13_IMX383-AAQK_Flyer.pdf
-        // WARNING: AUTEL METADATA IS BAD QUALITY
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         autelMap.put("XT705", new double[]{13.2d/5472.0d, 8.8d/3648.0d, 5472.0d, 3648.0d});
 
@@ -195,22 +193,23 @@ public class MetadataExtractor {
         //    \ \_\ \__/.\_\\ \_\  \ \_\\ \____/\ \__\
         //     \/_/\/__/\/_/ \/_/   \/_/ \/___/  \/__/
 
-        parrotMap.put("ANAFI", new double[]{5.90d/5344.0d, 4.43d/4016.0d, 5344.0d, 4016.0d});
-
-        parrotMap.put("ANAFIUSA", parrotMap.get("ANAFI"));
-        parrotMap.put("ANAFI USA", parrotMap.get("ANAFI"));
-        parrotMap.put("ANAFI-USA", parrotMap.get("ANAFI"));
-        parrotMap.put("ANAFI_USA", parrotMap.get("ANAFI"));
-
-        parrotMap.put("ANAFIAI", new double[]{6.40d/8000.0d, 4.80d/6000.0d, 8000.0d, 6000.0d});
-        parrotMap.put("ANAFI AI", parrotMap.get("ANAFIAI"));
-        parrotMap.put("ANAFI-AI", parrotMap.get("ANAFIAI"));
-        parrotMap.put("ANAFI_AI", parrotMap.get("ANAFI"));
-
-        parrotMap.put("BEBOP2", new double[]{6.16/4096.0d, 4.62/3072.0d, 4096.0d, 3072.0d});
-        parrotMap.put("BEBOP 2", parrotMap.get("BEBOP2"));
-        parrotMap.put("BEBOP-2", parrotMap.get("BEBOP2"));
-        parrotMap.put("BEBOP_2", parrotMap.get("BEBOP2"));
+        // TODO values are not satisfactory :(
+//        parrotMap.put("ANAFI", new double[]{5.90d/5344.0d, 4.43d/4016.0d, 5344.0d, 4016.0d});
+//
+//        parrotMap.put("ANAFIUSA", parrotMap.get("ANAFI"));
+//        parrotMap.put("ANAFI USA", parrotMap.get("ANAFI"));
+//        parrotMap.put("ANAFI-USA", parrotMap.get("ANAFI"));
+//        parrotMap.put("ANAFI_USA", parrotMap.get("ANAFI"));
+//
+//        parrotMap.put("ANAFIAI", new double[]{6.40d/8000.0d, 4.80d/6000.0d, 8000.0d, 6000.0d});
+//        parrotMap.put("ANAFI AI", parrotMap.get("ANAFIAI"));
+//        parrotMap.put("ANAFI-AI", parrotMap.get("ANAFIAI"));
+//        parrotMap.put("ANAFI_AI", parrotMap.get("ANAFI"));
+//
+//        parrotMap.put("BEBOP2", new double[]{6.16/4096.0d, 4.62/3072.0d, 4096.0d, 3072.0d});
+//        parrotMap.put("BEBOP 2", parrotMap.get("BEBOP2"));
+//        parrotMap.put("BEBOP-2", parrotMap.get("BEBOP2"));
+//        parrotMap.put("BEBOP_2", parrotMap.get("BEBOP2"));
 
         mfnMap.put("DJI", djiMap);
         mfnMap.put("HASSELBLAD", hasselbladMap);

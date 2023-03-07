@@ -105,21 +105,11 @@ public class TargetGetter {
             radTheta = Math.PI - radTheta;
         }
 
-        // direction, convert azimuth to unit circle (just like math class)
-        double radDirection = azimuthToUnitCircleRad(radAzimuth);
-
-        // from Direction, determine rate of x and y change
-        //     per unit travel (level with horizon for now)
-        double deltaX = Math.cos(radDirection);
-        double deltaY = Math.sin(radDirection);
-
         double deltaZ = -1.0d * Math.sin(radTheta); // neg because direction is downward
 
         // determines by how much of travel per unit is actually horiz
         // pythagorean theorem, deltaz^2 + deltax^2 + deltay^2 = 1
         double horizScalar = Math.cos(radTheta);
-        deltaX *= horizScalar;
-        deltaY *= horizScalar;
 
         // meters of acceptable distance between constructed line and datapoint
         // Somewhat arbitrary. SRTM has a horizontal resolution of 30m, but vertical accuracy is often more precise
@@ -159,7 +149,7 @@ public class TargetGetter {
 
         // When the loop ends, curY, curX, and curZ are closeish to the target
         //     may be a bit biased ever so slightly long (beyond the target)
-        //     this algorithum is crude, does not take into account the curvature of the earth over long distances
+        //     this algorithm is crude, does not take into account the curvature of the earth over long distances
         //     could use refinement
         double finalHorizDist = Math.abs(haversine(lon, lat, curLon, curLat, alt));
         double finalVertDist = Math.abs(alt - curAlt);
@@ -178,13 +168,7 @@ public class TargetGetter {
      * @return double the normalized value within [0, 2π)
      */
     public double normalize(double radAngle) {
-        while (radAngle < 0) {
-            radAngle += 2 * Math.PI;
-        }
-        while (radAngle >= (2 * Math.PI)) {
-            radAngle -= 2 * Math.PI;
-        }
-        return radAngle;
+        return radAngle % (2 * Math.PI);
     }
 
     /**

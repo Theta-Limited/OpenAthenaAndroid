@@ -56,7 +56,8 @@ public class CursorOnTargetSender {
         } else if (!(invoker instanceof android.app.Activity)) {
             throw new IllegalArgumentException("invoker context must be an Activity");
         } else if (theta > 90) {
-            throw new IllegalArgumentException("angle of camera depression " + theta + " was invalid");
+            // If camera is facing backwards, use the appropriate value for the reverse direction (the supplementary angle of theta)
+            theta = 180.0d - theta;
         } else if (lat > 90 || lat < -90){
             throw new IllegalArgumentException("latitude " + lat + " degrees is invalid");
         } else if (lon > 180 || lon < -180) {

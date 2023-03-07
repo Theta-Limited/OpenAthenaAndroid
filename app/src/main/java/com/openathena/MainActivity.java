@@ -48,6 +48,7 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -90,10 +91,7 @@ public class MainActivity extends AthenaActivity {
     Button buttonCalculate;
 
     protected String versionName;
-    Uri imageUri = null;
-    boolean isImageLoaded;
-    Uri demUri = null;
-    boolean isDEMLoaded;
+
 
     MetadataExtractor theMeta = null;
     GeoTIFFParser theParser = null;
@@ -166,6 +164,39 @@ public class MainActivity extends AthenaActivity {
 
         iView = (ImageView)findViewById(R.id.imageView);
 
+        iView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP){
+                    if (!isImageLoaded || imageUri == null || iView == null) {
+                        return true;
+                    }
+                    int original_width;
+                    int original_height;
+                    int[] original_dimensions = getImageDimensionsFromUri(imageUri);
+                    if (original_dimensions == null) {
+                        return true;
+                    } else {
+                        original_width = original_dimensions[0];
+                        original_height = original_dimensions[1];
+                    }
+                    int render_width = iView.getWidth();
+                    int render_height = iView.getHeight();
+                    selection_x = (int) (((1.0d * event.getX()) / render_width) * original_width);
+                    selection_y = (int) (((1.0d * event.getY()) / render_height) * original_height);
+                    Log.d("X",selection_x+"");
+                    Log.d("Y",selection_y+"");
+                    Toast.makeText(MainActivity.this, "x: " + selection_x + " y: " + selection_y, Toast.LENGTH_SHORT).show();
+
+                    if (isImageLoaded && isDEMLoaded) {
+                        calculateImage(iView);
+                    }
+                }
+                return true;
+            }
+
+        });
+
         // try to get our version out of app/build.gradle
         // versionName field
         try {
@@ -228,6 +259,27 @@ public class MainActivity extends AthenaActivity {
         restorePrefOutputMode(); // restore the outputMode from persistent settings
     }
 
+    public int[] getImageDimensionsFromUri(Uri imageUri) {
+        try {
+            ContentResolver cr = getContentResolver();
+            InputStream is = cr.openInputStream(imageUri);
+            ExifInterface exif = new ExifInterface(is);
+            int width = exif.getAttributeInt( ExifInterface.TAG_IMAGE_WIDTH, -1);
+            int height = exif.getAttributeInt( ExifInterface.TAG_IMAGE_LENGTH, -1);
+            if (width < 0 || height < 0) {
+                return null;
+            } else {
+                cx = width / 2; // x coordinate of the principal point (center) of the image. Measured from Top-Left corner
+                cy = height / 2; // y coordinate of the principal point (center) of the image. Measured from Top-Left corner
+                return new int[] {width, height};
+            }
+        } catch (IOException ioe) {
+            Log.e(TAG, "Failed to obtain image dimensions from EXIF metadata!");
+            ioe.printStackTrace();
+            return null;
+        }
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle saveInstanceState) {
         Log.d(TAG,"onSaveInstanceState started");
@@ -276,6 +328,10 @@ public class MainActivity extends AthenaActivity {
             restorePrefOutputMode(); // reset textViewTargetCoord to mode descriptor
 
             isImageLoaded = false;
+            selection_x = -1;
+            selection_y = -1;
+            cx = -1;
+            cy = -1;
         }
         imageUri = uri;
 
@@ -306,6 +362,7 @@ public class MainActivity extends AthenaActivity {
 //        appendLog("Selected image "+imageUri+"\n");
         appendText(getString(R.string.image_selected_msg) + "\n");
 
+        getImageDimensionsFromUri(imageUri); // updates cx and cy to that of new image
         isImageLoaded = true;
         if (isDEMLoaded) {
             setButtonReady(buttonCalculate, true);
@@ -431,35 +488,6 @@ public class MainActivity extends AthenaActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        Intent intent;
-
-        int id = item.getItemId();
-
-        // don't do anything if user chooses Calculate; we're already there.
-
-        if (id == R.id.action_prefs) {
-            intent = new Intent(getApplicationContext(), PrefsActivity.class);
-            // https://stackoverflow.com/questions/8688099/android-switch-to-activity-without-restarting-it
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
-            return true;
-        }
-
-        if (id == R.id.action_about) {
-            intent = new Intent(getApplicationContext(),AboutActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     protected void onResume() {
         Log.d(TAG,"onResume started");
         super.onResume();
@@ -555,11 +583,21 @@ public class MainActivity extends AthenaActivity {
 
             double[] relativeRay;
             relativeRay = new double[] {0.0d, 0.0d};
-//            try {
-//                relativeRay = theMeta.getRayAnglesFromImgPixel(2138, 1732, exif);
-//            } catch (Exception e) {
-//                relativeRay = new double[] {0.0d, 0.0d};
-//            }
+            try {
+                if (selection_x < 0 || selection_y < 0 || cx <= 0 || cy <= 0) {
+                    throw new NoSuchFieldException("no point was selected");
+                } else {
+                    relativeRay = theMeta.getRayAnglesFromImgPixel(selection_x, selection_y, exif);
+                    attribs += "Azimuth offset for selected point: " + Math.round(relativeRay[0]) + "°\n";
+                    attribs += "Pitch offset for selected point: " + Math.round(relativeRay[1]) + "°\n";
+                }
+            } catch (Exception e) {
+                relativeRay = new double[] {0.0d, 0.0d};
+                String infoStr = getString(R.string.using_principal_point_info_msg);
+                e.printStackTrace();
+                Log.i(TAG, infoStr);
+                attribs+= infoStr + "\n";
+            }
 
             double azimuthOffset = relativeRay[0];
             double thetaOffset = relativeRay[1];
@@ -704,6 +742,7 @@ public class MainActivity extends AthenaActivity {
             //
             // send CoT message to udp://239.2.3.1:6969
             //     e.g. for use with DoD's ATAK app
+            // TODO DO NOT SEND COT UNLESS ABACUS BUTTON IS EXPLICITY PRESSED
             CursorOnTargetSender.sendCoT(this, latitude, longitude, altitudeDouble, theta, exif.getAttribute(ExifInterface.TAG_DATETIME));
         } catch (XMPException e) {
             Log.e(TAG, e.getMessage());

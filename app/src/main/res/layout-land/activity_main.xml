@@ -107,7 +107,7 @@
 
     <TextView
         android:id="@+id/textViewTargetCoord"
-        android:layout_width="wrap_content"
+        android:layout_width="243dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
