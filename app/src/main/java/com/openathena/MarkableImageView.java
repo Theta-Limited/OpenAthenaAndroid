@@ -17,7 +17,7 @@ import androidx.annotation.NonNull;
 public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageView {
     Marker theMarker = null;
     MainActivity parent;
-    
+
     public MarkableImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
         if (!(context instanceof MainActivity)) {
@@ -66,7 +66,8 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
         if (theMarker != null) {
             Paint paint = new Paint();
             paint.setColor(Color.RED);
-            canvas.drawCircle(theMarker.x, theMarker.y, 10, paint);
+            float radius = Math.min(getWidth()/64, getHeight()/64);
+            canvas.drawCircle(theMarker.x, theMarker.y, radius, paint);
         } else {
             if (parent.isImageLoaded) {
                 theMarker = new Marker(getWidth() / 2, getHeight() / 2);

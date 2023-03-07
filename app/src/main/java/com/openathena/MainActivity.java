@@ -298,6 +298,7 @@ public class MainActivity extends AthenaActivity {
             restorePrefOutputMode(); // reset textViewTargetCoord to mode descriptor
 
             isImageLoaded = false;
+            iView.theMarker = null;
             selection_x = -1;
             selection_y = -1;
             cx = -1;
