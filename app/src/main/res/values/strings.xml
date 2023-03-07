@@ -104,6 +104,7 @@
     <string name="parrot_model_prefix_error_msg">ERROR: Parrot model </string>
     <string name="xmp_missing_error_msg">ERROR: XMP metadata not found!</string>
     <string name="xmp_empty_error_msg">ERROR: XMP metadata found but was empty!</string>
-    <string name="PointSelectionActivity">Select a point to target:</string>
-    <string name="using_principal_point_info_msg">No point was selected in image. Using principal point (center) for calculation.</string>
+    <string name="focal_length_label">focal length (pixels): </string>
+    <string name="azimuth_offset_label">Azimuth offset for selected point: </string>
+    <string name="pitch_offset_label">Pitch offset for selected point: </string>
 </resources>
