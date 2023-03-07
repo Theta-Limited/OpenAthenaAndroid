@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Android 版「OpenAthena™」</string>
+    <string name="app_name">Android 用 「OpenAthena™」</string>
 
     <string name="next">次</string>
     <string name="previous">前</string>
@@ -14,7 +14,7 @@
     <string name="button_loadDEM">⛰️</string>
 
     <string name="text_view_value">ChangeMe</string>
-    <string name="log_text_view_value">Android 版「OpenAthena™」. . .</string>
+    <string name="log_text_view_value">Android 用 「OpenAthena™」. . .</string>
     <string name="test_button_text">計算する</string>
     <string name="enter_host">ファイル名</string>
 
@@ -30,9 +30,9 @@
 
 
     <string name="clear_button_text">ログをクリア</string>
-    <string name="openathena_for_android">Android 版「OpenAthena™」</string>
+    <string name="openathena_for_android">Android 用「OpenAthena™」</string>
     <string name="GPL3Notice">GPL-3.0、一部権作権所有</string>
-    <string name="AboutSnippet"><![CDATA[<br> Android 版「OpenAthena™」 は、消費者向けおよびプロ向けのドローンが正確な測地位置を計算できるようにするプロジェクトです。<br>]]></string>
+    <string name="AboutSnippet"><![CDATA[<br> Android 用「OpenAthena™」 は、消費者向けおよびプロ向けのドローンが正確な測地位置を計算できるようにするプロジェクトです。<br> ]]></string>
     <string name="about_software_libraries_used">使用したソフトウェア ライブラリ:</string>
     <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a>によって維持されているプロジェクト<br>]]></string>
     <string name="CallToActionSnippet"><![CDATA[GitHub でプロジェクトを表示する</a><br> ]]></string>
@@ -84,11 +84,11 @@
     <string name="latitude_label_short">緯度</string>
     <string name="longitude_label_short">経度</string>
     <string name="altitude_label_short">高度:</string>
-    <string name="cot_remarks">sUAS データから Android 版「OpenAthena」 によって生成されます</string>
-    <string name="version_word">ver.</string>
-    <string name="step_1_load_a_DEM">ステップ1：標高データ(DEM)を読み込む</string>
-    <string name="step_2_load_drone_image">ステップ2：ドローンで撮影した画像を読み込む</string>
-    <string name="step_3_press_calculate">ステップ3：ボタンを押して計算</string>
+    <string name="cot_remarks">sUAS データから Android 用の 「OpenAthena」 によって生成されます</string>
+    <string name="version_word">バージョン</string>
+    <string name="step_1_load_a_DEM">ステップ 1: デジタル標高モデル (DEM) をロードする</string>
+    <string name="step_2_load_drone_image">ステップ 2: ドローン イメージをロードする</string>
+    <string name="step_3_press_calculate">ステップ 3: このボタンを押して計算します。</string>
     <string name="step_4_obtain_target">ステップ 4: 以下の目的地を取得する</string>
     <string name="wrong_filetype_toast_error_msg">誤り: ファイルタイプが間違っています。 「.tif」で終わる GeoTIFF ファイルを選択してください</string>
     <string name="permissions_toast_success_msg">付与される権限</string>
@@ -104,4 +104,7 @@
     <string name="parrot_model_prefix_error_msg">誤り: ドローン 種 「Parrot」</string>
     <string name="xmp_missing_error_msg">誤り: XMP メタデータが見つかりません!</string>
     <string name="xmp_empty_error_msg">誤り: XMP メタデータが見つかりましたが、空でした!</string>
+    <string name="focal_length_label">焦点距離 (ピクセル):</string>
+    <string name="azimuth_offset_label">選択した点の方位オフセット:</string>
+    <string name="pitch_offset_label">選択したポイントのピッチ オフセット:</string>
 </resources>
