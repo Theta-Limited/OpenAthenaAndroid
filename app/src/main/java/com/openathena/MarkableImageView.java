@@ -66,8 +66,8 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
         super.onDraw(canvas);
         if (theMarker != null) {
             Paint paint = new Paint();
-            paint.setColor(Color.RED);
-            float radius = Math.min(getWidth()/64, getHeight()/64);
+            paint.setColor(Color.parseColor("#FE00DD"));
+            float radius = Math.max(getWidth()/64, getHeight()/64);
             canvas.drawCircle(theMarker.x, theMarker.y, radius, paint);
         } else {
             if (parent.isImageLoaded) {
