@@ -36,6 +36,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.text.Html;
@@ -82,7 +85,7 @@ public class MainActivity extends AthenaActivity {
     public static int dangerousAutelAwarenessCount;
 
     TextView textView;
-    ImageView iView;
+    MarkableImageView iView;
 
     ProgressBar progressBar;
 
@@ -162,40 +165,7 @@ public class MainActivity extends AthenaActivity {
         textViewTargetCoord = (TextView)findViewById(R.id.textViewTargetCoord);
         textViewTargetCoord.setMovementMethod(LinkMovementMethod.getInstance());
 
-        iView = (ImageView)findViewById(R.id.imageView);
-
-        iView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP){
-                    if (!isImageLoaded || imageUri == null || iView == null) {
-                        return true;
-                    }
-                    int original_width;
-                    int original_height;
-                    int[] original_dimensions = getImageDimensionsFromUri(imageUri);
-                    if (original_dimensions == null) {
-                        return true;
-                    } else {
-                        original_width = original_dimensions[0];
-                        original_height = original_dimensions[1];
-                    }
-                    int render_width = iView.getWidth();
-                    int render_height = iView.getHeight();
-                    selection_x = (int) (((1.0d * event.getX()) / render_width) * original_width);
-                    selection_y = (int) (((1.0d * event.getY()) / render_height) * original_height);
-                    Log.d("X",selection_x+"");
-                    Log.d("Y",selection_y+"");
-                    Toast.makeText(MainActivity.this, "x: " + selection_x + " y: " + selection_y, Toast.LENGTH_SHORT).show();
-
-                    if (isImageLoaded && isDEMLoaded) {
-                        calculateImage(iView);
-                    }
-                }
-                return true;
-            }
-
-        });
+        iView = (MarkableImageView) findViewById(R.id.imageView);
 
         // try to get our version out of app/build.gradle
         // versionName field
@@ -516,7 +486,7 @@ public class MainActivity extends AthenaActivity {
         //appendText("onPause\n");
         super.onPause();
 
-    } // onPause()
+    }
 
     @Override
     protected void onDestroy()
@@ -529,9 +499,16 @@ public class MainActivity extends AthenaActivity {
 
         super.onDestroy();
 
-    } // onDestroy()
+    }
 
-    public void calculateImage(View view)
+
+
+    // overloaded, called by button press
+    public void calculateImage(View view) {
+        calculateImage(view, true);
+    }
+
+    public void calculateImage(View view, boolean shouldISendCoT)
     {
         Drawable aDrawable;
         ExifInterface exif;
@@ -576,7 +553,7 @@ public class MainActivity extends AthenaActivity {
             attribs += theMeta.getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_IMAGE_LENGTH, exif);
             double[] intrinsics = theMeta.getIntrinsicMatrixFromExif(exif);
-            attribs += "focal length (pixels): " + intrinsics[0] + "\n";
+            attribs += "focal length (pixels): " + Math.round(intrinsics[0]) + "\n";
 //            attribs += "fy: " + intrinsics[4] + "\n";
 //            attribs += "cx: " + intrinsics[2] + "\n";
 //            attribs += "cy: " + intrinsics[5] + "\n";
@@ -589,7 +566,7 @@ public class MainActivity extends AthenaActivity {
                 } else {
                     relativeRay = theMeta.getRayAnglesFromImgPixel(selection_x, selection_y, exif);
                     attribs += "Azimuth offset for selected point: " + Math.round(relativeRay[0]) + "°\n";
-                    attribs += "Pitch offset for selected point: " + Math.round(relativeRay[1]) + "°\n";
+                    attribs += "Pitch offset for selected point: " + -1 * Math.round(relativeRay[1]) + "°\n";
                 }
             } catch (Exception e) {
                 relativeRay = new double[] {0.0d, 0.0d};
@@ -615,8 +592,8 @@ public class MainActivity extends AthenaActivity {
                 attribs += getString(R.string.altiude_wgs84_label_long) + " " + Math.round(z) + "\n";
             }
 
-            attribs += getString(R.string.attribute_text_drone_azimuth) + " " + roundDouble(azimuth) + "\n";
-            attribs += getString(R.string.attribute_text_drone_camera_pitch) + " -" + roundDouble(theta) + "\n";
+            attribs += getString(R.string.attribute_text_drone_azimuth) + " " + Math.round(azimuth) + "\n";
+            attribs += getString(R.string.attribute_text_drone_camera_pitch) + " -" + Math.round(theta) + "\n";
             appendText(attribs);
             attribs = "";
             double[] result;
@@ -742,8 +719,9 @@ public class MainActivity extends AthenaActivity {
             //
             // send CoT message to udp://239.2.3.1:6969
             //     e.g. for use with DoD's ATAK app
-            // TODO DO NOT SEND COT UNLESS ABACUS BUTTON IS EXPLICITY PRESSED
-            CursorOnTargetSender.sendCoT(this, latitude, longitude, altitudeDouble, theta, exif.getAttribute(ExifInterface.TAG_DATETIME));
+            if (shouldISendCoT) {
+                CursorOnTargetSender.sendCoT(this, latitude, longitude, altitudeDouble, theta, exif.getAttribute(ExifInterface.TAG_DATETIME));
+            }
         } catch (XMPException e) {
             Log.e(TAG, e.getMessage());
             appendText(getString(R.string.metadata_parse_error_msg) + e + "\n");

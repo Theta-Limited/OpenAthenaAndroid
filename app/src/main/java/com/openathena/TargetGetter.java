@@ -68,7 +68,6 @@ public class TargetGetter {
         double radTheta = Math.toRadians(theta);
 
         radAzimuth = normalize(radAzimuth);
-        radTheta = Math.abs(radTheta); // for our purposes, angle of declination will always be expressed as a positive number
 
         double finalDist;
         double tarLat;
