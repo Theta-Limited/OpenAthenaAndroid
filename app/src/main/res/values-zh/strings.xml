@@ -104,4 +104,7 @@
     <string name="parrot_model_prefix_error_msg">错误：PARROT模型 </string>
     <string name="xmp_missing_error_msg">错误：找不到 XMP 元数据！</string>
     <string name="xmp_empty_error_msg">错误：找到 XMP 元数据但为空！</string>
+    <string name="focal_length_label">焦距（像素）：</string>
+    <string name="azimuth_offset_label">选定点的方位偏移：</string>
+    <string name="pitch_offset_label">选定点的俯仰偏移：</string>
 </resources>
