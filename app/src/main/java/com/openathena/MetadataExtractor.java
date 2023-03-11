@@ -110,7 +110,7 @@ public class MetadataExtractor {
 
         // DJI Zenmuse X4S (Inspire 2)
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC6510", new double[]{13.2d/5472.0d, 8.8d/3648.0d, 5472.0d, 3648.0d});
+        djiMap.put("FC6510", new double[]{13.1d/5472.0d, 8.76d/3648.0d, 5472.0d, 3648.0d});
 
         // DJI Zenmuse X5 (Inspire 1)
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
@@ -121,11 +121,27 @@ public class MetadataExtractor {
 
         // DJI Zenmuse X5S (Inspire 2)
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC6520", new double[]{17.3d/5280.0d, 13.0d/3956.0d, 5280.0d, 3956.0d});
+        djiMap.put("FC6520", new double[]{18.0d/5280.0d, 13.5d/3956.0d, 5280.0d, 3956.0d});
 
         // DJI Zenmuse X7 (Inspire 2)
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("FC6540", new double[]{23.5d/6016.0d, 15.7d/4008.0d, 6016.0d, 4008.0d});
+
+        // DJI Zenmuse H20 (Matrice 300 series payload)
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("ZENMUSEH20", new double[]{7.53d/5184.0d, 5.64d/3888.0d, 5184.0d, 3888.0d});
+        djiMap.put("ZENMUSEH20T", new double[]{7.68d/640.0d, 6.144d/512.0d, 640.0d, 512.0d});
+        djiMap.put("ZENMUSEH20W", new double[]{6.16d/4056.0d, 4.62d/3040.0d, 4056.0d, 3040.0d});
+
+        // DJI Zenmuse P1 (Matrice 300 series payload)
+        // has a full frame, 45 MP camera!
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("ZENMUSEP1", new double[]{35.9d/8192.0d, 24.0d/5460.0d, 8192.0d, 5460.0d});
+
+        // DJI Zenmuse XT and XT2 (discontinued Matrice 300 series payload)
+        djiMap.put("ZENMUSEXT2", new double[]{7.53d/4056.0d, 5.64d/3040.0d, 4056.0d, 3040.0d}); // not sure if these pixel values are right, specs just says "12 MP camera"
+
+        djiMap.put("ZENMUSEZ30", new double[]{4.71d/1920.0d, 3.54d/1440.0d, 1920.0d, 1440.0d}); // assuming the physical sensor is 4:3, not 16:9
 
         // DJI Spark
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
