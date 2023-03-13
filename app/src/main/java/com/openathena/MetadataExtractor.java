@@ -163,20 +163,20 @@ public class MetadataExtractor {
         // rare 2018 model
         // I couldn't find specs online for the camera sensor, but I will assume it's a Sony IMX577
         // Could be WRONG
-        skydioMap.put("R1", new double[]{6.16d/4056.0d, 4.62d/3040.0d, 4056.0d, 3040.0d});
+        skydioMap.put("R1", new double[]{0.001556870479947d, 0.001556870479947d, 4056.0d, 3040.0d});
 
         // Skydio 2 and 2+
         // Sony IMX577 1/2.3” 12.3MP CMOS
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        skydioMap.put("2", new double[]{6.16d/4056.0d, 4.62d/3040.0d, 4056.0d, 3040.0d});
+        skydioMap.put("2", new double[]{0.001556870479947d, 0.001556870479947d, 4056.0d, 3040.0d});
         skydioMap.put("2+", skydioMap.get("2"));
 
         // Skydio X2, X2E, X2D
         // Sony IMX577 1/2.3” 12.3MP CMOS (same as Skydio 2 and 2+)
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        skydioMap.put("X2", new double[]{6.16d/4056.0d, 4.62d/3040.0d, 4056.0d, 3040.0d});
-        skydioMap.put("X2E", skydioMap.get("X2")); // X2 Enterprise
-        skydioMap.put("X2D", skydioMap.get("X2")); // X2 Defense
+        skydioMap.put("X2", new double[]{0.001556870479947d, 0.001556870479947d, 4056.0d, 3040.0d});
+        skydioMap.put("X2E", new double[]{0.001546969872762d, 0.001552041889073d, 4056.0d, 3040.0d}); // X2 Enterprise (Color / Thermal)
+        skydioMap.put("X2D", skydioMap.get("X2E")); // X2 Defense (Color / Thermal)
 
         //  ______           __           ___       ____            __              __
         // /\  _  \         /\ \__       /\_ \     /\  _`\         /\ \            /\ \__  __
