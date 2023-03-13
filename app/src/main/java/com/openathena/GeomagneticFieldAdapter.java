@@ -1,5 +1,6 @@
 package com.openathena;
 
+// https://developer.android.com/reference/android/hardware/GeomagneticField#getDeclination()
 import android.hardware.GeomagneticField;
 
 public class GeomagneticFieldAdapter implements DeclinationProvider {

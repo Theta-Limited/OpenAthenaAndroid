@@ -574,8 +574,8 @@ public class MainActivity extends AthenaActivity {
             // I'm currently assuming DJI and Autel use magnetic north, while Skydio uses true north. Parrot is unknown
             // could be wrong, but seems accurate from testing
             if (make != null && (make.equals("DJI") || make.equals("AUTEL ROBOTICS"))) {
-                attribs += "Azimuth offset due to magnetic declination:" + " " + roundDouble(magOffset) + "°\n";
-                azimuthOffset -= magOffset;
+                attribs += getString(R.string.mag_declination_offset_label) + " " + roundDouble(magOffset) + "°\n";
+                azimuthOffset += magOffset;
             }
 
             azimuth += azimuthOffset;
@@ -591,7 +591,7 @@ public class MainActivity extends AthenaActivity {
                 attribs += getString(R.string.altiude_wgs84_label_long) + " " + Math.round(z) + "m\n";
             }
 
-            attribs += getString(R.string.attribute_text_drone_azimuth) + " " + Math.round(azimuth) + "°\n";
+            attribs += getString(R.string.attribute_text_drone_azimuth) + " " + Math.round(azimuth % 360.0d) + "°\n";
             attribs += getString(R.string.attribute_text_drone_camera_pitch) + " " + -1 * Math.round(theta) + "°\n";
             appendText(attribs);
             attribs = "";
