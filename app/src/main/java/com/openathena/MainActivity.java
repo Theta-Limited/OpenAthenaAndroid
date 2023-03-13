@@ -533,8 +533,8 @@ public class MainActivity extends AthenaActivity {
             appendText(getString(R.string.opened_exif_for_image_msg));
             attribs += theMeta.getTagString(ExifInterface.TAG_DATETIME, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_MAKE, exif);
+            String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
             attribs += theMeta.getTagString(ExifInterface.TAG_MODEL, exif);
-
             attribs += theMeta.getTagString(ExifInterface.TAG_FOCAL_LENGTH, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_DIGITAL_ZOOM_RATIO, exif);
@@ -565,24 +565,34 @@ public class MainActivity extends AthenaActivity {
             double azimuthOffset = relativeRay[0];
             double thetaOffset = relativeRay[1];
 
-            attribs += getString(R.string.azimuth_offset_label) + Math.round(azimuthOffset) + "°\n";
-            attribs += getString(R.string.pitch_offset_label) + -1 * Math.round(thetaOffset) + "°\n";
+            attribs += getString(R.string.azimuth_offset_label) + " " + Math.round(azimuthOffset) + "°\n";
+            attribs += getString(R.string.pitch_offset_label) + " " + -1 * Math.round(thetaOffset) + "°\n";
+
+            DeclinationProvider d = new GeomagneticFieldAdapter();
+            double magOffset = (double) d.getMagDeclinationFromLatLonAlt((float) y, (float) x, (float) z);
+
+            // I'm currently assuming DJI and Autel use magnetic north, while Skydio uses true north. Parrot is unknown
+            // could be wrong, but seems accurate from testing
+            if (make != null && (make.equals("DJI") || make.equals("AUTEL ROBOTICS"))) {
+                attribs += "Azimuth offset due to magnetic declination:" + " " + roundDouble(magOffset) + "°\n";
+                azimuthOffset -= magOffset;
+            }
 
             azimuth += azimuthOffset;
             theta += thetaOffset;
 
             if (!outputModeIsSlavic()) {
-                attribs += getString(R.string.latitude_label_long) + " "+ roundDouble(y) + "\n";
-                attribs += getString(R.string.longitude_label_long) + " " + roundDouble(x) + "\n";
-                attribs += getString(R.string.altitude_label_long) + " " + Math.round(z) + "\n";
+                attribs += getString(R.string.latitude_label_long) + " "+ roundDouble(y) + "°\n";
+                attribs += getString(R.string.longitude_label_long) + " " + roundDouble(x) + "°\n";
+                attribs += getString(R.string.altitude_label_long) + " " + Math.round(z) + "m\n";
             } else {
-                attribs += getString(R.string.latitude_wgs84_label_long) + " " + roundDouble(y) + "\n";
-                attribs += getString(R.string.longitude_wgs84_label_long) + " " + roundDouble(x) + "\n";
-                attribs += getString(R.string.altiude_wgs84_label_long) + " " + Math.round(z) + "\n";
+                attribs += getString(R.string.latitude_wgs84_label_long) + " " + roundDouble(y) + "°\n";
+                attribs += getString(R.string.longitude_wgs84_label_long) + " " + roundDouble(x) + "°\n";
+                attribs += getString(R.string.altiude_wgs84_label_long) + " " + Math.round(z) + "m\n";
             }
 
-            attribs += getString(R.string.attribute_text_drone_azimuth) + " " + Math.round(azimuth) + "\n";
-            attribs += getString(R.string.attribute_text_drone_camera_pitch) + " -" + Math.round(theta) + "\n";
+            attribs += getString(R.string.attribute_text_drone_azimuth) + " " + Math.round(azimuth) + "°\n";
+            attribs += getString(R.string.attribute_text_drone_camera_pitch) + " " + -1 * Math.round(theta) + "°\n";
             appendText(attribs);
             attribs = "";
             double[] result;
