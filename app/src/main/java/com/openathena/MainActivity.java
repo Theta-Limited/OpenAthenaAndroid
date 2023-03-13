@@ -571,11 +571,11 @@ public class MainActivity extends AthenaActivity {
             DeclinationProvider d = new GeomagneticFieldAdapter();
             double magOffset = (double) d.getMagDeclinationFromLatLonAlt((float) y, (float) x, (float) z);
 
-            // I'm currently assuming DJI and Autel use magnetic north, while Skydio uses true north. Parrot is unknown
+            // I'm currently assuming Autel uses magnetic north, while Skydio uses true north. Parrot is unknown
             // could be wrong, but seems accurate from testing
-            if (make != null && (make.equals("DJI") || make.equals("AUTEL ROBOTICS"))) {
+            if (make != null && (make.equals("AUTEL ROBOTICS"))) {
                 attribs += getString(R.string.mag_declination_offset_label) + " " + roundDouble(magOffset) + "°\n";
-                azimuthOffset += magOffset;
+                azimuthOffset -= magOffset;
             }
 
             azimuth += azimuthOffset;
