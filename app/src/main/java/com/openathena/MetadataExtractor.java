@@ -685,9 +685,6 @@ public class MetadataExtractor {
         float digitalZoomRatio = 1.0f;
         if (digitalZoomRational != null && !digitalZoomRational.equals("")) {
             digitalZoomRatio = rationalToFloat(exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO));
-//            if (Math.abs(digitalZoomRatio) > 0.000f && Math.abs(digitalZoomRatio - 1.0f) > 0.000f) {
-//                throw new Exception("Digital zoom detected. Not supported in this version");
-//            }
             if (digitalZoomRatio < 1.0f) {
                 digitalZoomRatio = 1.0f;
             }
@@ -747,21 +744,39 @@ public class MetadataExtractor {
         return new double[] {azimuth, elevation};
     }
 
-    public static double[] correctEulerAngles(double theta, double phi, double r) {
-        // Convert degrees to radians
-        theta = Math.toRadians(theta);
-        phi = Math.toRadians(phi);
-        r = Math.toRadians(r);
-        // Convert Euler angles to unit vector
-        double x = Math.sin(theta) * Math.cos(phi);
-        double y = Math.sin(theta) * Math.sin(phi);
-        double z = Math.cos(theta);
+    /**
+     * For an image taken where the camera image plane is not perpendicular with the ground, express the ray angle in terms of a frame of reference which is parallel to the ground
+     * <p>
+     *     While the camera gimbal of most drones attempt to keep the camera image plane parallel with the ground, this cannot be assumed for all cases. Therefore, this function rotates the 3D angle (calculated by camera intrinsics) by the same amount and direction as the roll of the camera.
+     * </p>
+     * @param psi the yaw of the ray relative to the camera. Rightwards is positive.
+     * @param theta the pitch angle of the ray relative to the camera. Downwards is positive.
+     * @param cameraRoll the roll angle of the camera relative to the earth's gravity. From the perspective of the camera, clockwise is positive
+     * @return a corrected Euler angle double[phi, theta] representing the same ray but in a new frame of reference where the x axis is parallel to the ground (i.e. perpendicular to Earth's gravity)
+     */
+    public static double[] correctRayAnglesForRoll(double psi, double theta, double cameraRoll) {
+        theta = -1.0d * theta; // convert from OpenAthena notation to standard Tait-Bryan aircraft notation (downward is negative)
 
-        // Create rotation matrix to apply roll angle r of the camera, facing the +z axis (away from the camrea)
+        // Convert degrees to radians
+        psi = Math.toRadians(psi);
+        theta = Math.toRadians(theta);
+        cameraRoll = Math.toRadians(cameraRoll);
+
+        // Convert Tait-Bryan angles to unit vector
+        // Note that these axis are labeled according to the Tait-Bryan aircraft notation, where:
+        //     +x is forward
+        //     +y is rightward
+        //     +z is downward
+        // This is different than either the image plane notation or ENU
+        double x = Math.cos(theta) * Math.cos(psi);
+        double y = Math.cos(theta) * Math.sin(psi);
+        double z = Math.sin(theta);
+
+        // Create rotation matrix for roll angle r around the X-axis
         double[][] rotationMatrix = {
-                {Math.cos(r), Math.sin(r), 0},
-                {-Math.sin(r), Math.cos(r), 0},
-                {0, 0, 1}
+                {1, 0, 0},
+                {0, Math.cos(cameraRoll), -Math.sin(cameraRoll)},
+                {0, Math.sin(cameraRoll), Math.cos(cameraRoll)}
         };
 
         // Rotate the unit vector back to correct for the observer's roll
@@ -772,14 +787,16 @@ public class MetadataExtractor {
         };
 
         // Convert rotated unit vector back to corrected Euler angles
+        double correctedPsi = Math.atan2(rotatedVector[1], rotatedVector[0]);
         double correctedTheta = Math.acos(rotatedVector[2]);
-        double correctedPhi = Math.atan2(rotatedVector[1], rotatedVector[0]);
 
         // Convert from radians back to degrees
+        correctedPsi = Math.toDegrees(correctedPsi);
         correctedTheta = Math.toDegrees(correctedTheta);
-        correctedPhi = Math.toDegrees(correctedPhi);
 
-        return new double[]{correctedTheta, correctedPhi};
+        correctedTheta = -1.0d * correctedTheta; // convert from Tait-Bryan notation to OpenAthena notation (downwards is positive)
+
+        return new double[]{correctedPsi, correctedTheta};
     }
 
 
