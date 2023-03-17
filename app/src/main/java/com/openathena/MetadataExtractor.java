@@ -747,6 +747,42 @@ public class MetadataExtractor {
         return new double[] {azimuth, elevation};
     }
 
+    public static double[] correctEulerAngles(double theta, double phi, double r) {
+        // Convert degrees to radians
+        theta = Math.toRadians(theta);
+        phi = Math.toRadians(phi);
+        r = Math.toRadians(r);
+        // Convert Euler angles to unit vector
+        double x = Math.sin(theta) * Math.cos(phi);
+        double y = Math.sin(theta) * Math.sin(phi);
+        double z = Math.cos(theta);
+
+        // Create rotation matrix to apply roll angle r of the camera, facing the +z axis (away from the camrea)
+        double[][] rotationMatrix = {
+                {Math.cos(r), Math.sin(r), 0},
+                {-Math.sin(r), Math.cos(r), 0},
+                {0, 0, 1}
+        };
+
+        // Rotate the unit vector back to correct for the observer's roll
+        double[] rotatedVector = {
+                rotationMatrix[0][0] * x + rotationMatrix[0][1] * y + rotationMatrix[0][2] * z,
+                rotationMatrix[1][0] * x + rotationMatrix[1][1] * y + rotationMatrix[1][2] * z,
+                rotationMatrix[2][0] * x + rotationMatrix[2][1] * y + rotationMatrix[2][2] * z
+        };
+
+        // Convert rotated unit vector back to corrected Euler angles
+        double correctedTheta = Math.acos(rotatedVector[2]);
+        double correctedPhi = Math.atan2(rotatedVector[1], rotatedVector[0]);
+
+        // Convert from radians back to degrees
+        correctedTheta = Math.toDegrees(correctedTheta);
+        correctedPhi = Math.toDegrees(correctedPhi);
+
+        return new double[]{correctedTheta, correctedPhi};
+    }
+
+
     public static float rationalToFloat(String str)
     {
         if (str == null) {
