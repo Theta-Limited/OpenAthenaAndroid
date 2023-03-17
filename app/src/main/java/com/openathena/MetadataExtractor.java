@@ -322,9 +322,19 @@ public class MetadataExtractor {
         double theta;
         String gimbalPitchDegree = xmpMeta.getPropertyString(schemaNS, "GimbalPitchDegree");
         if (gimbalPitchDegree != null) {
-            theta = Math.abs(Double.parseDouble(gimbalPitchDegree));
+            theta = -1.0d * Double.parseDouble(gimbalPitchDegree);
         } else {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
+        }
+
+        double roll;
+        String gimbalRollDegree = xmpMeta.getPropertyString(schemaNS, "GimbalRollDegree");
+        if (gimbalRollDegree != null) {
+            // ENU, positive roll is anti-clockwise? TODO verfiy this!
+            // negate roll to convert to NED
+            roll = -1.0d * Double.parseDouble(gimbalRollDegree);
+        } else {
+            throw new MissingDataException(parent.getString(R.string.missing_data_exception_roll), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ROLL);
         }
 
         // safety check: if metadata azimuth and theta are zero, it's extremely likely the metadata is invalid
@@ -332,7 +342,7 @@ public class MetadataExtractor {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_altitude_and_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
         }
 
-        double[] outArr = new double[]{y, x, z, azimuth, theta};
+        double[] outArr = new double[]{y, x, z, azimuth, theta, roll};
         return outArr;
     }
 
@@ -347,7 +357,7 @@ public class MetadataExtractor {
         XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
         String schemaNS = "https://www.skydio.com/drone-skydio/1.0/";
 
-        double y; double x; double z; double azimuth; double theta;
+        double y; double x; double z; double azimuth; double theta; double roll;
 
         try {
             y = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Latitude"));
@@ -376,12 +386,19 @@ public class MetadataExtractor {
 
         try {
             theta = Double.parseDouble(xmpMeta.getStructField(schemaNS, "CameraOrientationNED", schemaNS, "Pitch").getValue());
-            theta = Math.abs(theta);
+            theta = -1.0d * theta;
         } catch (NumberFormatException nfe) {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
         }
 
-        double[] outArr = new double[]{y, x, z, azimuth, theta};
+        try {
+            // NED, positive roll is clockwise TODO Verify this!
+            roll = Double.parseDouble(xmpMeta.getStructField(schemaNS, "CameraOrientationNED", schemaNS, "Roll").getValue());
+        } catch (NumberFormatException nfe) {
+            throw new MissingDataException(parent.getString(R.string.missing_data_exception_roll), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ROLL);
+        }
+
+        double[] outArr = new double[]{y, x, z, azimuth, theta, roll};
         return outArr;
     }
 
@@ -411,6 +428,7 @@ public class MetadataExtractor {
         double z;
         double azimuth;
         double theta;
+        double roll;
 
         if (isNewMetadataFormat) {
             // Newer metadata uses the same format and schemaNS as DJI
@@ -439,7 +457,15 @@ public class MetadataExtractor {
             // so, we use the complement of the angle instead
             // see: https://support.pix4d.com/hc/en-us/articles/202558969-Yaw-Pitch-Roll-and-Omega-Phi-Kappa-angles
             theta = 90.0d - theta;
-            double[] outArr = new double[]{y, x, z, azimuth, theta};
+
+            try {
+                // pix4d NED, positive roll is clockwise
+                roll = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Roll"));
+            } catch (NumberFormatException nfe) {
+                throw new MissingDataException(parent.getString(R.string.missing_data_exception_roll), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ROLL);
+            }
+
+            double[] outArr = new double[]{y, x, z, azimuth, theta, roll};
             return outArr;
         }
     }
@@ -450,6 +476,7 @@ public class MetadataExtractor {
         double z;
         double azimuth;
         double theta;
+        double roll;
 
         Float[] yxz = exifGetYXZ(exif);
         y = yxz[0];
@@ -475,12 +502,21 @@ public class MetadataExtractor {
         }
 
         try {
-            theta = Math.abs(Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraPitchDegree")));
+            theta = -1.0d * Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraPitchDegree"));
         } catch (NumberFormatException nfe) {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
         }
 
-        double[] outArr = new double[]{y, x, z, azimuth, theta};
+        try {
+            // ENU, positive roll is anti-clockwise TODO Verify this!
+            // negate roll to convert to NED
+
+            roll = -1.0d * Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraRollDegree"));
+        } catch (NumberFormatException nfe) {
+            throw new MissingDataException(parent.getString(R.string.missing_data_exception_roll), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ROLL);
+        }
+
+        double[] outArr = new double[]{y, x, z, azimuth, theta, roll};
         return outArr;
     }
 
