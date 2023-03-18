@@ -740,19 +740,25 @@ public class MetadataExtractor {
         azimuth = Math.toDegrees(azimuth);
         elevation = Math.toDegrees(elevation);
 
-        Log.d(TAG, "Pixel (" + x + ", " + y + ") -> Ray (" + azimuth + ", " + elevation + ")");
+        double roll = getMetadataValues(exifInterface)[5];
+
+        double[] TBAngle = correctRayAnglesForRoll(azimuth, elevation, roll);
+        azimuth = TBAngle[0];
+        elevation = TBAngle[1];
+
+        Log.d(TAG, "Pixel (" + x + ", " + y + ", Roll: " + roll + ") -> Ray (" + azimuth + ", " + elevation + ")");
         return new double[] {azimuth, elevation};
     }
 
     /**
-     * For an image taken where the camera image plane is not perpendicular with the ground, express the ray angle in terms of a frame of reference which is parallel to the ground
+     * For an image taken where the camera lateral axis is not parallel with the ground, express the ray angle in terms of a frame of reference which is parallel to the ground
      * <p>
-     *     While the camera gimbal of most drones attempt to keep the camera image plane parallel with the ground, this cannot be assumed for all cases. Therefore, this function rotates the 3D angle (calculated by camera intrinsics) by the same amount and direction as the roll of the camera.
+     *     While the camera gimbal of most drones attempt to keep the camera lateral axis parallel with the ground, this cannot be assumed for all cases. Therefore, this function rotates the 3D angle (calculated by camera intrinsics) by the same amount and direction as the roll of the camera.
      * </p>
      * @param psi the yaw of the ray relative to the camera. Rightwards is positive.
      * @param theta the pitch angle of the ray relative to the camera. Downwards is positive.
      * @param cameraRoll the roll angle of the camera relative to the earth's gravity. From the perspective of the camera, clockwise is positive
-     * @return a corrected Euler angle double[phi, theta] representing the same ray but in a new frame of reference where the x axis is parallel to the ground (i.e. perpendicular to Earth's gravity)
+     * @return a corrected Tait-Bryan angle double[phi, theta] representing the same ray but in a new frame of reference where the x axis is parallel to the ground (i.e. perpendicular to Earth's gravity)
      */
     public static double[] correctRayAnglesForRoll(double psi, double theta, double cameraRoll) {
         theta = -1.0d * theta; // convert from OpenAthena notation to standard Tait-Bryan aircraft notation (downward is negative)
@@ -786,9 +792,9 @@ public class MetadataExtractor {
                 rotationMatrix[2][0] * x + rotationMatrix[2][1] * y + rotationMatrix[2][2] * z
         };
 
-        // Convert rotated unit vector back to corrected Euler angles
+        // Convert rotated unit vector back to Tait-Bryan angle
         double correctedPsi = Math.atan2(rotatedVector[1], rotatedVector[0]);
-        double correctedTheta = Math.acos(rotatedVector[2]);
+        double correctedTheta = Math.atan2(rotatedVector[2], Math.sqrt(rotatedVector[0] * rotatedVector[0] + rotatedVector[1] * rotatedVector[1]));
 
         // Convert from radians back to degrees
         correctedPsi = Math.toDegrees(correctedPsi);
