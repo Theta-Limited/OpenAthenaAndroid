@@ -330,9 +330,8 @@ public class MetadataExtractor {
         double roll;
         String gimbalRollDegree = xmpMeta.getPropertyString(schemaNS, "GimbalRollDegree");
         if (gimbalRollDegree != null) {
-            // ENU, positive roll is anti-clockwise? TODO verfiy this!
-            // negate roll to convert to NED
-            roll = -1.0d * Double.parseDouble(gimbalRollDegree);
+            // positive roll is clockwise? TODO verfiy this!
+            roll = Double.parseDouble(gimbalRollDegree);
         } else {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_roll), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ROLL);
         }
@@ -508,10 +507,8 @@ public class MetadataExtractor {
         }
 
         try {
-            // ENU, positive roll is anti-clockwise TODO Verify this!
-            // negate roll to convert to NED
-
-            roll = -1.0d * Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraRollDegree"));
+            // positive roll is clockwise TODO Verify this!
+            roll = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraRollDegree"));
         } catch (NumberFormatException nfe) {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_roll), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ROLL);
         }
