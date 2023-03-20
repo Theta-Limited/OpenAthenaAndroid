@@ -100,6 +100,11 @@ public class MetadataExtractor {
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("FC2103", new double[]{6.17d/4056.0d, 4.55d/3040.0d, 4056.0d, 3040.0d});
 
+        // DJI Mavic 2 Enterprise Dual thermal sensor
+        // Teledyne FLIR Lepton 3.5 sensor
+        // 160x120 px sensor, upscaled by software to 640x480 px
+        djiMap.put("FC2403", new double[]{1.92d/160.0d, 1.44d/120.0d, 640.0d, 480.0d});
+
         // DJI Mavic Air 2 // UNKNOWN COMPATIBILITY
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("FC3170", new double[]{6.4d/8000.0d, 4.8d/6000.0d, 8000.0d, 6000.0d});
