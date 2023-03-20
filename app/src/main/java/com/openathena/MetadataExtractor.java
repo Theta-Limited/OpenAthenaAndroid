@@ -96,7 +96,7 @@ public class MetadataExtractor {
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("FC4170", new double[]{6.4d/4000.0d, 4.8d/3000.0d, 4000.0d, 3000.0d});
 
-        // DJI Mavic Air 1
+        // DJI Mavic Air 1, DJI Mavic 2 Enterprise Dual
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("FC2103", new double[]{6.17d/4056.0d, 4.55d/3040.0d, 4056.0d, 3040.0d});
 
@@ -130,18 +130,29 @@ public class MetadataExtractor {
         // DJI Zenmuse H20 (Matrice 300 series payload)
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("ZENMUSEH20", new double[]{7.53d/5184.0d, 5.64d/3888.0d, 5184.0d, 3888.0d});
+        djiMap.put("ZH20", djiMap.get("ZENMUSEH20"));
         djiMap.put("ZENMUSEH20T", new double[]{7.68d/640.0d, 6.144d/512.0d, 640.0d, 512.0d});
+        djiMap.put("ZH20T", djiMap.get("ZENMUSEH20T"));
+
         djiMap.put("ZENMUSEH20W", new double[]{6.16d/4056.0d, 4.62d/3040.0d, 4056.0d, 3040.0d});
+        djiMap.put("ZH20W", djiMap.get("ZENMUSEH20W"));
+
+        // DJI Mavic 2 Enterprise Advanced (M2EA) visual camera
+        // 1/2" CMOS sensor
+        djiMap.put("MAVIC2-ENTERPRISE-ADVANCED", new double[]{6.4d/8000.0d, 4.8/6000.0d, 8000.0d, 6000.0d});
 
         // DJI Zenmuse P1 (Matrice 300 series payload)
         // has a full frame, 45 MP camera!
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("ZENMUSEP1", new double[]{35.9d/8192.0d, 24.0d/5460.0d, 8192.0d, 5460.0d});
+        djiMap.put("ZP1", djiMap.get("ZENMUSEP1"));
 
         // DJI Zenmuse XT and XT2 (discontinued Matrice 300 series payload)
         djiMap.put("ZENMUSEXT2", new double[]{7.53d/4056.0d, 5.64d/3040.0d, 4056.0d, 3040.0d}); // not sure if these pixel values are right, specs just says "12 MP camera"
+        djiMap.put("XT2", djiMap.get("ZENMUSEXT2"));
 
         djiMap.put("ZENMUSEZ30", new double[]{4.71d/1920.0d, 3.54d/1440.0d, 1920.0d, 1440.0d}); // assuming the physical sensor is 4:3, not 16:9
+        djiMap.put("Z30", djiMap.get("ZENMUSEZ30"));
 
         // DJI Spark
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
