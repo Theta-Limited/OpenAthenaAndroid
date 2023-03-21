@@ -346,7 +346,6 @@ public class MetadataExtractor {
         double roll;
         String gimbalRollDegree = xmpMeta.getPropertyString(schemaNS, "GimbalRollDegree");
         if (gimbalRollDegree != null) {
-            // positive roll is clockwise? TODO verfiy this!
             roll = Double.parseDouble(gimbalRollDegree);
         } else {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_roll), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ROLL);
