@@ -100,6 +100,7 @@
     <string name="latitude_wgs84_label_long">Latitude (WGS84): </string>
     <string name="longitude_wgs84_label_long">Longitude (WGS84): </string>
     <string name="altiude_wgs84_label_long">Altitude (WGS84): </string>
+    <string name="roll_label">Camera Roll angle:</string>
     <string name="make_prefix_error_msg">ERROR: make </string>
     <string name="not_usable_at_this_time_error_msg">not usable at this time</string>
     <string name="parrot_model_prefix_error_msg">ERROR: Parrot model </string>
