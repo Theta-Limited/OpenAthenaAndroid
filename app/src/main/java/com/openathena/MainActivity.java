@@ -527,6 +527,7 @@ public class MainActivity extends AthenaActivity {
             double z = values[2];
             double azimuth = values[3];
             double theta = values[4];
+            double roll = values[5];
 
             Log.i(TAG, "parsed xmpMeta\n");
 
@@ -545,6 +546,7 @@ public class MainActivity extends AthenaActivity {
 //            attribs += "fy: " + intrinsics[4] + "\n";
 //            attribs += "cx: " + intrinsics[2] + "\n";
 //            attribs += "cy: " + intrinsics[5] + "\n";
+            attribs += getString(R.string.roll_label) + " " + roll + "°\n";
 
             double[] relativeRay;
             relativeRay = new double[] {0.0d, 0.0d};
