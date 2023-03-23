@@ -1,6 +1,5 @@
 package com.openathena;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,10 +8,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
+import android.view.ViewTreeObserver;
 
 public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageView {
     Marker theMarker = null;
@@ -24,7 +20,8 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
             return;
         }
         parent = (MainActivity) context;
-        MarkableImageView yahweh = this;
+        MarkableImageView yahweh = this; // reference to this MarkableImageView, for use in listener
+
         this.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -41,17 +38,16 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                         original_width = original_dimensions[0];
                         original_height = original_dimensions[1];
                     }
-                    int render_width = yahweh.getWidth();
-                    int render_height = yahweh.getHeight();
-                    parent.selection_x = (int) (((1.0d * event.getX()) / render_width) * original_width);
-                    parent.selection_y = (int) (((1.0d * event.getY()) / render_height) * original_height);
+                    int render_width = yahweh.getMeasuredWidth();
+                    int render_height = yahweh.getMeasuredHeight();
+                    parent.selection_x = (int) Math.round(((1.0d * event.getX()) / render_width) * original_width);
+                    parent.selection_y = (int) Math.round(((1.0d * event.getY()) / render_height) * original_height);
                     Log.d("X",parent.selection_x+"");
                     Log.d("Y",parent.selection_y+"");
 
                     if (parent.isImageLoaded && parent.isDEMLoaded) {
-                        parent.calculateImage(yahweh, false);
-                        theMarker = new Marker((int) event.getX(), (int) event.getY());
-                        yahweh.invalidate();
+                        yahweh.mark((double) event.getX() / (1.0d * render_width), (double) event.getY() / (1.0d * render_height));
+                        parent.calculateImage(yahweh, false); // this may cause the view to re-size due to constraint layout
                     }
                 }
 
@@ -59,6 +55,36 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
             }
 
         });
+
+    }
+
+    /**
+     * Given an x and y of a pixel in full-sized image, draw a mark on that same point on this imageView
+     * @param selection_x The x coordinate of a pixel in full-sized image. 0 is left side and increases rightward
+     * @param selection_y The y coordinate of a pixel in full-sized image. 0 is top side and increases downward
+     */
+    public void restoreMarker(int selection_x, int selection_y) {
+        int[] original_dimensions = parent.getImageDimensionsFromUri(parent.imageUri);
+        int original_x = original_dimensions[0];
+        int original_y = original_dimensions[1];
+
+        int render_width = getMeasuredWidth();
+        int render_height = getMeasuredHeight();
+
+        double x = (1.0d * selection_x) / original_x;
+        double y = (1.0d * selection_y) / original_y;
+
+        mark(x,y);
+    }
+
+    /**
+     * Given an x and y proportion (range [0, 1]) draw a mark that point
+     * @param x The x proportion of a point on this imageView to draw a mark on. 0.0d is left, 0.5d is mid, 1.0d is right
+     * @param y The y proportion of a point on this imageView to draw a mark on. 0.0d is left, 0.5d is mid, 1.0d is right
+     */
+    public void mark(double x, double y) {
+        theMarker = new Marker(x, y);
+        this.invalidate();
     }
 
     @Override
@@ -66,24 +92,28 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
         super.onDraw(canvas);
         if (theMarker != null) {
             Paint paint = new Paint();
-            paint.setColor(Color.parseColor("#FE00DD"));
-            float radius = Math.max(getWidth()/64, getHeight()/64);
-            canvas.drawCircle(theMarker.x, theMarker.y, radius, paint);
+            paint.setColor(Color.parseColor("#FE00DD")); // HI-VIS PINK
+            int render_width = getMeasuredWidth();
+            int render_height = getMeasuredHeight();
+            float radius = Math.max(render_width/64, render_height/64);
+            int x = (int) Math.round(theMarker.x_prop * render_width);
+            int y = (int) Math.round(theMarker.y_prop * render_height);
+            canvas.drawCircle(x, y, radius, paint);
         } else {
             if (parent.isImageLoaded) {
-                theMarker = new Marker(getWidth() / 2, getHeight() / 2);
+                theMarker = new Marker(0.5d, 0.5d);
                 invalidate();
             }
         }
     }
 
     protected class Marker {
-        public int x;
-        public int y;
+        public double x_prop;
+        public double y_prop;
 
-        public Marker(int x, int y) {
-            this.x  = x;
-            this.y = y;
+        public Marker(double x_prop, double y_prop) {
+            this.x_prop = x_prop;
+            this.y_prop = y_prop;
         }
     }
 }

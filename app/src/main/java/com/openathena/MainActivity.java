@@ -224,6 +224,12 @@ public class MainActivity extends AthenaActivity {
                 demSelected(demUri);
             }
             isTargetCoordDisplayed = savedInstanceState.getBoolean("isTargetCoordDisplayed");
+
+            selection_x = savedInstanceState.getInt("selection_x", -1);
+            selection_y = savedInstanceState.getInt("selection_y", -1);
+            cx = savedInstanceState.getInt("cx", -1);
+            cy = savedInstanceState.getInt("cy", -1);
+            iView.restoreMarker(selection_x, selection_y);
         }
 
         restorePrefOutputMode(); // restore the outputMode from persistent settings
@@ -267,6 +273,18 @@ public class MainActivity extends AthenaActivity {
         if (demUri != null) {
             Log.d(TAG, "saved demUri: " + demUri.toString());
             saveInstanceState.putString("demUri", demUri.toString());
+        }
+        if (selection_x >= 0) {
+            saveInstanceState.putInt("selection_x", selection_x);
+        }
+        if (selection_y >= 0) {
+            saveInstanceState.putInt("selection_y", selection_y);
+        }
+        if (cx >= 0) {
+            saveInstanceState.putInt("cx", cx);
+        }
+        if (cy >= 0) {
+            saveInstanceState.putInt("cy", cy);
         }
     }
 
@@ -555,7 +573,6 @@ public class MainActivity extends AthenaActivity {
                     throw new NoSuchFieldException("no point was selected");
                 } else {
                     relativeRay = theMeta.getRayAnglesFromImgPixel(selection_x, selection_y, exif);
-
                 }
             } catch (Exception e) {
                 relativeRay = new double[] {0.0d, 0.0d};
