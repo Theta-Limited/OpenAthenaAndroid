@@ -142,9 +142,12 @@ public class MetadataExtractor {
         djiMap.put("ZENMUSEH20W", new double[]{6.16d/4056.0d, 4.62d/3040.0d, 4056.0d, 3040.0d});
         djiMap.put("ZH20W", djiMap.get("ZENMUSEH20W"));
 
-        // DJI Mavic 2 Enterprise Advanced (M2EA) visual camera
+        // DJI Mavic 2 Enterprise Advanced (M2EA) thermal camera
+//        djiMap.put("MAVIC2-ENTERPRISE-ADVANCED", new double[]{6.4d/8000.0d, 4.8/6000.0d, 8000.0d, 6000.0d}); // WRONG
+
+        // DJI Mavic 2 Enterprise Advanced visual camera
         // 1/2" CMOS sensor
-        djiMap.put("MAVIC2-ENTERPRISE-ADVANCED", new double[]{6.4d/8000.0d, 4.8/6000.0d, 8000.0d, 6000.0d});
+        // TODO fixme
 
         // DJI Zenmuse P1 (Matrice 300 series payload)
         // has a full frame, 45 MP camera!
