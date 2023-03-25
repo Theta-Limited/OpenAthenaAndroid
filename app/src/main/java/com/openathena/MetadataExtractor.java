@@ -62,17 +62,38 @@ public class MetadataExtractor {
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("FC220", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
 
-        // DJI Phantom 4 Pro, Phantom 4 Pro v2.0, Phantom 4 Advanced
+        // DJI Mavic Air
+        djiMap.put("FC230", new double[]{6.17d/4056.0d, 4.55d/3040.0d, 4048.0d, 3032.0d});
+
+        // DJI Phantom 4
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("FC330", new double[]{13.2d/5472.0d, 8.8d/3648.0d, 5472.0d, 3648.0d});
 
+        // DJI Phantom 4 Pro, DJI Phantom 4 Advanced
+        djiMap.put("FC6310", djiMap.get("FC330"));
+        djiMap.put("FC6310S", djiMap.get("FC6310"));
+
+        // DJI Phantom 4 Multispectral
+        // 1/2.9" CMOS sensor
+        djiMap.put("FC6360", new double[]{4.96d/1600.0d, 3.72d/1300.0d, 1600.0d, 1300.0d});
+
         // DJI Phantom 3 SE
         djiMap.put("FC300C", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
+        djiMap.put("FC300S", djiMap.get("FC300C"));
+        djiMap.put("FC300X", djiMap.get("FC300C"));
+        djiMap.put("FC300XW", djiMap.get("FC300C"));
 
-        // DJI Mini and DJI Mini 2
+        // DJI Phantom 2 Vision
+        djiMap.put("FC200", new double[]{6.17d/4384.0d, 4.55d/3288.0d, 4384.0d, 4384.0d});
+        djiMap.put("PHANTOM VISION FC200", djiMap.get("FC200"));
+
+        // DJI Mini
+        djiMap.put("FC7203", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
+
+        // DJI Mini 2
         // ^ UNKNOWN    ^Mini 2 METADATA NOT COMPATIBLE WITH OPENATHENA
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC7303", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
+        djiMap.put("FC7303", djiMap.get("FC7203"));
         //djiMap.put("FC7303", new double[]{6.16d/4000.0d, 4.62d/3000.0d, 4000.0d, 3000.0d});
 
         // DJI Mini 3 Pro // METADATA NOT COMPATIBLE WITH OPENATHENA
@@ -81,8 +102,10 @@ public class MetadataExtractor {
 
         // DJI Mavic 2 Zoom
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        //     djiMap.put("FC2204", new double[]{6.26d/4000.0d, 4.7d/3000.0d, 4000.0d, 3000.0d});
-        djiMap.put("FC2204", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
+        //     djiMap.put("FC2200", new double[]{6.26d/4000.0d, 4.7d/3000.0d, 4000.0d, 3000.0d});
+        djiMap.put("FC2200", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
+        // Mavic 2 Enterprise Zoom
+        djiMap.put("FC2204", djiMap.get("FC2200"));
 
         // DJI Mavic 2 Pro
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
@@ -96,16 +119,22 @@ public class MetadataExtractor {
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("FC4170", new double[]{6.4d/4000.0d, 4.8d/3000.0d, 4000.0d, 3000.0d});
 
-        // DJI Mavic Air 1, DJI Mavic 2 Enterprise Dual
+        // DJI Mavic 3 Enterprise Main Hasselblad Camera
+        djiMap.put("M3E", new double[]{17.3d/5280.0d, 13.0d/3956.0d, 5280.0d, 3956.0d});
+
+        // DJI Mavic 3 Thermal (color camera)
+        djiMap.put("M3T", new double[]{6.4d/8000.0d, 4.8d/6000.0d, 8000.0d, 6000.0d});
+
+        // DJI Mavic 2 Enterprise Dual
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC2103", new double[]{6.17d/4056.0d, 4.55d/3040.0d, 4056.0d, 3040.0d});
+        djiMap.put("FC2103", new double[]{6.17d/4056.0d, 4.55d/3040.0d, 4048.0d, 3032.0d});
 
         // DJI Mavic 2 Enterprise Dual thermal sensor
         // Teledyne FLIR Lepton 3.5 sensor
         // 160x120 px sensor, upscaled by software to 640x480 px
         djiMap.put("FC2403", new double[]{1.92d/640.0d, 1.44d/480.0d, 640.0d, 480.0d});
 
-        // DJI Mavic Air 2 // UNKNOWN COMPATIBILITY
+        // DJI Mavic Air 2, possibly DJI Mavic 2 Enterprise Advanced? // UNKNOWN COMPATIBILITY
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("FC3170", new double[]{6.4d/8000.0d, 4.8d/6000.0d, 8000.0d, 6000.0d});
 
@@ -142,12 +171,16 @@ public class MetadataExtractor {
         djiMap.put("ZENMUSEH20W", new double[]{6.16d/4056.0d, 4.62d/3040.0d, 4056.0d, 3040.0d});
         djiMap.put("ZH20W", djiMap.get("ZENMUSEH20W"));
 
-        // DJI Mavic 2 Enterprise Advanced (M2EA) thermal camera
-//        djiMap.put("MAVIC2-ENTERPRISE-ADVANCED", new double[]{6.4d/8000.0d, 4.8/6000.0d, 8000.0d, 6000.0d}); // WRONG
+        // https://www.dji.com/zenmuse-h20n/specs
+        djiMap.put("ZENMUSEH20N", djiMap.get("ZH20T"));
+        djiMap.put("ZH20N", djiMap.get("ZENMUSEH20N"));
 
-        // DJI Mavic 2 Enterprise Advanced visual camera
-        // 1/2" CMOS sensor
-        // TODO fixme
+        // DJI Mavic 2 Enterprise Advanced (M2EA) thermal camera
+        djiMap.put("MAVIC2-ENTERPRISE-ADVANCED", new double[]{7.68d/640.0d, 6.144d/512.0d, 640.0d, 512.0d});
+
+//        // DJI Mavic 2 Enterprise Advanced visual camera
+//        // 1/2" CMOS sensor
+//        djiMap.put("M2EA", new double[]{6.4d/8000.0d, 4.8/6000.0d, 8000.0d, 6000.0d});
 
         // DJI Zenmuse P1 (Matrice 300 series payload)
         // has a full frame, 45 MP camera!
@@ -155,9 +188,15 @@ public class MetadataExtractor {
         djiMap.put("ZENMUSEP1", new double[]{35.9d/8192.0d, 24.0d/5460.0d, 8192.0d, 5460.0d});
         djiMap.put("ZP1", djiMap.get("ZENMUSEP1"));
 
-        // DJI Zenmuse XT and XT2 (discontinued Matrice 300 series payload)
+        // DJI Zenmuse XT and XT2 color camera (discontinued Matrice 300 series payload)
         djiMap.put("ZENMUSEXT2", new double[]{7.53d/4056.0d, 5.64d/3040.0d, 4056.0d, 3040.0d}); // not sure if these pixel values are right, specs just says "12 MP camera"
-        djiMap.put("XT2", djiMap.get("ZENMUSEXT2"));
+
+        // DJI Zenmuse XT and XT2 thermal camera (FLIR Tau 2 640)
+        djiMap.put("FLIR", new double[]{10.88d/640.0d, 8.704/512.0d, 640.0d, 512.0d});
+        djiMap.put("XT2", djiMap.get("FLIR"));
+
+        // DJI Zenmuse XT S (FLIR Tau 2 336)
+        djiMap.put("XT S", new double[]{5.712d/336.0d, 4.352/256.0d, 336.0d, 256.0d});
 
         djiMap.put("ZENMUSEZ30", new double[]{4.71d/1920.0d, 3.54d/1440.0d, 1920.0d, 1440.0d}); // assuming the physical sensor is 4:3, not 16:9
         djiMap.put("Z30", djiMap.get("ZENMUSEZ30"));
