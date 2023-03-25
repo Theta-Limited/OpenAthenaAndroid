@@ -268,23 +268,17 @@ public class MetadataExtractor {
         //    \ \_\ \__/.\_\\ \_\  \ \_\\ \____/\ \__\
         //     \/_/\/__/\/_/ \/_/   \/_/ \/___/  \/__/
 
-        // TODO values are not satisfactory :(
-//        parrotMap.put("ANAFI", new double[]{5.90d/5344.0d, 4.43d/4016.0d, 5344.0d, 4016.0d});
-//
-//        parrotMap.put("ANAFIUSA", parrotMap.get("ANAFI"));
-//        parrotMap.put("ANAFI USA", parrotMap.get("ANAFI"));
-//        parrotMap.put("ANAFI-USA", parrotMap.get("ANAFI"));
-//        parrotMap.put("ANAFI_USA", parrotMap.get("ANAFI"));
-//
-//        parrotMap.put("ANAFIAI", new double[]{6.40d/8000.0d, 4.80d/6000.0d, 8000.0d, 6000.0d});
-//        parrotMap.put("ANAFI AI", parrotMap.get("ANAFIAI"));
-//        parrotMap.put("ANAFI-AI", parrotMap.get("ANAFIAI"));
-//        parrotMap.put("ANAFI_AI", parrotMap.get("ANAFI"));
-//
-//        parrotMap.put("BEBOP2", new double[]{6.16/4096.0d, 4.62/3072.0d, 4096.0d, 3072.0d});
-//        parrotMap.put("BEBOP 2", parrotMap.get("BEBOP2"));
-//        parrotMap.put("BEBOP-2", parrotMap.get("BEBOP2"));
-//        parrotMap.put("BEBOP_2", parrotMap.get("BEBOP2"));
+        // Sony IMX230 CMOS sensor
+        parrotMap.put("ANAFI", new double[]{0.00112, 0.00112, 5344.0d, 4016.0d});
+
+        parrotMap.put("ANAFIUSA", parrotMap.get("ANAFI"));
+
+        // 1/2" 42 MP unnamed sensor
+        parrotMap.put("ANAFIAI", new double[]{6.40d/8000.0d, 4.80d/6000.0d, 8000.0d, 6000.0d});
+
+        // 1/2.3" 14 MP unnamed sensor
+        parrotMap.put("BEBOP 2", new double[]{6.16/4096.0d, 4.62/3072.0d, 4096.0d, 3072.0d});
+
 
         mfnMap.put("DJI", djiMap);
         mfnMap.put("HASSELBLAD", hasselbladMap);
