@@ -560,8 +560,8 @@ public class MainActivity extends AthenaActivity {
             attribs += theMeta.getTagString(ExifInterface.TAG_DATETIME, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_MAKE, exif);
             String make = exif.getAttribute(ExifInterface.TAG_MAKE);
-            attribs += getString(R.string.isCameraModelRecognized) + " " + (theMeta.isDroneModelInMap(exif) ? getString(R.string.yes) : getString(R.string.no)) + "\n";
             attribs += theMeta.getTagString(ExifInterface.TAG_MODEL, exif);
+            attribs += getString(R.string.isCameraModelRecognized) + " " + (theMeta.isDroneModelInMap(exif) ? getString(R.string.yes) : getString(R.string.no)) + "\n";
             attribs += theMeta.getTagString(ExifInterface.TAG_FOCAL_LENGTH, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_DIGITAL_ZOOM_RATIO, exif);
