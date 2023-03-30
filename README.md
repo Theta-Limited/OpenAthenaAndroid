@@ -70,6 +70,18 @@ When the "🧮" button is pressed, OpenAthena will automatically send a multicas
 
 Change the marker to its appropriate type (friend, suspect, hostile) then send the target to other networked users.
 
+## Arbitrary Point Selection
+
+OpenAthena for Android allows the user to tap any arbitrary point in the image to locate it.
+
+A tap at any point in the image will move the marker and calculate the new location:
+
+<img width="586" alt="OpenAthena for Android demo of arbitrary point selection for raycast calculation" src="./assets/DJI_0419_Target_Res_Arbitrary_Point_Demo_landscape.png">
+
+A new Cursor-on-Target message will not be sent to ATAK however until the "🧮" button is pressed:
+
+<img width="586" alt="OpenAthena for Android demo of a cursor on target message calculated for an arbitrary point selected in a drone image" src="./assets/ATAK_OpenAthena_CoT_Arbitrary_Point_Demo_landscape.png">
+
 # Application Settings (optional) ⚙:
 
 OpenAthena for Android supports multiple output modes for target calculation, including:
