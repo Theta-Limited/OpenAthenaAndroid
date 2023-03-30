@@ -80,6 +80,7 @@
     <string name="missing_data_exception_altitude_error_msg">错误：找不到海拔元数据！此无人机与 OpenAthena 不兼容！ 😭</string>
     <string name="missing_data_exception_azimuth_error_msg">错误：未找到方位角元数据！此无人机与 OpenAthena 不兼容！ 😭</string>
     <string name="missing_data_exception_theta_error_msg">错误：找不到相机俯仰元数据！此无人机与 OpenAthena 不兼容！ 😭</string>
+    <string name="missing_data_exception_roll">错误：找不到相机横滚元数据！</string>
     <string name="missing_data_exception_altitude_and_theta_error_msg">错误：在 XMP 元数据中找不到相机θ！此无人机与 OpenAthena 不兼容！ 😭</string>
     <string name="latitude_label_short">纬度</string>
     <string name="longitude_label_short">经度</string>
@@ -99,6 +100,7 @@
     <string name="latitude_wgs84_label_long">纬度 (WGS84):</string>
     <string name="longitude_wgs84_label_long">经度 (WGS84):</string>
     <string name="altiude_wgs84_label_long">海拔高度（WGS84）：</string>
+    <string name="roll_label">相机横滚角度：</string>
     <string name="make_prefix_error_msg">错误：品牌 </string>
     <string name="not_usable_at_this_time_error_msg">它不可用</string>
     <string name="parrot_model_prefix_error_msg">错误：PARROT模型 </string>
@@ -107,4 +109,7 @@
     <string name="focal_length_label">焦距（像素）：</string>
     <string name="azimuth_offset_label">选定点的方位偏移：</string>
     <string name="pitch_offset_label">选定点的俯仰偏移：</string>
+    <string name="isCameraModelRecognized">相机型号是否被识别？:</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
 </resources>
