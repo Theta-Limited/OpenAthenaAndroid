@@ -109,7 +109,6 @@
     <string name="focal_length_label">Focal Length (pixels) : </string>
     <string name="azimuth_offset_label">Azimuth offset for selected point: </string>
     <string name="pitch_offset_label">Pitch offset for selected point: </string>
-    <string name="mag_declination_offset_label">Azimuth offset due to magnetic declination:</string>
     <string name="isCameraModelRecognized">Is camera model recognized? :</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
