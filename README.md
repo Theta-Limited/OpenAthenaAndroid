@@ -74,7 +74,7 @@ Change the marker to its appropriate type (friend, suspect, hostile) then send t
 
 OpenAthena for Android allows the user to tap any arbitrary point in the image to locate it.
 
-A tap at any point in the image will move the marker and calculate the new location:
+Tapping on any point in the image will move the marker and calculate the new location:
 
 <img width="586" alt="OpenAthena for Android demo of arbitrary point selection for raycast calculation" src="./assets/DJI_0419_Target_Res_Arbitrary_Point_Demo_landscape.png">
 
