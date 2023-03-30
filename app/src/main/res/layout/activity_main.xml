@@ -14,7 +14,7 @@
         android:layout_marginEnd="36dp"
         android:onClick="selectImage"
         android:text="@string/button_selectImage"
-        android:textSize="18dp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -26,7 +26,7 @@
         android:layout_marginEnd="36dp"
         android:onClick="calculateImage"
         android:text="@string/button_calculate"
-        android:textSize="18dp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/selectImageButton" />
 
@@ -90,7 +90,7 @@
         android:layout_marginTop="36dp"
         android:onClick="selectDEM"
         android:text="@string/button_loadDEM"
-        android:textSize="18dp"
+        android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

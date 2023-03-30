@@ -200,7 +200,7 @@ public class MainActivity extends AthenaActivity {
             String storedUriString = savedInstanceState.getString("imageUri");
             if (storedUriString != null) {
                 imageUri = Uri.parse(storedUriString);
-                isImageLoaded = true;
+                Log.d(TAG, imageUri.getPath());
                 AssetFileDescriptor fileDescriptor = null;
                 try {
                     fileDescriptor = getApplicationContext().getContentResolver().openAssetFileDescriptor(imageUri , "r");
@@ -208,8 +208,7 @@ public class MainActivity extends AthenaActivity {
                     imageUri = null;
                     isImageLoaded = false;
                 }
-                if (imageUri != null) {
-                    long filesize = fileDescriptor.getLength();
+                if (imageUri != null && imageUri.getPath() != null) {
                     imageSelected(imageUri);
                 }
             }
@@ -221,18 +220,26 @@ public class MainActivity extends AthenaActivity {
                 demSelected(demUri);
             }
             isTargetCoordDisplayed = savedInstanceState.getBoolean("isTargetCoordDisplayed");
+            isImageLoaded = savedInstanceState.getBoolean("isImageLoaded");
+            // // handled by demSelected(demUri) above, will change in later version
+            // isDEMLoaded = savedInstanceState.getBoolean("isDEMLoaded");
 
             selection_x = savedInstanceState.getInt("selection_x", -1);
             selection_y = savedInstanceState.getInt("selection_y", -1);
             cx = savedInstanceState.getInt("cx", -1);
             cy = savedInstanceState.getInt("cy", -1);
-            iView.restoreMarker(selection_x, selection_y);
+            if (isImageLoaded) {
+                iView.restoreMarker(selection_x, selection_y);
+            }
         }
 
         restorePrefOutputMode(); // restore the outputMode from persistent settings
     }
 
     public int[] getImageDimensionsFromUri(Uri imageUri) {
+        if (imageUri == null) {
+            return new int[] {0,0};
+        }
         try {
             ContentResolver cr = getContentResolver();
             InputStream is = cr.openInputStream(imageUri);
@@ -264,6 +271,8 @@ public class MainActivity extends AthenaActivity {
             saveInstanceState.putCharSequence("textViewTargetCoord", textViewTargetCoord.getText());
         }
         saveInstanceState.putBoolean("isTargetCoordDisplayed", isTargetCoordDisplayed);
+        saveInstanceState.putBoolean("isImageLoaded", isImageLoaded);
+        saveInstanceState.putBoolean("isDEMLoaded", isDEMLoaded);
         if (imageUri != null) {
             saveInstanceState.putString("imageUri", imageUri.toString());
         }
