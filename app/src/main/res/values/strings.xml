@@ -80,6 +80,7 @@
     <string name="missing_data_exception_altitude_error_msg">ERROR: Altitude metadata not found! This drone is incompatible with OpenAthena! 😭</string>
     <string name="missing_data_exception_azimuth_error_msg">ERROR: Azimuth metadata not found! This drone is incompatible with OpenAthena! 😭</string>
     <string name="missing_data_exception_theta_error_msg">ERROR: Camera Pitch metadata not found! This drone is incompatible with OpenAthena! 😭</string>
+    <string name="missing_data_exception_roll">ERROR: Camera Roll metadata not found!</string>
     <string name="missing_data_exception_altitude_and_theta_error_msg">ERROR: Camera Pitch metadata found, but was invalid! This drone is incompatible with OpenAthena! 😭</string>
     <string name="latitude_label_short">lat</string>
     <string name="longitude_label_short">lon</string>
@@ -99,12 +100,17 @@
     <string name="latitude_wgs84_label_long">Latitude (WGS84): </string>
     <string name="longitude_wgs84_label_long">Longitude (WGS84): </string>
     <string name="altiude_wgs84_label_long">Altitude (WGS84): </string>
+    <string name="roll_label">Camera Roll angle:</string>
     <string name="make_prefix_error_msg">ERROR: make </string>
     <string name="not_usable_at_this_time_error_msg">not usable at this time</string>
     <string name="parrot_model_prefix_error_msg">ERROR: Parrot model </string>
     <string name="xmp_missing_error_msg">ERROR: XMP metadata not found!</string>
     <string name="xmp_empty_error_msg">ERROR: XMP metadata found but was empty!</string>
-    <string name="focal_length_label">focal length (pixels): </string>
+    <string name="focal_length_label">Focal Length (pixels) : </string>
     <string name="azimuth_offset_label">Azimuth offset for selected point: </string>
     <string name="pitch_offset_label">Pitch offset for selected point: </string>
+    <string name="mag_declination_offset_label">Azimuth offset due to magnetic declination:</string>
+    <string name="isCameraModelRecognized">Is camera model recognized? :</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
