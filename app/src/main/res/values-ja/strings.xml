@@ -80,6 +80,7 @@
     <string name="missing_data_exception_altitude_error_msg">誤り: 高度のメタデータが見つかりません!このドローンは 「OpenAthena」 と互換性がありません! 😭</string>
     <string name="missing_data_exception_azimuth_error_msg">誤り: 方位メタデータが見つかりません!このドローンは 「OpenAthena」 と互換性がありません! 😭</string>
     <string name="missing_data_exception_theta_error_msg">誤り: カメラ ピッチのメタデータが見つかりません!このドローンは 「OpenAthena」と互換性がありません! 😭</string>
+    <string name="missing_data_exception_roll">エラー: カメラ ロールのメタデータが見つかりません!</string>
     <string name="missing_data_exception_altitude_and_theta_error_msg">エラー: カメラ ピッチのメタデータが見つかりましたが、無効でした!このドローンは 「OpenAthena」 と互換性がありません! 😭</string>
     <string name="latitude_label_short">緯度</string>
     <string name="longitude_label_short">経度</string>
@@ -99,12 +100,16 @@
     <string name="latitude_wgs84_label_long">緯度 (WGS84):</string>
     <string name="longitude_wgs84_label_long">経度 (WGS84):</string>
     <string name="altiude_wgs84_label_long">高度 (WGS84):</string>
+    <string name="roll_label">カメラ ロール角度:</string>
     <string name="make_prefix_error_msg">誤り: ドローン 種</string>
     <string name="not_usable_at_this_time_error_msg">このバージョンでは利用できません</string>
     <string name="parrot_model_prefix_error_msg">誤り: ドローン 種 「Parrot」</string>
     <string name="xmp_missing_error_msg">誤り: XMP メタデータが見つかりません!</string>
     <string name="xmp_empty_error_msg">誤り: XMP メタデータが見つかりましたが、空でした!</string>
-    <string name="focal_length_label">焦点距離 (ピクセル):</string>
+    <string name="focal_length_label">焦点距離 (ピクセル) :</string>
     <string name="azimuth_offset_label">選択した点の方位オフセット:</string>
     <string name="pitch_offset_label">選択したポイントのピッチ オフセット:</string>
+    <string name="isCameraModelRecognized">カメラのモデルは認識されていますか? :</string>
+    <string name="yes">はい</string>
+    <string name="no">いいえ</string>
 </resources>
