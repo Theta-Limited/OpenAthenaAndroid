@@ -106,8 +106,11 @@
     <string name="parrot_model_prefix_error_msg">ERROR: Parrot model </string>
     <string name="xmp_missing_error_msg">ERROR: XMP metadata not found!</string>
     <string name="xmp_empty_error_msg">ERROR: XMP metadata found but was empty!</string>
-    <string name="focal_length_label">Focal Length (pixels): </string>
+    <string name="focal_length_label">Focal Length (pixels) : </string>
     <string name="azimuth_offset_label">Azimuth offset for selected point: </string>
     <string name="pitch_offset_label">Pitch offset for selected point: </string>
     <string name="mag_declination_offset_label">Azimuth offset due to magnetic declination:</string>
+    <string name="isCameraModelRecognized">Is camera model recognized? :</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
