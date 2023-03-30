@@ -80,6 +80,7 @@
     <string name="missing_data_exception_altitude_error_msg">ОШИБКА: метаданные высоты не найдены! Этот дрон несовместим с OpenAthena! 😭</string>
     <string name="missing_data_exception_azimuth_error_msg">ОШИБКА: метаданные азимута не найдены! Этот дрон несовместим с OpenAthena! 😭</string>
     <string name="missing_data_exception_theta_error_msg">ОШИБКА: метаданные тангаж камеры не найдены! Этот дрон несовместим с OpenAthena! 😭</string>
+    <string name="missing_data_exception_roll">ОШИБКА: метаданные угла крена не найдены!</string>
     <string name="missing_data_exception_altitude_and_theta_error_msg">ОШИБКА: Метаданные тангаж камеры найдены, но недействительны! Этот дрон несовместим с OpenAthena! 😭</string>
     <string name="latitude_label_short">широта</string>
     <string name="longitude_label_short">долгота</string>
@@ -99,12 +100,16 @@
     <string name="latitude_wgs84_label_long">Широта (WGS84):</string>
     <string name="longitude_wgs84_label_long">Долгота (WGS84):</string>
     <string name="altiude_wgs84_label_long">Высота (WGS84):</string>
+    <string name="roll_label">угол поворота камеры: </string>
     <string name="make_prefix_error_msg">ОШИБКА: марка</string>
     <string name="not_usable_at_this_time_error_msg">не используется в этой версии</string>
     <string name="parrot_model_prefix_error_msg">ОШИБКА: модель Parrot</string>
     <string name="xmp_missing_error_msg">ОШИБКА: Метаданные XMP не найдены!</string>
     <string name="xmp_empty_error_msg">ОШИБКА: Метаданные XMP найдены, но пусты!</string>
-    <string name="focal_length_label">фокусное расстояние (пиксели):</string>
+    <string name="focal_length_label">Фокусное расстояние (пиксели):</string>
     <string name="azimuth_offset_label">Смещение по азимуту для выбранной точки:</string>
     <string name="pitch_offset_label">Смещение тангаж для выбранной точки:</string>
+    <string name="isCameraModelRecognized">Распознается ли модель камеры? :</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
 </resources>
