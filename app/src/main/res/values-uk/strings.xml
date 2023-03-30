@@ -80,6 +80,7 @@
     <string name="missing_data_exception_altitude_error_msg">ПОМИЛКА: метадані висоти не знайдено! Цей дрон несумісний з OpenAthena! 😭</string>
     <string name="missing_data_exception_azimuth_error_msg">ПОМИЛКА: метадані азимута не знайдено! Цей дрон несумісний з OpenAthena! 😭</string>
     <string name="missing_data_exception_theta_error_msg">ПОМИЛКА: метадані тангаж камери не знайдено! Цей дрон несумісний з OpenAthena! 😭</string>
+    <string name="missing_data_exception_roll">ПОМИЛКА: метадані кута крену не знайдено!</string>
     <string name="missing_data_exception_altitude_and_theta_error_msg">ПОМИЛКА: Метадані тангаж камери знайдено, але вони недійсні! Цей дрон несумісний з OpenAthena! 😭</string>
     <string name="latitude_label_short">широта</string>
     <string name="longitude_label_short">довгота</string>
@@ -99,12 +100,16 @@
     <string name="latitude_wgs84_label_long">Широта (WGS84):</string>
     <string name="longitude_wgs84_label_long">Довгота (WGS84):</string>
     <string name="altiude_wgs84_label_long">Висота (WGS84):</string>
+    <string name="roll_label">кут повороту камери :</string>
     <string name="make_prefix_error_msg">ПОМИЛКА: марка</string>
     <string name="not_usable_at_this_time_error_msg">не можна використовувати в цій версії</string>
     <string name="parrot_model_prefix_error_msg">ПОМИЛКА: модель Parrot</string>
     <string name="xmp_missing_error_msg">ПОМИЛКА: метадані XMP не знайдено!</string>
     <string name="xmp_empty_error_msg">ПОМИЛКА: метадані XMP знайдено, але вони порожні!</string>
-    <string name="focal_length_label">фокусна відстань (пікселі):</string>
+    <string name="focal_length_label">Фокусна відстань (пікселі) :</string>
     <string name="azimuth_offset_label">Зсув по азимуту для вибраної точки:</string>
     <string name="pitch_offset_label">Зміщення тангаж для вибраної точки:</string>
+    <string name="isCameraModelRecognized">Модель камери розпізнається? :</string>
+    <string name="yes">Так</string>
+    <string name="no">Немає</string>
 </resources>
