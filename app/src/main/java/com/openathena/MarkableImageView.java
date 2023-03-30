@@ -38,8 +38,8 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                         original_width = original_dimensions[0];
                         original_height = original_dimensions[1];
                     }
-                    int render_width = yahweh.getMeasuredWidth();
-                    int render_height = yahweh.getMeasuredHeight();
+                    double render_width = yahweh.getWidth();
+                    double render_height = yahweh.getHeight();
                     parent.selection_x = (int) Math.round(((1.0d * event.getX()) / render_width) * original_width);
                     parent.selection_y = (int) Math.round(((1.0d * event.getY()) / render_height) * original_height);
                     Log.d("X",parent.selection_x+"");
@@ -48,12 +48,25 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                     if (parent.isImageLoaded && parent.isDEMLoaded) {
                         yahweh.mark((double) event.getX() / (1.0d * render_width), (double) event.getY() / (1.0d * render_height));
                         parent.calculateImage(yahweh, false); // this may cause the view to re-size due to constraint layout
+                        yahweh.invalidate();
                     }
                 }
 
                 return true;
             }
 
+        });
+
+        this.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (theMarker != null) {
+                    // Invalidate the view to redraw the marker at the correct position
+                    yahweh.invalidate();
+                }
+                // Remove the listener to avoid multiple calls
+//                yahweh.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
         });
 
     }
@@ -93,8 +106,8 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
         if (theMarker != null) {
             Paint paint = new Paint();
             paint.setColor(Color.parseColor("#FE00DD")); // HI-VIS PINK
-            int render_width = getMeasuredWidth();
-            int render_height = getMeasuredHeight();
+            int render_width = getWidth();
+            int render_height = getHeight();
             float radius = Math.max(render_width/64, render_height/64);
             int x = (int) Math.round(theMarker.x_prop * render_width);
             int y = (int) Math.round(theMarker.y_prop * render_height);

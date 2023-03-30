@@ -42,6 +42,8 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.text.Html;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.exifinterface.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
@@ -208,12 +210,7 @@ public class MainActivity extends AthenaActivity {
                 }
                 if (imageUri != null) {
                     long filesize = fileDescriptor.getLength();
-                    if (filesize < 1024 * 1024 * 20) { // check if filesize below 20Mb
-                        iView.setImageURI(imageUri);
-                    }  else { // otherwise:
-                        Toast.makeText(MainActivity.this, getString(R.string.image_is_too_large_error_msg), Toast.LENGTH_SHORT).show();
-                        iView.setImageResource(R.drawable.athena); // put up placeholder icon
-                    }
+                    imageSelected(imageUri);
                 }
             }
 
@@ -351,7 +348,17 @@ public class MainActivity extends AthenaActivity {
 //        appendLog("Selected image "+imageUri+"\n");
         appendText(getString(R.string.image_selected_msg) + "\n");
 
-        getImageDimensionsFromUri(imageUri); // updates cx and cy to that of new image
+        // Force the aspect ratio to be same as original image
+        int[] width_and_height = getImageDimensionsFromUri(imageUri); // also updates cx and cy to that of new image
+        int width = width_and_height[0];
+        int height = width_and_height[1];
+        String aspectRatio = width + ":" + height;
+        Drawable drawable = iView.getDrawable();
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) iView.getLayoutParams();
+        layoutParams.dimensionRatio = aspectRatio;
+        iView.setLayoutParams(layoutParams);
+        iView.invalidate();
+
         isImageLoaded = true;
         if (isDEMLoaded) {
             setButtonReady(buttonCalculate, true);
@@ -552,7 +559,8 @@ public class MainActivity extends AthenaActivity {
             appendText(getString(R.string.opened_exif_for_image_msg));
             attribs += theMeta.getTagString(ExifInterface.TAG_DATETIME, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_MAKE, exif);
-            String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
+            String make = exif.getAttribute(ExifInterface.TAG_MAKE);
+            attribs += getString(R.string.isCameraModelRecognized) + " " + (theMeta.isDroneModelInMap(exif) ? getString(R.string.yes) : getString(R.string.no)) + "\n";
             attribs += theMeta.getTagString(ExifInterface.TAG_MODEL, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_FOCAL_LENGTH, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM, exif);
@@ -560,7 +568,7 @@ public class MainActivity extends AthenaActivity {
             attribs += theMeta.getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_IMAGE_LENGTH, exif);
             double[] intrinsics = theMeta.getIntrinsicMatrixFromExif(exif);
-            attribs += getString(R.string.focal_length_label) + Math.round(intrinsics[0]) + "\n";
+            attribs += getString(R.string.focal_length_label) + " " + Math.round(intrinsics[0]) + "\n";
 //            attribs += "fy: " + intrinsics[4] + "\n";
 //            attribs += "cx: " + intrinsics[2] + "\n";
 //            attribs += "cy: " + intrinsics[5] + "\n";
@@ -658,7 +666,7 @@ public class MainActivity extends AthenaActivity {
                     } else {
                         Log.e(TAG, "ERROR: resolveTarget ran OOB at (WGS84): " + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon));
                         if (!outputModeIsSlavic()) {
-                            attribs += getString(R.string.resolveTarget_oob_error_msg) + ":" + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon) + "\n";
+                            attribs += getString(R.string.resolveTarget_oob_error_msg) + ": " + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon) + "\n";
                         } else {
                             attribs += getString(R.string.resolveTarget_oob_error_msg) + " (CK-42):" + roundDouble(CoordTranslator.toCK42Lat(e.OOBLat, e.OOBLon, z)) + ", " + roundDouble(CoordTranslator.toCK42Lon(e.OOBLat, e.OOBLon, z)) + "\n";
                         }

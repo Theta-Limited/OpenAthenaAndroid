@@ -1,6 +1,5 @@
 package com.openathena;
 
-import android.content.Context;
 import android.util.Log;
 
 import androidx.exifinterface.media.ExifInterface;
@@ -10,15 +9,13 @@ import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.XMPMetaFactory;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 public class MetadataExtractor {
     private static final String TAG = "MetadataExtractor";
     private static MainActivity parent;
 
-    private static HashMap<String, HashMap> mfnMap = new HashMap<String, HashMap>();
+    private static HashMap<String, HashMap> mfnMaps = new HashMap<String, HashMap>();
 
     protected MetadataExtractor(MainActivity caller) {
         super();
@@ -279,13 +276,54 @@ public class MetadataExtractor {
         // 1/2.3" 14 MP unnamed sensor
         parrotMap.put("BEBOP 2", new double[]{6.16/4096.0d, 4.62/3072.0d, 4096.0d, 3072.0d});
 
-        mfnMap.put("DJI", djiMap);
-        mfnMap.put("HASSELBLAD", hasselbladMap);
-        mfnMap.put("SKYDIO", skydioMap);
-        mfnMap.put("AUTEL ROBOTICS", autelMap);
-        mfnMap.put("AUTEL", autelMap);
-        mfnMap.put("PARROT", parrotMap);
+        mfnMaps.put("DJI", djiMap);
+        mfnMaps.put("HASSELBLAD", hasselbladMap);
+        mfnMaps.put("SKYDIO", skydioMap);
+        mfnMaps.put("AUTEL ROBOTICS", autelMap);
+        mfnMaps.put("AUTEL", autelMap);
+        mfnMaps.put("PARROT", parrotMap);
 
+    }
+
+    /**
+     * Returns true if and only if drone's camera is a known model
+     * @param exif exif of an image to analyze for make and model
+     * @return true if the make and model is a known model
+     */
+    public static boolean isDroneModelInMap(ExifInterface exif) {
+        String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
+        String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase();
+        return (mfnMaps.get(make) != null && mfnMaps.get(make).get(model) != null);
+    }
+
+    public static double getSensorPhysicalHeight(ExifInterface exif) {
+        String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
+        String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase();
+        HashMap<String, double[]> mfn = mfnMaps.get(make);
+        if (mfn == null) {
+            return -1.0d;
+        }
+        double[] pixelDimensions = mfn.get(model);
+        double heightPerPixel = pixelDimensions[0];
+        double heightPixels = pixelDimensions[3];
+        // double widthPerPixel = pixelDimensions[1];
+        // double widthPixels = pixelDimensions[2];
+        return heightPerPixel * heightPixels;
+    }
+
+    public static double getSensorPhysicalWidth(ExifInterface exif) {
+        String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
+        String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase();
+        HashMap<String, double[]> mfn = mfnMaps.get(make);
+        if (mfn == null) {
+            return -1.0d;
+        }
+        double[] pixelDimensions = mfn.get(model);
+        // double heightPerPixel = pixelDimensions[0];
+        // double heightPixels = pixelDimensions[3];
+        double widthPerPixel = pixelDimensions[1];
+        double widthPixels = pixelDimensions[2];
+        return widthPerPixel * widthPixels;
     }
 
     public static double[] getMetadataValues(ExifInterface exif) throws XMPException, MissingDataException {
@@ -293,13 +331,11 @@ public class MetadataExtractor {
             Log.e(TAG, "ERROR: getMetadataValues failed, ExifInterface was null");
             throw new IllegalArgumentException("ERROR: getMetadataValues failed, exif was null");
         }
-        String make = exif.getAttribute(ExifInterface.TAG_MAKE);
-        String model = exif.getAttribute(ExifInterface.TAG_MODEL);
+        String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
+        String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase();
         if (make == null || make.equals("")) {
             return null;
         }
-        make = make.toUpperCase();
-        model = model.toUpperCase();
         switch(make) {
             case "DJI":
                 return handleDJI(exif);
@@ -622,12 +658,10 @@ public class MetadataExtractor {
 
     public static double[] getIntrinsicMatrixFromExif(ExifInterface exif) throws Exception {
         double[] intrinsicMatrix = new double[9];
-        String make = exif.getAttribute(ExifInterface.TAG_MAKE);
-        String model = exif.getAttribute(ExifInterface.TAG_MODEL);
-        make = make.toUpperCase();
-        model = model.toUpperCase();
+        String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
+        String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase();
 
-        HashMap<String, double[]> mfn = mfnMap.get(make);
+        HashMap<String, double[]> mfn = mfnMaps.get(make);
         if (mfn != null) {
             double[] pixelDimensions = mfn.get(model);
             if (pixelDimensions != null) {
