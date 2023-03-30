@@ -1,6 +1,5 @@
 package com.openathena;
 
-import android.content.Context;
 import android.util.Log;
 
 import androidx.exifinterface.media.ExifInterface;
@@ -10,15 +9,13 @@ import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.XMPMetaFactory;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 public class MetadataExtractor {
     private static final String TAG = "MetadataExtractor";
     private static MainActivity parent;
 
-    private static HashMap<String, HashMap> mfnMap = new HashMap<String, HashMap>();
+    private static HashMap<String, HashMap> mfnMaps = new HashMap<String, HashMap>();
 
     protected MetadataExtractor(MainActivity caller) {
         super();
@@ -62,17 +59,38 @@ public class MetadataExtractor {
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("FC220", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
 
-        // DJI Phantom 4 Pro, Phantom 4 Pro v2.0, Phantom 4 Advanced
+        // DJI Mavic Air
+        djiMap.put("FC230", new double[]{6.17d/4056.0d, 4.55d/3040.0d, 4048.0d, 3032.0d});
+
+        // DJI Phantom 4
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("FC330", new double[]{13.2d/5472.0d, 8.8d/3648.0d, 5472.0d, 3648.0d});
 
+        // DJI Phantom 4 Pro, DJI Phantom 4 Advanced
+        djiMap.put("FC6310", djiMap.get("FC330"));
+        djiMap.put("FC6310S", djiMap.get("FC6310"));
+
+        // DJI Phantom 4 Multispectral
+        // 1/2.9" CMOS sensor
+        djiMap.put("FC6360", new double[]{4.96d/1600.0d, 3.72d/1300.0d, 1600.0d, 1300.0d});
+
         // DJI Phantom 3 SE
         djiMap.put("FC300C", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
+        djiMap.put("FC300S", djiMap.get("FC300C"));
+        djiMap.put("FC300X", djiMap.get("FC300C"));
+        djiMap.put("FC300XW", djiMap.get("FC300C"));
 
-        // DJI Mini and DJI Mini 2
+        // DJI Phantom 2 Vision
+        djiMap.put("FC200", new double[]{6.17d/4384.0d, 4.55d/3288.0d, 4384.0d, 4384.0d});
+        djiMap.put("PHANTOM VISION FC200", djiMap.get("FC200"));
+
+        // DJI Mini
+        djiMap.put("FC7203", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
+
+        // DJI Mini 2
         // ^ UNKNOWN    ^Mini 2 METADATA NOT COMPATIBLE WITH OPENATHENA
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC7303", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
+        djiMap.put("FC7303", djiMap.get("FC7203"));
         //djiMap.put("FC7303", new double[]{6.16d/4000.0d, 4.62d/3000.0d, 4000.0d, 3000.0d});
 
         // DJI Mini 3 Pro // METADATA NOT COMPATIBLE WITH OPENATHENA
@@ -81,8 +99,10 @@ public class MetadataExtractor {
 
         // DJI Mavic 2 Zoom
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        //     djiMap.put("FC2204", new double[]{6.26d/4000.0d, 4.7d/3000.0d, 4000.0d, 3000.0d});
-        djiMap.put("FC2204", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
+        //     djiMap.put("FC2200", new double[]{6.26d/4000.0d, 4.7d/3000.0d, 4000.0d, 3000.0d});
+        djiMap.put("FC2200", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
+        // Mavic 2 Enterprise Zoom
+        djiMap.put("FC2204", djiMap.get("FC2200"));
 
         // DJI Mavic 2 Pro
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
@@ -96,11 +116,22 @@ public class MetadataExtractor {
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("FC4170", new double[]{6.4d/4000.0d, 4.8d/3000.0d, 4000.0d, 3000.0d});
 
-        // DJI Mavic Air 1
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC2103", new double[]{6.17d/4056.0d, 4.55d/3040.0d, 4056.0d, 3040.0d});
+        // DJI Mavic 3 Enterprise Main Hasselblad Camera
+        djiMap.put("M3E", new double[]{17.3d/5280.0d, 13.0d/3956.0d, 5280.0d, 3956.0d});
 
-        // DJI Mavic Air 2 // UNKNOWN COMPATIBILITY
+        // DJI Mavic 3 Thermal (color camera)
+        djiMap.put("M3T", new double[]{6.4d/8000.0d, 4.8d/6000.0d, 8000.0d, 6000.0d});
+
+        // DJI Mavic 2 Enterprise Dual
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("FC2103", new double[]{6.17d/4056.0d, 4.55d/3040.0d, 4048.0d, 3032.0d});
+
+        // DJI Mavic 2 Enterprise Dual thermal sensor
+        // Teledyne FLIR Lepton 3.5 sensor
+        // 160x120 px sensor, upscaled by software to 640x480 px
+        djiMap.put("FC2403", new double[]{1.92d/640.0d, 1.44d/480.0d, 640.0d, 480.0d});
+
+        // DJI Mavic Air 2, possibly DJI Mavic 2 Enterprise Advanced? // UNKNOWN COMPATIBILITY
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("FC3170", new double[]{6.4d/8000.0d, 4.8d/6000.0d, 8000.0d, 6000.0d});
 
@@ -110,7 +141,7 @@ public class MetadataExtractor {
 
         // DJI Zenmuse X4S (Inspire 2)
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC6510", new double[]{13.2d/5472.0d, 8.8d/3648.0d, 5472.0d, 3648.0d});
+        djiMap.put("FC6510", new double[]{13.1d/5472.0d, 8.76d/3648.0d, 5472.0d, 3648.0d});
 
         // DJI Zenmuse X5 (Inspire 1)
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
@@ -121,11 +152,51 @@ public class MetadataExtractor {
 
         // DJI Zenmuse X5S (Inspire 2)
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC6520", new double[]{17.3d/5280.0d, 13.0d/3956.0d, 5280.0d, 3956.0d});
+        djiMap.put("FC6520", new double[]{18.0d/5280.0d, 13.5d/3956.0d, 5280.0d, 3956.0d});
 
         // DJI Zenmuse X7 (Inspire 2)
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("FC6540", new double[]{23.5d/6016.0d, 15.7d/4008.0d, 6016.0d, 4008.0d});
+
+        // DJI Zenmuse H20 (Matrice 300 series payload)
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("ZENMUSEH20", new double[]{7.53d/5184.0d, 5.64d/3888.0d, 5184.0d, 3888.0d});
+        djiMap.put("ZH20", djiMap.get("ZENMUSEH20"));
+        djiMap.put("ZENMUSEH20T", new double[]{7.68d/640.0d, 6.144d/512.0d, 640.0d, 512.0d});
+        djiMap.put("ZH20T", djiMap.get("ZENMUSEH20T"));
+
+        djiMap.put("ZENMUSEH20W", new double[]{6.16d/4056.0d, 4.62d/3040.0d, 4056.0d, 3040.0d});
+        djiMap.put("ZH20W", djiMap.get("ZENMUSEH20W"));
+
+        // https://www.dji.com/zenmuse-h20n/specs
+        djiMap.put("ZENMUSEH20N", djiMap.get("ZH20T"));
+        djiMap.put("ZH20N", djiMap.get("ZENMUSEH20N"));
+
+        // DJI Mavic 2 Enterprise Advanced (M2EA) thermal camera
+        djiMap.put("MAVIC2-ENTERPRISE-ADVANCED", new double[]{7.68d/640.0d, 6.144d/512.0d, 640.0d, 512.0d});
+
+//        // DJI Mavic 2 Enterprise Advanced visual camera
+//        // 1/2" CMOS sensor
+//        djiMap.put("M2EA", new double[]{6.4d/8000.0d, 4.8/6000.0d, 8000.0d, 6000.0d});
+
+        // DJI Zenmuse P1 (Matrice 300 series payload)
+        // has a full frame, 45 MP camera!
+        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
+        djiMap.put("ZENMUSEP1", new double[]{35.9d/8192.0d, 24.0d/5460.0d, 8192.0d, 5460.0d});
+        djiMap.put("ZP1", djiMap.get("ZENMUSEP1"));
+
+        // DJI Zenmuse XT and XT2 color camera (discontinued Matrice 300 series payload)
+        djiMap.put("ZENMUSEXT2", new double[]{7.53d/4056.0d, 5.64d/3040.0d, 4056.0d, 3040.0d}); // not sure if these pixel values are right, specs just says "12 MP camera"
+
+        // DJI Zenmuse XT and XT2 thermal camera (FLIR Tau 2 640)
+        djiMap.put("FLIR", new double[]{10.88d/640.0d, 8.704/512.0d, 640.0d, 512.0d});
+        djiMap.put("XT2", djiMap.get("FLIR"));
+
+        // DJI Zenmuse XT S (FLIR Tau 2 336)
+        djiMap.put("XT S", new double[]{5.712d/336.0d, 4.352/256.0d, 336.0d, 256.0d});
+
+        djiMap.put("ZENMUSEZ30", new double[]{4.71d/1920.0d, 3.54d/1440.0d, 1920.0d, 1440.0d}); // assuming the physical sensor is 4:3, not 16:9
+        djiMap.put("Z30", djiMap.get("ZENMUSEZ30"));
 
         // DJI Spark
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
@@ -142,25 +213,26 @@ public class MetadataExtractor {
         //                       /\___/
         //                       \/__/
 
+        // https://support.skydio.com/hc/en-us/articles/4417425974683-Skydio-camera-and-metadata-overview
 
         // Skydio R1
         // rare 2018 model
         // I couldn't find specs online for the camera sensor, but I will assume it's a Sony IMX577
         // Could be WRONG
-        skydioMap.put("R1", new double[]{6.16d/4056.0d, 4.62d/3040.0d, 4056.0d, 3040.0d});
+        skydioMap.put("R1", new double[]{3.7d/2376.5625d, 3.7d/2376.5625d, 4056.0d, 3040.0d});
 
         // Skydio 2 and 2+
         // Sony IMX577 1/2.3” 12.3MP CMOS
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        skydioMap.put("2", new double[]{6.16d/4056.0d, 4.62d/3040.0d, 4056.0d, 3040.0d});
+        skydioMap.put("2", new double[]{3.7d/2376.5625d, 3.7d/2376.5625d, 4056.0d, 3040.0d});
         skydioMap.put("2+", skydioMap.get("2"));
 
         // Skydio X2, X2E, X2D
         // Sony IMX577 1/2.3” 12.3MP CMOS (same as Skydio 2 and 2+)
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        skydioMap.put("X2", new double[]{6.16d/4056.0d, 4.62d/3040.0d, 4056.0d, 3040.0d});
-        skydioMap.put("X2E", skydioMap.get("X2")); // X2 Enterprise
-        skydioMap.put("X2D", skydioMap.get("X2")); // X2 Defense
+        skydioMap.put("X2", new double[]{3.7d/2376.5625d, 3.7d/2376.5625d, 4056.0d, 3040.0d});
+        skydioMap.put("X2E", new double[]{7.5d/4848.1875d, 7.5d/4832.3438d, 4056.0d, 3040.0d}); // X2 Enterprise (Color / Thermal)
+        skydioMap.put("X2D", skydioMap.get("X2E")); // X2 Defense (Color / Thermal)
 
         //  ______           __           ___       ____            __              __
         // /\  _  \         /\ \__       /\_ \     /\  _`\         /\ \            /\ \__  __
@@ -193,31 +265,65 @@ public class MetadataExtractor {
         //    \ \_\ \__/.\_\\ \_\  \ \_\\ \____/\ \__\
         //     \/_/\/__/\/_/ \/_/   \/_/ \/___/  \/__/
 
-        // TODO values are not satisfactory :(
-//        parrotMap.put("ANAFI", new double[]{5.90d/5344.0d, 4.43d/4016.0d, 5344.0d, 4016.0d});
+//        // Sony IMX230 CMOS sensor
+//        parrotMap.put("ANAFI", new double[]{5.9896d/5344.0d, 4.4922d/4016.0d, 5344.0d, 4016.0d});
 //
 //        parrotMap.put("ANAFIUSA", parrotMap.get("ANAFI"));
-//        parrotMap.put("ANAFI USA", parrotMap.get("ANAFI"));
-//        parrotMap.put("ANAFI-USA", parrotMap.get("ANAFI"));
-//        parrotMap.put("ANAFI_USA", parrotMap.get("ANAFI"));
-//
-//        parrotMap.put("ANAFIAI", new double[]{6.40d/8000.0d, 4.80d/6000.0d, 8000.0d, 6000.0d});
-//        parrotMap.put("ANAFI AI", parrotMap.get("ANAFIAI"));
-//        parrotMap.put("ANAFI-AI", parrotMap.get("ANAFIAI"));
-//        parrotMap.put("ANAFI_AI", parrotMap.get("ANAFI"));
-//
-//        parrotMap.put("BEBOP2", new double[]{6.16/4096.0d, 4.62/3072.0d, 4096.0d, 3072.0d});
-//        parrotMap.put("BEBOP 2", parrotMap.get("BEBOP2"));
-//        parrotMap.put("BEBOP-2", parrotMap.get("BEBOP2"));
-//        parrotMap.put("BEBOP_2", parrotMap.get("BEBOP2"));
 
-        mfnMap.put("DJI", djiMap);
-        mfnMap.put("HASSELBLAD", hasselbladMap);
-        mfnMap.put("SKYDIO", skydioMap);
-        mfnMap.put("AUTEL ROBOTICS", autelMap);
-        mfnMap.put("AUTEL", autelMap);
-        mfnMap.put("PARROT", parrotMap);
+        // 1/2" 42 MP unnamed sensor
+        parrotMap.put("ANAFIAI", new double[]{6.40d/8000.0d, 4.80d/6000.0d, 8000.0d, 6000.0d});
 
+        // 1/2.3" 14 MP unnamed sensor
+        parrotMap.put("BEBOP 2", new double[]{6.16/4096.0d, 4.62/3072.0d, 4096.0d, 3072.0d});
+
+        mfnMaps.put("DJI", djiMap);
+        mfnMaps.put("HASSELBLAD", hasselbladMap);
+        mfnMaps.put("SKYDIO", skydioMap);
+        mfnMaps.put("AUTEL ROBOTICS", autelMap);
+        mfnMaps.put("AUTEL", autelMap);
+        mfnMaps.put("PARROT", parrotMap);
+
+    }
+
+    /**
+     * Returns true if and only if drone's camera is a known model
+     * @param exif exif of an image to analyze for make and model
+     * @return true if the make and model is a known model
+     */
+    public static boolean isDroneModelInMap(ExifInterface exif) {
+        String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
+        String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase();
+        return (mfnMaps.get(make) != null && mfnMaps.get(make).get(model) != null);
+    }
+
+    public static double getSensorPhysicalHeight(ExifInterface exif) {
+        String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
+        String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase();
+        HashMap<String, double[]> mfn = mfnMaps.get(make);
+        if (mfn == null) {
+            return -1.0d;
+        }
+        double[] pixelDimensions = mfn.get(model);
+        double heightPerPixel = pixelDimensions[0];
+        double heightPixels = pixelDimensions[3];
+        // double widthPerPixel = pixelDimensions[1];
+        // double widthPixels = pixelDimensions[2];
+        return heightPerPixel * heightPixels;
+    }
+
+    public static double getSensorPhysicalWidth(ExifInterface exif) {
+        String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
+        String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase();
+        HashMap<String, double[]> mfn = mfnMaps.get(make);
+        if (mfn == null) {
+            return -1.0d;
+        }
+        double[] pixelDimensions = mfn.get(model);
+        // double heightPerPixel = pixelDimensions[0];
+        // double heightPixels = pixelDimensions[3];
+        double widthPerPixel = pixelDimensions[1];
+        double widthPixels = pixelDimensions[2];
+        return widthPerPixel * widthPixels;
     }
 
     public static double[] getMetadataValues(ExifInterface exif) throws XMPException, MissingDataException {
@@ -225,13 +331,11 @@ public class MetadataExtractor {
             Log.e(TAG, "ERROR: getMetadataValues failed, ExifInterface was null");
             throw new IllegalArgumentException("ERROR: getMetadataValues failed, exif was null");
         }
-        String make = exif.getAttribute(ExifInterface.TAG_MAKE);
-        String model = exif.getAttribute(ExifInterface.TAG_MODEL);
+        String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
+        String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase();
         if (make == null || make.equals("")) {
             return null;
         }
-        make = make.toUpperCase();
-        model = model.toUpperCase();
         switch(make) {
             case "DJI":
                 return handleDJI(exif);
@@ -305,9 +409,17 @@ public class MetadataExtractor {
         double theta;
         String gimbalPitchDegree = xmpMeta.getPropertyString(schemaNS, "GimbalPitchDegree");
         if (gimbalPitchDegree != null) {
-            theta = Math.abs(Double.parseDouble(gimbalPitchDegree));
+            theta = -1.0d * Double.parseDouble(gimbalPitchDegree);
         } else {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
+        }
+
+        double roll;
+        String gimbalRollDegree = xmpMeta.getPropertyString(schemaNS, "GimbalRollDegree");
+        if (gimbalRollDegree != null) {
+            roll = Double.parseDouble(gimbalRollDegree);
+        } else {
+            throw new MissingDataException(parent.getString(R.string.missing_data_exception_roll), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ROLL);
         }
 
         // safety check: if metadata azimuth and theta are zero, it's extremely likely the metadata is invalid
@@ -315,7 +427,7 @@ public class MetadataExtractor {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_altitude_and_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
         }
 
-        double[] outArr = new double[]{y, x, z, azimuth, theta};
+        double[] outArr = new double[]{y, x, z, azimuth, theta, roll};
         return outArr;
     }
 
@@ -330,7 +442,7 @@ public class MetadataExtractor {
         XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
         String schemaNS = "https://www.skydio.com/drone-skydio/1.0/";
 
-        double y; double x; double z; double azimuth; double theta;
+        double y; double x; double z; double azimuth; double theta; double roll;
 
         try {
             y = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Latitude"));
@@ -359,12 +471,19 @@ public class MetadataExtractor {
 
         try {
             theta = Double.parseDouble(xmpMeta.getStructField(schemaNS, "CameraOrientationNED", schemaNS, "Pitch").getValue());
-            theta = Math.abs(theta);
+            theta = -1.0d * theta;
         } catch (NumberFormatException nfe) {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
         }
 
-        double[] outArr = new double[]{y, x, z, azimuth, theta};
+        try {
+            // NED, positive roll is clockwise TODO Verify this!
+            roll = Double.parseDouble(xmpMeta.getStructField(schemaNS, "CameraOrientationNED", schemaNS, "Roll").getValue());
+        } catch (NumberFormatException nfe) {
+            throw new MissingDataException(parent.getString(R.string.missing_data_exception_roll), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ROLL);
+        }
+
+        double[] outArr = new double[]{y, x, z, azimuth, theta, roll};
         return outArr;
     }
 
@@ -394,6 +513,7 @@ public class MetadataExtractor {
         double z;
         double azimuth;
         double theta;
+        double roll;
 
         if (isNewMetadataFormat) {
             // Newer metadata uses the same format and schemaNS as DJI
@@ -422,7 +542,15 @@ public class MetadataExtractor {
             // so, we use the complement of the angle instead
             // see: https://support.pix4d.com/hc/en-us/articles/202558969-Yaw-Pitch-Roll-and-Omega-Phi-Kappa-angles
             theta = 90.0d - theta;
-            double[] outArr = new double[]{y, x, z, azimuth, theta};
+
+            try {
+                // pix4d NED, positive roll is clockwise
+                roll = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Roll"));
+            } catch (NumberFormatException nfe) {
+                throw new MissingDataException(parent.getString(R.string.missing_data_exception_roll), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ROLL);
+            }
+
+            double[] outArr = new double[]{y, x, z, azimuth, theta, roll};
             return outArr;
         }
     }
@@ -433,6 +561,7 @@ public class MetadataExtractor {
         double z;
         double azimuth;
         double theta;
+        double roll;
 
         Float[] yxz = exifGetYXZ(exif);
         y = yxz[0];
@@ -458,12 +587,19 @@ public class MetadataExtractor {
         }
 
         try {
-            theta = Math.abs(Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraPitchDegree")));
+            theta = -1.0d * Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraPitchDegree"));
         } catch (NumberFormatException nfe) {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
         }
 
-        double[] outArr = new double[]{y, x, z, azimuth, theta};
+        try {
+            // positive roll is clockwise TODO Verify this!
+            roll = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraRollDegree"));
+        } catch (NumberFormatException nfe) {
+            throw new MissingDataException(parent.getString(R.string.missing_data_exception_roll), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ROLL);
+        }
+
+        double[] outArr = new double[]{y, x, z, azimuth, theta, roll};
         return outArr;
     }
 
@@ -522,12 +658,10 @@ public class MetadataExtractor {
 
     public static double[] getIntrinsicMatrixFromExif(ExifInterface exif) throws Exception {
         double[] intrinsicMatrix = new double[9];
-        String make = exif.getAttribute(ExifInterface.TAG_MAKE);
-        String model = exif.getAttribute(ExifInterface.TAG_MODEL);
-        make = make.toUpperCase();
-        model = model.toUpperCase();
+        String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
+        String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase();
 
-        HashMap<String, double[]> mfn = mfnMap.get(make);
+        HashMap<String, double[]> mfn = mfnMaps.get(make);
         if (mfn != null) {
             double[] pixelDimensions = mfn.get(model);
             if (pixelDimensions != null) {
@@ -632,9 +766,6 @@ public class MetadataExtractor {
         float digitalZoomRatio = 1.0f;
         if (digitalZoomRational != null && !digitalZoomRational.equals("")) {
             digitalZoomRatio = rationalToFloat(exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO));
-//            if (Math.abs(digitalZoomRatio) > 0.000f && Math.abs(digitalZoomRatio - 1.0f) > 0.000f) {
-//                throw new Exception("Digital zoom detected. Not supported in this version");
-//            }
             if (digitalZoomRatio < 1.0f) {
                 digitalZoomRatio = 1.0f;
             }
@@ -690,9 +821,71 @@ public class MetadataExtractor {
         azimuth = Math.toDegrees(azimuth);
         elevation = Math.toDegrees(elevation);
 
-        Log.d(TAG, "Pixel (" + x + ", " + y + ") -> Ray (" + azimuth + ", " + elevation + ")");
+        double roll = getMetadataValues(exifInterface)[5];
+
+        double[] TBAngle = correctRayAnglesForRoll(azimuth, elevation, roll);
+        azimuth = TBAngle[0];
+        elevation = TBAngle[1];
+
+        Log.d(TAG, "Pixel (" + x + ", " + y + ", Roll: " + roll + ") -> Ray (" + azimuth + ", " + elevation + ")");
         return new double[] {azimuth, elevation};
     }
+
+    /**
+     * For an image taken where the camera lateral axis is not parallel with the ground, express the ray angle in terms of a frame of reference which is parallel to the ground
+     * <p>
+     *     While the camera gimbal of most drones attempt to keep the camera lateral axis parallel with the ground, this cannot be assumed for all cases. Therefore, this function rotates the 3D angle (calculated by camera intrinsics) by the same amount and direction as the roll of the camera.
+     * </p>
+     * @param psi the yaw of the ray relative to the camera. Rightwards is positive.
+     * @param theta the pitch angle of the ray relative to the camera. Downwards is positive.
+     * @param cameraRoll the roll angle of the camera relative to the earth's gravity. From the perspective of the camera, clockwise is positive
+     * @return a corrected Tait-Bryan angle double[phi, theta] representing the same ray but in a new frame of reference where the x axis is parallel to the ground (i.e. perpendicular to Earth's gravity)
+     */
+    public static double[] correctRayAnglesForRoll(double psi, double theta, double cameraRoll) {
+        theta = -1.0d * theta; // convert from OpenAthena notation to standard Tait-Bryan aircraft notation (downward is negative)
+
+        // Convert degrees to radians
+        psi = Math.toRadians(psi);
+        theta = Math.toRadians(theta);
+        cameraRoll = Math.toRadians(cameraRoll);
+
+        // Convert Tait-Bryan angles to unit vector
+        // Note that these axis are labeled according to the Tait-Bryan aircraft notation, where:
+        //     +x is forward
+        //     +y is rightward
+        //     +z is downward
+        // This is different than either the image plane notation or ENU
+        double x = Math.cos(theta) * Math.cos(psi);
+        double y = Math.cos(theta) * Math.sin(psi);
+        double z = Math.sin(theta);
+
+        // Create rotation matrix for roll angle r around the X-axis
+        double[][] rotationMatrix = {
+                {1, 0, 0},
+                {0, Math.cos(cameraRoll), -Math.sin(cameraRoll)},
+                {0, Math.sin(cameraRoll), Math.cos(cameraRoll)}
+        };
+
+        // Rotate the unit vector back to correct for the observer's roll
+        double[] rotatedVector = {
+                rotationMatrix[0][0] * x + rotationMatrix[0][1] * y + rotationMatrix[0][2] * z,
+                rotationMatrix[1][0] * x + rotationMatrix[1][1] * y + rotationMatrix[1][2] * z,
+                rotationMatrix[2][0] * x + rotationMatrix[2][1] * y + rotationMatrix[2][2] * z
+        };
+
+        // Convert rotated unit vector back to Tait-Bryan angle
+        double correctedPsi = Math.atan2(rotatedVector[1], rotatedVector[0]);
+        double correctedTheta = Math.atan2(rotatedVector[2], Math.sqrt(rotatedVector[0] * rotatedVector[0] + rotatedVector[1] * rotatedVector[1]));
+
+        // Convert from radians back to degrees
+        correctedPsi = Math.toDegrees(correctedPsi);
+        correctedTheta = Math.toDegrees(correctedTheta);
+
+        correctedTheta = -1.0d * correctedTheta; // convert from Tait-Bryan notation to OpenAthena notation (downwards is positive)
+
+        return new double[]{correctedPsi, correctedTheta};
+    }
+
 
     public static float rationalToFloat(String str)
     {

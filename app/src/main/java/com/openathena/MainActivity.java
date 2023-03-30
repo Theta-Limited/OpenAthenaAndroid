@@ -42,6 +42,8 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.text.Html;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.exifinterface.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
@@ -208,12 +210,7 @@ public class MainActivity extends AthenaActivity {
                 }
                 if (imageUri != null) {
                     long filesize = fileDescriptor.getLength();
-                    if (filesize < 1024 * 1024 * 20) { // check if filesize below 20Mb
-                        iView.setImageURI(imageUri);
-                    }  else { // otherwise:
-                        Toast.makeText(MainActivity.this, getString(R.string.image_is_too_large_error_msg), Toast.LENGTH_SHORT).show();
-                        iView.setImageResource(R.drawable.athena); // put up placeholder icon
-                    }
+                    imageSelected(imageUri);
                 }
             }
 
@@ -224,6 +221,12 @@ public class MainActivity extends AthenaActivity {
                 demSelected(demUri);
             }
             isTargetCoordDisplayed = savedInstanceState.getBoolean("isTargetCoordDisplayed");
+
+            selection_x = savedInstanceState.getInt("selection_x", -1);
+            selection_y = savedInstanceState.getInt("selection_y", -1);
+            cx = savedInstanceState.getInt("cx", -1);
+            cy = savedInstanceState.getInt("cy", -1);
+            iView.restoreMarker(selection_x, selection_y);
         }
 
         restorePrefOutputMode(); // restore the outputMode from persistent settings
@@ -267,6 +270,18 @@ public class MainActivity extends AthenaActivity {
         if (demUri != null) {
             Log.d(TAG, "saved demUri: " + demUri.toString());
             saveInstanceState.putString("demUri", demUri.toString());
+        }
+        if (selection_x >= 0) {
+            saveInstanceState.putInt("selection_x", selection_x);
+        }
+        if (selection_y >= 0) {
+            saveInstanceState.putInt("selection_y", selection_y);
+        }
+        if (cx >= 0) {
+            saveInstanceState.putInt("cx", cx);
+        }
+        if (cy >= 0) {
+            saveInstanceState.putInt("cy", cy);
         }
     }
 
@@ -333,7 +348,17 @@ public class MainActivity extends AthenaActivity {
 //        appendLog("Selected image "+imageUri+"\n");
         appendText(getString(R.string.image_selected_msg) + "\n");
 
-        getImageDimensionsFromUri(imageUri); // updates cx and cy to that of new image
+        // Force the aspect ratio to be same as original image
+        int[] width_and_height = getImageDimensionsFromUri(imageUri); // also updates cx and cy to that of new image
+        int width = width_and_height[0];
+        int height = width_and_height[1];
+        String aspectRatio = width + ":" + height;
+        Drawable drawable = iView.getDrawable();
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) iView.getLayoutParams();
+        layoutParams.dimensionRatio = aspectRatio;
+        iView.setLayoutParams(layoutParams);
+        iView.invalidate();
+
         isImageLoaded = true;
         if (isDEMLoaded) {
             setButtonReady(buttonCalculate, true);
@@ -527,24 +552,27 @@ public class MainActivity extends AthenaActivity {
             double z = values[2];
             double azimuth = values[3];
             double theta = values[4];
+            double roll = values[5];
 
             Log.i(TAG, "parsed xmpMeta\n");
 
             appendText(getString(R.string.opened_exif_for_image_msg));
             attribs += theMeta.getTagString(ExifInterface.TAG_DATETIME, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_MAKE, exif);
+            String make = exif.getAttribute(ExifInterface.TAG_MAKE);
             attribs += theMeta.getTagString(ExifInterface.TAG_MODEL, exif);
-
+            attribs += getString(R.string.isCameraModelRecognized) + " " + (theMeta.isDroneModelInMap(exif) ? getString(R.string.yes) : getString(R.string.no)) + "\n";
             attribs += theMeta.getTagString(ExifInterface.TAG_FOCAL_LENGTH, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_DIGITAL_ZOOM_RATIO, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_IMAGE_LENGTH, exif);
             double[] intrinsics = theMeta.getIntrinsicMatrixFromExif(exif);
-            attribs += getString(R.string.focal_length_label) + Math.round(intrinsics[0]) + "\n";
+            attribs += getString(R.string.focal_length_label) + " " + Math.round(intrinsics[0]) + "\n";
 //            attribs += "fy: " + intrinsics[4] + "\n";
 //            attribs += "cx: " + intrinsics[2] + "\n";
 //            attribs += "cy: " + intrinsics[5] + "\n";
+            attribs += getString(R.string.roll_label) + " " + roll + "°\n";
 
             double[] relativeRay;
             relativeRay = new double[] {0.0d, 0.0d};
@@ -553,7 +581,6 @@ public class MainActivity extends AthenaActivity {
                     throw new NoSuchFieldException("no point was selected");
                 } else {
                     relativeRay = theMeta.getRayAnglesFromImgPixel(selection_x, selection_y, exif);
-
                 }
             } catch (Exception e) {
                 relativeRay = new double[] {0.0d, 0.0d};
@@ -565,24 +592,24 @@ public class MainActivity extends AthenaActivity {
             double azimuthOffset = relativeRay[0];
             double thetaOffset = relativeRay[1];
 
-            attribs += getString(R.string.azimuth_offset_label) + Math.round(azimuthOffset) + "°\n";
-            attribs += getString(R.string.pitch_offset_label) + -1 * Math.round(thetaOffset) + "°\n";
+            attribs += getString(R.string.azimuth_offset_label) + " " + Math.round(azimuthOffset) + "°\n";
+            attribs += getString(R.string.pitch_offset_label) + " " + -1 * Math.round(thetaOffset) + "°\n";
 
             azimuth += azimuthOffset;
             theta += thetaOffset;
 
             if (!outputModeIsSlavic()) {
-                attribs += getString(R.string.latitude_label_long) + " "+ roundDouble(y) + "\n";
-                attribs += getString(R.string.longitude_label_long) + " " + roundDouble(x) + "\n";
-                attribs += getString(R.string.altitude_label_long) + " " + Math.round(z) + "\n";
+                attribs += getString(R.string.latitude_label_long) + " "+ roundDouble(y) + "°\n";
+                attribs += getString(R.string.longitude_label_long) + " " + roundDouble(x) + "°\n";
+                attribs += getString(R.string.altitude_label_long) + " " + Math.round(z) + "m\n";
             } else {
-                attribs += getString(R.string.latitude_wgs84_label_long) + " " + roundDouble(y) + "\n";
-                attribs += getString(R.string.longitude_wgs84_label_long) + " " + roundDouble(x) + "\n";
-                attribs += getString(R.string.altiude_wgs84_label_long) + " " + Math.round(z) + "\n";
+                attribs += getString(R.string.latitude_wgs84_label_long) + " " + roundDouble(y) + "°\n";
+                attribs += getString(R.string.longitude_wgs84_label_long) + " " + roundDouble(x) + "°\n";
+                attribs += getString(R.string.altiude_wgs84_label_long) + " " + Math.round(z) + "m\n";
             }
 
-            attribs += getString(R.string.attribute_text_drone_azimuth) + " " + Math.round(azimuth) + "\n";
-            attribs += getString(R.string.attribute_text_drone_camera_pitch) + " -" + Math.round(theta) + "\n";
+            attribs += getString(R.string.attribute_text_drone_azimuth) + " " + Math.round(azimuth % 360.0d) + "°\n";
+            attribs += getString(R.string.attribute_text_drone_camera_pitch) + " " + -1 * Math.round(theta) + "°\n";
             appendText(attribs);
             attribs = "";
             double[] result;
@@ -639,7 +666,7 @@ public class MainActivity extends AthenaActivity {
                     } else {
                         Log.e(TAG, "ERROR: resolveTarget ran OOB at (WGS84): " + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon));
                         if (!outputModeIsSlavic()) {
-                            attribs += getString(R.string.resolveTarget_oob_error_msg) + ":" + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon) + "\n";
+                            attribs += getString(R.string.resolveTarget_oob_error_msg) + ": " + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon) + "\n";
                         } else {
                             attribs += getString(R.string.resolveTarget_oob_error_msg) + " (CK-42):" + roundDouble(CoordTranslator.toCK42Lat(e.OOBLat, e.OOBLon, z)) + ", " + roundDouble(CoordTranslator.toCK42Lon(e.OOBLat, e.OOBLon, z)) + "\n";
                         }

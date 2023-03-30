@@ -9,7 +9,7 @@ android {
         applicationId "com.openathena"
         minSdk 28
         targetSdk 32
-        versionCode 15
+        versionCode 16
         versionName "0.15.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
