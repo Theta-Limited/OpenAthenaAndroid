@@ -373,7 +373,7 @@ public class MetadataExtractor {
         Log.i(TAG, "xmp_str for Make DJI: " + xmp_str);
         XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
 
-        String longitudeTagName = "GPSLongitude";
+        String longitudeTagName = "GpsLongitude";
         String schemaNS = "http://www.dji.com/drone-dji/1.0/";
         String latitude = xmpMeta.getPropertyString(schemaNS, "GpsLatitude");
         if (latitude == null) {
