@@ -64,10 +64,12 @@ public class MetadataExtractor {
 
         // DJI Phantom 4
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC330", new double[]{13.2d/5472.0d, 8.8d/3648.0d, 5472.0d, 3648.0d});
+        // appears to be a Sony IMX377 CMOS
+        // https://forum.dji.com/thread-47292-1-1.html
+        djiMap.put("FC330", new double[]{6.2372d/4024.0d, 4.7058d/3036.0d, 4000.0d, 3000.0d});
 
         // DJI Phantom 4 Pro, DJI Phantom 4 Advanced
-        djiMap.put("FC6310", djiMap.get("FC330"));
+        djiMap.put("FC6310", new double[]{13.2d/5472.0d, 8.8d/3648.0d, 5472.0d, 3648.0d});
         djiMap.put("FC6310S", djiMap.get("FC6310"));
 
         // DJI Phantom 4 Multispectral
@@ -371,30 +373,41 @@ public class MetadataExtractor {
         Log.i(TAG, "xmp_str for Make DJI: " + xmp_str);
         XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
 
+        String longitudeTagName = "GPSLongitude";
         String schemaNS = "http://www.dji.com/drone-dji/1.0/";
         String latitude = xmpMeta.getPropertyString(schemaNS, "GpsLatitude");
-        double y;
+        if (latitude == null) {
+            // Older DJI drones have a different tag name
+            latitude = xmpMeta.getPropertyString(schemaNS, "Latitude");
+            longitudeTagName = "Longitude";
+        }
+
+        double y; double x; double z;
         if (latitude != null) {
             y = Double.parseDouble(latitude);
-        } else {
-            throw new MissingDataException(parent.getString(R.string.missing_data_exception_latitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.LATITUDE);
-        }
-        String longitude = xmpMeta.getPropertyString(schemaNS, "GpsLongitude");
-        if (longitude == null || longitude.equals("")) {
-            // handle a typo "GpsLongtitude" that occurs in certain versions of Autel drone firmware (which use drone-dji metadata format)
-            longitude = xmpMeta.getPropertyString(schemaNS, "GpsLong" + "t" + "itude");
-            if (longitude == null || longitude.equals("")) {
-                throw new MissingDataException(parent.getString(R.string.missing_data_exception_longitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.LATITUDE);
-            }
-        }
-        double x = Double.parseDouble(longitude);
 
-        double z;
-        String altitude = xmpMeta.getPropertyString(schemaNS, "AbsoluteAltitude");
-        if (altitude != null) {
-            z = Double.parseDouble(altitude);
+            String longitude = xmpMeta.getPropertyString(schemaNS, longitudeTagName);
+            if (longitude == null || longitude.equals("")) {
+                // handle a typo "GpsLongtitude" that occurs in certain versions of Autel drone firmware (which use drone-dji metadata format)
+                longitude = xmpMeta.getPropertyString(schemaNS, "GpsLong" + "t" + "itude");
+                if (longitude == null || longitude.equals("")) {
+                    throw new MissingDataException(parent.getString(R.string.missing_data_exception_longitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.LATITUDE);
+                }
+            }
+            x = Double.parseDouble(longitude);
+
+            String altitude = xmpMeta.getPropertyString(schemaNS, "AbsoluteAltitude");
+            if (altitude != null) {
+                z = Double.parseDouble(altitude);
+            } else {
+                throw new MissingDataException(parent.getString(R.string.missing_data_exception_altitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALTITUDE);
+            }
         } else {
-            throw new MissingDataException(parent.getString(R.string.missing_data_exception_altitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALTITUDE);
+            // Lat, Lon, Alt metadata not present in XMP, use EXIF as backup instead:
+            Float[] yxz = exifGetYXZ(exif); // may throw MissingDataException
+            y = (double) yxz[0];
+            x = (double) yxz[1];
+            z = (double) yxz[2];
         }
 
         double azimuth;
