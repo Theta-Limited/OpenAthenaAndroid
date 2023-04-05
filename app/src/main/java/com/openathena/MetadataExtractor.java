@@ -55,6 +55,9 @@ public class MetadataExtractor {
         //    \ \____/    \ \____/     /\_____\
         //     \/___/      \/___/      \/_____/
 
+        // Example images:
+        // https://commons.wikimedia.org/wiki/Category:Taken_with_DJI
+
         // DJI Mavic Pro / Mavic Pro Platinum
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("FC220", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
