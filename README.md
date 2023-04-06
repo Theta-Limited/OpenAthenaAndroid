@@ -42,7 +42,7 @@ Load the DEM file (e.g. cobb.tif) using the "⛰" button. The app will display t
 
 ## Calibrate your drone's compass sensor 🧭 and take photos :
 
-It is _**strongly suggested**_ that you should [calibrate the drone's compass sensor for the local environment](https://phantompilots.com/threads/compass-calibration-a-complete-primer.32829/) before taking photos to be used with OpenAthena. Consult your drone's operation manual for this procedure. The image metadata from an un-calibrated drone can be many degrees off from the correct heading. This can result in dramatic Target-resolution inaccuracies. _**Always**_ verify a target match location from OpenAthena before use!
+It is _**strongly suggested**_ that you should [calibrate the drone's compass sensor for the local environment](https://phantompilots.com/threads/compass-calibration-a-complete-primer.32829/) before taking photos to be used with OpenAthena. Consult your drone's operation manual for this procedure. The image metadata from an un-calibrated drone can be several degrees off from the correct heading. This can result in dramatic target-resolution inaccuracies if the sensor is not calibrated. _**Always**_ verify a target match location from OpenAthena before use!
 
 E.x.:
 
