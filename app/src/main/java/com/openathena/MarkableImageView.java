@@ -46,9 +46,8 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                     Log.d("Y",parent.selection_y+"");
 
                     if (parent.isImageLoaded && parent.isDEMLoaded) {
-                        yahweh.mark((double) event.getX() / (1.0d * render_width), (double) event.getY() / (1.0d * render_height));
                         parent.calculateImage(yahweh, false); // this may cause the view to re-size due to constraint layout
-                        yahweh.invalidate();
+                        yahweh.mark((double) event.getX() / (1.0d * render_width), (double) event.getY() / (1.0d * render_height));
                     }
                 }
 
@@ -65,7 +64,7 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                     yahweh.invalidate();
                 }
                 // Remove the listener to avoid multiple calls
-//                yahweh.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                yahweh.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
 
@@ -104,17 +103,27 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (theMarker != null) {
+            float length = Math.max(getWidth() / 48, getHeight() / 48);
+            float gap = length / 1.5f;
+
             Paint paint = new Paint();
             paint.setColor(Color.parseColor("#FE00DD")); // HI-VIS PINK
-            int render_width = getWidth();
-            int render_height = getHeight();
-            float radius = Math.max(render_width/64, render_height/64);
-            int x = (int) Math.round(theMarker.x_prop * render_width);
-            int y = (int) Math.round(theMarker.y_prop * render_height);
-            canvas.drawCircle(x, y, radius, paint);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(gap);
+
+            float actualX = (float) theMarker.x_prop * getWidth();
+            float actualY = (float) theMarker.y_prop * getHeight();
+
+            // Draw horizontal lines
+            canvas.drawLine(actualX - length - gap, actualY, actualX - gap, actualY, paint);
+            canvas.drawLine(actualX + gap, actualY, actualX + length + gap, actualY, paint);
+
+            // Draw vertical lines
+            canvas.drawLine(actualX, actualY - length - gap, actualX, actualY - gap, paint);
+            canvas.drawLine(actualX, actualY + gap, actualX, actualY + length + gap, paint);
         } else {
             if (parent.isImageLoaded) {
-                theMarker = new Marker(0.5d, 0.5d);
+                theMarker = new Marker(getWidth() / 2, getHeight() / 2);
                 invalidate();
             }
         }
