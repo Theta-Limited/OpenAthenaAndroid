@@ -78,7 +78,7 @@ public class TargetGetter {
 
         // Check if target is exactly straight downwards,
         //     if so, skip iterative search b/c target is directly below us
-        if (Math.abs(Double.compare(radTheta, Math.PI)) <= 0.005d) { // 0.005 radians ~= 0.29 degrees
+        if (Math.abs(Double.compare(radTheta, Math.PI / 2.0d)) <= 0.005d) { // 0.005 radians ~= 0.29 degrees
             try {
                 terrainAlt = myGeoTIFFParser.getAltFromLatLon(lat, lon);
             } catch (RequestedValueOOBException e) {
@@ -99,7 +99,7 @@ public class TargetGetter {
         // a new appropriate THETA for the reverse direction
         //
         // during manual data entry, please avoid absolute values > 90
-        if (radAzimuth > (Math.PI / 2)) {
+        if (radTheta > (Math.PI / 2)) {
             radAzimuth = normalize(radAzimuth + Math.PI);
             radTheta = Math.PI - radTheta;
         }
