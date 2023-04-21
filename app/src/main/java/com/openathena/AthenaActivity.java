@@ -39,12 +39,12 @@ public abstract class AthenaActivity extends AppCompatActivity {
     protected boolean isDEMLoaded;
 
     // selected image pixel for use in ray offset calculation
-    // represents +/- difference from the principal point (cx,cy)
+    // represents (u, v) in pixels from the top left corner of the image
     protected int selection_x = -1;
     protected int selection_y = -1;
 
-    protected int cx = -1; // x position of the principal point (centerpoint of image). Measured from upper-left corner
-    protected int cy = -1; // y position of the principal point (centerpoint of image). Measured from upper-left corner
+//    protected int cx = -1; // x position of the principal point (centerpoint of image). Measured from upper-left corner
+//    protected int cy = -1; // y position of the principal point (centerpoint of image). Measured from upper-left corner
 
     @SuppressLint("SetTextI18n")
     public void setOutputMode(int mode) {
@@ -156,13 +156,13 @@ public abstract class AthenaActivity extends AppCompatActivity {
         return this.selection_y;
     }
 
-    public int get_cx() {
-        return cx;
-    }
-
-    public int get_cy() {
-        return cy;
-    }
+//    public int get_cx() {
+//        return cx;
+//    }
+//
+//    public int get_cy() {
+//        return cy;
+//    }
 
     // Overloaded
     public void setOutputMode(outputModes aMode) {

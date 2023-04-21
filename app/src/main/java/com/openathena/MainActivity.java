@@ -227,8 +227,8 @@ public class MainActivity extends AthenaActivity {
 
             selection_x = savedInstanceState.getInt("selection_x", -1);
             selection_y = savedInstanceState.getInt("selection_y", -1);
-            cx = savedInstanceState.getInt("cx", -1);
-            cy = savedInstanceState.getInt("cy", -1);
+//            cx = savedInstanceState.getInt("cx", -1);
+//            cy = savedInstanceState.getInt("cy", -1);
             if (isImageLoaded) {
                 iView.restoreMarker(selection_x, selection_y);
             }
@@ -250,8 +250,8 @@ public class MainActivity extends AthenaActivity {
             if (width < 0 || height < 0) {
                 return null;
             } else {
-                cx = width / 2; // x coordinate of the principal point (center) of the image. Measured from Top-Left corner
-                cy = height / 2; // y coordinate of the principal point (center) of the image. Measured from Top-Left corner
+//                cx = width / 2; // x coordinate of the principal point (center) of the image. Measured from Top-Left corner
+//                cy = height / 2; // y coordinate of the principal point (center) of the image. Measured from Top-Left corner
                 return new int[] {width, height};
             }
         } catch (IOException ioe) {
@@ -287,12 +287,12 @@ public class MainActivity extends AthenaActivity {
         if (selection_y >= 0) {
             saveInstanceState.putInt("selection_y", selection_y);
         }
-        if (cx >= 0) {
-            saveInstanceState.putInt("cx", cx);
-        }
-        if (cy >= 0) {
-            saveInstanceState.putInt("cy", cy);
-        }
+//        if (cx >= 0) {
+//            saveInstanceState.putInt("cx", cx);
+//        }
+//        if (cy >= 0) {
+//            saveInstanceState.putInt("cy", cy);
+//        }
     }
 
     public void setButtonReady(Button aButton, boolean isItReady) {
@@ -323,11 +323,9 @@ public class MainActivity extends AthenaActivity {
             restorePrefOutputMode(); // reset textViewTargetCoord to mode descriptor
 
             isImageLoaded = false;
-            iView.theMarker = null;
+            iView.mark(0.5d, 0.5d); // reset the marker to the principle point (center)
             selection_x = -1;
             selection_y = -1;
-            cx = -1;
-            cy = -1;
         }
         imageUri = uri;
 
@@ -587,7 +585,7 @@ public class MainActivity extends AthenaActivity {
             double[] relativeRay;
             relativeRay = new double[] {0.0d, 0.0d};
             try {
-                if (selection_x < 0 || selection_y < 0 || cx <= 0 || cy <= 0) {
+                if (selection_x < 0 || selection_y < 0) {
                     throw new NoSuchFieldException("no point was selected");
                 } else {
                     relativeRay = theMeta.getRayAnglesFromImgPixel(selection_x, selection_y, exif);
