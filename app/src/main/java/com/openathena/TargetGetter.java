@@ -197,7 +197,7 @@ public class TargetGetter {
         lon0 = Math.toRadians(lon0);
         lat1 = Math.toRadians(lat1);
         lon1 = Math.toRadians(lon1);
-        return Math.toDegrees(Math.acos(cos(lat0)*cos(lat1)*cos(lon0-lon1) + sin(lat0)*sin(lat1)));
+        return Math.abs(Math.toDegrees(Math.acos(cos(lat0)*cos(lat1)*cos(lon0-lon1) + sin(lat0)*sin(lat1))));
     }
 
     /**
