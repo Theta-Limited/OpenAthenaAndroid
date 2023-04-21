@@ -1,15 +1,33 @@
 package com.openathena;
 
+import android.util.Log;
+
+import com.openathena.GeoTIFFParser;
+import com.openathena.geodataAxisParams;
+import com.openathena.RequestedValueOOBException;
 // // Convert from Nato ellipsoid to Warsaw
 // import com.openathena.WGS84_SK42_Translator
 // // Convert geodetic coords to Gauss Kruger grid ref
 // import com.openathena.SK42_Gauss_Kruger_Projector
 
 import java.io.File;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Properties;
+import java.util.Vector;
+import java.io.InputStream;
+import java.io.PrintWriter;
 
-        import java.lang.Math;
+import java.lang.Math;
 
-        import java.lang.NullPointerException;
+import java.lang.IllegalArgumentException;
+import java.lang.NullPointerException;
+
+import com.openathena.RequestedValueOOBException;
+import com.openathena.geodataAxisParams;
+import com.openathena.GeoTIFFParser;
+
+import mil.nga.tiff.*;
 
 public class TargetGetter {
     private static final String TAG = TargetGetter.class.getSimpleName();
