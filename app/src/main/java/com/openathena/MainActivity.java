@@ -11,12 +11,10 @@
 // intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
 package com.openathena;
+import static com.openathena.TargetGetter.degNormalize;
 
 // import veraPDF fork of Adobe XMP core Java v5.1.0
-import com.adobe.xmp.XMPError;
 import com.adobe.xmp.XMPException;
-import com.adobe.xmp.XMPMeta;
-import com.adobe.xmp.XMPMetaFactory;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -25,20 +23,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
-import android.database.Cursor;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.text.Html;
@@ -48,15 +39,11 @@ import androidx.exifinterface.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -617,7 +604,7 @@ public class MainActivity extends AthenaActivity {
                 attribs += getString(R.string.altiude_wgs84_label_long) + " " + Math.round(z) + "m\n";
             }
 
-            attribs += getString(R.string.attribute_text_drone_azimuth) + " " + Math.round(azimuth % 360.0d) + "°\n";
+            attribs += getString(R.string.attribute_text_drone_azimuth) + " " + Math.round(degNormalize(azimuth)) + "°\n";
             attribs += getString(R.string.attribute_text_drone_camera_pitch) + " " + -1 * Math.round(theta) + "°\n";
             appendText(attribs);
             attribs = "";

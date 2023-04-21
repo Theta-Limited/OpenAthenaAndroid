@@ -1,33 +1,15 @@
 package com.openathena;
 
-import android.util.Log;
-
-import com.openathena.GeoTIFFParser;
-import com.openathena.geodataAxisParams;
-import com.openathena.RequestedValueOOBException;
 // // Convert from Nato ellipsoid to Warsaw
 // import com.openathena.WGS84_SK42_Translator
 // // Convert geodetic coords to Gauss Kruger grid ref
 // import com.openathena.SK42_Gauss_Kruger_Projector
 
 import java.io.File;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Properties;
-import java.util.Vector;
-import java.io.InputStream;
-import java.io.PrintWriter;
 
-import java.lang.Math;
+        import java.lang.Math;
 
-import java.lang.IllegalArgumentException;
-import java.lang.NullPointerException;
-
-import com.openathena.RequestedValueOOBException;
-import com.openathena.geodataAxisParams;
-import com.openathena.GeoTIFFParser;
-
-import mil.nga.tiff.*;
+        import java.lang.NullPointerException;
 
 public class TargetGetter {
     private static final String TAG = TargetGetter.class.getSimpleName();
@@ -67,7 +49,7 @@ public class TargetGetter {
         double radAzimuth = Math.toRadians(azimuth);
         double radTheta = Math.toRadians(theta);
 
-        radAzimuth = normalize(radAzimuth);
+        radAzimuth = radNormalize(radAzimuth);
 
         double finalDist;
         double tarLat;
@@ -99,7 +81,7 @@ public class TargetGetter {
         // a new appropriate THETA for the reverse direction
         //
         if (radTheta > (Math.PI / 2)) {
-            radAzimuth = normalize(radAzimuth + Math.PI);
+            radAzimuth = radNormalize(radAzimuth + Math.PI);
             radTheta = Math.PI - radTheta;
         }
 
@@ -165,8 +147,29 @@ public class TargetGetter {
      * @param radAngle an angle input in Radians. May be any positive or negative number
      * @return double the normalized value within [0, 2π)
      */
-    public double normalize(double radAngle) {
-        return radAngle % (2 * Math.PI);
+    public static double radNormalize(double radAngle) {
+        while (radAngle >= Math.PI * 2.0d) {
+            radAngle -= Math.PI * 2.0d;
+        }
+        while (radAngle < 0.0d) {
+            radAngle += Math.PI * 2.0d;
+        }
+        return radAngle;
+    }
+
+    /**
+     * Given an angle (in degrees), returns an equivalent angle where 0 ≤ angle < 2 * π
+     * @param degAngle an angle input in Radians. May be any positive or negative number
+     * @return double the normalized value within [0, 360.0)
+     */
+    public static double degNormalize(double degAngle) {
+        while (degAngle >= 360.0d) {
+            degAngle -= 360.0d;
+        }
+        while (degAngle < 0.0d) {
+            degAngle += 360.0d;
+        }
+        return degAngle;
     }
 
     /**
@@ -174,10 +177,10 @@ public class TargetGetter {
      * @param radAzimuth an angle input in Radians, in Azimuth format. 0 is North, π/2 is East, π is South, 3π/2 is West
      * @return double an angle output in Radains, in Unit Circle format. 0 is East, π/2 is North, π is West, 3π/2 is South
      */
-    public double azimuthToUnitCircleRad(double radAzimuth) {
+    public static double azimuthToUnitCircleRad(double radAzimuth) {
         double radDirection = -1.0d * radAzimuth;
         radDirection += (0.5d * Math.PI);
-        radDirection = normalize(radDirection);
+        radDirection = radNormalize(radDirection);
         return radDirection;
     }
 
@@ -187,7 +190,7 @@ public class TargetGetter {
      * @param lon In degrees. Not used at all for this calculation
      * @return double The radius of the WGS84 reference ellipsoid at the given Latitude, in meters
      */
-    public double radius_at_lat_lon(double lat, double lon) {
+    public static double radius_at_lat_lon(double lat, double lon) {
         lat = Math.toRadians(lat);
         lon = Math.toRadians(lon); // not used
 
@@ -213,9 +216,9 @@ public class TargetGetter {
      * @param alt The altitude above the surface of the WGS84 reference ellipsoid, measured in meters.
      * @return double[] A Lat/Lon pair representing the point at the end of the great circle d meters away from the starting point
      */
-    double[] inverse_haversine(double lat1, double lon1, double d /*distance*/, double radAzimuth, double alt) {
+    static double[] inverse_haversine(double lat1, double lon1, double d /*distance*/, double radAzimuth, double alt) {
         if (d < 0.0d) {
-            return inverse_haversine(lat1, lon1, -1.0d * d, normalize(radAzimuth + Math.PI), alt);
+            return inverse_haversine(lat1, lon1, -1.0d * d, radNormalize(radAzimuth + Math.PI), alt);
         }
 
         // calculate WGS84 radius at lat/lon
@@ -258,7 +261,7 @@ public class TargetGetter {
      * @param alt The altitude above the surface of the WGS84 reference ellipsoid, measured in meters. Used to determine the radius of the great circle
      * @return double The distance in meters along a great circle path between the two inputed points.
      */
-    double haversine(double lon1, double lat1, double lon2, double lat2, double alt) {
+    static double haversine(double lon1, double lat1, double lon2, double lat2, double alt) {
         lon1 = Math.toRadians(lon1);
         lat1 = Math.toRadians(lat1);
         lon2 = Math.toRadians(lon2);
@@ -285,7 +288,7 @@ public class TargetGetter {
      * @param lat2
      * @return
      */
-    double haversine_bearing(double lon1, double lat1, double lon2, double lat2) {
+    static double haversine_bearing(double lon1, double lat1, double lon2, double lat2) {
         lon1 = Math.toRadians(lon1);
         lat1 = Math.toRadians(lat1);
         lon2 = Math.toRadians(lon2);
@@ -296,33 +299,33 @@ public class TargetGetter {
         double y = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon);
 
         double brng = atan2(x,y); // arguments intentionally swapped out of order
-        brng = normalize(brng);
+        brng = radNormalize(brng);
         brng = Math.toDegrees(brng);
 
         return brng;
     }
 
-    double squared(double val) {
+    static double squared(double val) {
         return val * val;
     }
 
-    double sqrt(double val) {
+    static double sqrt(double val) {
         return Math.sqrt(val);
     }
 
-    double sin(double radAngle) {
+    static double sin(double radAngle) {
         return Math.sin(radAngle);
     }
 
-    double asin(double radAngle) {
+    static double asin(double radAngle) {
         return Math.asin(radAngle);
     }
 
-    double cos(double radAngle) {
+    static double cos(double radAngle) {
         return Math.cos(radAngle);
     }
 
-    double atan2(double y, double x) {
+    static double atan2(double y, double x) {
         return Math.atan2(y, x);
     }
 

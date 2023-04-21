@@ -1,4 +1,5 @@
 package com.openathena;
+import static com.openathena.TargetGetter.degNormalize;
 
 import android.util.Log;
 
@@ -417,7 +418,7 @@ public class MetadataExtractor {
         String gimbalYawDegree = xmpMeta.getPropertyString(schemaNS, "GimbalYawDegree");
         if (gimbalYawDegree != null) {
             azimuth = Double.parseDouble(gimbalYawDegree);
-            azimuth = azimuth % 360.0d;
+            azimuth = degNormalize(azimuth);
         } else {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_azimuth_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.AZIMUTH);
         }
@@ -480,7 +481,7 @@ public class MetadataExtractor {
 
         try {
             azimuth = Double.parseDouble(xmpMeta.getStructField(schemaNS, "CameraOrientationNED", schemaNS, "Yaw").getValue());
-            azimuth = azimuth % 360.0d;
+            azimuth = degNormalize(azimuth);
         } catch (NumberFormatException nfe) {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_altitude_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.AZIMUTH);
         }
@@ -544,7 +545,7 @@ public class MetadataExtractor {
 
             try {
                 azimuth = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "Yaw"));
-                azimuth = azimuth % 360.0d;
+                azimuth = degNormalize(azimuth);
             } catch (NumberFormatException nfe) {
                 throw new MissingDataException(parent.getString(R.string.missing_data_exception_azimuth_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.AZIMUTH);
             }
@@ -597,7 +598,7 @@ public class MetadataExtractor {
 
         try {
             azimuth = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraYawDegree"));
-            azimuth = azimuth % 360.0d;
+            azimuth = degNormalize(azimuth);
         } catch (NumberFormatException nfe) {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_azimuth_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.AZIMUTH);
         }
