@@ -118,6 +118,12 @@ public class TargetGetter {
         double curLon = lon;
         double curAlt = alt;
         double groundAlt;
+
+        // account for curvature of Earth at each Epoch
+        long iterCount = 0;
+        long iterPerEpoch = 128;
+        double lastEpochLat = curLat;
+        double lastEpochLon = curLon;
         try {
             groundAlt = myGeoTIFFParser.getAltFromLatLon(curLat, curLon);
         } catch (RequestedValueOOBException e) {
@@ -136,6 +142,18 @@ public class TargetGetter {
             }
             altDiff = curAlt - groundAlt;
 
+            // account for curvature of Earth at each Epoch
+            if (iterCount > 0 && iterCount % iterPerEpoch == 0) {
+                double minArcAngle = minArcAngle(lastEpochLat, lastEpochLon, curLat, curLon);
+                Log.d(TAG, "iterCount: " + iterCount + ", minArcAngle: " + minArcAngle);
+                radTheta += Math.toRadians(minArcAngle); // rotate ray upwards by same amount Earth's curvature rotated it downwards
+                deltaZ = -1.0d * Math.sin(radTheta);
+                horizScalar = Math.cos(radTheta);
+
+                lastEpochLat = curLat;
+                lastEpochLon = curLon;
+            }
+
             double avgAlt = curAlt;
             // deltaZ should always be negative
             curAlt += deltaZ;
@@ -143,6 +161,7 @@ public class TargetGetter {
             double[] nextIter = inverse_haversine(curLat, curLon, horizScalar*INCREMENT, radAzimuth, avgAlt);
             curLat = nextIter[0];
             curLon = nextIter[1];
+            iterCount++;
         }
 
         // When the loop ends, curY, curX, and curZ are closeish to the target
@@ -158,6 +177,27 @@ public class TargetGetter {
 
         outArr = new double[]{finalDist, curLat, curLon, curAlt, terrainAlt}; // I hate Java
         return outArr;
+    }
+
+    /**
+     * Given two lat/lon coordinate pairs (in degrees) , finds the approximate arc angle (in degrees) of the shortest great-circle path between them
+     * This is useful for accounting for curvature of the Earth. Treats coordinates as on a sphere rather than ellipsoid for simplicity
+     *
+     * <p>
+     *     Formula from: https://math.stackexchange.com/a/2940458
+     * </p>
+     * @param lat0 latitude of first coordinate (in degrees)
+     * @param lon0 longitude of first coordinate (in degrees)
+     * @param lat1 latitude of second coordinate (in degrees)
+     * @param lon1 longitude of second coordinate (in degrees)
+     * @return the arc angle (in degrees) of the shortest great-circle path between first and second coordinates
+     */
+    public static double minArcAngle(double lat0, double lon0, double lat1, double lon1) {
+        lat0 = Math.toRadians(lat0);
+        lon0 = Math.toRadians(lon0);
+        lat1 = Math.toRadians(lat1);
+        lon1 = Math.toRadians(lon1);
+        return Math.toDegrees(Math.acos(cos(lat0)*cos(lat1)*cos(lon0-lon1) + sin(lat0)*sin(lat1)));
     }
 
     /**
