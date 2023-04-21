@@ -123,7 +123,7 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
             canvas.drawLine(actualX, actualY + gap, actualX, actualY + length + gap, paint);
         } else {
             if (parent.isImageLoaded) {
-                theMarker = new Marker(getWidth() / 2, getHeight() / 2);
+                theMarker = new Marker(0.5d, 0.5d);
                 invalidate();
             }
         }

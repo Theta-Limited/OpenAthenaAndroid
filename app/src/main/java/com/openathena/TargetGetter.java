@@ -98,7 +98,6 @@ public class TargetGetter {
         // then subtract theta from 180deg to determine
         // a new appropriate THETA for the reverse direction
         //
-        // during manual data entry, please avoid absolute values > 90
         if (radTheta > (Math.PI / 2)) {
             radAzimuth = normalize(radAzimuth + Math.PI);
             radTheta = Math.PI - radTheta;
