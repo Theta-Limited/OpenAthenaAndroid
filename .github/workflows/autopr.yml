@@ -35,4 +35,4 @@ jobs:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}        
-        base_branch: master
+        base_branch: 'master'
