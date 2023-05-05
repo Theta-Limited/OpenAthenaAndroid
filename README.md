@@ -67,6 +67,8 @@ Press the "🧮" button to calculate the target location on the ground. You can 
 
 <img width="586" alt="OpenAthena Android DJI_0419.JPG target location text copied to clipboard" src="./assets/0419_text_copied_to_clipboard.png">
 
+<img width="340" alt="Gif showing text copied to clipboard toast after taping on results box" src="./assets/TextCopiedOptimized.gif">
+
 <img width="586" alt="OpenAthena Android DJI_0419.JPG target shown in Google Maps satellite view" src="./assets/0419_maps_screenshot.png">
 
 ## [ATAK](https://en.wikipedia.org/wiki/Android_Team_Awareness_Kit) Cursor on Target
