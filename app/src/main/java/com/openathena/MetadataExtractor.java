@@ -248,6 +248,8 @@ public class MetadataExtractor {
         //    \ \_\ \_\ \____/ \ \__\ \____\/\____\   \ \_\ \_\ \____/\ \_,__/\ \____/\ \__\\ \_\ \____\/\____/
         //     \/_/\/_/\/___/   \/__/\/____/\/____/    \/_/\/ /\/___/  \/___/  \/___/  \/__/ \/_/\/____/\/___/
 
+        // https://commons.wikimedia.org/wiki/Category:Taken_with_Autel_Robotics
+
         // Autel EVO II camera
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         autelMap.put("XT701", new double[]{6.40d/8000.0d, 4.80d/6000.0d, 8000.0d, 6000.0d});
@@ -639,6 +641,7 @@ public class MetadataExtractor {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_longitude_error_msg), MissingDataException.dataSources.EXIF, MissingDataException.missingValues.LATITUDE);
         }
 
+        String altDir = exif.getAttribute(ExifInterface.TAG_GPS_ALTITUDE_REF);
         String alt = exif.getAttribute(ExifInterface.TAG_GPS_ALTITUDE);
         if (alt == null) {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_altitude_error_msg), MissingDataException.dataSources.EXIF, MissingDataException.missingValues.ALTITUDE);
@@ -668,6 +671,9 @@ public class MetadataExtractor {
         }
 
         float z = rationalToFloat(alt);
+        if (altDir != null && altDir.equals("1")) {
+            z = z * -1.0f;
+        }
 
         Float[] arrOut = {y, x, z};
         return(arrOut);
