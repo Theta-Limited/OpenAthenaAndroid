@@ -198,8 +198,6 @@ public abstract class AthenaActivity extends AppCompatActivity {
 
         int id = item.getItemId();
 
-        // don't do anything if they select prefs
-
         if (id == R.id.action_calculate) {
             // jump to main activity
             // its already created

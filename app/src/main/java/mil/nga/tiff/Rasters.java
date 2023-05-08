@@ -1,5 +1,9 @@
 package mil.nga.tiff;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -14,17 +18,21 @@ import mil.nga.tiff.util.TiffException;
  * 
  * @author osbornb
  */
-public class Rasters {
+public class Rasters implements Serializable {
+	/**
+	 * serialVersionUID for serialization compatibility
+	 */
+	private static final long serialVersionUID = 2000L;
 
 	/**
 	 * Values separated by sample
 	 */
-	private ByteBuffer[] sampleValues;
+	private transient ByteBuffer[] sampleValues;
 
 	/**
 	 * Interleaved pixel sample values
 	 */
-	private ByteBuffer interleaveValues;
+	private transient ByteBuffer interleaveValues;
 
 	/**
 	 * Width of pixels
@@ -293,6 +301,68 @@ public class Rasters {
 					width * height * fieldTypes[i].getBytes()).order(order);
 		}
 	}
+
+	/**
+	 * Custom Serialization for Rasters Object
+	 * @param out the ObjectOutputStream to write serialized data to
+	 * @throws IOException if cannot complete write operation
+	 */
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.defaultWriteObject(); // Serialize all non-transient fields
+
+		// Serialize ByteBuffer arrays
+		for (ByteBuffer bb : sampleValues) {
+			if (bb != null) {
+				int remaining = bb.remaining();
+				out.writeInt(remaining);
+				byte[] bytes = new byte[remaining];
+				bb.get(bytes);
+				out.write(bytes);
+			} else {
+				out.writeInt(-1);
+			}
+		}
+		if (interleaveValues != null) {
+			int remaining = interleaveValues.remaining();
+			out.writeInt(remaining);
+			byte[] bytes = new byte[remaining];
+			interleaveValues.get(bytes);
+			out.write(bytes);
+		} else {
+			out.writeInt(-1);
+		}
+	}
+
+	/**
+	 * Custom De-serialization for Rasters Object
+	 * @param in the ObjectInputStream to read from
+	 * @throws IOException if cannot complete the read operation
+	 * @throws ClassNotFoundException if the UID of the serialized object is mismatched
+	 */
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+		in.defaultReadObject(); // Deserialize all non-transient fields
+
+		// Deserialize ByteBuffer arrays
+		for (int i = 0; i < sampleValues.length; i++) {
+			int remaining = in.readInt();
+			if (remaining != -1) {
+				byte[] bytes = new byte[remaining];
+				in.readFully(bytes);
+				sampleValues[i] = ByteBuffer.wrap(bytes);
+			} else {
+				sampleValues[i] = null;
+			}
+		}
+		int remaining = in.readInt();
+		if (remaining != -1) {
+			byte[] bytes = new byte[remaining];
+			in.readFully(bytes);
+			interleaveValues = ByteBuffer.wrap(bytes);
+		} else {
+			interleaveValues = null;
+		}
+	}
+
 
 	/**
 	 * Validate that either sample or interleave values exist

@@ -5,6 +5,8 @@ import android.util.Log;
 import java.io.Console;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,19 +25,20 @@ import com.openathena.geodataAxisParams;
 
 import mil.nga.tiff.*;
 
-public class GeoTIFFParser {
+public class GeoTIFFParser implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     public static String TAG = GeoTIFFParser.class.getSimpleName();
 
-    private File geofile;
+    private transient File geofile;
 
-    private TIFFImage tiffImage;
-    private List<FileDirectory> directories;
-    private FileDirectory directory;
-    private Rasters rasters;
+    private transient TIFFImage tiffImage;
+    private transient List<FileDirectory> directories;
+    private transient FileDirectory directory;
+    private Rasters rasters; // implements Serializable
 
-    private geodataAxisParams xParams;
-    private geodataAxisParams yParams;
+    private geodataAxisParams xParams; // implements Serializable
+    private geodataAxisParams yParams; // implements Serializable
 
     GeoTIFFParser() {
         geofile = null;
@@ -182,7 +185,7 @@ public class GeoTIFFParser {
      * @throws RequestedValueOOBException
      */
     public double getAltFromLatLon(double lat, double lon) throws RequestedValueOOBException {
-        if (geofile == null || rasters == null || xParams == null || yParams == null) {
+        if (rasters == null || xParams == null || yParams == null) {
             throw new NullPointerException("getAltFromLatLon pre-req was null!");
         }
         if ( xParams.numOfSteps <= 0 || yParams.numOfSteps <= 0) {
@@ -236,10 +239,10 @@ public class GeoTIFFParser {
     }
 
     /**
-     * Performs a binary search, returning indicies pointing to the two closest values to the input
+     * Performs a binary search, returning indices pointing to the two closest values to the input
      * @param start the start value, in degrees, of an axis of the geofile
      * @param n the number of items in an axis of the geofile
-     * @param val an input value for which to find the two closest indicies
+     * @param val an input value for which to find the two closest indices
      * @param dN the change in value for each increment of the index along an axis of the geofile
      * @return
      */
@@ -294,7 +297,7 @@ public class GeoTIFFParser {
 
         // if we've broken out of the loop, L > R
         //     which means the markers have flipped
-        //     therfore, either list[L] or list[R] must be closest to val
+        //     therefore, either list[L] or list[R] must be closest to val
         return new long[]{R, L};
     }
 }
