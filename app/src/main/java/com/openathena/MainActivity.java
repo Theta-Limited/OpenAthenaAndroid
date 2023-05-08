@@ -70,6 +70,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -186,7 +187,6 @@ public class MainActivity extends AthenaActivity {
         // append
 
         clearText();
-//        appendLog("OpenAthena™ for Android version "+versionName+"\nMatthew Krupczak, Bobby Krupczak, et al.\n GPL-3.0, some rights reserved\n");
 
         if (savedInstanceState != null) {
             CharSequence textRestore = savedInstanceState.getCharSequence("textview");
@@ -196,6 +196,24 @@ public class MainActivity extends AthenaActivity {
             CharSequence textViewTargetCoordRestore = savedInstanceState.getCharSequence("textViewTargetCoord");
             if (textViewTargetCoordRestore != null) {
                 textViewTargetCoord.setText(textViewTargetCoordRestore);
+            }
+
+            // restore previously loaded DEM
+            Object obj = savedInstanceState.getSerializable("theParser");
+            if (obj == null) {
+                Log.d(TAG, "theParser was null in savedInstanceState");
+            }
+            if (obj instanceof GeoTIFFParser) {
+                Log.d(TAG, "theParser restored successfully!");
+                theParser = (GeoTIFFParser) obj;
+                theTGetter = new TargetGetter(theParser);
+                try {
+                    Log.d(TAG, "alt at start point is: " + theParser.getAltFromLatLon(33.837189, -84.53877));
+                } catch (RequestedValueOOBException e) {
+                    e.printStackTrace();
+                }
+                isDEMLoaded = true;
+                setButtonReady(buttonSelectImage, true);
             }
 
             String storedUriString = savedInstanceState.getString("imageUri");
@@ -214,12 +232,14 @@ public class MainActivity extends AthenaActivity {
                 }
             }
 
-            String storedDEMUriString = savedInstanceState.getString("demUri");
-            Log.d(TAG, "loaded demUri: " + storedDEMUriString);
-            if (storedDEMUriString != null) {
-                demUri = Uri.parse(storedDEMUriString);
-                demSelected(demUri);
-            }
+            // // old way of restoring loaded DEM
+//            String storedDEMUriString = savedInstanceState.getString("demUri");
+//            Log.d(TAG, "loaded demUri: " + storedDEMUriString);
+//            if (storedDEMUriString != null) {
+//                demUri = Uri.parse(storedDEMUriString);
+//                demSelected(demUri);
+//            }
+
             isTargetCoordDisplayed = savedInstanceState.getBoolean("isTargetCoordDisplayed");
             isImageLoaded = savedInstanceState.getBoolean("isImageLoaded");
             // // handled by demSelected(demUri) above, will change in later version
@@ -277,9 +297,12 @@ public class MainActivity extends AthenaActivity {
         if (imageUri != null) {
             saveInstanceState.putString("imageUri", imageUri.toString());
         }
-        if (demUri != null) {
-            Log.d(TAG, "saved demUri: " + demUri.toString());
-            saveInstanceState.putString("demUri", demUri.toString());
+//        if (demUri != null) {
+//            Log.d(TAG, "saved demUri: " + demUri.toString());
+//            saveInstanceState.putString("demUri", demUri.toString());
+//        }
+        if (theParser != null) {
+            saveInstanceState.putSerializable("theParser", theParser);
         }
         if (selection_x >= 0) {
             saveInstanceState.putInt("selection_x", selection_x);
@@ -287,6 +310,7 @@ public class MainActivity extends AthenaActivity {
         if (selection_y >= 0) {
             saveInstanceState.putInt("selection_y", selection_y);
         }
+
 //        if (cx >= 0) {
 //            saveInstanceState.putInt("cx", cx);
 //        }

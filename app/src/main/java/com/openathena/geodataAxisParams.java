@@ -1,5 +1,8 @@
 package com.openathena;
-class geodataAxisParams {
+
+import java.io.Serializable;
+
+class geodataAxisParams implements Serializable {
     double start;
     double end;
     double stepwiseIncrement;

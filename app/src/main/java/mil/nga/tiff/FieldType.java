@@ -1,5 +1,7 @@
 package mil.nga.tiff;
 
+import java.io.Serializable;
+
 import mil.nga.tiff.util.TiffConstants;
 import mil.nga.tiff.util.TiffException;
 
@@ -8,7 +10,7 @@ import mil.nga.tiff.util.TiffException;
  * 
  * @author osbornb
  */
-public enum FieldType {
+public enum FieldType implements Serializable {
 
 	/**
 	 * 8-bit unsigned integer
