@@ -99,7 +99,7 @@ public class MainActivity extends AthenaActivity {
 
     protected String versionName;
 
-
+    AthenaApp athenaApp;
     MetadataExtractor theMeta = null;
     GeoTIFFParser theParser = null;
     TargetGetter theTGetter = null;
@@ -170,7 +170,7 @@ public class MainActivity extends AthenaActivity {
         textViewTargetCoord.setMovementMethod(LinkMovementMethod.getInstance());
 
         iView = (MarkableImageView) findViewById(R.id.imageView);
-
+        athenaApp = (AthenaApp) getApplication();
         // try to get our version out of app/build.gradle
         // versionName field
         try {
@@ -198,22 +198,27 @@ public class MainActivity extends AthenaActivity {
                 textViewTargetCoord.setText(textViewTargetCoordRestore);
             }
 
-            // restore previously loaded DEM
-            Object obj = savedInstanceState.getSerializable("theParser");
-            if (obj == null) {
-                Log.d(TAG, "theParser was null in savedInstanceState");
-            }
-            if (obj instanceof GeoTIFFParser) {
-                Log.d(TAG, "theParser restored successfully!");
-                theParser = (GeoTIFFParser) obj;
-                theTGetter = new TargetGetter(theParser);
-                try {
-                    Log.d(TAG, "alt at start point is: " + theParser.getAltFromLatLon(33.837189, -84.53877));
-                } catch (RequestedValueOOBException e) {
-                    e.printStackTrace();
+            isTargetCoordDisplayed = savedInstanceState.getBoolean("isTargetCoordDisplayed");
+            isImageLoaded = savedInstanceState.getBoolean("isImageLoaded");
+            isDEMLoaded = savedInstanceState.getBoolean("isDEMLoaded");
+
+            String storedDEMUriString = savedInstanceState.getString("demUri");
+            Log.d(TAG, "recovered demUri: " + storedDEMUriString);
+
+            if (isDEMLoaded) {
+                if (athenaApp != null && athenaApp.getGeoTIFFParser() != null) { // load DEM from App singleton instance in mem
+                    theParser = athenaApp.getGeoTIFFParser();
+                    theTGetter = new TargetGetter(theParser);
+                    setButtonReady(buttonSelectImage, true);
+                } else if (storedDEMUriString != null && !storedDEMUriString.equals("")) { // fallback, load DEM from disk (slower)
+                    Log.d(TAG, "loaded demUri: " + storedDEMUriString);
+                    demUri = Uri.parse(storedDEMUriString);
+                    demSelected(demUri);
+                } else { // this shouldn't ever happen, but just to be safe...
+                    isDEMLoaded = false;
+                    setButtonReady(buttonSelectImage, false);
+                    setButtonReady(buttonCalculate, false);
                 }
-                isDEMLoaded = true;
-                setButtonReady(buttonSelectImage, true);
             }
 
             String storedUriString = savedInstanceState.getString("imageUri");
@@ -232,25 +237,23 @@ public class MainActivity extends AthenaActivity {
                 }
             }
 
+
             // // old way of restoring loaded DEM
 //            String storedDEMUriString = savedInstanceState.getString("demUri");
-//            Log.d(TAG, "loaded demUri: " + storedDEMUriString);
-//            if (storedDEMUriString != null) {
-//                demUri = Uri.parse(storedDEMUriString);
-//                demSelected(demUri);
-//            }
 
-            isTargetCoordDisplayed = savedInstanceState.getBoolean("isTargetCoordDisplayed");
-            isImageLoaded = savedInstanceState.getBoolean("isImageLoaded");
-            // // handled by demSelected(demUri) above, will change in later version
-            // isDEMLoaded = savedInstanceState.getBoolean("isDEMLoaded");
+
+
 
             selection_x = savedInstanceState.getInt("selection_x", -1);
             selection_y = savedInstanceState.getInt("selection_y", -1);
 //            cx = savedInstanceState.getInt("cx", -1);
 //            cy = savedInstanceState.getInt("cy", -1);
             if (isImageLoaded) {
-                iView.restoreMarker(selection_x, selection_y);
+                if (selection_x != -1 && selection_y != -1) {
+                    iView.restoreMarker(selection_x, selection_y);
+                } else{
+                    iView.mark(0.5d, 0.5d); // put marker on center of iView if no current selection
+                }
             }
         }
 
@@ -297,13 +300,18 @@ public class MainActivity extends AthenaActivity {
         if (imageUri != null) {
             saveInstanceState.putString("imageUri", imageUri.toString());
         }
-//        if (demUri != null) {
-//            Log.d(TAG, "saved demUri: " + demUri.toString());
-//            saveInstanceState.putString("demUri", demUri.toString());
-//        }
-        if (theParser != null) {
-            saveInstanceState.putSerializable("theParser", theParser);
+
+        if (demUri != null) {
+            Log.d(TAG, "saved demUri: " + demUri.toString());
+            saveInstanceState.putString("demUri", demUri.toString());
+
+            athenaApp.setGeoTIFFParser(theParser);
         }
+
+//        if (theParser != null) {
+//            saveInstanceState.putSerializable("theParser", theParser);
+//        }
+
         if (selection_x >= 0) {
             saveInstanceState.putInt("selection_x", selection_x);
         }
@@ -931,26 +939,5 @@ public class MainActivity extends AthenaActivity {
         });
 
     }
-
-    private void appendLog(String str)
-    {
-        FileOutputStream fos;
-        PrintWriter pw;
-
-        Log.d(TAG,"appendLog started");
-
-        try {
-            fos = openFileOutput(MainActivity.LOG_NAME, Context.MODE_PRIVATE|Context.MODE_APPEND);
-            pw = new PrintWriter(fos);
-            pw.print(str);
-            pw.close();
-            fos.close();
-            Log.d(TAG,"appendLog: wrote to logfile");
-
-        } catch (Exception e) {
-            Log.d(TAG,"appendLog: failed to write log:"+e.getMessage());
-        }
-
-    } // appendLog()
 
 }
