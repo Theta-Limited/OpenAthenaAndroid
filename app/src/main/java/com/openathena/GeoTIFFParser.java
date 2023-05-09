@@ -265,7 +265,7 @@ public class GeoTIFFParser implements Serializable {
          * on the interpolated value. A higher power will result in a higher influence
          * of closer points and a lower influence of more distant points.
          */
-        double power = 1.0d;
+        double power = 2.0d;
         // Inverse Distance Weighting interpolation using 4 neighbors
         // see: https://doi.org/10.3846/gac.2023.16591
         //      https://pro.arcgis.com/en/pro-app/latest/help/analysis/geostatistical-analyst/how-inverse-distance-weighted-interpolation-works.htm
