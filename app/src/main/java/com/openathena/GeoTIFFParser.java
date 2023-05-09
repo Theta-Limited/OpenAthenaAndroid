@@ -174,6 +174,41 @@ public class GeoTIFFParser implements Serializable {
      */
     public double getMaxLat() { return Math.max(yParams.end, yParams.start); }
 
+    private static class Location {
+        double latitude;
+        double longitude;
+        double elevation;
+
+        private Location(double latitude, double longitude, double elevation) {
+            this.latitude = latitude;
+            this.longitude = longitude;
+            this.elevation = elevation;
+        }
+
+        private Location(double latitude, double longitude) {
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
+    }
+
+    private static double idwInterpolation(Location target, Location[] neighbors, double power) {
+        double sumWeights = 0;
+        double sumWeightedElevations = 0;
+
+        for (Location neighbor : neighbors) {
+            double distance = TargetGetter.haversine(target.longitude, target.latitude, neighbor.longitude, neighbor.latitude, neighbor.elevation);
+            if (distance == 0) {
+                return neighbor.elevation;
+            }
+
+            double weight = 1 / Math.pow(distance, power);
+            sumWeights += weight;
+            sumWeightedElevations += weight * neighbor.elevation;
+        }
+
+        return sumWeightedElevations / sumWeights;
+    }
+
     /**
      * Using the loaded GeoTIFF DEM, obtains the nearest elevation value for a given Lat/Lon pair
      * <p>
@@ -212,30 +247,53 @@ public class GeoTIFFParser implements Serializable {
         }
 
         long[] xNeighbors = binarySearchNearest(x0, ncols, lon, dx);
+        long[] yNeighbors = binarySearchNearest(y0, nrows, lat, dy);
         long xL = xNeighbors[0];
         long xR = xNeighbors[1];
-        long xIndex;
-        if (Math.abs(lon - (x0 + xL * dx)) < Math.abs(lon - (x0 + xR * dx))) {
-            xIndex = xL;
-        } else {
-            xIndex = xR;
-        }
-
-        long[] yNeighbors = binarySearchNearest(y0, nrows, lat, dy);
         long yT = yNeighbors[0];
         long yB = yNeighbors[1];
-        long yIndex;
-        if (Math.abs(lat - (y0 + yT * dy)) < Math.abs(lat - (y0 + yB * dy))) {
-            yIndex = yT;
-        } else {
-            yIndex = yB;
-        }
+        // https://gdal.org/java/org/gdal/gdal/Dataset.html#ReadRaster(int,int,int,int,int,int,int,byte%5B%5D,int%5B%5D)
+        // https://gis.stackexchange.com/questions/349760/get-elevation-of-geotiff-using-gdal-bindings-in-java
+        Location L1 = new Location(y0 + yT * dy,x0 + xR * dx, rasters.getPixel((int) xR, (int) yT)[0].doubleValue());
+        Location L2 = new Location(y0 + yT * dy, x0 + xL * dx, rasters.getPixel((int) xL, (int) yT)[0].doubleValue());
+        Location L3 = new Location(y0 + yB * dy, x0 + xL * dx, rasters.getPixel((int) xL, (int) yB)[0].doubleValue());
+        Location L4 = new Location(y0 + yB * dy, x0 + xR * dx, rasters.getPixel((int) xR, (int) yB)[0].doubleValue());
+
+        Location target = new Location(lat, lon);
+        Location[] neighbors = new Location[]{L1, L2, L3, L4};
+        /* the power parameter controls the degree of influence that the neighboring points have
+         * on the interpolated value. A higher power will result in a higher influence
+         * of closer points and a lower influence of more distant points.
+         */
+        double power = 1.0d;
+        // Inverse Distance Weighting interpolation using 4 neighbors
+        // see: https://doi.org/10.3846/gac.2023.16591
+        //      https://pro.arcgis.com/en/pro-app/latest/help/analysis/geostatistical-analyst/how-inverse-distance-weighted-interpolation-works.htm
+        return idwInterpolation(target, neighbors, power);
+//
+//        long xL = xNeighbors[0];
+//        long xR = xNeighbors[1];
+//        long xIndex;
+//        if (Math.abs(lon - (x0 + xL * dx)) < Math.abs(lon - (x0 + xR * dx))) {
+//            xIndex = xL;
+//        } else {
+//            xIndex = xR;
+//        }
+//
+//        long yT = yNeighbors[0];
+//        long yB = yNeighbors[1];
+//        long yIndex;
+//        if (Math.abs(lat - (y0 + yT * dy)) < Math.abs(lat - (y0 + yB * dy))) {
+//            yIndex = yT;
+//        } else {
+//            yIndex = yB;
+//        }
 
         // https://gdal.org/java/org/gdal/gdal/Dataset.html#ReadRaster(int,int,int,int,int,int,int,byte%5B%5D,int%5B%5D)
         // https://gis.stackexchange.com/questions/349760/get-elevation-of-geotiff-using-gdal-bindings-in-java
 //        geodata.ReadRaster((int) xIndex, (int) yIndex, 1, 1, 1, 1, 6, floatToBytes(result), band);
-        double result = rasters.getPixel((int) xIndex, (int) yIndex)[0].doubleValue();
-        return result;
+//        double result = rasters.getPixel((int) xIndex, (int) yIndex)[0].doubleValue();
+//        return result;
     }
 
     /**
