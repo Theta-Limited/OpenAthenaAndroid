@@ -120,7 +120,7 @@ Then press the back button or again tap the kebab menu icon (three dots) to retu
 ## UI language translation
 If you speak another language in addition to English, please consider contributing to the UI translation using the link below. The insights of a native-speaker are the only way to provide a good user experience for the program in a given language:
 
-[https://www.transifex.com/krupczakorg/openathena-for-android/](https://www.transifex.com/krupczakorg/openathena-for-android/)
+[https://www.transifex.com/thetalimited/openathena-for-android/](https://www.transifex.com/thetalimited/openathena-for-android/)
 
 
 ## Code
