@@ -1,10 +1,12 @@
 package com.openathena;
 
 import android.annotation.SuppressLint;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.exifinterface.media.ExifInterface;
 
 import android.net.Uri;
 import android.preference.PreferenceManager;
@@ -15,9 +17,15 @@ import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 public abstract class AthenaActivity extends AppCompatActivity {
 
     public static String TAG;
+    MarkableImageView iView;
+
+    public static AthenaApp athenaApp; // singleton for storing persistent state information between activities
 
     public enum outputModes {
         WGS84,
@@ -38,10 +46,10 @@ public abstract class AthenaActivity extends AppCompatActivity {
     protected Uri demUri = null;
     protected boolean isDEMLoaded;
 
-    // selected image pixel for use in ray offset calculation
-    // represents (u, v) in pixels from the top left corner of the image
-    protected int selection_x = -1;
-    protected int selection_y = -1;
+//    // selected image pixel for use in ray offset calculation
+//    // represents (u, v) in pixels from the top left corner of the image
+//    protected int selection_x = -1;
+//    protected int selection_y = -1;
 
 //    protected int cx = -1; // x position of the principal point (centerpoint of image). Measured from upper-left corner
 //    protected int cy = -1; // y position of the principal point (centerpoint of image). Measured from upper-left corner
@@ -148,13 +156,48 @@ public abstract class AthenaActivity extends AppCompatActivity {
         }
     }
 
-    public int get_selection_x() {
-        return this.selection_x;
+    public static int get_selection_x() {
+        return athenaApp.get_selection_x();
     }
 
-    public int get_selection_y() {
-        return this.selection_y;
+    public static void set_selection_x(int x) {
+        athenaApp.set_selection_x(x);
     }
+
+    public static int get_selection_y() {
+        return athenaApp.get_selection_y();
+    }
+
+    public static void set_selection_y(int y) {
+        athenaApp.set_selection_y(y);
+    }
+
+    public int[] getImageDimensionsFromUri(Uri imageUri) {
+        if (imageUri == null) {
+            return new int[] {0,0};
+        }
+        try {
+            ContentResolver cr = getContentResolver();
+            InputStream is = cr.openInputStream(imageUri);
+            ExifInterface exif = new ExifInterface(is);
+            int width = exif.getAttributeInt( ExifInterface.TAG_IMAGE_WIDTH, -1);
+            int height = exif.getAttributeInt( ExifInterface.TAG_IMAGE_LENGTH, -1);
+            if (width < 0 || height < 0) {
+                return null;
+            } else {
+//                cx = width / 2; // x coordinate of the principal point (center) of the image. Measured from Top-Left corner
+//                cy = height / 2; // y coordinate of the principal point (center) of the image. Measured from Top-Left corner
+                return new int[] {width, height};
+            }
+        } catch (IOException ioe) {
+            Log.e(TAG, "Failed to obtain image dimensions from EXIF metadata!");
+            ioe.printStackTrace();
+            return null;
+        }
+    }
+
+    public abstract void calculateImage(View view);
+    public abstract void calculateImage(View view, boolean shouldISendCoT);
 
 //    public int get_cx() {
 //        return cx;

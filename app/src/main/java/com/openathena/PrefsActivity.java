@@ -84,6 +84,14 @@ public class PrefsActivity extends AthenaActivity {
         }
     }
 
+    public void calculateImage(View view) {
+        return; // not used in this activity
+    }
+
+    public void calculateImage(View view, boolean shouldISendCoT) {
+        return; // not used in this activity
+    }
+
 //    public void prefsSave(View view)
 //    {
 //        appendLog("Saving preferences/settings\n");

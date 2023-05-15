@@ -88,8 +88,10 @@ public class MainActivity extends AthenaActivity {
     public static int requestNo = 0;
     public static int dangerousAutelAwarenessCount;
 
+    private int selection_x;
+    private int selection_y;
+
     TextView textView;
-    MarkableImageView iView;
 
     ProgressBar progressBar;
 
@@ -99,7 +101,6 @@ public class MainActivity extends AthenaActivity {
 
     protected String versionName;
 
-    AthenaApp athenaApp;
     MetadataExtractor theMeta = null;
     GeoTIFFParser theParser = null;
     TargetGetter theTGetter = null;
@@ -188,143 +189,114 @@ public class MainActivity extends AthenaActivity {
 
         clearText();
 
-        if (savedInstanceState != null) {
-            CharSequence textRestore = savedInstanceState.getCharSequence("textview");
-            if (textRestore != null) {
-                textView.setText(textRestore);
-            }
-            CharSequence textViewTargetCoordRestore = savedInstanceState.getCharSequence("textViewTargetCoord");
-            if (textViewTargetCoordRestore != null) {
-                textViewTargetCoord.setText(textViewTargetCoordRestore);
-            }
+        CharSequence textRestore = athenaApp.getCharSequence("textview");
+        if (textRestore != null) {
+            textView.setText(textRestore);
+        }
+        CharSequence textViewTargetCoordRestore = athenaApp.getCharSequence("textViewTargetCoord");
+        if (textViewTargetCoordRestore != null) {
+            textViewTargetCoord.setText(textViewTargetCoordRestore);
+        }
 
-            isTargetCoordDisplayed = savedInstanceState.getBoolean("isTargetCoordDisplayed");
-            isImageLoaded = savedInstanceState.getBoolean("isImageLoaded");
-            isDEMLoaded = savedInstanceState.getBoolean("isDEMLoaded");
+        isTargetCoordDisplayed = athenaApp.getBoolean("isTargetCoordDisplayed");
+        isImageLoaded = athenaApp.getBoolean("isImageLoaded");
+        isDEMLoaded = athenaApp.getBoolean("isDEMLoaded");
 
-            String storedDEMUriString = savedInstanceState.getString("demUri");
+        String storedDEMUriString = athenaApp.getString("demUri");
+        if (storedDEMUriString != null && !storedDEMUriString.equals("")) {
             Log.d(TAG, "recovered demUri: " + storedDEMUriString);
+        }
 
-            if (isDEMLoaded) {
-                if (athenaApp != null && athenaApp.getGeoTIFFParser() != null) { // load DEM from App singleton instance in mem
-                    theParser = athenaApp.getGeoTIFFParser();
-                    theTGetter = new TargetGetter(theParser);
-                    setButtonReady(buttonSelectImage, true);
-                } else if (storedDEMUriString != null && !storedDEMUriString.equals("")) { // fallback, load DEM from disk (slower)
-                    Log.d(TAG, "loaded demUri: " + storedDEMUriString);
-                    demUri = Uri.parse(storedDEMUriString);
-                    demSelected(demUri);
-                } else { // this shouldn't ever happen, but just to be safe...
-                    isDEMLoaded = false;
-                    setButtonReady(buttonSelectImage, false);
-                    setButtonReady(buttonCalculate, false);
-                }
+        if (isDEMLoaded) {
+            if (athenaApp != null && athenaApp.getGeoTIFFParser() != null) { // load DEM from App singleton instance in mem
+                theParser = athenaApp.getGeoTIFFParser();
+                theTGetter = new TargetGetter(theParser);
+                setButtonReady(buttonSelectImage, true);
+            } else if (storedDEMUriString != null && !storedDEMUriString.equals("")) { // fallback, load DEM from disk (slower)
+                Log.d(TAG, "loaded demUri: " + storedDEMUriString);
+                demUri = Uri.parse(storedDEMUriString);
+                demSelected(demUri);
+            } else { // this shouldn't ever happen, but just to be safe...
+                isDEMLoaded = false;
+                setButtonReady(buttonSelectImage, false);
+                setButtonReady(buttonCalculate, false);
             }
+        }
 
-            String storedUriString = savedInstanceState.getString("imageUri");
-            if (storedUriString != null) {
-                imageUri = Uri.parse(storedUriString);
-                Log.d(TAG, imageUri.getPath());
-                AssetFileDescriptor fileDescriptor = null;
-                try {
-                    fileDescriptor = getApplicationContext().getContentResolver().openAssetFileDescriptor(imageUri , "r");
-                } catch(FileNotFoundException e) {
-                    imageUri = null;
-                    isImageLoaded = false;
-                }
-                if (imageUri != null && imageUri.getPath() != null) {
-                    imageSelected(imageUri);
-                }
+        String storedUriString = athenaApp.getString("imageUri");
+        if (storedUriString != null) {
+            imageUri = Uri.parse(storedUriString);
+            Log.d(TAG, imageUri.getPath());
+            AssetFileDescriptor fileDescriptor = null;
+            try {
+                fileDescriptor = getApplicationContext().getContentResolver().openAssetFileDescriptor(imageUri , "r");
+            } catch(FileNotFoundException e) {
+                imageUri = null;
+                isImageLoaded = false;
             }
+            if (imageUri != null && imageUri.getPath() != null) {
+                imageSelected(imageUri);
+            }
+        }
 
+        // // old way of restoring loaded DEM
+        //            String storedDEMUriString = athenaApp.getString("demUri");
 
-            // // old way of restoring loaded DEM
-//            String storedDEMUriString = savedInstanceState.getString("demUri");
-
-
-
-
-            selection_x = savedInstanceState.getInt("selection_x", -1);
-            selection_y = savedInstanceState.getInt("selection_y", -1);
-//            cx = savedInstanceState.getInt("cx", -1);
-//            cy = savedInstanceState.getInt("cy", -1);
-            if (isImageLoaded) {
-                if (selection_x != -1 && selection_y != -1) {
-                    iView.restoreMarker(selection_x, selection_y);
-                } else{
-                    iView.mark(0.5d, 0.5d); // put marker on center of iView if no current selection
-                }
+        selection_x = athenaApp.get_selection_x();
+        selection_y = athenaApp.get_selection_y();
+        //            cx = athenaApp.getInt("cx", -1);
+        //            cy = athenaApp.getInt("cy", -1);
+        if (isImageLoaded) {
+            if (selection_x != -1 && selection_y != -1) {
+                iView.restoreMarker(selection_x, selection_y);
+            } else{
+                iView.mark(0.5d, 0.5d); // put marker on center of iView if no current selection
             }
         }
 
         restorePrefOutputMode(); // restore the outputMode from persistent settings
+        if (athenaApp.needsToCalculateForNewSelection) {
+            calculateImage(iView, false);
+        }
     }
 
-    public int[] getImageDimensionsFromUri(Uri imageUri) {
-        if (imageUri == null) {
-            return new int[] {0,0};
-        }
-        try {
-            ContentResolver cr = getContentResolver();
-            InputStream is = cr.openInputStream(imageUri);
-            ExifInterface exif = new ExifInterface(is);
-            int width = exif.getAttributeInt( ExifInterface.TAG_IMAGE_WIDTH, -1);
-            int height = exif.getAttributeInt( ExifInterface.TAG_IMAGE_LENGTH, -1);
-            if (width < 0 || height < 0) {
-                return null;
-            } else {
-//                cx = width / 2; // x coordinate of the principal point (center) of the image. Measured from Top-Left corner
-//                cy = height / 2; // y coordinate of the principal point (center) of the image. Measured from Top-Left corner
-                return new int[] {width, height};
-            }
-        } catch (IOException ioe) {
-            Log.e(TAG, "Failed to obtain image dimensions from EXIF metadata!");
-            ioe.printStackTrace();
-            return null;
-        }
-    }
+
 
     @Override
     protected void onSaveInstanceState(Bundle saveInstanceState) {
         Log.d(TAG,"onSaveInstanceState started");
         super.onSaveInstanceState(saveInstanceState);
         if (textView != null) {
-            saveInstanceState.putCharSequence("textview", textView.getText());
+            athenaApp.putCharSequence("textview", textView.getText());
         }
         if (textViewTargetCoord != null) {
-            saveInstanceState.putCharSequence("textViewTargetCoord", textViewTargetCoord.getText());
+            athenaApp.putCharSequence("textViewTargetCoord", textViewTargetCoord.getText());
         }
-        saveInstanceState.putBoolean("isTargetCoordDisplayed", isTargetCoordDisplayed);
-        saveInstanceState.putBoolean("isImageLoaded", isImageLoaded);
-        saveInstanceState.putBoolean("isDEMLoaded", isDEMLoaded);
+        athenaApp.putBoolean("isTargetCoordDisplayed", isTargetCoordDisplayed);
+        athenaApp.putBoolean("isImageLoaded", isImageLoaded);
+        athenaApp.putBoolean("isDEMLoaded", isDEMLoaded);
         if (imageUri != null) {
-            saveInstanceState.putString("imageUri", imageUri.toString());
+            athenaApp.putString("imageUri", imageUri.toString());
         }
 
         if (demUri != null) {
             Log.d(TAG, "saved demUri: " + demUri.toString());
-            saveInstanceState.putString("demUri", demUri.toString());
+            athenaApp.putString("demUri", demUri.toString());
 
             athenaApp.setGeoTIFFParser(theParser);
         }
 
 //        if (theParser != null) {
-//            saveInstanceState.putSerializable("theParser", theParser);
+//            athenaApp.putSerializable("theParser", theParser);
 //        }
 
         if (selection_x >= 0) {
-            saveInstanceState.putInt("selection_x", selection_x);
+            athenaApp.set_selection_x(selection_x);
         }
         if (selection_y >= 0) {
-            saveInstanceState.putInt("selection_y", selection_y);
+            athenaApp.set_selection_y(selection_y);
         }
 
-//        if (cx >= 0) {
-//            saveInstanceState.putInt("cx", cx);
-//        }
-//        if (cy >= 0) {
-//            saveInstanceState.putInt("cy", cy);
-//        }
     }
 
     public void setButtonReady(Button aButton, boolean isItReady) {
@@ -524,6 +496,8 @@ public class MainActivity extends AthenaActivity {
     protected void onResume() {
         Log.d(TAG,"onResume started");
         super.onResume();
+        selection_x = athenaApp.get_selection_x();
+        selection_y = athenaApp.get_selection_y();
         if (!isTargetCoordDisplayed) {
             restorePrefOutputMode(); // reset the textViewTargetCoord display
         }
@@ -554,6 +528,12 @@ public class MainActivity extends AthenaActivity {
     {
         Log.d(TAG,"onDestroy started");
         super.onDestroy();
+        if (selection_x > 0) {
+            athenaApp.set_selection_x(selection_x);
+        }
+        if (selection_y > 0) {
+            athenaApp.set_selection_y(selection_y);
+        }
     }
 
     // overloaded, called by button press
@@ -617,10 +597,10 @@ public class MainActivity extends AthenaActivity {
             double[] relativeRay;
             relativeRay = new double[] {0.0d, 0.0d};
             try {
-                if (selection_x < 0 || selection_y < 0) {
+                if (get_selection_x() < 0 || get_selection_y() < 0) {
                     throw new NoSuchFieldException("no point was selected");
                 } else {
-                    relativeRay = theMeta.getRayAnglesFromImgPixel(selection_x, selection_y, exif);
+                    relativeRay = theMeta.getRayAnglesFromImgPixel(get_selection_x(), selection_y, exif);
                 }
             } catch (Exception e) {
                 relativeRay = new double[] {0.0d, 0.0d};

@@ -12,7 +12,7 @@ import android.view.ViewTreeObserver;
 
 public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageView {
     Marker theMarker = null;
-    MainActivity parent;
+    AthenaActivity parent;
 
     public MarkableImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -40,10 +40,10 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                     }
                     double render_width = yahweh.getWidth();
                     double render_height = yahweh.getHeight();
-                    parent.selection_x = (int) Math.round(((1.0d * event.getX()) / render_width) * original_width);
-                    parent.selection_y = (int) Math.round(((1.0d * event.getY()) / render_height) * original_height);
-                    Log.d("X",parent.selection_x+"");
-                    Log.d("Y",parent.selection_y+"");
+                    parent.set_selection_x((int) Math.round(((1.0d * event.getX()) / render_width) * original_width));
+                    parent.set_selection_y((int) Math.round(((1.0d * event.getY()) / render_height) * original_height));
+                    Log.d("X",parent.get_selection_x() + "");
+                    Log.d("Y",parent.get_selection_y() + "");
 
                     if (parent.isImageLoaded && parent.isDEMLoaded) {
                         parent.calculateImage(yahweh, false); // this may cause the view to re-size due to constraint layout
@@ -86,13 +86,14 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
         double x = (1.0d * selection_x) / original_x;
         double y = (1.0d * selection_y) / original_y;
 
+        parent.calculateImage(this, false); // this may cause the view to re-size due to constraint layout
         mark(x,y);
     }
 
     /**
      * Given an x and y proportion (range [0, 1]) draw a mark that point
      * @param x The x proportion of a point on this imageView to draw a mark on. 0.0d is left, 0.5d is mid, 1.0d is right
-     * @param y The y proportion of a point on this imageView to draw a mark on. 0.0d is left, 0.5d is mid, 1.0d is right
+     * @param y The y proportion of a point on this imageView to draw a mark on. 0.0d is top, 0.5d is mid, 1.0d is bottom
      */
     public void mark(double x, double y) {
         theMarker = new Marker(x, y);
