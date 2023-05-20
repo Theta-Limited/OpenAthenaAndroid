@@ -88,9 +88,6 @@ public class MainActivity extends AthenaActivity {
     public static int requestNo = 0;
     public static int dangerousAutelAwarenessCount;
 
-    private int selection_x;
-    private int selection_y;
-
     TextView textView;
 
     ProgressBar progressBar;
@@ -239,16 +236,12 @@ public class MainActivity extends AthenaActivity {
             }
         }
 
-        // // old way of restoring loaded DEM
-        //            String storedDEMUriString = athenaApp.getString("demUri");
+        set_selection_x(athenaApp.get_selection_x());
+        set_selection_y(athenaApp.get_selection_y());
 
-        selection_x = athenaApp.get_selection_x();
-        selection_y = athenaApp.get_selection_y();
-        //            cx = athenaApp.getInt("cx", -1);
-        //            cy = athenaApp.getInt("cy", -1);
         if (isImageLoaded) {
-            if (selection_x != -1 && selection_y != -1) {
-                iView.restoreMarker(selection_x, selection_y);
+            if (get_selection_x() != -1 && get_selection_y() != -1) {
+                iView.restoreMarker(get_selection_x(), get_selection_y());
             } else{
                 iView.mark(0.5d, 0.5d); // put marker on center of iView if no current selection
             }
@@ -285,18 +278,6 @@ public class MainActivity extends AthenaActivity {
 
             athenaApp.setGeoTIFFParser(theParser);
         }
-
-//        if (theParser != null) {
-//            athenaApp.putSerializable("theParser", theParser);
-//        }
-
-        if (selection_x >= 0) {
-            athenaApp.set_selection_x(selection_x);
-        }
-        if (selection_y >= 0) {
-            athenaApp.set_selection_y(selection_y);
-        }
-
     }
 
     public void setButtonReady(Button aButton, boolean isItReady) {
@@ -328,8 +309,8 @@ public class MainActivity extends AthenaActivity {
 
             isImageLoaded = false;
             iView.mark(0.5d, 0.5d); // reset the marker to the principle point (center)
-            selection_x = -1;
-            selection_y = -1;
+            set_selection_x(-1);
+            set_selection_y(-1);
         }
         imageUri = uri;
 
@@ -383,7 +364,6 @@ public class MainActivity extends AthenaActivity {
         //    isDEMLoaded = false;
         setButtonReady(buttonSelectDEM, false);
         setButtonReady(buttonCalculate, false);
-
 
         progressBar.setVisibility(View.VISIBLE);
 
@@ -496,8 +476,6 @@ public class MainActivity extends AthenaActivity {
     protected void onResume() {
         Log.d(TAG,"onResume started");
         super.onResume();
-        selection_x = athenaApp.get_selection_x();
-        selection_y = athenaApp.get_selection_y();
         if (!isTargetCoordDisplayed) {
             restorePrefOutputMode(); // reset the textViewTargetCoord display
         }
@@ -515,7 +493,6 @@ public class MainActivity extends AthenaActivity {
         }
     }
 
-
     @Override
     protected void onPause()
     {
@@ -528,12 +505,6 @@ public class MainActivity extends AthenaActivity {
     {
         Log.d(TAG,"onDestroy started");
         super.onDestroy();
-        if (selection_x > 0) {
-            athenaApp.set_selection_x(selection_x);
-        }
-        if (selection_y > 0) {
-            athenaApp.set_selection_y(selection_y);
-        }
     }
 
     // overloaded, called by button press
@@ -595,7 +566,6 @@ public class MainActivity extends AthenaActivity {
             attribs += getString(R.string.roll_label) + " " + roll + "°\n";
 
             double[] relativeRay;
-            relativeRay = new double[] {0.0d, 0.0d};
             try {
                 if (get_selection_x() < 0 || get_selection_y() < 0) {
                     throw new NoSuchFieldException("no point was selected");
