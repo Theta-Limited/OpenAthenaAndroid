@@ -600,7 +600,7 @@ public class MainActivity extends AthenaActivity {
                 if (get_selection_x() < 0 || get_selection_y() < 0) {
                     throw new NoSuchFieldException("no point was selected");
                 } else {
-                    relativeRay = theMeta.getRayAnglesFromImgPixel(get_selection_x(), selection_y, exif);
+                    relativeRay = theMeta.getRayAnglesFromImgPixel(get_selection_x(), get_selection_y(), exif);
                 }
             } catch (Exception e) {
                 relativeRay = new double[] {0.0d, 0.0d};
