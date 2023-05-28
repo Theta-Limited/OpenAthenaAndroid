@@ -236,8 +236,8 @@ public class MainActivity extends AthenaActivity {
             }
         }
 
-        set_selection_x(athenaApp.get_selection_x());
-        set_selection_y(athenaApp.get_selection_y());
+//        set_selection_x(athenaApp.get_selection_x());
+//        set_selection_y(athenaApp.get_selection_y());
 
         if (isImageLoaded) {
             if (get_selection_x() != -1 && get_selection_y() != -1) {
@@ -248,8 +248,9 @@ public class MainActivity extends AthenaActivity {
         }
 
         restorePrefOutputMode(); // restore the outputMode from persistent settings
-        if (athenaApp.needsToCalculateForNewSelection) {
-            calculateImage(iView, false);
+        if (athenaApp.needsToCalculateForNewSelection && isDEMLoaded && isImageLoaded) {
+            calculateImage(iView, athenaApp.shouldISendCoT);
+            athenaApp.needsToCalculateForNewSelection = false;
         }
     }
 
@@ -259,6 +260,12 @@ public class MainActivity extends AthenaActivity {
     protected void onSaveInstanceState(Bundle saveInstanceState) {
         Log.d(TAG,"onSaveInstanceState started");
         super.onSaveInstanceState(saveInstanceState);
+        saveStateToSingleton();
+    }
+
+    // save the current state of this activity to the athenaApp Singleton object
+    @Override
+    protected void saveStateToSingleton() {
         if (textView != null) {
             athenaApp.putCharSequence("textview", textView.getText());
         }
@@ -301,7 +308,7 @@ public class MainActivity extends AthenaActivity {
     // back from image selection dialog; handle it
     private void imageSelected(Uri uri)
     {
-        // save uri for later calculation
+        // reset marker and selection if new image is being loaded
         if (imageUri != null && !uri.equals(imageUri)) {
             clearText(); // clear attributes textView
             isTargetCoordDisplayed = false;
@@ -341,21 +348,26 @@ public class MainActivity extends AthenaActivity {
 //        appendLog("Selected image "+imageUri+"\n");
         appendText(getString(R.string.image_selected_msg) + "\n");
 
+//        // Force the aspect ratio to be same as original image
+//        int[] width_and_height = getImageDimensionsFromUri(imageUri); // also updates cx and cy to that of new image
+//        int width = width_and_height[0];
+//        int height = width_and_height[1];
+//        String aspectRatio = width + ":" + height;
+//        Drawable drawable = iView.getDrawable();
+//        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) iView.getLayoutParams();
+//        layoutParams.dimensionRatio = aspectRatio;
+//        iView.setLayoutParams(layoutParams);
+//        iView.invalidate();
+
         // Force the aspect ratio to be same as original image
-        int[] width_and_height = getImageDimensionsFromUri(imageUri); // also updates cx and cy to that of new image
-        int width = width_and_height[0];
-        int height = width_and_height[1];
-        String aspectRatio = width + ":" + height;
-        Drawable drawable = iView.getDrawable();
-        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) iView.getLayoutParams();
-        layoutParams.dimensionRatio = aspectRatio;
-        iView.setLayoutParams(layoutParams);
-        iView.invalidate();
+        constrainViewAspectRatio();
 
         isImageLoaded = true;
         if (isDEMLoaded) {
             setButtonReady(buttonCalculate, true);
         }
+
+
     }
 
     private void demSelected(Uri uri) {
@@ -473,15 +485,6 @@ public class MainActivity extends AthenaActivity {
     }
 
     @Override
-    protected void onResume() {
-        Log.d(TAG,"onResume started");
-        super.onResume();
-        if (!isTargetCoordDisplayed) {
-            restorePrefOutputMode(); // reset the textViewTargetCoord display
-        }
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -491,13 +494,6 @@ public class MainActivity extends AthenaActivity {
         } else {
             Toast.makeText(MainActivity.this, getString(R.string.permissions_toast_error_msg), Toast.LENGTH_SHORT).show();
         }
-    }
-
-    @Override
-    protected void onPause()
-    {
-        Log.d(TAG,"onPause started");
-        super.onPause();
     }
 
     @Override

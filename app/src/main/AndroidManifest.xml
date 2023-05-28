@@ -55,6 +55,11 @@
             android:label="@string/title_activity_about"
              />
         <activity
+            android:name=".SelectionActivity"
+            android:exported="true"
+            android:label="Select a Target"
+            />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

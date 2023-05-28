@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.exifinterface.media.ExifInterface;
 
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -42,10 +44,16 @@ public abstract class AthenaActivity extends AppCompatActivity {
     protected boolean isTargetCoordDisplayed;
 
     protected Uri imageUri = null;
-    protected boolean isImageLoaded;
+    public boolean isImageLoaded;
     protected Uri demUri = null;
     protected boolean isDEMLoaded;
 
+    public AthenaActivity() {
+        super();
+        isTargetCoordDisplayed = false;
+        isImageLoaded = false;
+        isDEMLoaded = false;
+    }
 //    // selected image pixel for use in ray offset calculation
 //    // represents (u, v) in pixels from the top left corner of the image
 //    protected int selection_x = -1;
@@ -274,20 +282,47 @@ public abstract class AthenaActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private static int gcd(int a, int b) {
+        if (b == 0) {
+            return a;
+        }
+        return gcd(b, a % b);
+    }
+
+    protected void constrainViewAspectRatio() {
+        // Force the aspect ratio to be same as original image
+        int[] width_and_height = getImageDimensionsFromUri(imageUri); // also updates cx and cy to that of new image
+        int width = width_and_height[0];
+        int height = width_and_height[1];
+        String aspectRatio = width + ":" + height;
+        Drawable drawable = iView.getDrawable();
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) iView.getLayoutParams();
+        layoutParams.dimensionRatio = aspectRatio;
+        iView.setLayoutParams(layoutParams);
+        iView.invalidate();
+    }
+
+    protected abstract void saveStateToSingleton();
+
     @Override
     protected void onResume() {
         Log.d(TAG,"onResume started");
         super.onResume();
+        if (iView != null) {
+            iView.restoreMarker(get_selection_x(), get_selection_y());
+        }
+        if (!isTargetCoordDisplayed) {
+            restorePrefOutputMode(); // reset the textViewTargetCoord display
+        }
     }
 
     @Override
     protected void onPause()
     {
         Log.d(TAG,"onPause started");
-
         //appendText("onPause\n");
         super.onPause();
-
+        saveStateToSingleton();
     } // onPause()
 
     @Override

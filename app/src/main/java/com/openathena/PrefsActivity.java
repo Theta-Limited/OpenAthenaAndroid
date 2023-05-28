@@ -76,6 +76,10 @@ public class PrefsActivity extends AthenaActivity {
         restorePrefOutputMode();
     } // end onCreate()
 
+    protected void saveStateToSingleton() {
+        return; // do nothing
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle saveInstanceState) {
         super.onSaveInstanceState(saveInstanceState);

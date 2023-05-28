@@ -1,12 +1,15 @@
 package com.openathena;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
@@ -14,18 +17,41 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
     Marker theMarker = null;
     AthenaActivity parent;
 
+    private ScaleGestureDetector scaleGestureDetector;
+    private GestureDetector gestureDetector;
+    private boolean scaleGestureInProgress = false;
+    private boolean doubleTapGestureInProgress = false;
+
     public MarkableImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        if (!(context instanceof MainActivity)) {
+        if (!(context instanceof AthenaActivity)) {
             return;
         }
-        parent = (MainActivity) context;
+        parent = (AthenaActivity) context;
+
+        scaleGestureDetector = new ScaleGestureDetector(context, new MyScaleGestureListener());
+        gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                if(parent instanceof MainActivity){
+                    Intent intent = new Intent(parent, SelectionActivity.class);
+                    parent.startActivity(intent);
+                    doubleTapGestureInProgress = true;
+                }
+                return super.onDoubleTap(e);
+            }
+        });
+
         MarkableImageView yahweh = this; // reference to this MarkableImageView, for use in listener
 
         this.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP){
+                // Detect gestures
+                scaleGestureDetector.onTouchEvent(event);
+                gestureDetector.onTouchEvent(event);
+
+                if (event.getAction() == MotionEvent.ACTION_UP && !scaleGestureInProgress && !doubleTapGestureInProgress){
                     if (!parent.isImageLoaded || parent.imageUri == null || parent.iView == null) {
                         return true;
                     }
@@ -51,6 +77,12 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                     }
                 }
 
+                // Reset flags on finger lift
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    scaleGestureInProgress = false;
+                    doubleTapGestureInProgress = false;
+                }
+
                 return true;
             }
 
@@ -68,6 +100,20 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
             }
         });
 
+    }
+
+    private class MyScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            if (detector.getCurrentSpan() > 200 && // avoid too sensitive reactions to scaling
+                    detector.getTimeDelta() > 200 && // avoid detecting quick pinches as scaling
+                    parent instanceof MainActivity) { // make sure we're in MainActivity
+                Intent intent = new Intent(parent, SelectionActivity.class);
+                parent.startActivity(intent);
+                scaleGestureInProgress = true;
+            }
+            return super.onScale(detector);
+        }
     }
 
     /**

@@ -18,6 +18,8 @@ public class AthenaApp extends Application { // Android Singleton Class for hold
     // flag which is set if any participating activity updates the selected point
     // should be cleared by participating activity upon calculation
     public boolean needsToCalculateForNewSelection = false;
+    // flag which indicates whether CoT message should be sent on next calculation
+    public boolean shouldISendCoT = false;
 
     // selected image pixel for use in ray offset calculation
     // represents (u, v) in pixels from the top left corner of the image
