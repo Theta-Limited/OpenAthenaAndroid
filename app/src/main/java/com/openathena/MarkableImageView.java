@@ -19,8 +19,10 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
 
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
-    private boolean scaleGestureInProgress = false;
-    private boolean doubleTapGestureInProgress = false;
+    // Time when last intent was fired
+    private long lastIntentTime = 0;
+    // Cooldown period of 1 second
+    private static final long INTENT_COOLDOWN_MS = 1000;
 
     public MarkableImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -33,10 +35,18 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
         gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onDoubleTap(MotionEvent e) {
-                if(parent instanceof MainActivity){
-                    Intent intent = new Intent(parent, SelectionActivity.class);
-                    parent.startActivity(intent);
-                    doubleTapGestureInProgress = true;
+                long currentTime = System.currentTimeMillis();
+                if (currentTime - lastIntentTime > INTENT_COOLDOWN_MS) {
+                    if (parent instanceof MainActivity){
+                        Intent intent = new Intent(parent, SelectionActivity.class);
+                        parent.startActivity(intent);
+                        lastIntentTime = currentTime;
+                    } else if (parent instanceof SelectionActivity) {
+                        Intent intent = new Intent(parent, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        parent.startActivity(intent);
+                        lastIntentTime = currentTime;
+                    }
                 }
                 return super.onDoubleTap(e);
             }
@@ -50,8 +60,9 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                 // Detect gestures
                 scaleGestureDetector.onTouchEvent(event);
                 gestureDetector.onTouchEvent(event);
+                long currentTime = System.currentTimeMillis();
 
-                if (event.getAction() == MotionEvent.ACTION_UP && !scaleGestureInProgress && !doubleTapGestureInProgress){
+                if (event.getAction() == MotionEvent.ACTION_UP && currentTime - lastIntentTime > INTENT_COOLDOWN_MS){
                     if (!parent.isImageLoaded || parent.imageUri == null || parent.iView == null) {
                         return true;
                     }
@@ -77,12 +88,6 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                     }
                 }
 
-                // Reset flags on finger lift
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    scaleGestureInProgress = false;
-                    doubleTapGestureInProgress = false;
-                }
-
                 return true;
             }
 
@@ -105,12 +110,21 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
     private class MyScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            if (detector.getCurrentSpan() > 200 && // avoid too sensitive reactions to scaling
-                    detector.getTimeDelta() > 200 && // avoid detecting quick pinches as scaling
-                    parent instanceof MainActivity) { // make sure we're in MainActivity
-                Intent intent = new Intent(parent, SelectionActivity.class);
-                parent.startActivity(intent);
-                scaleGestureInProgress = true;
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastIntentTime > INTENT_COOLDOWN_MS) {
+                if (parent instanceof MainActivity && detector.getCurrentSpan() > 125 && detector.getTimeDelta() > 125) {
+                    Intent intent = new Intent(parent, SelectionActivity.class);
+                    parent.startActivity(intent);
+                    lastIntentTime = currentTime;
+                } else if (parent instanceof SelectionActivity) {
+                    final float scaleFactorThreshold = 0.9f;
+                    if (detector.getScaleFactor() < scaleFactorThreshold) { // Check for pinch-to-zoom-out gesture
+                        Intent intent = new Intent(parent, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        parent.startActivity(intent);
+                        lastIntentTime = currentTime;
+                    }
+                }
             }
             return super.onScale(detector);
         }

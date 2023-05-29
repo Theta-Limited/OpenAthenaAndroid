@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -302,14 +303,25 @@ public abstract class AthenaActivity extends AppCompatActivity {
         iView.invalidate();
     }
 
+    public boolean isCacheUri(Uri uri) {
+        File cacheDir = getCacheDir();
+        String cachePath = cacheDir.getAbsolutePath();
+        String uriPath = uri.getPath();
+        return uriPath.startsWith(cachePath);
+    }
+
     protected abstract void saveStateToSingleton();
 
     @Override
     protected void onResume() {
         Log.d(TAG,"onResume started");
         super.onResume();
-        if (iView != null) {
-            iView.restoreMarker(get_selection_x(), get_selection_y());
+        if (isImageLoaded && iView != null) {
+            if (get_selection_x() != -1 && get_selection_y() != -1) {
+                iView.restoreMarker(get_selection_x(), get_selection_y());
+            } else{
+                iView.mark(0.5d, 0.5d); // put marker on center of iView if no current selection
+            }
         }
         if (!isTargetCoordDisplayed) {
             restorePrefOutputMode(); // reset the textViewTargetCoord display

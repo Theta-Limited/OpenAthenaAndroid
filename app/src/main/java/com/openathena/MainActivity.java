@@ -308,6 +308,37 @@ public class MainActivity extends AthenaActivity {
     // back from image selection dialog; handle it
     private void imageSelected(Uri uri)
     {
+        File appCacheDir = new File(getCacheDir(), "images");
+        if (!appCacheDir.exists()) {
+            appCacheDir.mkdirs();
+        }
+
+        // Android 10/11, we can't access this file directly
+        // We will copy the file into app's own package cache
+        File fileInCache = new File(appCacheDir, uri.getLastPathSegment());
+        if (!isCacheUri(uri)) {
+            try {
+                try (InputStream inputStream = getContentResolver().openInputStream(uri);
+                     OutputStream outputStream = new FileOutputStream(fileInCache)) {
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                } catch (FileNotFoundException e) {
+                    Log.e(TAG, "FileNotFound imageSelected()");
+                    throw e;
+                } catch (IOException e) {
+                    Log.e(TAG, "IOException imageSelected()");
+                    throw e;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+            uri = Uri.fromFile(fileInCache); // use the uri of the copy in the cache directory
+        }
+
         // reset marker and selection if new image is being loaded
         if (imageUri != null && !uri.equals(imageUri)) {
             clearText(); // clear attributes textView
@@ -413,6 +444,7 @@ public class MainActivity extends AthenaActivity {
         if (!appCacheDir.exists()) {
             appCacheDir.mkdirs();
         }
+
         // Android 10/11, we can't access this file directly
         // We will copy the file into app's own package cache
         File fileInCache = new File(appCacheDir, uri.getLastPathSegment());
@@ -470,12 +502,7 @@ public class MainActivity extends AthenaActivity {
         }
     }
 
-    private boolean isCacheUri(Uri uri) {
-        File cacheDir = getCacheDir();
-        String cachePath = cacheDir.getAbsolutePath();
-        String uriPath = uri.getPath();
-        return uriPath.startsWith(cachePath);
-    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
