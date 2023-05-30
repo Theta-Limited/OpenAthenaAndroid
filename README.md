@@ -3,7 +3,7 @@ OpenAthena for Android
 
 An Android port of the [OpenAthena project](http://OpenAthena.com)
 
-OpenAthena™ allows consumer and professional drones to spot precise geodetic locations.
+OpenAthena™ allows common drones to spot precise geodetic locations.
 
 🖼️👨‍💻 + 🧮⛰️ = 🎯📍
 
