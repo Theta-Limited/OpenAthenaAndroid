@@ -112,4 +112,5 @@
     <string name="isCameraModelRecognized">Is camera model recognized? :</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="title_activity_selection">Select a Target</string>
 </resources>

@@ -57,7 +57,7 @@
         <activity
             android:name=".SelectionActivity"
             android:exported="true"
-            android:label="Select a Target"
+            android:label="@string/title_activity_selection"
             />
         <activity
             android:name=".MainActivity"
