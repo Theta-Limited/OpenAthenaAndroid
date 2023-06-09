@@ -88,6 +88,8 @@ public class MainActivity extends AthenaActivity {
     public static int requestNo = 0;
     public static int dangerousAutelAwarenessCount;
 
+    public static EGMOffsetProvider offsetAdapter = new EGM96OffsetAdapter(); // calculates diff between WGS84 reference ellipsoid and EGM96 geoid
+
     TextView textView;
 
     ProgressBar progressBar;
@@ -650,7 +652,6 @@ public class MainActivity extends AthenaActivity {
                     lonCK42 = CoordTranslator.toCK42Lon(latitude, longitude, altitudeDouble);
                     // Note: This altitude calculation assumes the SK42 and WGS84 ellipsoid have the exact same center
                     //     This is not totally correct, but in practice is close enough to the actual value
-                    //     @TODO Could be refined at a later time with better math
                     //     See: https://gis.stackexchange.com/a/88499
                     altCK42 = Math.round(altitudeDouble - CoordTranslator.fromCK42Alt(latCK42, lonCK42, 0.0d));
 
@@ -660,10 +661,10 @@ public class MainActivity extends AthenaActivity {
 
                     altitude = Math.round(result[3]);
                     if (!outputModeIsSlavic()) {
-                        attribs += getString(R.string.target_found_at_msg) + ": " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt: " + altitude + "m" + "\n";
+                        attribs += getString(R.string.target_found_at_msg) + ": " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt (hae): " + altitude + "m" + "\n";
                     } else {
-                        attribs += getString(R.string.target_found_at_msg) + " (WGS84): " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt: " + altitude + "m" + "\n";
-                        attribs += getString(R.string.target_found_at_msg) + " (CK-42): " + roundDouble(latCK42) + "," + roundDouble(lonCK42) + " Alt: " + altCK42 + "m" + "\n";
+                        attribs += getString(R.string.target_found_at_msg) + " (WGS84): " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt (hae): " + altitude + "m" + "\n";
+                        attribs += getString(R.string.target_found_at_msg) + " (CK-42): " + roundDouble(latCK42) + "," + roundDouble(lonCK42) + " Alt (hae): " + altCK42 + "m" + "\n";
                     }
                     attribs += getString(R.string.drone_dist_to_target_msg) + " " + Math.round(distance) + "m\n";
                     if (!outputModeIsSlavic()) { // to avoid confusion with WGS84, no Google Maps link is provided when outputModeIsSlavic()
@@ -729,13 +730,17 @@ public class MainActivity extends AthenaActivity {
                     targetCoordString += roundDouble(latitude) + ", " + roundDouble(longitude);
                 }
                 targetCoordString += "</a> "; // end href tag
-                targetCoordString += getString(R.string.altitude_label_short) + " " + altitude + "m";
+
+                // convert from WGS84 height above ellipsoid to EGM96 above mean sea level (much more commonly used)
+                long altEGM96 = Math.round(altitudeDouble + offsetAdapter.getEGM96OffsetAtLatLon(latitude, longitude));
+                targetCoordString += getString(R.string.altitude_label_short) + " " + altEGM96 + "m";
             } else { // to avoid confusion with WGS84, no Google Maps link is provided when outputModeIsSlavic()
                 if (outputMode == outputModes.CK42Geodetic) {
                     targetCoordString = "(CK-42) " + roundDouble(latCK42) + ", " + roundDouble(lonCK42) + " Alt: " + altCK42 + "m" + "<br>";
                 } else if (outputMode == outputModes.CK42GaussKrüger) {
                     String northing_string = makeGKHumanReadable(GK_northing);
                     String easting_string = makeGKHumanReadable(GK_easting);
+                    // Note that for CK-42, height above ellipsoid is used rather than above mean sea level
                     targetCoordString = "(CK-42) [Gauss-Krüger] " + "<br>" + getString(R.string.gk_northing_text) + " " + northing_string + "<br>" + getString(R.string.gk_easting_text) + " " + easting_string + "<br>" + getString(R.string.altitude_label_short) + " " + altCK42 + "m\n";
                 } else {
                     throw new RuntimeException("Program entered an inoperable state due to outputMode"); // this shouldn't ever happen
@@ -749,6 +754,7 @@ public class MainActivity extends AthenaActivity {
             // send CoT message to udp://239.2.3.1:6969
             //     e.g. for use with DoD's ATAK app
             if (shouldISendCoT) {
+                // NOTE that the CoT spec requires WGS84 hae, not EGM96 above mean sea level
                 CursorOnTargetSender.sendCoT(this, latitude, longitude, altitudeDouble, theta, exif.getAttribute(ExifInterface.TAG_DATETIME));
             }
         } catch (XMPException e) {

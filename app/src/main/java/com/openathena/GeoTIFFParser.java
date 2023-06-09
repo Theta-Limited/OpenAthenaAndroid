@@ -40,6 +40,8 @@ public class GeoTIFFParser implements Serializable {
     private geodataAxisParams xParams; // implements Serializable
     private geodataAxisParams yParams; // implements Serializable
 
+    private EGMOffsetProvider offsetProvider = new EGM96OffsetAdapter();
+
     private verticalDatumTypes verticalDatum;
 
     GeoTIFFParser() {
@@ -119,10 +121,10 @@ public class GeoTIFFParser implements Serializable {
 
         FileDirectoryEntry fde = directory.get(FieldTagType.GeoKeyDirectory);
         // Because my sources don't properly store vertical datum,
-        // we have to assume its WGS84 (for GeoTIFFs) and hope it's correct :(
+        // we have to assume its EGM96 (for GeoTIFFs) and hope it's correct :(
         // When we implement the DTED2 and DTED3 format in a future version,
-        // we know it will be in EGM96 however
-        verticalDatum = verticalDatumTypes.WGS84;
+        // we know it will also be in EGM96
+        verticalDatum = verticalDatumTypes.EGM96;
 
         if (fde != null) {
             ArrayList<Integer> values = (ArrayList<Integer>) fde.getValues();
@@ -509,10 +511,18 @@ public class GeoTIFFParser implements Serializable {
          * of closer points and a lower influence of more distant points.
          */
         double power = 2.0d;
+
         // Inverse Distance Weighting interpolation using 4 neighbors
         // see: https://doi.org/10.3846/gac.2023.16591
         //      https://pro.arcgis.com/en/pro-app/latest/help/analysis/geostatistical-analyst/how-inverse-distance-weighted-interpolation-works.htm
-        return idwInterpolation(target, neighbors, power);
+        double altitude =  idwInterpolation(target, neighbors, power);
+
+        if (verticalDatum == verticalDatumTypes.EGM96) {
+            // convert from EGM96 AMSL orthometric height to WGS84 height above ellipsoid hae (if necessary)
+            altitude = altitude - offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
+        }
+
+        return altitude;
     }
 
     /**

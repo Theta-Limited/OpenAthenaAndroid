@@ -60,14 +60,18 @@ public class AboutActivity extends AppCompatActivity {
 
         // set About text
         aboutText.setText(Html.fromHtml( getString(R.string.app_name) + " " + getString(R.string.version_word) + " " + versionName+"<br>"
-                        + "Matthew Krupczak, Bobby Krupczak, et al.<br>"
+                        + "Matthew Krupczak, Bobby Krupczak, Seth Canada, et al.<br>"
                         + getString(R.string.GPL3Notice)
                         + " <a href=\"https://openathena.com/\">OpenAthena.com</a> <br>"
                         + getString(R.string.AboutSnippet)
-                        + "<br><a href=\"https://github.com/mkrupczak3/OpenAthenaAndroid\">"
+                        + "<br><a href=\"https://github.com/Theta-Limited/OpenAthena/blob/main/EIO_fetch_geotiff_example.md\">"
+                        + "Obtain a Digital Elevation Model Here</a>"
+                        + "<br><br><a href=\"https://github.com/mkrupczak3/OpenAthenaAndroid\">"
                         + getString(R.string.CallToActionSnippet)
+                        + "<br>" + getString(R.string.nato_vertical_datum_notice) + "<br>"
+                        + getString(R.string.warsaw_vertical_datum_notice) + "<br>"
                         + getString(R.string.AuthorGitHubSnippet)
-                        + "<br><br> " + getString(R.string.about_software_libraries_used) + "<br>"
+                        + getString(R.string.about_software_libraries_used) + "<br>"
                         + "<a href=\"https://github.com/ngageoint/tiff-java\">ngageoint/tiff-java</a> MIT license<br>"
                         + "<a href=\"https://github.com/ngageoint/mgrs-android/\">ngageoint/mgrs-android</a> MIT license<br>"
                         + "<a href=\"https://github.com/veraPDF/veraPDF-xmp\">veraPDF/veraPDF-xmp</a> Adobe Community license<br>"

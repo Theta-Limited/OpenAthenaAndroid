@@ -24,6 +24,8 @@ public class MetadataExtractor {
         genCCDMap();
     }
 
+    protected static EGMOffsetProvider offsetProvider = new EGM96OffsetAdapter();
+
     /**
      * Generates a nested map which can be indexed into by make, then model
      * The double[4] stored in the map represents the width and height, in mm, of a pixel and the width-pixels and height-pixels
@@ -356,7 +358,7 @@ public class MetadataExtractor {
                 return handleAUTEL(exif);
             //break;
             case "PARROT":
-                if (model.contains("ANAFI")) {
+                if (model.contains("ANAFI") || model.contains("BEBOP")) {
                     return handlePARROT(exif);
                 } else {
                     Log.e(TAG, "ERROR: Parrot model " + model + " not usable at this time");
@@ -446,6 +448,13 @@ public class MetadataExtractor {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_altitude_and_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
         }
 
+        // DJI altitude is usually orthometric (EGM96 AMSL), but will be ellipsoidal (WGS84 hae) if special RTK device is used (rare)
+        String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
+        if (!make.toLowerCase().contains("autel") /* I'm not sure if autel uses EGM96 AMSL or WGS84 hae for new firmware */ && !xmp_str.toLowerCase().contains("rtkflag")) {
+            // convert the height from EGM96 AMSL to WGS84 hae if made by dji and rtk device not present
+            z = z - offsetProvider.getEGM96OffsetAtLatLon(y,x);
+        }
+
         double[] outArr = new double[]{y, x, z, azimuth, theta, roll};
         return outArr;
     }
@@ -502,6 +511,9 @@ public class MetadataExtractor {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_roll), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ROLL);
         }
 
+        // Skydio altitude is orthometric (EGM96 AMSL), we must convert to ellipsoidal (WGS84 hae)
+        z = z - offsetProvider.getEGM96OffsetAtLatLon(y, x);
+
         double[] outArr = new double[]{y, x, z, azimuth, theta, roll};
         return outArr;
     }
@@ -541,6 +553,8 @@ public class MetadataExtractor {
             Float[] yxz = exifGetYXZ(exif);
             y = yxz[0];
             x = yxz[1];
+            // Autel altitude is WGS84 height above ellipsoid
+            // therefore we do not need to convert
             z = yxz[2];
 
             String schemaNS = "http://pix4d.com/camera/1.0";
@@ -616,6 +630,15 @@ public class MetadataExtractor {
             roll = Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraRollDegree"));
         } catch (NumberFormatException nfe) {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_roll), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ROLL);
+        }
+
+        // From Parrot Docs, regarding EGM96 AMSL vs WGS84 hae:
+        // Location altitude of where the photo was taken in meters expressed as a fraction (e.g. “4971569/65536”) On ANAFI 4K/Thermal/USA, this is the drone location with reference to the EGM96 geoid (AMSL); on ANAFI Ai with firmware < 7.4, this is the drone location with with reference to the WGS84 ellipsoid; on ANAFI Ai with firmware >= 7.4, this is the front camera location with reference to the WGS84 ellipsoid
+        // https://developer.parrot.com/docs/groundsdk-tools/photo-metadata.html
+        String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase();
+        if (!model.toLowerCase().contains("anafiai")) {
+            // convert from EGM96 AMSL to WGS84 hae (if necessary)
+            z = z - offsetProvider.getEGM96OffsetAtLatLon(y,x);
         }
 
         double[] outArr = new double[]{y, x, z, azimuth, theta, roll};
