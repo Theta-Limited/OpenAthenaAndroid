@@ -497,6 +497,33 @@ public class GeoTIFFParser implements Serializable {
         long xR = xNeighbors[1];
         long yT = yNeighbors[0];
         long yB = yNeighbors[1];
+
+        double altitude;
+
+        // on DEM edge check, if so just return nearest elevation
+        if (lat == getMaxLat() || lat == getMinLat() || lon == getMaxLon() || lon == getMinLon()) {
+            long xIndex;
+            long yIndex;
+            if (Math.abs(lon - (x0 + xL * dx)) < Math.abs(lon - (x0 + xR * dx))) {
+                xIndex = xL;
+            } else {
+                xIndex = xR;
+            }
+            if (Math.abs(lat - (y0 + yT * dy)) < Math.abs(lat - (y0 + yB * dy))) {
+                yIndex = yT;
+            } else {
+                yIndex = yB;
+            }
+
+            altitude = rasters.getPixel((int) xIndex, (int) yIndex)[0].doubleValue();
+
+            if (verticalDatum == verticalDatumTypes.EGM96) {
+                // convert from EGM96 AMSL orthometric height to WGS84 height above ellipsoid hae (if necessary)
+                altitude = altitude - offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
+            }
+            return altitude;
+        } // end edge case handling
+
         // https://gdal.org/java/org/gdal/gdal/Dataset.html#ReadRaster(int,int,int,int,int,int,int,byte%5B%5D,int%5B%5D)
         // https://gis.stackexchange.com/questions/349760/get-elevation-of-geotiff-using-gdal-bindings-in-java
         Location L1 = new Location(y0 + yT * dy,x0 + xR * dx, rasters.getPixel((int) xR, (int) yT)[0].doubleValue());
@@ -515,7 +542,7 @@ public class GeoTIFFParser implements Serializable {
         // Inverse Distance Weighting interpolation using 4 neighbors
         // see: https://doi.org/10.3846/gac.2023.16591
         //      https://pro.arcgis.com/en/pro-app/latest/help/analysis/geostatistical-analyst/how-inverse-distance-weighted-interpolation-works.htm
-        double altitude =  idwInterpolation(target, neighbors, power);
+        altitude =  idwInterpolation(target, neighbors, power);
 
         if (verticalDatum == verticalDatumTypes.EGM96) {
             // convert from EGM96 AMSL orthometric height to WGS84 height above ellipsoid hae (if necessary)
