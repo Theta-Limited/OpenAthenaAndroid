@@ -113,4 +113,5 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="title_activity_selection">Select a Target</string>
+    <string name="geoid_load_error_msg">Critical Error: could not load Earth geoid datafile!</string>
 </resources>
