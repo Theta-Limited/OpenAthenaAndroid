@@ -26,14 +26,19 @@ public class AthenaApp extends Application { // Android Singleton Class for hold
         try {
             // Android asset manager has a bug with any filename ending in 'gz':
             // https://stackoverflow.com/a/3447148
+            // Initialize matthias' library which calculates the offset between WGS84 reference ellipsoid and the EGM96 geoid
+            // https://github.com/matthiaszimmermann/EGM96
+            // More info: https://epsg.org/crs_4979/WGS-84.html https://epsg.org/crs_5773/EGM96-height.html
             Geoid.init(getAssets().open("EGM96complete.bin")); // op may consume significant memory
+            // example usage for calculating offfset between WGS84 and EGM96:
+            // Geoid.getOffset(new Location(latitude, longitude))
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, e.getMessage());
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Critical Error: could not load Earth geoid datafile!");
+            builder.setMessage(R.string.geoid_load_error_msg);
             builder.setPositiveButton(R.string.reset_prefs_text, (DialogInterface.OnClickListener) (dialog, which) -> {
-                System.exit(1);
+                System.exit(1); // exit the app if the geoid data can't be loaded
             });
         }
     }
