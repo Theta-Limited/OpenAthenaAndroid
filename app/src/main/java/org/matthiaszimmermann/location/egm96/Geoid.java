@@ -47,32 +47,48 @@ public class Geoid {
 	private static double offset_south_pole = 0;
 	private static boolean s_model_ok = false;
 
-	public static void main(String [] args) {
-		if(args.length != 2) {
-			System.err.println("usage: java Geoid lat long");
-			System.exit(-1);
-		}
-		
-		double lat = Double.parseDouble(args[0]);
-		double lng = Double.parseDouble(args[1]);
-		
-		init();
-		
-		StringBuffer b = new StringBuffer();
-		b.append("lat=").append(lat).append(" ");
-		b.append("long=").append(lng).append(" ");
-		b.append("offset=").append(getOffset(new Location(lat, lng)));
-		
-		System.out.println(b.toString());
-	}
-	
-	public static boolean init() {
+//	public static void main(String [] args) {
+//		if(args.length != 2) {
+//			System.err.println("usage: java Geoid lat long");
+//			System.exit(-1);
+//		}
+//
+//		double lat = Double.parseDouble(args[0]);
+//		double lng = Double.parseDouble(args[1]);
+//
+//		init();
+//
+//		StringBuffer b = new StringBuffer();
+//		b.append("lat=").append(lat).append(" ");
+//		b.append("long=").append(lng).append(" ");
+//		b.append("offset=").append(getOffset(new Location(lat, lng)));
+//
+//		System.out.println(b.toString());
+//	}
+
+//	public static boolean init() {
+//		if(s_model_ok) {
+//			return true;
+//		}
+//
+//		try {
+//			InputStream is = Geoid.class.getResourceAsStream(FILE_GEOID_GZ);
+//			return init(is);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			s_model_ok = false;
+//			System.err.println("failed to read file '"+FILE_GEOID_GZ+"'");
+//		}
+//		return s_model_ok;
+//	}
+
+	public static boolean init(InputStream is) {
 		if(s_model_ok) {
 			return true;
 		}
 
 		try {
-			InputStream is = Geoid.class.getResourceAsStream(FILE_GEOID_GZ);
+			//InputStream is = Geoid.class.getResourceAsStream(FILE_GEOID_GZ);
 			GZIPInputStream gis = new GZIPInputStream(is);
 			InputStreamReader isr = new InputStreamReader(gis);
 			BufferedReader br = new BufferedReader(isr);
@@ -80,8 +96,10 @@ public class Geoid {
 			s_model_ok = readGeoidOffsets(br);
 		} 
 		catch (Exception e) {
+			e.printStackTrace();
 			s_model_ok = false;
-			System.err.println("failed to read file '"+FILE_GEOID_GZ+"'");
+			//System.err.println("failed to read file '"+FILE_GEOID_GZ+"'");
+			System.err.println("failed to read file '"+is.toString()+"'");
 		}
 
 		return s_model_ok;
@@ -140,7 +158,7 @@ public class Geoid {
 	
 	/**
 	 * bilinearInterpolation according to description on wikipedia
-	 * {@link https://en.wikipedia.org/wiki/Bilinear_interpolation}
+	 * {@link <a href="https://en.wikipedia.org/wiki/Bilinear_interpolation">https://en.wikipedia.org/wiki/Bilinear_interpolation</a>}
 	 * @return
 	 */
 	static double bilinearInterpolation(Location target, Location q11, Location q12, Location q21, Location q22) {
@@ -176,7 +194,7 @@ public class Geoid {
 	 * within any point of a unit tile in (u,v) space.
 	 * If you want to create a spline surface, you can make a two dimensional array of such objects.
 	 * 
-	 * {@link http://mrl.nyu.edu/~perlin/cubic/Cubic_java.html}
+	 * {@link <a href="http://mrl.nyu.edu/~perlin/cubic/Cubic_java.html">http://mrl.nyu.edu/~perlin/cubic/Cubic_java.html</a>}
 	 * @return
 	 */	
     static double bicubicSplineInterpolation(Location target, Location [][] grid) {

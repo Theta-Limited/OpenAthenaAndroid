@@ -1,12 +1,43 @@
 package com.openathena;
 
 import android.app.Application;
+import android.content.DialogInterface;
+import android.util.Log;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+
+import org.matthiaszimmermann.location.Location;
+import org.matthiaszimmermann.location.egm96.Geoid;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class AthenaApp extends Application { // Android Singleton Class for holding persistent state information between activities
     private GeoTIFFParser geoTIFFParser;
+
+    public static String TAG = AthenaApp.class.getSimpleName();
+
+    @Override
+    public void onCreate() {
+        Log.d(TAG, "AthenaApp onCreate() called");
+        super.onCreate();
+        try {
+            // Android asset manager has a bug with any filename ending in 'gz':
+            // https://stackoverflow.com/a/3447148
+            Geoid.init(getAssets().open("EGM96complete.bin")); // op may consume significant memory
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Critical Error: could not load Earth geoid datafile!");
+            builder.setPositiveButton(R.string.reset_prefs_text, (DialogInterface.OnClickListener) (dialog, which) -> {
+                System.exit(1);
+            });
+        }
+    }
+
     public GeoTIFFParser getGeoTIFFParser() {
         return geoTIFFParser;
     }
