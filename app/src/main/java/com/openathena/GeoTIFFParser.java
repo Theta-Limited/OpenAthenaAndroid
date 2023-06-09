@@ -40,6 +40,8 @@ public class GeoTIFFParser implements Serializable {
     private geodataAxisParams xParams; // implements Serializable
     private geodataAxisParams yParams; // implements Serializable
 
+    private verticalDatumTypes verticalDatum;
+
     GeoTIFFParser() {
         geofile = null;
 
@@ -47,7 +49,6 @@ public class GeoTIFFParser implements Serializable {
         List<FileDirectory> directories = null;
         FileDirectory directory = null;
         Rasters rasters = null;
-
     }
 
     GeoTIFFParser(File geofile) throws IllegalArgumentException{
@@ -55,6 +56,17 @@ public class GeoTIFFParser implements Serializable {
         this.geofile = geofile;
         loadGeoTIFF(geofile);
     }
+
+    public enum verticalDatumTypes implements Serializable{
+        WGS84,
+        EGM96,
+        NAVD88,
+        UNKNOWN_OTHER
+    }
+
+//    final short VERTICAL_CS_TYPE_GEO_KEY = 4096;
+//    final short VERTICAL_DATUM_GEO_KEY = 4097;
+//    final short VERTICAL_UNITS_GEO_KEY = 4099;
 
     /**
      * Loads a GeoTIFF Digital Elevation Model geofile into the parent GeoTIFFParser object's instance
@@ -104,6 +116,36 @@ public class GeoTIFFParser implements Serializable {
         if (pixelAxisScales.get(2) != 0.0d) {
             throw new IllegalArgumentException("ERROR: failed to load a rotated or skewed GeoTIFF!");
         }
+
+        FileDirectoryEntry fde = directory.get(FieldTagType.GeoKeyDirectory);
+        // Because my sources don't properly store vertical datum,
+        // we have to assume its WGS84 (for GeoTIFFs) and hope it's correct :(
+        // When we implement the DTED2 and DTED3 format in a future version,
+        // we know it will be in EGM96 however
+        verticalDatum = verticalDatumTypes.WGS84;
+
+        if (fde != null) {
+            ArrayList<Integer> values = (ArrayList<Integer>) fde.getValues();
+            if (values != null) {
+                boolean isWGS84 = isHorizontalDatumWGS84(directory, values);
+                if (!isWGS84) {
+                    throw new IllegalArgumentException(" horizontal datum not of an accepted type");
+                }
+            } else {
+                Log.e(TAG, "metadata values obtained were of an unknown type");
+            }
+        } else {
+            Log.e(TAG, "Could not obtain FileDirectoryEntry for GeoTIFF metadata");
+        }
+
+//        Log.d(TAG, "vertical datum is: " + verticalDatum.name());
+//        if (verticalDatum == verticalDatumTypes.UNKNOWN_OTHER || verticalDatum == verticalDatumTypes.NAVD88) {
+//            throw new IllegalArgumentException("ERROR: vertical datum not of an accepted type");
+//        }
+//        if (verticalUnit == verticalUnitTypes.UNKNOWN_OTHER) {
+//            throw new IllegalArgumentException("ERROR: vertical unit not of an accepted type");
+//        }
+
         List<Double> tiePoint = directory.getModelTiepoint();
         Number imgWidth = directory.getImageWidth();
         Number imgHeight = directory.getImageHeight();
@@ -125,6 +167,194 @@ public class GeoTIFFParser implements Serializable {
         this.yParams.numOfSteps = imgHeight.longValue();
         this.yParams.calcEndValue();
     }
+
+    public boolean isHorizontalDatumWGS84(FileDirectory directory, ArrayList<Integer> geoKeys) {
+        int numberOfKeys = geoKeys.get(3);
+        for (int i = 0; i < numberOfKeys; i++) {
+            int index = 4 + i * 4;
+            int keyId = geoKeys.get(index);
+            int tiffTagLocation = geoKeys.get(index + 1);
+            int count = geoKeys.get(index + 2);
+            int valueOffset = geoKeys.get(index + 3);
+
+            if (keyId == 2048) { // GeographicTypeGeoKey
+                if (tiffTagLocation == 0) {
+                    // The valueOffset is the value of the key.
+                    int value = valueOffset;
+                    if (value == 4326) { // 4326 is the EPSG numnber for WGS84 ellipsoid
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    // The valueOffset is an offset into the tag specified by tiffTagLocation.
+                    // Read the value from the specified tag.
+                    FileDirectoryEntry tagEntry = directory.get(FieldTagType.getById(tiffTagLocation));
+                    if (tagEntry != null) {
+                        Object tagValues = tagEntry.getValues();
+                        if (tagValues instanceof ArrayList) {
+                            ArrayList<Integer> tagArray = (ArrayList<Integer>) tagValues;
+                            int arrayIndex = valueOffset / 2; // Convert byte offset to array index
+                            if (arrayIndex < tagArray.size()) {
+                                int tagValue = tagArray.get(arrayIndex);
+                                if (tagValue == 4326) {
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+//    public verticalDatumTypes getVerticalDatum(FileDirectory directory, ArrayList<Integer> geoKeys) {
+//        int numberOfKeys = geoKeys.get(3);
+//        for (int i = 0; i < numberOfKeys; i++) {
+//            int index = 4 + i * 4;
+//            int keyId = geoKeys.get(index);
+//            int tiffTagLocation = geoKeys.get(index + 1);
+//            int count = geoKeys.get(index + 2);
+//            int valueOffset = geoKeys.get(index + 3);
+//            Log.d(TAG, "KeyID: " + keyId + ", TIFF Tag Location: " + tiffTagLocation + ", Count: " + count + ", Value Offset: " + valueOffset);
+//            if (keyId == VERTICAL_CS_TYPE_GEO_KEY || keyId == VERTICAL_DATUM_GEO_KEY) {
+//                if (tiffTagLocation == 0) {
+//                    // The valueOffset is the value of the key.
+//                    int value = valueOffset;
+//                    return datumValueFromKey(keyId, value);
+//                    //System.out.println("KeyID: " + keyId + ", Value: " + value);
+//                } else {
+//                    // The valueOffset is an offset into the tag specified by tiffTagLocation.
+//                    // Read the value from the specified tag.
+//                    FileDirectoryEntry tagEntry = directory.get(FieldTagType.getById(tiffTagLocation));
+//                    if (tagEntry != null) {
+//                        Object tagValues = tagEntry.getValues();
+//                        if (tagValues != null) {
+//                            ArrayList arr = (ArrayList) tagValues;
+//                            int tag0 = (Integer) arr.get(0);
+//                            Log.d(TAG, "" + tag0);
+//                            short[] tagArray = (short[]) tagValues;
+//                            int byteIndex = valueOffset / 2; // Convert byte offset to index in uint16 array
+//                            if (byteIndex < tagArray.length) {
+//                                short tagValue = tagArray[byteIndex];
+//                                return datumValueFromKey(keyId, tagValue);
+//                                // System.out.println("KeyID: " + keyId + ", Value: " + value);
+//                            } else {
+//                                Log.e(TAG, "Encountered error while determining GeoTIFF vertical datum");
+//                                return verticalDatumTypes.UNKNOWN_OTHER;
+//                            }
+//                        } else {
+//                            Log.e(TAG, "Encountered error while determining GeoTIFF vertical datum");
+//                            return verticalDatumTypes.UNKNOWN_OTHER;
+//                        }
+//                    } else {
+//                        Log.e(TAG, "Encountered error while determining GeoTIFF vertical datum");
+//                        return verticalDatumTypes.UNKNOWN_OTHER;
+//                    }
+//                }
+//            }
+//        }
+//        Log.e(TAG, "Encountered error while determining GeoTIFF vertical datum");
+//        return verticalDatumTypes.UNKNOWN_OTHER;
+//    }
+//
+//    public verticalDatumTypes datumValueFromKey(int keyId, int value) {
+//        switch (keyId) {
+//            case VERTICAL_CS_TYPE_GEO_KEY:
+//                switch (value) {
+//                    case 5001:
+//                        return verticalDatumTypes.EGM96;
+//                    case 5002:
+//                        Log.e(TAG, "Encountered an incompatible vertical datum: NavD88");
+//                        return verticalDatumTypes.NAVD88; // NavD88 Height
+//                    case 5003:
+//                        return verticalDatumTypes.WGS84;
+//                    // TODO Add more cases as needed.
+//                    default:
+//                        Log.e(TAG, "vertical datum type was missing or not recognized");
+//                        return verticalDatumTypes.UNKNOWN_OTHER;
+//                }
+//            case VERTICAL_DATUM_GEO_KEY:
+//                switch (value) {
+//                    case 1027:
+//                        return verticalDatumTypes.EGM96;
+//                    case 5103:
+//                        return verticalDatumTypes.WGS84;
+//                    // Add more cases as needed.
+//                    default:
+//                        Log.e(TAG, "vertical datum type was missing or not recognized");
+//                        return verticalDatumTypes.UNKNOWN_OTHER;
+//                }
+//            default:
+//                Log.e(TAG, "Encountered error while determining GeoTIFF vertical datum");
+//                return verticalDatumTypes.UNKNOWN_OTHER;
+//        }
+//    }
+//
+//    public verticalUnitTypes getVerticalUnit(FileDirectory directory, ArrayList<Integer> geoKeys) {
+//        int numberOfKeys = geoKeys.get(3);
+//        for (int i = 0; i < numberOfKeys; i++) {
+//            int index = 4 + i * 4;
+//            int keyId = geoKeys.get(index);
+//            int tiffTagLocation = geoKeys.get(index + 1);
+//            int count = geoKeys.get(index + 2);
+//            int valueOffset = geoKeys.get(index + 3);
+//            Log.d(TAG, "KeyID: " + keyId + ", TIFF Tag Location: " + tiffTagLocation + ", Count: " + count + ", Value Offset: " + valueOffset);
+//
+//            if (keyId == VERTICAL_UNITS_GEO_KEY) {
+//                if (tiffTagLocation == 0) {
+//                    // The valueOffset is the value of the key.
+//                    int value = valueOffset;
+//                    return unitTypeFromValue(value);
+//                    //System.out.println("KeyID: " + keyId + ", Value: " + value);
+//                } else {
+//                    // The valueOffset is an offset into the tag specified by tiffTagLocation.
+//                    // Read the value from the specified tag.
+//                    FileDirectoryEntry tagEntry = directory.get(FieldTagType.getById(tiffTagLocation));
+//                    if (tagEntry != null) {
+//                        Object tagValues = tagEntry.getValues();
+//                        if (tagValues instanceof short[]) {
+//                            short[] tagArray = (short[]) tagValues;
+//                            int byteIndex = valueOffset / 2; // Convert byte offset to index in uint16 array
+//                            if (byteIndex < tagArray.length) {
+//                                short tagValue = tagArray[byteIndex];
+//                                return unitTypeFromValue(tagValue);
+//                                // System.out.println("KeyID: " + keyId + ", Value: " + value);
+//                            } else {
+//                                Log.e(TAG, "Encountered error while determining GeoTIFF vertical datum");
+//                                return verticalUnitTypes.UNKNOWN_OTHER;
+//                            }
+//                        } else {
+//                            Log.e(TAG, "Encountered error while determining GeoTIFF vertical datum");
+//                            return verticalUnitTypes.UNKNOWN_OTHER;
+//                        }
+//                    } else {
+//                        Log.e(TAG, "Encountered error while determining GeoTIFF vertical datum");
+//                        return verticalUnitTypes.UNKNOWN_OTHER;
+//                    }
+//                }
+//            }
+//        }
+//        Log.e(TAG, "Encountered error while determining GeoTIFF vertical datum");
+//        return verticalUnitTypes.UNKNOWN_OTHER;
+//    }
+//
+//    public verticalUnitTypes unitTypeFromValue(int value) {
+//        switch (value) {
+//            case 9001:
+//                return verticalUnitTypes.METERS;
+//            case 9002:
+//                return verticalUnitTypes.FEET;
+//            case 9003:
+//                return verticalUnitTypes.US_SURVEY_FEET;
+//            // TODO Add more cases as needed.
+//            default:
+//                return verticalUnitTypes.UNKNOWN_OTHER;
+//        }
+//    }
 
     /**
      * Gets the spacing between X datapoints of the loaded GeoTIFF DEM
