@@ -63,7 +63,7 @@ public class MetadataExtractor {
 
         // DJI Mavic Pro / Mavic Pro Platinum
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC220", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
+        djiMap.put("FC220", new double[]{6.32692d/4000.0d, 4.7452d/3000.0d, 4000.0d, 3000.0d});
 
         // DJI Mavic Air
         djiMap.put("FC230", new double[]{6.17d/4056.0d, 4.55d/3040.0d, 4048.0d, 3032.0d});
@@ -72,28 +72,28 @@ public class MetadataExtractor {
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         // appears to be a Sony IMX377 CMOS
         // https://forum.dji.com/thread-47292-1-1.html
-        djiMap.put("FC330", new double[]{6.2372d/4024.0d, 4.7058d/3036.0d, 4000.0d, 3000.0d});
+        djiMap.put("FC330", new double[]{6.3174d/4024.0d, 4.73812d/3036.0d, 4000.0d, 3000.0d});
 
         // DJI Phantom 4 Pro, DJI Phantom 4 Advanced
-        djiMap.put("FC6310", new double[]{13.2d/5472.0d, 8.8d/3648.0d, 5472.0d, 3648.0d});
+        djiMap.put("FC6310", new double[]{12.83332d/5472.0d, 8.55554d/3648.0d, 5472.0d, 3648.0d});
         djiMap.put("FC6310S", djiMap.get("FC6310"));
 
         // DJI Phantom 4 Multispectral
         // 1/2.9" CMOS sensor
-        djiMap.put("FC6360", new double[]{4.96d/1600.0d, 3.72d/1300.0d, 1600.0d, 1300.0d});
+        djiMap.put("FC6360", new double[]{4.902986d/1600.0d, 4.014978d/1300.0d, 1600.0d, 1300.0d});
 
         // DJI Phantom 3 SE
-        djiMap.put("FC300C", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
+        djiMap.put("FC300C", new double[]{6.3175d/4000.0d, 4.73812d/3000.0d, 4000.0d, 3000.0d});
         djiMap.put("FC300S", djiMap.get("FC300C"));
         djiMap.put("FC300X", djiMap.get("FC300C"));
         djiMap.put("FC300XW", djiMap.get("FC300C"));
 
         // DJI Phantom 2 Vision
-        djiMap.put("FC200", new double[]{6.17d/4384.0d, 4.55d/3288.0d, 4384.0d, 4384.0d});
+        djiMap.put("FC200", new double[]{6.17d/4384.0d, 4.6275d/3288.0d, 4384.0d, 3288.0d});
         djiMap.put("PHANTOM VISION FC200", djiMap.get("FC200"));
 
         // DJI Mini
-        djiMap.put("FC7203", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
+        djiMap.put("FC7203", new double[]{6.577876d/4000.0d, 4.91094d/3000.0d, 4000.0d, 3000.0d});
 
         // DJI Mini 2
         // ^ UNKNOWN    ^Mini 2 METADATA NOT COMPATIBLE WITH OPENATHENA
@@ -103,74 +103,78 @@ public class MetadataExtractor {
 
         // DJI Mini 3 Pro // METADATA NOT COMPATIBLE WITH OPENATHENA
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC3582", new double[]{9.7d/8064.0d, 7.3d/6048.0d, 8064.0d, 6048.0d});
+        djiMap.put("FC3582", new double[]{9.7d/8064.0d, 7.3d/6048.0d, 8064.0d, 6048.0d}); // TODO improve these values
 
         // DJI Mavic 2 Zoom
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         //     djiMap.put("FC2200", new double[]{6.26d/4000.0d, 4.7d/3000.0d, 4000.0d, 3000.0d});
-        djiMap.put("FC2200", new double[]{6.17d/4000.0d, 4.55d/3000.0d, 4000.0d, 3000.0d});
+        djiMap.put("FC2200", new double[]{6.3175d/4000.0d, 4.73812d/3000.0d, 4000.0d, 3000.0d});
         // Mavic 2 Enterprise Zoom
         djiMap.put("FC2204", djiMap.get("FC2200"));
 
         // DJI Mavic 2 Pro
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        hasselbladMap.put("L1D-20C", new double[]{13.2d/5472.0d, 8.8d/3648.0d, 5472.0d, 3648.0d});
+        hasselbladMap.put("L1D-20C", new double[]{12.825d/5472.0d, 8.55d/3648.0d, 5472.0d, 3648.0d});
 
         // DJI Mavic 3 Main Hasselblad Camera
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        hasselbladMap.put("L2D-20C", new double[]{17.3d/5280.0d, 13.0d/3956.0d, 5280.0d, 3956.0d});
+        hasselbladMap.put("L2D-20C", new double[]{17.902472d/5280.0d, 13.357522d/3956.0d, 5280.0d, 3956.0d});
 
         // DJI Mavic 3 Telephoto Camera
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("FC4170", new double[]{6.4d/4000.0d, 4.8d/3000.0d, 4000.0d, 3000.0d});
 
         // DJI Mavic 3 Enterprise Main Hasselblad Camera
-        djiMap.put("M3E", new double[]{17.3d/5280.0d, 13.0d/3956.0d, 5280.0d, 3956.0d});
+        djiMap.put("M3E", new double[]{17.456274d/5280.0d, 12.988404d/3956.0d, 5280.0d, 3956.0d});
 
         // DJI Mavic 3 Thermal (color camera)
-        djiMap.put("M3T", new double[]{6.4d/8000.0d, 4.8d/6000.0d, 8000.0d, 6000.0d});
+        djiMap.put("M3T", new double[]{6.430908d/8000.0d, 4.838406d/6000.0d, 8000.0d, 6000.0d});
 
         // DJI Mavic 2 Enterprise Dual
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC2103", new double[]{6.17d/4056.0d, 4.55d/3040.0d, 4048.0d, 3032.0d});
+        djiMap.put("FC2103", new double[]{6.097268d/4056.0d, 4.337884d/3040.0d, 4056.0d, 3040.0d});
 
-        // DJI Mavic 2 Enterprise Dual thermal sensor
-        // Teledyne FLIR Lepton 3.5 sensor
-        // 160x120 px sensor, upscaled by software to 640x480 px
-        djiMap.put("FC2403", new double[]{1.92d/640.0d, 1.44d/480.0d, 640.0d, 480.0d});
+        djiMap.put("FC2403", new double[]{6.49952d/4056.0d, 4.944222/3040.0d, 4056.0d, 3040.0d});
+
+//        // DJI Mavic 2 Enterprise Dual thermal sensor
+//        // https://mavicpilots.com/threads/mavic-2-enterprise-thermal-camera-parameters.62562/#post-714679
+//        // TODO handle overloaded EXIF name for thermal pictures
+//        djiMap.put("FC2403", new double[]{1.92d/640.0d, 1.44d/480.0d, 640.0d, 480.0d});
 
         // DJI Mavic Air 2, possibly DJI Mavic 2 Enterprise Advanced? // UNKNOWN COMPATIBILITY
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC3170", new double[]{6.4d/8000.0d, 4.8d/6000.0d, 8000.0d, 6000.0d});
+        djiMap.put("FC3170", new double[]{6.623518d/8000.0d, 4.854492d/6000.0d, 8000.0d, 6000.0d});
 
         // DJI Mavic Air 2S // METADATA NOT COMPATIBLE WITH OPENATHENA
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC3411", new double[]{13.2d/5472.0d, 8.8d/3648.0d, 5472.0d, 3648.0d});
+        djiMap.put("FC3411", new double[]{13.192066d/5472.0d, 9.002534d/3648.0d, 5472.0d, 3648.0d});
 
         // DJI Zenmuse X4S (Inspire 2)
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC6510", new double[]{13.1d/5472.0d, 8.76d/3648.0d, 5472.0d, 3648.0d});
+        djiMap.put("FC6510", new double[]{12.80942d/5472.0d, 8.58222d/3648.0d, 5472.0d, 3648.0d});
 
         // DJI Zenmuse X5 (Inspire 1)
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC550", new double[]{17.3d/4608.0d, 13.0d/3456.0d, 4608.0d, 3456.0d});
+        djiMap.put("FC550", new double[]{17.5d/4608.0d, 13.125d/3456.0d, 4608.0d, 3456.0d});
         // DJI Zenmuse X5R (Inspire 1)
         djiMap.put("FC550RAW", djiMap.get("FC550"));
         djiMap.put("FC550R", djiMap.get("FC550"));
 
         // DJI Zenmuse X5S (Inspire 2)
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC6520", new double[]{18.0d/5280.0d, 13.5d/3956.0d, 5280.0d, 3956.0d});
+        djiMap.put("FC6520", new double[]{17.8855d/5280.0d, 12.66604d/3956.0d, 5280.0d, 3956.0d});
 
         // DJI Zenmuse X7 (Inspire 2)
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC6540", new double[]{23.5d/6016.0d, 15.7d/4008.0d, 6016.0d, 4008.0d});
+        djiMap.put("FC6540", new double[]{23.321566d/6016.0d, 15.771348d/4008.0d, 6016.0d, 4008.0d});
 
         // DJI Zenmuse H20 (Matrice 300 series payload)
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
         djiMap.put("ZENMUSEH20", new double[]{7.53d/5184.0d, 5.64d/3888.0d, 5184.0d, 3888.0d});
         djiMap.put("ZH20", djiMap.get("ZENMUSEH20"));
-        djiMap.put("ZENMUSEH20T", new double[]{7.68d/640.0d, 6.144d/512.0d, 640.0d, 512.0d});
+//        // TODO handle overloaded EXIF name for thermal pictures
+//        djiMap.put("ZENMUSEH20T", new double[]{7.68d/640.0d, 6.144d/512.0d, 640.0d, 512.0d});
+        djiMap.put("ZENMUSEH20T", new double[]{6.576918d/4056.0d, 4.96953d/3040.0d, 4056.0d, 3040.0d});
         djiMap.put("ZH20T", djiMap.get("ZENMUSEH20T"));
 
         djiMap.put("ZENMUSEH20W", new double[]{6.16d/4056.0d, 4.62d/3040.0d, 4056.0d, 3040.0d});
@@ -180,8 +184,11 @@ public class MetadataExtractor {
         djiMap.put("ZENMUSEH20N", djiMap.get("ZH20T"));
         djiMap.put("ZH20N", djiMap.get("ZENMUSEH20N"));
 
-        // DJI Mavic 2 Enterprise Advanced (M2EA) thermal camera
-        djiMap.put("MAVIC2-ENTERPRISE-ADVANCED", new double[]{7.68d/640.0d, 6.144d/512.0d, 640.0d, 512.0d});
+//        // DJI Mavic 2 Enterprise Advanced (M2EA) thermal camera
+//        djiMap.put("MAVIC2-ENTERPRISE-ADVANCED", new double[]{7.68d/640.0d, 6.144d/512.0d, 640.0d, 512.0d});
+//        // TODO handle overloaded EXIF name for thermal pictures
+        djiMap.put("MAVIC2-ENTERPRISE-ADVANCED", new double[]{6.407596d/8000.0d, 4.867836d/6000.0d, 8000.0d, 6000.0d});
+        djiMap.put("M2EA", djiMap.get("MAVIC2-ENTERPRISE-ADVANCED"));
 
 //        // DJI Mavic 2 Enterprise Advanced visual camera
 //        // 1/2" CMOS sensor
@@ -190,11 +197,11 @@ public class MetadataExtractor {
         // DJI Zenmuse P1 (Matrice 300 series payload)
         // has a full frame, 45 MP camera!
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("ZENMUSEP1", new double[]{35.9d/8192.0d, 24.0d/5460.0d, 8192.0d, 5460.0d});
+        djiMap.put("ZENMUSEP1", new double[]{34.824566d/8192.0d, 23.474776d/5460.0d, 8192.0d, 5460.0d});
         djiMap.put("ZP1", djiMap.get("ZENMUSEP1"));
 
         // DJI Zenmuse XT and XT2 color camera (discontinued Matrice 300 series payload)
-        djiMap.put("ZENMUSEXT2", new double[]{7.53d/4056.0d, 5.64d/3040.0d, 4056.0d, 3040.0d}); // not sure if these pixel values are right, specs just says "12 MP camera"
+        djiMap.put("ZENMUSEXT2", new double[]{7.5036d/4056.0d, 5.624d/3040.0d, 4056.0d, 3040.0d}); // not sure if these pixel values are right, specs just says "12 MP camera"
 
         // DJI Zenmuse XT and XT2 thermal camera (FLIR Tau 2 640)
         djiMap.put("FLIR", new double[]{10.88d/640.0d, 8.704/512.0d, 640.0d, 512.0d});
@@ -208,7 +215,7 @@ public class MetadataExtractor {
 
         // DJI Spark
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC1102", new double[]{6.17d/3968.0d, 4.55d/2976.0d, 3968.0d, 2976.0d});
+        djiMap.put("FC1102", new double[]{6.260924d/3968.0d, 4.670134d/2976.0d, 3968.0d, 2976.0d});
         //djiMap.put("FC1102", new double[]{6.16d/3968.0d, 4.62d/2976.0d, 3968.0d, 2976.0d});
 
         //  ____    __                  __
@@ -254,18 +261,18 @@ public class MetadataExtractor {
 
         // Autel EVO II camera
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        autelMap.put("XT701", new double[]{6.40d/8000.0d, 4.80d/6000.0d, 8000.0d, 6000.0d});
+        autelMap.put("XT701", new double[]{6.433608d/7680d, 5.014122d/6000.0d, 7680.0d, 6000.0d});
 
         // Autel EVO II Pro camera
         // Sony IMX383 CMOS sensor
         // https://commonlands.com/blogs/technical/cmos-sensor-size
         // https://www.sony-semicon.com/files/62/pdf/p-13_IMX383-AAQK_Flyer.pdf
         //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        autelMap.put("XT705", new double[]{13.2d/5472.0d, 8.8d/3648.0d, 5472.0d, 3648.0d});
+        autelMap.put("XT705", new double[]{12.75016d/5472.0d, 8.690014d/3648.0d, 5472.0d, 3648.0d});
 
         // Autel EVO II v2 and EVO II DUAL camera
         // unnamed 1/2" CMOS 4:3 sensor
-        autelMap.put("XT709", new double[]{6.40d/8000.0d, 4.80d/6000.0d, 8000.0d, 6000.0d});
+        autelMap.put("XT709", new double[]{6.40d/8000.0d, 4.80d/6000.0d, 8000.0d, 6000.0d}); // TODO improve these values
 
         //   ____                              __
         // /\  _`\                           /\ \__
@@ -275,16 +282,17 @@ public class MetadataExtractor {
         //    \ \_\ \__/.\_\\ \_\  \ \_\\ \____/\ \__\
         //     \/_/\/__/\/_/ \/_/   \/_/ \/___/  \/__/
 
-//        // Sony IMX230 CMOS sensor
-//        parrotMap.put("ANAFI", new double[]{5.9896d/5344.0d, 4.4922d/4016.0d, 5344.0d, 4016.0d});
+        // Sony IMX230 CMOS sensor
+        parrotMap.put("ANAFI", new double[]{5.963396d/5344.0d, 4.428166d/4016.0d, 5344.0d, 4016.0d});
 //
-//        parrotMap.put("ANAFIUSA", parrotMap.get("ANAFI"));
+        parrotMap.put("ANAFIUSA", parrotMap.get("ANAFI"));
+        parrotMap.put("ANAFIUA", parrotMap.get("ANAFI"));
 
         // 1/2" 42 MP unnamed sensor
-        parrotMap.put("ANAFIAI", new double[]{6.40d/8000.0d, 4.80d/6000.0d, 8000.0d, 6000.0d});
+        parrotMap.put("ANAFIAI", new double[]{6.636112d/8000.0d, 4.941216d/6000.0d, 8000.0d, 6000.0d});
 
         // 1/2.3" 14 MP unnamed sensor
-        parrotMap.put("BEBOP 2", new double[]{6.16/4096.0d, 4.62/3072.0d, 4096.0d, 3072.0d});
+        parrotMap.put("BEBOP 2", new double[]{5.7344d/4096.0d, 4.648d/3072.0d, 4096.0d, 3072.0d});
 
         mfnMaps.put("DJI", djiMap);
         mfnMaps.put("HASSELBLAD", hasselbladMap);
