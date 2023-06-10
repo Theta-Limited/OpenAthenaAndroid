@@ -32,7 +32,7 @@
     <string name="clear_button_text">Очистить журнал</string>
     <string name="openathena_for_android">OpenAthena™ для Android</string>
     <string name="GPL3Notice">GPL-3.0, некоторые права защищены</string>
-    <string name="AboutSnippet"><![CDATA[<br>OpenAthena™ для Android — это проект, который позволяет дронам определять точные геодезические координаты.<br>]]></string>
+    <string name="AboutSnippet"><![CDATA[<br>OpenAthena™ для Android — это проект, который позволяет обычным дронам определять точные геодезические координаты.<br>]]></string>
     <string name="about_software_libraries_used">Используемые программные библиотеки:</string>
     <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p>Проект поддерживается <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br>]]></string>
     <string name="CallToActionSnippet"><![CDATA[View the project on GitHub</a><br> ]]></string>
@@ -112,4 +112,8 @@
     <string name="isCameraModelRecognized">Распознается ли модель камеры? :</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
+    <string name="title_activity_selection">Выберите цель</string>
+    <string name="geoid_load_error_msg">Критическая ошибка: не удалось загрузить файл данных геоида Земли!</string>
+    <string name="nato_vertical_datum_notice">Вертикальная исходная точка для выходных данных НАТО и WGS84 составляет EGM96 метров над средним уровнем моря.</string>
+    <string name="warsaw_vertical_datum_notice">Вертикальная исходная точка данных CK-42 - это метровая высота над эллипсоидом Красовского 1940 года.</string>
 </resources>
