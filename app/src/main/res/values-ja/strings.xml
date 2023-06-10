@@ -32,7 +32,7 @@
     <string name="clear_button_text">ログをクリア</string>
     <string name="openathena_for_android">Android 用「OpenAthena™」</string>
     <string name="GPL3Notice">GPL-3.0、一部権作権所有</string>
-    <string name="AboutSnippet"><![CDATA[<br> Android 用「OpenAthena™」 は、消費者向けおよびプロ向けのドローンが正確な測地位置を計算できるようにするプロジェクトです。<br> ]]></string>
+    <string name="AboutSnippet"><![CDATA[<br>OpenAthena™ for Android は、一般的なドローンが正確な測地位置を特定できるようにするプロジェクトです<br>]]></string>
     <string name="about_software_libraries_used">使用したソフトウェア ライブラリ:</string>
     <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a>によって維持されているプロジェクト<br>]]></string>
     <string name="CallToActionSnippet"><![CDATA[GitHub でプロジェクトを表示する</a><br> ]]></string>
@@ -112,4 +112,8 @@
     <string name="isCameraModelRecognized">カメラのモデルは認識されていますか? :</string>
     <string name="yes">はい</string>
     <string name="no">いいえ</string>
+    <string name="title_activity_selection">ターゲットを選択してください</string>
+    <string name="geoid_load_error_msg">重大なエラー: Earth ジオイド データファイルをロードできませんでした。</string>
+    <string name="nato_vertical_datum_notice">NATO と WGS84 の出力鉛直基準系は平均海抜 EGM96 メートルです。</string>
+    <string name="warsaw_vertical_datum_notice">CK-42 出力垂直基準線は、Krassowsky 1940 楕円体上のメートルの高さです。</string>
 </resources>

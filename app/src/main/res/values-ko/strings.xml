@@ -32,7 +32,7 @@
     <string name="clear_button_text">초기화 로그</string>
     <string name="openathena_for_android">Android용 OpenAthena™</string>
     <string name="GPL3Notice">GPL-3.0, 일부 권리 보유</string>
-    <string name="AboutSnippet"><![CDATA[<br> Android용 OpenAthena™는 소비자 및 전문 드론이 정확한 측지 위치를 찾을 수 있도록 하는 프로젝트입니다.<br> ]]></string>
+    <string name="AboutSnippet"><![CDATA[<br>Android용 OpenAthena™는 일반적인 드론이 정확한 측지 위치를 파악할 수 있도록 하는 프로젝트입니다.<br>]]></string>
     <string name="about_software_libraries_used">사용된 소프트웨어 라이브러리:</string>
     <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a> 이 관리하는 프로젝트<br> ]]></string>
     <string name="CallToActionSnippet"><![CDATA[GitHub에서 프로젝트 보기</a><br> ]]></string>
@@ -113,4 +113,8 @@
     <string name="isCameraModelRecognized">카메라 모델이 인식되나요? :</string>
     <string name="yes">예</string>
     <string name="no">아니요</string>
+    <string name="title_activity_selection">대상 선택</string>
+    <string name="geoid_load_error_msg">심각한 오류: 지구 지오이드 데이터 파일을 로드할 수 없습니다!</string>
+    <string name="nato_vertical_datum_notice">NATO 및 WGS84 출력 수직 데이텀은 평균 해수면 위 EGM96미터입니다.</string>
+    <string name="warsaw_vertical_datum_notice">CK-42 출력 수직 데이텀은 Krassowsky 1940 타원체 위의 미터 높이입니다.</string>
 </resources>
