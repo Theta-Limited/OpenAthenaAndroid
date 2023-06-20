@@ -1,5 +1,7 @@
 package com.openathena;
 
+import android.util.Log;
+
 import org.matthiaszimmermann.location.Location;
 import org.matthiaszimmermann.location.egm96.Geoid;
 
@@ -14,6 +16,8 @@ public class EGM96OffsetAdapter implements EGMOffsetProvider, Serializable {
 //        Geoid.init(); // this may consume significant memory resources
 //    }
 
+    public static String TAG = EGM96OffsetAdapter.class.getSimpleName();
+
     /**
      * Get the difference in altitude between the WGS84 ellipsoid and the EGM96 geoid at the given WGS84 lat/lon
      * @param latitude The latitude of the point of interest
@@ -22,6 +26,8 @@ public class EGM96OffsetAdapter implements EGMOffsetProvider, Serializable {
      */
     @Override
     public double getEGM96OffsetAtLatLon(double latitude, double longitude) {
-        return Geoid.getOffset(new Location(latitude, longitude));
+        double offset = Geoid.getOffset(new Location(latitude, longitude));
+        //Log.d(TAG, "Offset at ("+latitude+","+longitude+") is: "+offset);
+        return offset;
     }
 }

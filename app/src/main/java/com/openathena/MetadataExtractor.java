@@ -458,7 +458,7 @@ public class MetadataExtractor {
 
         // DJI altitude is usually orthometric (EGM96 AMSL), but will be ellipsoidal (WGS84 hae) if special RTK device is used (rare)
         String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
-        if (!make.toLowerCase().contains("autel") /* I'm not sure if autel uses EGM96 AMSL or WGS84 hae for new firmware */ && !xmp_str.toLowerCase().contains("rtkflag")) {
+        if (!xmp_str.toLowerCase().contains("rtkflag")) {
             // convert the height from EGM96 AMSL to WGS84 hae if made by dji and rtk device not present
             z = z - offsetProvider.getEGM96OffsetAtLatLon(y,x);
         }
