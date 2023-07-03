@@ -117,12 +117,34 @@ Then press the back button or again tap the kebab menu icon (three dots) to retu
 **TBD**
 
 # Contributing
+
+## Code
+If you're interested in contributing to this project, feel free to make a fork. This project will
+follow the [fork and pull model](https://reflectoring.io/github-fork-and-pull/) for third-party contributors.
+
+### Cloning this project with submodules
+This project requires content from other git repositories to build correctly.
+
+To clone this project properly, with the necessary submodules:
+```bash
+git clone --recursive git@github.com:Theta-Limited/OpenAthenaAndroid.git # can also use https clone url instead
+```
+
+If you have already cloned, and wish to acquire the neccesary submodule contents:
+```bash
+git submodule init
+git submodule update
+```
+
+If you wish to update the contents of submodules from their source:
+```bash
+git submodule update --remote
+```
+
+### Setting Up Android Studio with this project
+**TODO add instructions for setting up Android Studio**
+
 ## UI language translation
 If you speak another language in addition to English, please consider contributing to the UI translation using the link below. The insights of a native-speaker are the only way to provide a good user experience for the program in a given language:
 
 [https://www.transifex.com/thetalimited/openathena-for-android/](https://www.transifex.com/thetalimited/openathena-for-android/)
-
-
-## Code
-If you're interested in contributing to this project, feel free to make a fork. This project will
-follow the [fork and pull model](https://reflectoring.io/github-fork-and-pull/) for third-party contributors

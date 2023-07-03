@@ -10,6 +10,10 @@ import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.XMPMetaFactory;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 
 public class MetadataExtractor {
@@ -18,289 +22,13 @@ public class MetadataExtractor {
 
     private static HashMap<String, HashMap> mfnMaps = new HashMap<String, HashMap>();
 
+    protected static EGMOffsetProvider offsetProvider = new EGM96OffsetAdapter();
+    protected static DroneParameterProvider parameterProvider;
+
     protected MetadataExtractor(MainActivity caller) {
         super();
         parent = caller;
-        genCCDMap();
-    }
-
-    protected static EGMOffsetProvider offsetProvider = new EGM96OffsetAdapter();
-
-    /**
-     * Generates a nested map which can be indexed into by make, then model
-     * The double[4] stored in the map represents the width and height, in mm, of a pixel and the width-pixels and height-pixels
-     * of the device's specific ccd/cmos sensor.
-     *
-     * This is used for intrinsics calculation, and allows the focal length to be converted from mm to pixel units
-     * <p>
-     *     See also:
-     *     https://towardsdatascience.com/camera-intrinsic-matrix-with-example-in-python-d79bf2478c12
-     *     https://www.digicamdb.com/sensor-sizes/
-     *     https://en.wikipedia.org/wiki/Image_sensor_format
-     *     https://www.djzphoto.com/blog/2018/12/5/dji-drone-quick-specs-amp-comparison-page
-     *     https://support.skydio.com/hc/en-us/articles/5338292379803-Comparing-Skydio-2-and-Skydio-2-
-     *     https://commonlands.com/blogs/technical/cmos-sensor-size
-     *
-     * </p>
-     */
-    private static void genCCDMap() {
-        HashMap<String, double[]> djiMap = new HashMap<String, double[]>();
-        HashMap<String, double[]> skydioMap = new HashMap<String, double[]>();
-        HashMap<String, double[]> hasselbladMap = new HashMap<String, double[]>(); // Mavic 3 and Mavic 2 Pro camera is of different make than drone
-        HashMap<String, double[]> autelMap = new HashMap<String, double[]>();
-        HashMap<String, double[]> parrotMap = new HashMap<String, double[]>();
-
-        //  ____         _____      ______
-        // /\  _`\      /\___ \    /\__  _\
-        // \ \ \/\ \    \/__/\ \   \/_/\ \/
-        //  \ \ \ \ \      _\ \ \     \ \ \
-        //   \ \ \_\ \    /\ \_\ \     \_\ \__
-        //    \ \____/    \ \____/     /\_____\
-        //     \/___/      \/___/      \/_____/
-
-        // Example images:
-        // https://commons.wikimedia.org/wiki/Category:Taken_with_DJI
-
-        // DJI Mavic Pro / Mavic Pro Platinum
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC220", new double[]{6.32692d/4000.0d, 4.7452d/3000.0d, 4000.0d, 3000.0d});
-
-        // DJI Mavic Air
-        djiMap.put("FC230", new double[]{6.17d/4056.0d, 4.55d/3040.0d, 4048.0d, 3032.0d});
-
-        // DJI Phantom 4
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        // appears to be a Sony IMX377 CMOS
-        // https://forum.dji.com/thread-47292-1-1.html
-        djiMap.put("FC330", new double[]{6.3174d/4024.0d, 4.73812d/3036.0d, 4000.0d, 3000.0d});
-
-        // DJI Phantom 4 Pro, DJI Phantom 4 Advanced
-        djiMap.put("FC6310", new double[]{12.83332d/5472.0d, 8.55554d/3648.0d, 5472.0d, 3648.0d});
-        djiMap.put("FC6310S", djiMap.get("FC6310"));
-
-        // DJI Phantom 4 Multispectral
-        // 1/2.9" CMOS sensor
-        djiMap.put("FC6360", new double[]{4.902986d/1600.0d, 4.014978d/1300.0d, 1600.0d, 1300.0d});
-
-        // DJI Phantom 3 SE
-        djiMap.put("FC300C", new double[]{6.3175d/4000.0d, 4.73812d/3000.0d, 4000.0d, 3000.0d});
-        djiMap.put("FC300S", djiMap.get("FC300C"));
-        djiMap.put("FC300X", djiMap.get("FC300C"));
-        djiMap.put("FC300XW", djiMap.get("FC300C"));
-
-        // DJI Phantom 2 Vision
-        djiMap.put("FC200", new double[]{6.17d/4384.0d, 4.6275d/3288.0d, 4384.0d, 3288.0d});
-        djiMap.put("PHANTOM VISION FC200", djiMap.get("FC200"));
-
-        // DJI Mini
-        djiMap.put("FC7203", new double[]{6.577876d/4000.0d, 4.91094d/3000.0d, 4000.0d, 3000.0d});
-
-        // DJI Mini 2
-        // ^ UNKNOWN    ^Mini 2 METADATA NOT COMPATIBLE WITH OPENATHENA
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC7303", djiMap.get("FC7203"));
-        //djiMap.put("FC7303", new double[]{6.16d/4000.0d, 4.62d/3000.0d, 4000.0d, 3000.0d});
-
-        // DJI Mini 3 Pro // METADATA NOT COMPATIBLE WITH OPENATHENA
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC3582", new double[]{9.7d/8064.0d, 7.3d/6048.0d, 8064.0d, 6048.0d}); // TODO improve these values
-
-        // DJI Mavic 2 Zoom
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        //     djiMap.put("FC2200", new double[]{6.26d/4000.0d, 4.7d/3000.0d, 4000.0d, 3000.0d});
-        djiMap.put("FC2200", new double[]{6.3175d/4000.0d, 4.73812d/3000.0d, 4000.0d, 3000.0d});
-        // Mavic 2 Enterprise Zoom
-        djiMap.put("FC2204", djiMap.get("FC2200"));
-
-        // DJI Mavic 2 Pro
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        hasselbladMap.put("L1D-20C", new double[]{12.825d/5472.0d, 8.55d/3648.0d, 5472.0d, 3648.0d});
-
-        // DJI Mavic 3 Main Hasselblad Camera
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        hasselbladMap.put("L2D-20C", new double[]{17.902472d/5280.0d, 13.357522d/3956.0d, 5280.0d, 3956.0d});
-
-        // DJI Mavic 3 Telephoto Camera
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC4170", new double[]{6.4d/4000.0d, 4.8d/3000.0d, 4000.0d, 3000.0d});
-
-        // DJI Mavic 3 Enterprise Main Hasselblad Camera
-        djiMap.put("M3E", new double[]{17.456274d/5280.0d, 12.988404d/3956.0d, 5280.0d, 3956.0d});
-
-        // DJI Mavic 3 Thermal (color camera)
-        djiMap.put("M3T", new double[]{6.430908d/8000.0d, 4.838406d/6000.0d, 8000.0d, 6000.0d});
-
-        // DJI Mavic 2 Enterprise Dual
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC2103", new double[]{6.097268d/4056.0d, 4.337884d/3040.0d, 4056.0d, 3040.0d});
-
-        djiMap.put("FC2403", new double[]{6.49952d/4056.0d, 4.944222/3040.0d, 4056.0d, 3040.0d});
-
-//        // DJI Mavic 2 Enterprise Dual thermal sensor
-//        // https://mavicpilots.com/threads/mavic-2-enterprise-thermal-camera-parameters.62562/#post-714679
-//        // TODO handle overloaded EXIF name for thermal pictures
-//        djiMap.put("FC2403", new double[]{1.92d/640.0d, 1.44d/480.0d, 640.0d, 480.0d});
-
-        // DJI Mavic Air 2, possibly DJI Mavic 2 Enterprise Advanced? // UNKNOWN COMPATIBILITY
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC3170", new double[]{6.623518d/8000.0d, 4.854492d/6000.0d, 8000.0d, 6000.0d});
-
-        // DJI Mavic Air 2S // METADATA NOT COMPATIBLE WITH OPENATHENA
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC3411", new double[]{13.192066d/5472.0d, 9.002534d/3648.0d, 5472.0d, 3648.0d});
-
-        // DJI Zenmuse X4S (Inspire 2)
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC6510", new double[]{12.80942d/5472.0d, 8.58222d/3648.0d, 5472.0d, 3648.0d});
-
-        // DJI Zenmuse X5 (Inspire 1)
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC550", new double[]{17.5d/4608.0d, 13.125d/3456.0d, 4608.0d, 3456.0d});
-        // DJI Zenmuse X5R (Inspire 1)
-        djiMap.put("FC550RAW", djiMap.get("FC550"));
-        djiMap.put("FC550R", djiMap.get("FC550"));
-
-        // DJI Zenmuse X5S (Inspire 2)
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC6520", new double[]{17.8855d/5280.0d, 12.66604d/3956.0d, 5280.0d, 3956.0d});
-
-        // DJI Zenmuse X7 (Inspire 2)
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC6540", new double[]{23.321566d/6016.0d, 15.771348d/4008.0d, 6016.0d, 4008.0d});
-
-        // DJI Zenmuse H20 (Matrice 300 series payload)
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("ZENMUSEH20", new double[]{7.53d/5184.0d, 5.64d/3888.0d, 5184.0d, 3888.0d});
-        djiMap.put("ZH20", djiMap.get("ZENMUSEH20"));
-//        // TODO handle overloaded EXIF name for thermal pictures
-//        djiMap.put("ZENMUSEH20T", new double[]{7.68d/640.0d, 6.144d/512.0d, 640.0d, 512.0d});
-        djiMap.put("ZENMUSEH20T", new double[]{6.576918d/4056.0d, 4.96953d/3040.0d, 4056.0d, 3040.0d});
-        djiMap.put("ZH20T", djiMap.get("ZENMUSEH20T"));
-
-        djiMap.put("ZENMUSEH20W", new double[]{6.16d/4056.0d, 4.62d/3040.0d, 4056.0d, 3040.0d});
-        djiMap.put("ZH20W", djiMap.get("ZENMUSEH20W"));
-
-        // https://www.dji.com/zenmuse-h20n/specs
-        djiMap.put("ZENMUSEH20N", djiMap.get("ZH20T"));
-        djiMap.put("ZH20N", djiMap.get("ZENMUSEH20N"));
-
-//        // DJI Mavic 2 Enterprise Advanced (M2EA) thermal camera
-//        djiMap.put("MAVIC2-ENTERPRISE-ADVANCED", new double[]{7.68d/640.0d, 6.144d/512.0d, 640.0d, 512.0d});
-//        // TODO handle overloaded EXIF name for thermal pictures
-        djiMap.put("MAVIC2-ENTERPRISE-ADVANCED", new double[]{6.407596d/8000.0d, 4.867836d/6000.0d, 8000.0d, 6000.0d});
-        djiMap.put("M2EA", djiMap.get("MAVIC2-ENTERPRISE-ADVANCED"));
-
-//        // DJI Mavic 2 Enterprise Advanced visual camera
-//        // 1/2" CMOS sensor
-//        djiMap.put("M2EA", new double[]{6.4d/8000.0d, 4.8/6000.0d, 8000.0d, 6000.0d});
-
-        // DJI Zenmuse P1 (Matrice 300 series payload)
-        // has a full frame, 45 MP camera!
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("ZENMUSEP1", new double[]{34.824566d/8192.0d, 23.474776d/5460.0d, 8192.0d, 5460.0d});
-        djiMap.put("ZP1", djiMap.get("ZENMUSEP1"));
-
-        // DJI Zenmuse XT and XT2 color camera (discontinued Matrice 300 series payload)
-        djiMap.put("ZENMUSEXT2", new double[]{7.5036d/4056.0d, 5.624d/3040.0d, 4056.0d, 3040.0d}); // not sure if these pixel values are right, specs just says "12 MP camera"
-
-        // DJI Zenmuse XT and XT2 thermal camera (FLIR Tau 2 640)
-        djiMap.put("FLIR", new double[]{10.88d/640.0d, 8.704/512.0d, 640.0d, 512.0d});
-        djiMap.put("XT2", djiMap.get("FLIR"));
-
-        // DJI Zenmuse XT S (FLIR Tau 2 336)
-        djiMap.put("XT S", new double[]{5.712d/336.0d, 4.352/256.0d, 336.0d, 256.0d});
-
-        djiMap.put("ZENMUSEZ30", new double[]{4.71d/1920.0d, 3.54d/1440.0d, 1920.0d, 1440.0d}); // assuming the physical sensor is 4:3, not 16:9
-        djiMap.put("Z30", djiMap.get("ZENMUSEZ30"));
-
-        // DJI Spark
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        djiMap.put("FC1102", new double[]{6.260924d/3968.0d, 4.670134d/2976.0d, 3968.0d, 2976.0d});
-        //djiMap.put("FC1102", new double[]{6.16d/3968.0d, 4.62d/2976.0d, 3968.0d, 2976.0d});
-
-        //  ____    __                  __
-        // /\  _`\ /\ \                /\ \  __
-        // \ \,\L\_\ \ \/'\   __  __   \_\ \/\_\    ___
-        //  \/_\__ \\ \ , <  /\ \/\ \  /'_` \/\ \  / __`\
-        //   /\ \L\ \ \ \\`\\ \ \_\ \/\ \L\ \ \ \/\ \L\ \
-        //   \ `\____\ \_\ \_\/`____ \ \___,_\ \_\ \____/
-        //    \/_____/\/_/\/_/`/___/> \/__,_ /\/_/\/___/
-        //                       /\___/
-        //                       \/__/
-
-        // https://support.skydio.com/hc/en-us/articles/4417425974683-Skydio-camera-and-metadata-overview
-
-        // Skydio R1
-        // rare 2018 model
-        // I couldn't find specs online for the camera sensor, but I will assume it's a Sony IMX577
-        // Could be WRONG
-        skydioMap.put("R1", new double[]{3.7d/2376.5625d, 3.7d/2376.5625d, 4056.0d, 3040.0d});
-
-        // Skydio 2 and 2+
-        // Sony IMX577 1/2.3” 12.3MP CMOS
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        skydioMap.put("2", new double[]{3.7d/2376.5625d, 3.7d/2376.5625d, 4056.0d, 3040.0d});
-        skydioMap.put("2+", skydioMap.get("2"));
-
-        // Skydio X2, X2E, X2D
-        // Sony IMX577 1/2.3” 12.3MP CMOS (same as Skydio 2 and 2+)
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        skydioMap.put("X2", new double[]{3.7d/2376.5625d, 3.7d/2376.5625d, 4056.0d, 3040.0d});
-        skydioMap.put("X2E", new double[]{7.5d/4848.1875d, 7.5d/4832.3438d, 4056.0d, 3040.0d}); // X2 Enterprise (Color / Thermal)
-        skydioMap.put("X2D", skydioMap.get("X2E")); // X2 Defense (Color / Thermal)
-
-        //  ______           __           ___       ____            __              __
-        // /\  _  \         /\ \__       /\_ \     /\  _`\         /\ \            /\ \__  __
-        // \ \ \L\ \  __  __\ \ ,_\    __\//\ \    \ \ \L\ \    ___\ \ \____    ___\ \ ,_\/\_\    ___    ____
-        //  \ \  __ \/\ \/\ \\ \ \/  /'__`\\ \ \    \ \ ,  /   / __`\ \ '__`\  / __`\ \ \/\/\ \  /'___\ /',__\
-        //   \ \ \/\ \ \ \_\ \\ \ \_/\  __/ \_\ \_   \ \ \\ \ /\ \L\ \ \ \L\ \/\ \L\ \ \ \_\ \ \/\ \__//\__, `\
-        //    \ \_\ \_\ \____/ \ \__\ \____\/\____\   \ \_\ \_\ \____/\ \_,__/\ \____/\ \__\\ \_\ \____\/\____/
-        //     \/_/\/_/\/___/   \/__/\/____/\/____/    \/_/\/ /\/___/  \/___/  \/___/  \/__/ \/_/\/____/\/___/
-
-        // https://commons.wikimedia.org/wiki/Category:Taken_with_Autel_Robotics
-
-        // Autel EVO II camera
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        autelMap.put("XT701", new double[]{6.433608d/7680d, 5.014122d/6000.0d, 7680.0d, 6000.0d});
-
-        // Autel EVO II Pro camera
-        // Sony IMX383 CMOS sensor
-        // https://commonlands.com/blogs/technical/cmos-sensor-size
-        // https://www.sony-semicon.com/files/62/pdf/p-13_IMX383-AAQK_Flyer.pdf
-        //     ccd_width(mm) / width_pixels(pixels) = pixel_width(mm/pixel) ...
-        autelMap.put("XT705", new double[]{12.75016d/5472.0d, 8.690014d/3648.0d, 5472.0d, 3648.0d});
-
-        // Autel EVO II v2 and EVO II DUAL camera
-        // unnamed 1/2" CMOS 4:3 sensor
-        autelMap.put("XT709", new double[]{6.40d/8000.0d, 4.80d/6000.0d, 8000.0d, 6000.0d}); // TODO improve these values
-
-        //   ____                              __
-        // /\  _`\                           /\ \__
-        // \ \ \L\ \ __     _ __   _ __   ___\ \ ,_\
-        //  \ \ ,__/'__`\  /\`'__\/\`'__\/ __`\ \ \/
-        //   \ \ \/\ \L\.\_\ \ \/ \ \ \//\ \L\ \ \ \_
-        //    \ \_\ \__/.\_\\ \_\  \ \_\\ \____/\ \__\
-        //     \/_/\/__/\/_/ \/_/   \/_/ \/___/  \/__/
-
-        // Sony IMX230 CMOS sensor
-        parrotMap.put("ANAFI", new double[]{5.963396d/5344.0d, 4.428166d/4016.0d, 5344.0d, 4016.0d});
-//
-        parrotMap.put("ANAFIUSA", parrotMap.get("ANAFI"));
-        parrotMap.put("ANAFIUA", parrotMap.get("ANAFI"));
-
-        // 1/2" 42 MP unnamed sensor
-        parrotMap.put("ANAFIAI", new double[]{6.636112d/8000.0d, 4.941216d/6000.0d, 8000.0d, 6000.0d});
-
-        // 1/2.3" 14 MP unnamed sensor
-        parrotMap.put("BEBOP 2", new double[]{5.7344d/4096.0d, 4.648d/3072.0d, 4096.0d, 3072.0d});
-
-        mfnMaps.put("DJI", djiMap);
-        mfnMaps.put("HASSELBLAD", hasselbladMap);
-        mfnMaps.put("SKYDIO", skydioMap);
-        mfnMaps.put("AUTEL ROBOTICS", autelMap);
-        mfnMaps.put("AUTEL", autelMap);
-        mfnMaps.put("PARROT", parrotMap);
-
+        parameterProvider = new DroneParametersFromJSON(parent.getApplicationContext());
     }
 
     /**
@@ -308,40 +36,81 @@ public class MetadataExtractor {
      * @param exif exif of an image to analyze for make and model
      * @return true if the make and model is a known model
      */
-    public static boolean isDroneModelInMap(ExifInterface exif) {
-        String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
-        String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase();
-        return (mfnMaps.get(make) != null && mfnMaps.get(make).get(model) != null);
+    public static boolean isDroneModelRecognized(ExifInterface exif) {
+        String make = exif.getAttribute(ExifInterface.TAG_MAKE);
+        String model = exif.getAttribute(ExifInterface.TAG_MODEL);
+        return (parameterProvider.getMatchingDrones(make, model).length() > 0);
+    }
+
+    /**
+     * Given a make and model string, returns the intrinsics of the matching drone camera from db lookup
+     * @param exif exif of an image where the camera intrinsic parameters are desired
+     * @return a JSONObject containing the intrinsic parameters of the particular matching camera
+     * <p>
+     *     Many drone models have an EXIF make/model name collision between their main color camera and their secondary thermal camera, even though each has its entirely own intrinsics.
+     * </p>
+     */
+    public static JSONObject getMatchingDrone(ExifInterface exif) {
+        String make = exif.getAttribute(ExifInterface.TAG_MAKE);
+        String model = exif.getAttribute(ExifInterface.TAG_MODEL);
+        JSONArray matchingDrones = parameterProvider.getMatchingDrones(make, model);
+        if (matchingDrones.length() < 1) {
+            return null;
+        }
+
+        double targetWidth = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, -1);
+        if (targetWidth <= 0) {
+            throw new RuntimeException("could not determine width and height of image!");
+        }
+
+        int smallestDifference = Integer.MAX_VALUE;
+        JSONObject closestDrone = null;
+
+        for (int i = 0; i < matchingDrones.length(); i++) {
+            try {
+                JSONObject drone = matchingDrones.getJSONObject(i);
+                int droneWidth = drone.getInt("widthPixels");
+
+                int difference = (int) Math.abs(droneWidth - targetWidth);
+                if (difference < smallestDifference) {
+                    closestDrone = drone;
+                    smallestDifference = difference;
+                }
+            } catch (JSONException e) {
+                return null;
+            }
+        }
+        return closestDrone;
     }
 
     public static double getSensorPhysicalHeight(ExifInterface exif) {
-        String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
-        String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase();
-        HashMap<String, double[]> mfn = mfnMaps.get(make);
-        if (mfn == null) {
+        JSONObject drone = getMatchingDrone(exif);
+        if (drone == null) {
             return -1.0d;
         }
-        double[] pixelDimensions = mfn.get(model);
-        double heightPerPixel = pixelDimensions[0];
-        double heightPixels = pixelDimensions[3];
-        // double widthPerPixel = pixelDimensions[1];
-        // double widthPixels = pixelDimensions[2];
-        return heightPerPixel * heightPixels;
+
+        try {
+            double heightPerPixel = (double) rationalToFloat(drone.getString("ccdHeightMMPerPixel"));
+            double heightPixels = (double) drone.getInt("heightPixels");
+            return heightPerPixel * heightPixels;
+        } catch (JSONException jse) {
+            return -1.0d;
+        }
     }
 
     public static double getSensorPhysicalWidth(ExifInterface exif) {
-        String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
-        String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase();
-        HashMap<String, double[]> mfn = mfnMaps.get(make);
-        if (mfn == null) {
+        JSONObject drone = getMatchingDrone(exif);
+        if (drone == null) {
             return -1.0d;
         }
-        double[] pixelDimensions = mfn.get(model);
-        // double heightPerPixel = pixelDimensions[0];
-        // double heightPixels = pixelDimensions[3];
-        double widthPerPixel = pixelDimensions[1];
-        double widthPixels = pixelDimensions[2];
-        return widthPerPixel * widthPixels;
+
+        try {
+            double widthPerPixel = (double) rationalToFloat(drone.getString("ccdWidthMMPerPixel"));
+            double widthPixels = (double) drone.getInt("widthPixels");
+            return widthPerPixel * widthPixels;
+        } catch (JSONException jse) {
+            return -1.0d;
+        }
     }
 
     public static double[] getMetadataValues(ExifInterface exif) throws XMPException, MissingDataException {
@@ -711,15 +480,16 @@ public class MetadataExtractor {
     }
 
     public static double[] getIntrinsicMatrixFromExif(ExifInterface exif) throws Exception {
-        double[] intrinsicMatrix = new double[9];
-        String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
-        String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase();
+        JSONObject drone = getMatchingDrone(exif);
 
-        HashMap<String, double[]> mfn = mfnMaps.get(make);
-        if (mfn != null) {
-            double[] pixelDimensions = mfn.get(model);
+        if (drone != null) {
+            double[] pixelDimensions = new double[4];
+            pixelDimensions[0] = (double) rationalToFloat(drone.getString("ccdWidthMMPerPixel"));
+            pixelDimensions[1] = (double) rationalToFloat(drone.getString("ccdHeightMMPerPixel"));
+            pixelDimensions[2] = (double) drone.getInt("widthPixels");
+            pixelDimensions[3] = (double) drone.getInt("heightPixels");
             if (pixelDimensions != null) {
-                Log.i(TAG, "found pixel dimensions (mm) from table lookup: " + pixelDimensions[0] + ", " + pixelDimensions[1]);
+                Log.i(TAG, "found pixel dimensions (mm) from lookup: " + pixelDimensions[0] + ", " + pixelDimensions[1]);
                 return getIntrinsicMatrixFromKnownCCD(exif, pixelDimensions);
             } else {
                 Log.i(TAG, "Camera make and model not recognized. Guestimating intrinsics from exif...");
@@ -732,6 +502,8 @@ public class MetadataExtractor {
     }
 
     protected static double[] getIntrinsicMatrixFromKnownCCD(ExifInterface exif, double[] pixelDimensions) throws Exception {
+        JSONObject drone = getMatchingDrone(exif);
+
         if (exif == null) {
             throw new IllegalArgumentException("Failed to get intrinsics, ExifInterface was null!");
         }
@@ -740,31 +512,28 @@ public class MetadataExtractor {
             Log.e(TAG, "Warning: reverting to calc from 35mm mode");
             return getIntrinsicMatrixFromExif35mm(exif);
         }
-        if (pixelDimensions.length < 2) {
+        if (pixelDimensions.length < 4) {
             Log.e(TAG, "Failed to calculate intrinsics, ccdDimensions was invalid!");
             Log.e(TAG, "Warning: reverting to calc from 35mm mode");
             return getIntrinsicMatrixFromExif35mm(exif);
         }
 
         String focalRational = exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
-        if (focalRational == null || focalRational.equals("")) {
-            Log.e(TAG, "Failed to calculate intrinsics, focal length was missing or invalid!");
-            Log.e(TAG, "Warning: reverting to calc from 35mm mode");
-            return getIntrinsicMatrixFromExif35mm(exif);
-        }
-
         double focalLength = rationalToFloat(focalRational);
         if (focalLength == -1.0d || focalLength == 0.0d) {
-            throw new Exception("focal length could not be determined");
+            if (drone != null && drone.has("focalLength")) {
+                focalLength = drone.getDouble("focalLength");
+            } else {
+                Log.e(TAG, "Failed to calculate intrinsics, focal length was missing or invalid!");
+                Log.e(TAG, "Warning: reverting to calc from 35mm mode");
+                return getIntrinsicMatrixFromExif35mm(exif);
+            }
         }
 
         String digitalZoomRational = exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO);
         float digitalZoomRatio = 1.0f;
         if (digitalZoomRational != null && !digitalZoomRational.equals("")) {
             digitalZoomRatio = rationalToFloat(exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO));
-//            if (Math.abs(digitalZoomRatio) > 0.000f && Math.abs(digitalZoomRatio - 1.0f) > 0.000f) {
-//                throw new Exception("digital zoom detected. Not supported in this version");
-//            }
             if (digitalZoomRatio < 1.0f) {
                 digitalZoomRatio = 1.0f;
             }
@@ -832,7 +601,6 @@ public class MetadataExtractor {
         }
 
         // calculate aspect ratio
-//        double aspectRatio = imageWidth / imageHeight; // This will be WRONG if the image is auto-cropped, which is commonly done to make a 16:9 picture from a 4:3 sensor
         // note that this represents the aspect ratio of the CCD, not the image!
         double ccdAspectRatio = 4.0d/3.0d; // This will be WRONG if the sensor is not 4:3! e.g: APS-C or Full-frame 3:2
 
@@ -943,7 +711,7 @@ public class MetadataExtractor {
 
     public static float rationalToFloat(String str)
     {
-        if (str == null) {
+        if (str == null || str.equals("")) {
             return 0.0f;
         }
         String[] split = str.split("/", 2);
