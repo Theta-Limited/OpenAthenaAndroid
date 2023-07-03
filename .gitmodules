@@ -1,0 +1,3 @@
+[submodule "app/src/main/assets/DroneModels"]
+	path = app/src/main/assets/DroneModels
+	url = git@github.com:Theta-Limited/DroneModels.git
