@@ -172,7 +172,7 @@ public class CursorOnTargetSender {
             root.appendChild(detail);
 
             Element precisionlocation = doc.createElement("precisionlocation");
-            precisionlocation.setAttribute("altsrc", "DTED0");
+            precisionlocation.setAttribute("altsrc", "DTED2");
             precisionlocation.setAttribute("geopointsrc", "GPS");
             detail.appendChild(precisionlocation);
 
