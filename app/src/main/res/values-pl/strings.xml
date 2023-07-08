@@ -1,0 +1,119 @@
+<resources>
+    <string name="app_name">OpenAthena™ dla Androida</string>
+
+    <string name="next">Następny</string>
+    <string name="previous">Poprzedni</string>
+
+    <string name="action_prefs">Ustawienia</string>
+    <string name="action_calculate">Oblicz</string>
+    <string name="action_about_openathena">O OpenAthena</string>
+    <string name="action_settings">Ustawienia</string>
+
+    <string name="button_selectImage">🖼️</string>
+    <string name="button_calculate">🧮</string>
+    <string name="button_loadDEM">⛰️</string>
+
+    <string name="text_view_value">ChangeMe</string>
+    <string name="log_text_view_value">OpenAthena™ dla Androida. . .</string>
+    <string name="test_button_text">Oblicz</string>
+    <string name="enter_host">Nazwa pliku</string>
+
+    <string name="finish_button_text">Wróć</string>
+
+    <string name="save_prefs_text">💾</string>
+    <string name="reset_prefs_text">Resetuj</string>
+
+    <string name="title_activity_log">Log OpenAthena™ dla Androida</string>
+    <string name="title_activity_prefs">Ustawienia OpenAthena™ dla Androida</string>
+    <string name="title_activity_about">O OpenAthena™ dla Androida</string>
+
+
+
+    <string name="clear_button_text">Wyczyść Dziennik</string>
+    <string name="openathena_for_android">OpenAthena™ dla Androida</string>
+    <string name="GPL3Notice">GPL-3.0, niektóre prawa zastrzeżone</string>
+    <string name="AboutSnippet"><![CDATA[<br> OpenAthena™ na Androida to projekt, który umożliwia popularnym dronom wykrywanie precyzyjnych lokalizacji geodezyjnych<br> ]]></string>
+    <string name="about_software_libraries_used">Użyte biblioteki oprogramowania:</string>
+    <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> Projekt prowadzony przez <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br> ]]></string>
+    <string name="CallToActionSnippet"><![CDATA[Zobacz projekt na GitHub</a><br> ]]></string>
+    <string name="bad_altitude_data_error_msg">BŁĄD: błędne dane dotyczące wysokości lub terenu. Ten obraz nie nadaje się do użytku. 🖼🚫🎯</string>
+    <string name="target_found_at_msg">Cel znaleziony pod adresem</string>
+    <string name="drone_dist_to_target_msg">Odległość drona do celu:</string>
+    <string name="resolveTarget_oob_error_msg">BŁĄD: funkcja \'resolveTarget\' przekroczyła zakres</string>
+    <string name="geotiff_coverage_reminder">Upewnij się, że plik cyfrowego modelu terenu GeoTIFF obejmuje lokalizację drona!\n</string>
+    <string name="geotiff_coverage_precedent_message">Obszar pokrycia Twojego pliku GeoTIFF to:</string>
+    <string name="geotiff_load_reminder_msg">Nie można rozwiązać celu. Załaduj cyfrowy model terenu GeoTIFF „.tif” za pomocą przycisku ⛰\n</string>
+    <string name="metadata_parse_error_msg">Nie można otworzyć pliku obrazu do obliczenia. Brakuje metadanych obrazu z drona 🖼 lub są one bezużyteczne. Czy to zdjęcie z drona? \n</string>
+    <string name="text_copied_to_clipboard_msg">Tekst skopiowany do schowka 📋</string>
+    <string name="image_selected_msg">Wybrano 🖼\n</string>
+    <string name="dem_loaded_size_is_msg">został załadowany ⛰. Rozmiar to</string>
+    <string name="dem_load_error_generic_msg">BŁĄD: nie udało się załadować cyfrowego modelu terenu,</string>
+    <string name="dem_load_error_tiffexception_msg">BŁĄD: ładowanie cyfrowego modelu terenu nie powiodło się, plik nie był plikiem GeoTIFF „.tif”.\n</string>
+    <string name="calculating_target_msg">Obliczanie 🧮:\n</string>
+    <string name="no_image_selected_error_msg">BŁĄD: Nie można obliczyć 🚫🧮: nie wybrano obrazu 🚫🖼\n</string>
+    <string name="opened_exif_for_image_msg">Otwarto metadane EXIF dla obrazu\n</string>
+    <string name="autel_accuracy_warning_msg">⚠️ NIEBEZPIECZEŃSTWO: drony Autel mają znane problemy z precyzja ⚠️</string>
+    <string name="i_understand_this_risk">Rozumiem to ryzyko</string>
+    <string name="image_is_too_large_error_msg">Obraz jest za duży, aby go pokazać!</string>
+    <string name="loading_geotiff_toast_msg">Ładowanie GeoTIFF. Proszę czekać...</string>
+    <string name="wgs84_standard_lat_lon">WGS84 (domyślnie)\nSzer. geogr., Dług. geogr.</string>
+    <string name="wgs84_tooltip">Szeroko stosowany standard opisujący położenie szerokości geograficznej i długości geograficznej na Ziemi</string>
+    <string name="nato_mgrs_1m">NATO MGRS 1m</string>
+    <string name="nato_mgrs_10m">NATO MGRS 10m</string>
+    <string name="nato_mgrs_100m">NATO MGRS 100m</string>
+    <string name="nato_mgrs_1m_tooltip">Standard wojskowego systemu referencyjnego NATO. Opisuje 1 metry kwadratowe powierzchni Ziemi</string>
+    <string name="nato_mgrs_10m_tooltip">Standard wojskowego systemu referencyjnego NATO. Opisuje 10 metry kwadratowe powierzchni Ziemi</string>
+    <string name="nato_mgrs_100m_tooltip">Standard wojskowego systemu referencyjnego NATO. Opisuje 100 metry kwadratowe powierzchni Ziemi</string>
+    <string name="ck_42_lat_lon">CK-42 Красовский\nLat, Lon</string>
+    <string name="ck_42_geodetic_tooltip">Alternatywny system geodezyjny wykorzystujący elipsoidę Krasowskiego 1940. Powszechnie używany w krajach byłego Układu Warszawskiego</string>
+    <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
+    <string name="ck_42_gauss_kruger_tooltip">Alternatywny system geodezyjny wykorzystujący elipsoidę Krasowskiego 1940. Współrzędna północna zdefiniowana przez wartość X i współrzędna wschodnia zdefiniowana przez wartość Y opisują dokładne położenie na Ziemi</string>
+    <string name="target_output_mode_title">🎯 Tryb wyjściowy:</string>
+    <string name="gk_northing_text">Północ:</string>
+    <string name="gk_easting_text">Wschodnia:</string>
+    <string name="gk_zone_text">STREFA:</string>
+    <string name="attribute_text_drone_azimuth">Azymut:</string>
+    <string name="attribute_text_drone_camera_pitch">Nachylenie:</string>
+    <string name="wgs84_ck42_conversion_fail_warning">⚠️OSTRZEŻENIE: wartości są w WGS84, a nie w CK-42 ⚠️\n</string>
+    <string name="missing_data_exception_latitude_error_msg">BŁĄD: nie znaleziono metadanych Latitude! Ten dron jest niekompatybilny z OpenAthena! 😭</string>
+    <string name="missing_data_exception_longitude_error_msg">BŁĄD: nie znaleziono metadanych długości geograficznej! Ten dron jest niekompatybilny z OpenAthena! 😭</string>
+    <string name="missing_data_exception_altitude_error_msg">BŁĄD: nie znaleziono metadanych wysokości! Ten dron jest niekompatybilny z OpenAthena! 😭</string>
+    <string name="missing_data_exception_azimuth_error_msg">BŁĄD: nie znaleziono metadanych azymutu! Ten dron jest niekompatybilny z OpenAthena! 😭</string>
+    <string name="missing_data_exception_theta_error_msg">BŁĄD: nie znaleziono metadanych nachylenia kamery! Ten dron jest niekompatybilny z OpenAthena! 😭</string>
+    <string name="missing_data_exception_roll">BŁĄD: nie znaleziono metadanych bełkotu kamery!</string>
+    <string name="missing_data_exception_altitude_and_theta_error_msg">BŁĄD: znaleziono metadane kąta nachylenia kamery, ale były one nieprawidłowe! Ten dron jest niekompatybilny z OpenAthena! 😭</string>
+    <string name="latitude_label_short">łac</string>
+    <string name="longitude_label_short">lon</string>
+    <string name="altitude_label_short">Wys:</string>
+    <string name="cot_remarks">Wygenerowane przez OpenAthena dla Androida z danych sUAS</string>
+    <string name="version_word">wersja</string>
+    <string name="step_1_load_a_DEM">Krok 1: Wczytaj Cyfrowy Model Terenu (DEM)</string>
+    <string name="step_2_load_drone_image">Krok 2: załaduj obraz drona</string>
+    <string name="step_3_press_calculate">Krok 3: naciśnij ten przycisk, aby obliczyć:</string>
+    <string name="step_4_obtain_target">Krok 4: uzyskaj lokalizację docelową poniżej</string>
+    <string name="wrong_filetype_toast_error_msg">BŁĄD: niewłaściwy typ pliku. Wybierz plik GeoTIFF z rozszerzeniem „.tif”</string>
+    <string name="permissions_toast_success_msg">Uprawnienia Przyznane</string>
+    <string name="permissions_toast_error_msg">Nie udało się uzyskać niezbędnych uprawnień</string>
+    <string name="latitude_label_long">Szerokość :</string>
+    <string name="longitude_label_long">Długość :</string>
+    <string name="altitude_label_long">Wysokość :</string>
+    <string name="latitude_wgs84_label_long">Szerokość (WGS84):</string>
+    <string name="longitude_wgs84_label_long">Długość (WGS84):</string>
+    <string name="altiude_wgs84_label_long">Wysokość (WGS84):</string>
+    <string name="roll_label">Kąt obrotu kamery:</string>
+    <string name="make_prefix_error_msg">BŁĄD: producent</string>
+    <string name="not_usable_at_this_time_error_msg">aktualnie nie jest użyteczny</string>
+    <string name="parrot_model_prefix_error_msg">BŁĄD: model Parrot</string>
+    <string name="xmp_missing_error_msg">BŁĄD: metadane XMP są puste!</string>
+    <string name="xmp_empty_error_msg">BŁĄD: znaleziono metadane XMP, ale były puste!</string>
+    <string name="focal_length_label">Długość ogniskowej (w pikselach)::</string>
+    <string name="azimuth_offset_label">Przesunięcie azymutu dla wybranego punktu:</string>
+    <string name="pitch_offset_label">Przesunięcie kąta nachylenia dla wybranego punktu:</string>
+    <string name="isCameraModelRecognized">Czy model aparatu jest rozpoznawalny?:</string>
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
+    <string name="title_activity_selection">Wybierz cel</string>
+    <string name="geoid_load_error_msg">Błąd krytyczny: nie można załadować pliku danych geoidy Ziemi!</string>
+    <string name="nato_vertical_datum_notice">NATO i WGS84 używają pionowego układu odniesienia EGM96, wyrażonego w metrach powyżej średniego poziomu morza.</string>
+    <string name="warsaw_vertical_datum_notice">CK-42 używa pionowego układu odniesienia opartego na wysokości w metrach nad elipsoidą Krassowskiego z 1940 roku.</string>
+</resources>
