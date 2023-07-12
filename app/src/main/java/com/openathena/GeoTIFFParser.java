@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.io.Console;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -23,9 +24,10 @@ import java.lang.NullPointerException;
 import com.openathena.RequestedValueOOBException;
 import com.openathena.geodataAxisParams;
 
-import com.agilesrc.dem4j.*;
-import com.agilesrc.dem4j.dted.*;
-import com.agilesrc.dem4j.exceptions.*;
+import com.agilesrc.dem4j.Point;
+import com.agilesrc.dem4j.dted.impl.FileBasedDTED;
+import com.agilesrc.dem4j.exceptions.CorruptTerrainException;
+import com.agilesrc.dem4j.exceptions.InvalidValueException;
 
 import mil.nga.tiff.*;
 
@@ -48,6 +50,10 @@ public class GeoTIFFParser implements Serializable {
 
     private verticalDatumTypes verticalDatum;
 
+    private FileBasedDTED dted;
+    private File file;
+    private boolean isDTED = false;
+
     GeoTIFFParser() {
         geofile = null;
 
@@ -57,10 +63,23 @@ public class GeoTIFFParser implements Serializable {
         Rasters rasters = null;
     }
 
-    GeoTIFFParser(File geofile) throws IllegalArgumentException{
+    GeoTIFFParser(File geofile) throws IllegalArgumentException {
         this();
         this.geofile = geofile;
-        loadGeoTIFF(geofile);
+        if (!file.exists()) {
+            throw new IllegalArgumentException("The file " + geofile.getAbsolutePath() + " does not exist.");
+        }
+        try {
+            loadGeoTIFF(geofile);
+        } catch (IllegalArgumentException ile) {
+            // If GeoTIFF parsing fails, try to parse as DTED
+            try {
+                this.dted = new FileBasedDTED(file);
+                this.isDTED = true;
+            } catch (Exception ex) {
+                throw new IllegalArgumentException("Failed to parse the file as GeoTIFF or DTED: " + file.getAbsolutePath(), ex);
+            }
+        }
     }
 
     public enum verticalDatumTypes implements Serializable{
@@ -468,7 +487,18 @@ public class GeoTIFFParser implements Serializable {
      * @return The altitude of the terrain near the given Lat/Lon, in meters above the WGS84 reference ellipsoid
      * @throws RequestedValueOOBException
      */
-    public double getAltFromLatLon(double lat, double lon) throws RequestedValueOOBException {
+    public double getAltFromLatLon(double lat, double lon) throws RequestedValueOOBException, CorruptTerrainException{
+        if (this.isDTED) {
+            Point point = new Point(lat, lon);
+            try {
+                return this.dted.getElevation(point).getElevation();
+            } catch (CorruptTerrainException e) {
+                throw new CorruptTerrainException("The terrain data in the DTED file is corrupt.", e);
+            } catch (InvalidValueException e) {
+                throw new CorruptTerrainException("The provided latitude and longitude values are invalid.", e);
+            }
+        }
+
         if (rasters == null || xParams == null || yParams == null) {
             throw new NullPointerException("getAltFromLatLon pre-req was null!");
         }

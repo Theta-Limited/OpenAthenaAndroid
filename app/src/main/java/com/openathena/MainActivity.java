@@ -15,6 +15,7 @@ import static com.openathena.TargetGetter.degNormalize;
 
 // import veraPDF fork of Adobe XMP core Java v5.1.0
 import com.adobe.xmp.XMPException;
+import com.agilesrc.dem4j.exceptions.CorruptTerrainException;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -779,9 +780,11 @@ public class MainActivity extends AthenaActivity {
                 attribs += roundDouble(CoordTranslator.toCK42Lon(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ " + getString(R.string.longitude_label_short) + " " + "(CK-42)" + " ≤ " + roundDouble(CoordTranslator.toCK42Lon(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n\n";
             } catch (RequestedValueOOBException e_OOB) { // This shouldn't happen, may be possible though if GeoTIFF file is very small
                 // revert to WGS84 if CK-42 conversion has failed
-                attribs += getString(R.string.wgs84_ck42_conversion_fail_warning);
+                attribs += getString(R.string.wgs84_ck42_conversion_fail_warning) + "\n";
                 attribs += roundDouble(theParser.getMinLat()) + " ≤ " + getString(R.string.latitude_label_short) + " ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
                 attribs += roundDouble(theParser.getMinLon()) + " ≤ " + getString(R.string.longitude_label_short) + " ≤ " + roundDouble(theParser.getMaxLon()) + "\n\n";
+            } catch (CorruptTerrainException cte) {
+                attribs += "ERROR: DTED elevation model file is corrupt and unusable! ð⛰️";
             }
         }
         appendText(attribs);

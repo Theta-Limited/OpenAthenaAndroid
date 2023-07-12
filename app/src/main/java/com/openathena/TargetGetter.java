@@ -2,6 +2,7 @@ package com.openathena;
 
 import android.util.Log;
 
+import com.agilesrc.dem4j.exceptions.CorruptTerrainException;
 import com.openathena.GeoTIFFParser;
 import com.openathena.geodataAxisParams;
 import com.openathena.RequestedValueOOBException;
@@ -60,7 +61,7 @@ public class TargetGetter {
      * @return double[] an array containing: 0 the distance to the target 1 the last latitude value along the raycast 2 the last longitude value along the raycast 3 the last altitude value along the raycast 4 the terrain altitude of the datapoint nearest the last raycast position
      * @throws RequestedValueOOBException Throws a RequestedValueOOBException if the raycast exceeds the coverage of the DEM held by this object's GeoTIFFParser. If the altitude of the start of the ray is already below terrain elevation data, isAltitudeBad boolean will be set to true
      */
-    public double[] resolveTarget(double lat, double lon, double alt, double azimuth, double theta) throws RequestedValueOOBException{
+    public double[] resolveTarget(double lat, double lon, double alt, double azimuth, double theta) throws RequestedValueOOBException, CorruptTerrainException {
         if (myGeoTIFFParser == null) {
             throw new NullPointerException("FATAL ERROR: resolveTarget attempted before geotiff loaded");
         }

@@ -14,7 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 
 import org.threeten.bp.YearMonth;
-import org.apache.commons.lang.builder.CompareToBuilder;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -345,16 +345,16 @@ public class FileBasedDTED extends AbstractFileBasedTerrain
 	 */
 	public int compareTo(final DEM other) {
 		int result = Integer.MIN_VALUE;
-		
+
 		try {
-			result = new CompareToBuilder().append(getSouthWestCorner(), 
+			result = new CompareToBuilder().append(getSouthWestCorner(),
 					other.getSouthWestCorner()).toComparison();
 		} catch (CorruptTerrainException e) {
 			if (_LOGGER.isErrorEnabled()) {
 				_LOGGER.error("Unable to get point information",e);
 			}
 		}
-		
+
 		return result;
 	}
 
