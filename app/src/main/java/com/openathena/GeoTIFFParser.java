@@ -75,6 +75,16 @@ public class GeoTIFFParser implements Serializable {
             // If GeoTIFF parsing fails, try to parse as DTED
             try {
                 this.dted = new FileBasedDTED(geofile);
+                this.xParams = new geodataAxisParams();
+                this.xParams.start = this.dted.getNorthWestCorner().getLongitude();
+                this.xParams.end = this.dted.getNorthEastCorner().getLongitude();
+                this.xParams.stepwiseIncrement = this.dted.getLongitudeInterval();
+                this.xParams.numOfSteps = (long) Math.ceil((xParams.end - xParams.start) / xParams.stepwiseIncrement);
+                this.yParams = new geodataAxisParams();
+                this.yParams.start = this.dted.getNorthWestCorner().getLatitude();
+                this.yParams.end = this.dted.getSouthWestCorner().getLatitude();
+                this.yParams.stepwiseIncrement = this.dted.getLatitudeInterval();
+                this.yParams.numOfSteps = (long) Math.ceil((yParams.start - yParams.end) / Math.abs(yParams.stepwiseIncrement));
                 this.isDTED = true;
             } catch (Exception ex) {
                 throw new IllegalArgumentException("Failed to parse the file as GeoTIFF or DTED: " + geofile.getAbsolutePath(), ex);
@@ -491,7 +501,10 @@ public class GeoTIFFParser implements Serializable {
         if (this.isDTED) {
             Point point = new Point(lat, lon);
             try {
-                return this.dted.getElevation(point).getElevation();
+                double EGM96_altitude = this.dted.getElevation(point).getElevation();
+                // DTED vertical datum is height above EGM96 geoid, we must convert it to height above WGS84 ellipsoid
+                double WGS84_altitude = EGM96_altitude - offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
+                return WGS84_altitude;
             } catch (CorruptTerrainException e) {
                 throw new CorruptTerrainException("The terrain data in the DTED file is corrupt.", e);
             } catch (InvalidValueException e) {
