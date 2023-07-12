@@ -23,6 +23,10 @@ import java.lang.NullPointerException;
 import com.openathena.RequestedValueOOBException;
 import com.openathena.geodataAxisParams;
 
+import com.agilesrc.dem4j.*;
+import com.agilesrc.dem4j.dted.*;
+import com.agilesrc.dem4j.exceptions.*;
+
 import mil.nga.tiff.*;
 
 public class GeoTIFFParser implements Serializable {
