@@ -9,7 +9,7 @@
  */
 package com.agilesrc.dem4j;
 
-import org.apache.commons.lang.builder.*;
+import org.apache.commons.lang3.builder.*;
 
 /**
  * <p>The Point object is the representation of a 

@@ -852,7 +852,7 @@ public class MainActivity extends AthenaActivity {
 
         requestExternStorage();
 
-        mGetDEM.launch("image/*");
+        mGetDEM.launch("*/*");
 
     }
 

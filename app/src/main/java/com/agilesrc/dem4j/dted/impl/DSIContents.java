@@ -15,7 +15,7 @@ import java.util.EnumSet;
 import org.threeten.bp.*;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.DateTimeFormatterBuilder;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.agilesrc.dem4j.SecurityEnum;
 import com.agilesrc.dem4j.decoders.PointDecoder;

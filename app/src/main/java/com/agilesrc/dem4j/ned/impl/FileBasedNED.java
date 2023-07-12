@@ -18,8 +18,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.EndianUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.builder.CompareToBuilder;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -9,7 +9,7 @@
  */
 package com.agilesrc.dem4j.decoders;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.agilesrc.dem4j.HemisphereEnum;
 import com.agilesrc.dem4j.util.CooridnateConversion;

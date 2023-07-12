@@ -12,8 +12,8 @@ package com.agilesrc.dem4j.dted.impl;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.apache.commons.lang.builder.StandardToStringStyle;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.StandardToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.agilesrc.dem4j.Point;
 import com.agilesrc.dem4j.SecurityEnum;

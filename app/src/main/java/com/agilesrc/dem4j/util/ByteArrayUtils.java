@@ -12,7 +12,7 @@ package com.agilesrc.dem4j.util;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -30,6 +30,7 @@ import com.agilesrc.dem4j.exceptions.CorruptTerrainException;
 import com.agilesrc.dem4j.exceptions.InvalidValueException;
 
 import mil.nga.tiff.*;
+import mil.nga.tiff.util.TiffException;
 
 public class GeoTIFFParser implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -51,7 +52,6 @@ public class GeoTIFFParser implements Serializable {
     private verticalDatumTypes verticalDatum;
 
     private FileBasedDTED dted;
-    private File file;
     private boolean isDTED = false;
 
     GeoTIFFParser() {
@@ -66,18 +66,18 @@ public class GeoTIFFParser implements Serializable {
     GeoTIFFParser(File geofile) throws IllegalArgumentException {
         this();
         this.geofile = geofile;
-        if (!file.exists()) {
+        if (!geofile.exists()) {
             throw new IllegalArgumentException("The file " + geofile.getAbsolutePath() + " does not exist.");
         }
         try {
             loadGeoTIFF(geofile);
-        } catch (IllegalArgumentException ile) {
+        } catch (IllegalArgumentException | TiffException e) {
             // If GeoTIFF parsing fails, try to parse as DTED
             try {
-                this.dted = new FileBasedDTED(file);
+                this.dted = new FileBasedDTED(geofile);
                 this.isDTED = true;
             } catch (Exception ex) {
-                throw new IllegalArgumentException("Failed to parse the file as GeoTIFF or DTED: " + file.getAbsolutePath(), ex);
+                throw new IllegalArgumentException("Failed to parse the file as GeoTIFF or DTED: " + geofile.getAbsolutePath(), ex);
             }
         }
     }
