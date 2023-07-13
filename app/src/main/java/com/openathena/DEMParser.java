@@ -12,6 +12,7 @@ import java.lang.Math;
 
 import java.lang.IllegalArgumentException;
 import java.lang.NullPointerException;
+import java.util.Locale;
 
 import com.agilesrc.dem4j.Point;
 import com.agilesrc.dem4j.dted.impl.FileBasedDTED;
@@ -64,6 +65,11 @@ public class DEMParser implements Serializable {
             // If GeoTIFF parsing fails, try to parse as DTED
             try {
                 this.dted = new FileBasedDTED(geofile);
+                String dtedLevel = this.dted.getDTEDLevel().name().toUpperCase();
+                Log.d(TAG, "DTED LEVEL IS: " + dtedLevel);
+                if (dtedLevel.equals("DTED0") || dtedLevel.equals("DTED1")) {
+                    throw new CorruptTerrainException("DTED2 or DTED3 is required");
+                }
                 this.xParams = new geodataAxisParams();
                 this.xParams.start = this.dted.getNorthWestCorner().getLongitude();
                 this.xParams.end = this.dted.getNorthEastCorner().getLongitude();
