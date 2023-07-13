@@ -52,7 +52,7 @@ public class GeoTIFFParser implements Serializable {
     private verticalDatumTypes verticalDatum;
 
     private FileBasedDTED dted;
-    private boolean isDTED = false;
+    public boolean isDTED = false;
 
     GeoTIFFParser() {
         geofile = null;
@@ -87,7 +87,7 @@ public class GeoTIFFParser implements Serializable {
                 this.yParams.numOfSteps = (long) Math.ceil((yParams.start - yParams.end) / Math.abs(yParams.stepwiseIncrement));
                 this.isDTED = true;
             } catch (Exception ex) {
-                throw new IllegalArgumentException("Failed to parse the file as GeoTIFF or DTED: " + geofile.getAbsolutePath(), ex);
+                throw new TiffException(ex.getMessage());
             }
         }
     }

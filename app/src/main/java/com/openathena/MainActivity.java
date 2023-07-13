@@ -405,7 +405,8 @@ public class MainActivity extends AthenaActivity {
                 @Override
                 public void run() {
                     if (e == null) {
-                        String successOutput = "GeoTIFF DEM ";
+                        String prefix = theParser.isDTED ? "DTED2 DEM " : "GeoTIFF DEM ";
+                        String successOutput = prefix;
 //            successOutput += "\"" + uri.getLastPathSegment(); + "\" ";
                         successOutput += getString(R.string.dem_loaded_size_is_msg) + " " + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
                         appendText(successOutput);

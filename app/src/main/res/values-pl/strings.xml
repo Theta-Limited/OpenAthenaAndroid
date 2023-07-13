@@ -40,22 +40,21 @@
     <string name="target_found_at_msg">Cel znaleziony pod adresem</string>
     <string name="drone_dist_to_target_msg">Odległość drona do celu:</string>
     <string name="resolveTarget_oob_error_msg">BŁĄD: funkcja \'resolveTarget\' przekroczyła zakres</string>
-    <string name="geotiff_coverage_reminder">Upewnij się, że plik cyfrowego modelu terenu GeoTIFF obejmuje lokalizację drona!\n</string>
-    <string name="geotiff_coverage_precedent_message">Obszar pokrycia Twojego pliku GeoTIFF to:</string>
-    <string name="geotiff_load_reminder_msg">Nie można rozwiązać celu. Załaduj cyfrowy model terenu GeoTIFF „.tif” za pomocą przycisku ⛰\n</string>
+    <string name="geotiff_coverage_precedent_message">Twój zasięg DEM wynosi ⛰:</string>
+    <string name="geotiff_load_reminder_msg">Nie można rozwiązać celu. Załaduj plik GeoTIFF Digital Elevation Model „.tif” lub DTED2 „.dt2” za pomocą przycisku „⛰”</string>
     <string name="metadata_parse_error_msg">Nie można otworzyć pliku obrazu do obliczenia. Brakuje metadanych obrazu z drona 🖼 lub są one bezużyteczne. Czy to zdjęcie z drona? \n</string>
     <string name="text_copied_to_clipboard_msg">Tekst skopiowany do schowka 📋</string>
     <string name="image_selected_msg">Wybrano 🖼\n</string>
     <string name="dem_loaded_size_is_msg">został załadowany ⛰. Rozmiar to</string>
     <string name="dem_load_error_generic_msg">BŁĄD: nie udało się załadować cyfrowego modelu terenu,</string>
-    <string name="dem_load_error_tiffexception_msg">BŁĄD: ładowanie cyfrowego modelu terenu nie powiodło się, plik nie był plikiem GeoTIFF „.tif”.\n</string>
+    <string name="dem_load_error_tiffexception_msg">BŁĄD: ładowanie pliku DEM nie powiodło się, nie był to plik GeoTIFF \\\".tif\\\" ani DTED2 \\\".dt2\\\".\\n</string>
     <string name="calculating_target_msg">Obliczanie 🧮:\n</string>
     <string name="no_image_selected_error_msg">BŁĄD: Nie można obliczyć 🚫🧮: nie wybrano obrazu 🚫🖼\n</string>
     <string name="opened_exif_for_image_msg">Otwarto metadane EXIF dla obrazu\n</string>
     <string name="autel_accuracy_warning_msg">⚠️ NIEBEZPIECZEŃSTWO: drony Autel mają znane problemy z precyzja ⚠️</string>
     <string name="i_understand_this_risk">Rozumiem to ryzyko</string>
     <string name="image_is_too_large_error_msg">Obraz jest za duży, aby go pokazać!</string>
-    <string name="loading_geotiff_toast_msg">Ładowanie GeoTIFF. Proszę czekać...</string>
+    <string name="loading_geotiff_toast_msg">Ładowanie pliku DEM. Proszę czekać...</string>
     <string name="wgs84_standard_lat_lon">WGS84 (domyślnie)\nSzer. geogr., Dług. geogr.</string>
     <string name="wgs84_tooltip">Szeroko stosowany standard opisujący położenie szerokości geograficznej i długości geograficznej na Ziemi</string>
     <string name="nato_mgrs_1m">NATO MGRS 1m</string>
@@ -67,7 +66,7 @@
     <string name="ck_42_lat_lon">CK-42 Красовский\nLat, Lon</string>
     <string name="ck_42_geodetic_tooltip">Alternatywny system geodezyjny wykorzystujący elipsoidę Krasowskiego 1940. Powszechnie używany w krajach byłego Układu Warszawskiego</string>
     <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
-    <string name="ck_42_gauss_kruger_tooltip">Alternatywny system geodezyjny wykorzystujący elipsoidę Krasowskiego 1940. Współrzędna północna zdefiniowana przez wartość X i współrzędna wschodnia zdefiniowana przez wartość Y opisują dokładne położenie na Ziemi</string>
+    <string name="ck_42_gauss_kruger_tooltip">Gauss-Krüger: Alternatywny system geodezyjny korzystający z elipsoidy Krasowskiego z 1940 roku. Północ jest określana przez wartość X, a Wschód jest określany przez wartość Y, co opisuje dokładną pozycję na Ziemi.</string>
     <string name="target_output_mode_title">🎯 Tryb wyjściowy:</string>
     <string name="gk_northing_text">Północ:</string>
     <string name="gk_easting_text">Wschodnia:</string>
@@ -91,7 +90,7 @@
     <string name="step_2_load_drone_image">Krok 2: załaduj obraz drona</string>
     <string name="step_3_press_calculate">Krok 3: naciśnij ten przycisk, aby obliczyć:</string>
     <string name="step_4_obtain_target">Krok 4: uzyskaj lokalizację docelową poniżej</string>
-    <string name="wrong_filetype_toast_error_msg">BŁĄD: niewłaściwy typ pliku. Wybierz plik GeoTIFF z rozszerzeniem „.tif”</string>
+    <string name="wrong_filetype_toast_error_msg">BŁĄD: niewłaściwy typ pliku. Wybierz plik GeoTIFF z rozszerzeniem „.tif” lub plik DTED2 z rozszerzeniem „.dt2”</string>
     <string name="permissions_toast_success_msg">Uprawnienia Przyznane</string>
     <string name="permissions_toast_error_msg">Nie udało się uzyskać niezbędnych uprawnień</string>
     <string name="latitude_label_long">Szerokość :</string>
@@ -116,4 +115,5 @@
     <string name="geoid_load_error_msg">Błąd krytyczny: nie można załadować pliku danych geoidy Ziemi!</string>
     <string name="nato_vertical_datum_notice">NATO i WGS84 używają pionowego układu odniesienia EGM96, wyrażonego w metrach powyżej średniego poziomu morza.</string>
     <string name="warsaw_vertical_datum_notice">CK-42 używa pionowego układu odniesienia opartego na wysokości w metrach nad elipsoidą Krassowskiego z 1940 roku.</string>
+    <string name="geotiff_coverage_reminder">Upewnij się, że plik DEM obejmuje lokalizację drona!</string>
 </resources>
