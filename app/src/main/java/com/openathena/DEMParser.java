@@ -2,27 +2,16 @@ package com.openathena;
 
 import android.util.Log;
 
-import java.io.Console;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-import java.util.Vector;
-import java.io.InputStream;
-import java.io.PrintWriter;
 
 import java.lang.Math;
 
 import java.lang.IllegalArgumentException;
 import java.lang.NullPointerException;
-
-import com.openathena.RequestedValueOOBException;
-import com.openathena.geodataAxisParams;
 
 import com.agilesrc.dem4j.Point;
 import com.agilesrc.dem4j.dted.impl.FileBasedDTED;
@@ -32,10 +21,10 @@ import com.agilesrc.dem4j.exceptions.InvalidValueException;
 import mil.nga.tiff.*;
 import mil.nga.tiff.util.TiffException;
 
-public class GeoTIFFParser implements Serializable {
+public class DEMParser implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public static String TAG = GeoTIFFParser.class.getSimpleName();
+    public static String TAG = DEMParser.class.getSimpleName();
 
     private transient File geofile;
 
@@ -54,7 +43,7 @@ public class GeoTIFFParser implements Serializable {
     private FileBasedDTED dted;
     public boolean isDTED = false;
 
-    GeoTIFFParser() {
+    DEMParser() {
         geofile = null;
 
         TIFFImage tiffImage = null;
@@ -63,14 +52,14 @@ public class GeoTIFFParser implements Serializable {
         Rasters rasters = null;
     }
 
-    GeoTIFFParser(File geofile) throws IllegalArgumentException {
+    DEMParser(File geofile) throws IllegalArgumentException {
         this();
         this.geofile = geofile;
         if (!geofile.exists()) {
             throw new IllegalArgumentException("The file " + geofile.getAbsolutePath() + " does not exist.");
         }
         try {
-            loadGeoTIFF(geofile);
+            loadDEM(geofile);
         } catch (IllegalArgumentException | TiffException e) {
             // If GeoTIFF parsing fails, try to parse as DTED
             try {
@@ -104,16 +93,16 @@ public class GeoTIFFParser implements Serializable {
 //    final short VERTICAL_UNITS_GEO_KEY = 4099;
 
     /**
-     * Loads a GeoTIFF Digital Elevation Model geofile into the parent GeoTIFFParser object's instance
+     * Loads a GeoTIFF or DTED2 Digital Elevation Model geofile into the parent DEMParser object's instance
      * <p>
-     *     This function takes in a Java file object and loads it into the parent GeoTIFFParser object.
-     *     Once loaded, the GeoTIFFParser object (via {@link com.openathena.GeoTIFFParser#getAltFromLatLon(double, double)} will be able to provide the nearest elevation value from a given latitude longitude pair
+     *     This function takes in a Java file object and loads it into the parent DEMParser object.
+     *     Once loaded, the DEMParser object (via {@link DEMParser#getAltFromLatLon(double, double)} will be able to provide the nearest elevation value from a given latitude longitude pair
      *
      * </p>
-     * @param geofile a Java file object which should represent a GeoTIFF DEM
+     * @param geofile a Java file object which should represent a GeoTIFF or DTED DEM
      * @throws IllegalArgumentException if geofile cannot be read or is rotated or skewed
      */
-    public void loadGeoTIFF(File geofile) throws IllegalArgumentException {
+    public void loadDEM(File geofile) throws IllegalArgumentException {
         this.geofile = geofile;
   /*      this.geodata = gdal.Open(geofile);
         this.geoTransform = getGeoTransform(geodata);*/
@@ -155,7 +144,7 @@ public class GeoTIFFParser implements Serializable {
         FileDirectoryEntry fde = directory.get(FieldTagType.GeoKeyDirectory);
         // Because my sources don't properly store vertical datum,
         // we have to assume its EGM96 (for GeoTIFFs) and hope it's correct :(
-        // When we implement the DTED2 and DTED3 format in a future version,
+        // When we implement the DTED2 and DTED3 format,
         // we know it will also be in EGM96
         verticalDatum = verticalDatumTypes.EGM96;
 
@@ -508,7 +497,7 @@ public class GeoTIFFParser implements Serializable {
             } catch (CorruptTerrainException e) {
                 throw new CorruptTerrainException("The terrain data in the DTED file is corrupt.", e);
             } catch (InvalidValueException e) {
-                throw new CorruptTerrainException("The provided latitude and longitude values are invalid.", e);
+                throw new RequestedValueOOBException("getAltFromLatLon arguments out of bounds!", lat, lon);
             }
         }
 
