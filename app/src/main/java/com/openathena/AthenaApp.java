@@ -3,19 +3,16 @@ package com.openathena;
 import android.app.Application;
 import android.content.DialogInterface;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
-import org.matthiaszimmermann.location.Location;
 import org.matthiaszimmermann.location.egm96.Geoid;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 public class AthenaApp extends Application { // Android Singleton Class for holding persistent state information between activities
-    private GeoTIFFParser geoTIFFParser;
+    private DEMParser demParser;
 
     public static String TAG = AthenaApp.class.getSimpleName();
 
@@ -44,12 +41,12 @@ public class AthenaApp extends Application { // Android Singleton Class for hold
         }
     }
 
-    public GeoTIFFParser getGeoTIFFParser() {
-        return geoTIFFParser;
+    public DEMParser getDEMParser() {
+        return demParser;
     }
 
-    public synchronized void setGeoTIFFParser(GeoTIFFParser geoTIFFParser) {
-        this.geoTIFFParser = geoTIFFParser;
+    public synchronized void setDEMParser(DEMParser demParser) {
+        this.demParser = demParser;
     }
 
     // flag which is set if any participating activity updates the selected point

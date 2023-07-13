@@ -15,6 +15,7 @@ import static com.openathena.TargetGetter.degNormalize;
 
 // import veraPDF fork of Adobe XMP core Java v5.1.0
 import com.adobe.xmp.XMPException;
+import com.agilesrc.dem4j.exceptions.CorruptTerrainException;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -84,7 +85,7 @@ public class MainActivity extends AthenaActivity {
     protected String versionName;
 
     MetadataExtractor theMeta = null;
-    GeoTIFFParser theParser = null;
+    DEMParser theParser = null;
     TargetGetter theTGetter = null;
 
     ActivityResultLauncher<String> mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
@@ -190,8 +191,8 @@ public class MainActivity extends AthenaActivity {
         }
 
         if (isDEMLoaded) {
-            if (athenaApp != null && athenaApp.getGeoTIFFParser() != null) { // load DEM from App singleton instance in mem
-                theParser = athenaApp.getGeoTIFFParser();
+            if (athenaApp != null && athenaApp.getDEMParser() != null) { // load DEM from App singleton instance in mem
+                theParser = athenaApp.getDEMParser();
                 theTGetter = new TargetGetter(theParser);
                 setButtonReady(buttonSelectImage, true);
             } else if (storedDEMUriString != null && !storedDEMUriString.equals("")) { // fallback, load DEM from disk (slower)
@@ -268,7 +269,7 @@ public class MainActivity extends AthenaActivity {
             Log.d(TAG, "saved demUri: " + demUri.toString());
             athenaApp.putString("demUri", demUri.toString());
 
-            athenaApp.setGeoTIFFParser(theParser);
+            athenaApp.setDEMParser(theParser);
         }
     }
 
@@ -404,11 +405,12 @@ public class MainActivity extends AthenaActivity {
                 @Override
                 public void run() {
                     if (e == null) {
-                        String successOutput = "GeoTIFF DEM ";
+                        String prefix = theParser.isDTED ? "DTED2 DEM " : "GeoTIFF DEM ";
+                        String successOutput = prefix;
 //            successOutput += "\"" + uri.getLastPathSegment(); + "\" ";
                         successOutput += getString(R.string.dem_loaded_size_is_msg) + " " + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
                         appendText(successOutput);
-                        printGeoTIFFBounds();
+                        printDEMBounds();
                         isDEMLoaded = true;
                         setButtonReady(buttonSelectImage, true);
                         if (isImageLoaded) {
@@ -425,7 +427,7 @@ public class MainActivity extends AthenaActivity {
     }
 
     private Exception loadDEMnewThread(Uri uri) {
-        File appCacheDir = new File(getCacheDir(), "geotiff");
+        File appCacheDir = new File(getCacheDir(), "DEMs");
         if (!appCacheDir.exists()) {
             appCacheDir.mkdirs();
         }
@@ -463,7 +465,7 @@ public class MainActivity extends AthenaActivity {
         demUri = Uri.fromFile(fileInCache);
 
         try {
-            GeoTIFFParser parser = new GeoTIFFParser(fileInCache);
+            DEMParser parser = new DEMParser(fileInCache);
             theParser = parser;
             theTGetter = new TargetGetter(parser);
             return null;
@@ -667,10 +669,10 @@ public class MainActivity extends AthenaActivity {
                         } else {
                             attribs += getString(R.string.resolveTarget_oob_error_msg) + " (CK-42):" + roundDouble(CoordTranslator.toCK42Lat(e.OOBLat, e.OOBLon, z)) + ", " + roundDouble(CoordTranslator.toCK42Lon(e.OOBLat, e.OOBLon, z)) + "\n";
                         }
-                        attribs += getString(R.string.geotiff_coverage_reminder);
-                        attribs += getString(R.string.geotiff_coverage_precedent_message);
+                        attribs += getString(R.string.geotiff_coverage_reminder) + "\n";
+                        attribs += getString(R.string.geotiff_coverage_precedent_message) + "\n";
                         appendText(attribs);
-                        printGeoTIFFBounds();
+                        printDEMBounds();
                         return;
                     }
                 }
@@ -748,6 +750,9 @@ public class MainActivity extends AthenaActivity {
             Log.e(TAG, e.getMessage());
             appendText(e.getMessage() + "\n");
             e.getStackTrace();
+        } catch (CorruptTerrainException cte) {
+            Log.e(TAG, cte.getMessage());
+            printDEMBounds();
         } catch (Exception e) {
 //            Log.e(TAG, e.getMessage());
             appendText(getString(R.string.metadata_parse_error_msg)+e+"\n\n");
@@ -767,7 +772,7 @@ public class MainActivity extends AthenaActivity {
         return human_readable;
     }
 
-    private void printGeoTIFFBounds() {
+    private void printDEMBounds() {
         String attribs = "";
         if (!outputModeIsSlavic()) {
             attribs += roundDouble(theParser.getMinLat()) + " ≤ " + getString(R.string.latitude_label_short) + " ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
@@ -779,9 +784,11 @@ public class MainActivity extends AthenaActivity {
                 attribs += roundDouble(CoordTranslator.toCK42Lon(theParser.getMinLat(), theParser.getMinLon(), theParser.getAltFromLatLon(theParser.getMinLat(), theParser.getMinLon()))) + " ≤ " + getString(R.string.longitude_label_short) + " " + "(CK-42)" + " ≤ " + roundDouble(CoordTranslator.toCK42Lon(theParser.getMaxLat(), theParser.getMaxLon(), theParser.getAltFromLatLon(theParser.getMaxLat(), theParser.getMaxLon()))) + "\n\n";
             } catch (RequestedValueOOBException e_OOB) { // This shouldn't happen, may be possible though if GeoTIFF file is very small
                 // revert to WGS84 if CK-42 conversion has failed
-                attribs += getString(R.string.wgs84_ck42_conversion_fail_warning);
+                attribs += getString(R.string.wgs84_ck42_conversion_fail_warning) + "\n";
                 attribs += roundDouble(theParser.getMinLat()) + " ≤ " + getString(R.string.latitude_label_short) + " ≤ " + roundDouble(theParser.getMaxLat()) + "\n";
                 attribs += roundDouble(theParser.getMinLon()) + " ≤ " + getString(R.string.longitude_label_short) + " ≤ " + roundDouble(theParser.getMaxLon()) + "\n\n";
+            } catch (CorruptTerrainException cte) {
+                attribs += "ERROR: DTED elevation model file is corrupt and unusable! ð⛰️";
             }
         }
         appendText(attribs);
@@ -849,7 +856,7 @@ public class MainActivity extends AthenaActivity {
 
         requestExternStorage();
 
-        mGetDEM.launch("image/*");
+        mGetDEM.launch("*/*");
 
     }
 

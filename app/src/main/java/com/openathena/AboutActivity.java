@@ -60,9 +60,9 @@ public class AboutActivity extends AppCompatActivity {
 
         // set About text
         aboutText.setText(Html.fromHtml( getString(R.string.app_name) + " " + getString(R.string.version_word) + " " + versionName+"<br>"
-                        + "Matthew Krupczak, Bobby Krupczak, Seth Canada, et al.<br>"
+                        + "Theta Informatics LLC<br>"
                         + getString(R.string.GPL3Notice)
-                        + " <a href=\"https://openathena.com/\">OpenAthena.com</a> <br>"
+                        + "<br> <a href=\"https://openathena.com/\">OpenAthena.com</a> <br>"
                         + getString(R.string.AboutSnippet)
                         + "<br><a href=\"https://github.com/Theta-Limited/OpenAthena/blob/main/EIO_fetch_geotiff_example.md\">"
                         + "Obtain a Digital Elevation Model Here</a>"
@@ -76,6 +76,11 @@ public class AboutActivity extends AppCompatActivity {
                         + "<a href=\"https://github.com/ngageoint/mgrs-android/\">ngageoint/mgrs-android</a> MIT license<br>"
                         + "<a href=\"https://github.com/veraPDF/veraPDF-xmp\">veraPDF/veraPDF-xmp</a> Adobe Community license<br>"
                         + "<a href=\"https://github.com/matthiaszimmermann/EGM96\">matthiaszimmermann/EGM96</a> MIT license<br>"
+                        + "<a href=\"https://github.com/agilesrc/dem4j\">agilesrc/dem4j</a> Apache-2.0 license<br>"
+                        + "<a href=\"https://github.com/ThreeTen/threetenbp\">ThreeTen/threetenbp</a> BSD 3-Clause<br>"
+                        + "<a href=\"https://github.com/apache/commons-lang\">Apache Commons Lang</a> Apache License<br>"
+                        + "<a href=\"https://github.com/apache/commons-io\">Apache Commons IO</a> Apache License<br>"
+
 
                 ,0,null, null)
         );

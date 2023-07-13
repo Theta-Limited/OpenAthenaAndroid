@@ -2,66 +2,51 @@ package com.openathena;
 
 import android.util.Log;
 
-import com.openathena.GeoTIFFParser;
-import com.openathena.geodataAxisParams;
-import com.openathena.RequestedValueOOBException;
+import com.agilesrc.dem4j.exceptions.CorruptTerrainException;
 // // Convert from Nato ellipsoid to Warsaw
 // import com.openathena.WGS84_SK42_Translator
 // // Convert geodetic coords to Gauss Kruger grid ref
 // import com.openathena.SK42_Gauss_Kruger_Projector
 
 import java.io.File;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Properties;
-import java.util.Vector;
-import java.io.InputStream;
-import java.io.PrintWriter;
 
 import java.lang.Math;
 
-import java.lang.IllegalArgumentException;
 import java.lang.NullPointerException;
-
-import com.openathena.RequestedValueOOBException;
-import com.openathena.geodataAxisParams;
-import com.openathena.GeoTIFFParser;
-
-import mil.nga.tiff.*;
 
 public class TargetGetter {
     private static final String TAG = TargetGetter.class.getSimpleName();
-    private GeoTIFFParser myGeoTIFFParser;
+    private DEMParser myDEMParser;
     private final double INCREMENT = 1.0d;
     // private MGRS mgrs;
     // private WGS84_SK42_Translator ellipsoidTranslator
     // private SK42_Gauss_Kruger_Projector gk_Projector
 
     TargetGetter() {
-        myGeoTIFFParser = new GeoTIFFParser();
+        myDEMParser = new DEMParser();
     }
 
     TargetGetter(File geofile) {
         this();
-        myGeoTIFFParser.loadGeoTIFF(geofile);
+        myDEMParser.loadDEM(geofile);
     }
 
-    TargetGetter(GeoTIFFParser gman) {
-        this.myGeoTIFFParser = gman;
+    TargetGetter(DEMParser gman) {
+        this.myDEMParser = gman;
     }
 
     /**
-     * Given sensor data from a drone, performs a raycast against the DEM held by this object's GeoTIFFParser and returns the target's location as a result
+     * Given sensor data from a drone, performs a raycast against the DEM held by this object's DEMParser and returns the target's location as a result
      * @param lat The latitude of the aircraft
      * @param lon The longitude of the aircraft
      * @param alt The altitude of the aircraft (in meters above the WGS84 reference ellipsoid)
      * @param azimuth The direction of the aircraft's camera. 0° is North, increases clockwise
      * @param theta The angle of depression (pitch) of the aircraft's camera. A positive value representing degrees downward from the horizon
      * @return double[] an array containing: 0 the distance to the target 1 the last latitude value along the raycast 2 the last longitude value along the raycast 3 the last altitude value along the raycast 4 the terrain altitude of the datapoint nearest the last raycast position
-     * @throws RequestedValueOOBException Throws a RequestedValueOOBException if the raycast exceeds the coverage of the DEM held by this object's GeoTIFFParser. If the altitude of the start of the ray is already below terrain elevation data, isAltitudeBad boolean will be set to true
+     * @throws RequestedValueOOBException Throws a RequestedValueOOBException if the raycast exceeds the coverage of the DEM held by this object's DEMParser. If the altitude of the start of the ray is already below terrain elevation data, isAltitudeBad boolean will be set to true
      */
-    public double[] resolveTarget(double lat, double lon, double alt, double azimuth, double theta) throws RequestedValueOOBException{
-        if (myGeoTIFFParser == null) {
+    public double[] resolveTarget(double lat, double lon, double alt, double azimuth, double theta) throws RequestedValueOOBException, CorruptTerrainException {
+        if (myDEMParser == null) {
             throw new NullPointerException("FATAL ERROR: resolveTarget attempted before geotiff loaded");
         }
         double radAzimuth = Math.toRadians(azimuth);
@@ -80,7 +65,7 @@ public class TargetGetter {
         //     if so, skip iterative search b/c target is directly below us
         if (Math.abs(Double.compare(radTheta, Math.PI / 2.0d)) <= 0.005d) { // 0.005 radians ~= 0.29 degrees
             try {
-                terrainAlt = myGeoTIFFParser.getAltFromLatLon(lat, lon);
+                terrainAlt = myDEMParser.getAltFromLatLon(lat, lon);
             } catch (RequestedValueOOBException e) {
                 throw e;
             }
@@ -111,7 +96,7 @@ public class TargetGetter {
 
         // meters of acceptable distance between constructed line and datapoint
         // Somewhat arbitrary. SRTM has a horizontal resolution of 30m, but vertical accuracy is often more precise
-        double post_spacing_meters = haversine(0, lat, myGeoTIFFParser.getXResolution(), lat, alt); // meters between datapoints, from degrees
+        double post_spacing_meters = haversine(0, lat, myDEMParser.getXResolution(), lat, alt); // meters between datapoints, from degrees
         final double THRESHOLD = post_spacing_meters / 16.0d; // meters of acceptable distance between constructed line and datapoint. somewhat arbitrary
 
         double curLat = lat;
@@ -125,7 +110,7 @@ public class TargetGetter {
         double lastEpochLat = curLat;
         double lastEpochLon = curLon;
         try {
-            groundAlt = myGeoTIFFParser.getAltFromLatLon(curLat, curLon);
+            groundAlt = myDEMParser.getAltFromLatLon(curLat, curLon);
         } catch (RequestedValueOOBException e) {
             throw e;
         }
@@ -136,7 +121,7 @@ public class TargetGetter {
         double altDiff = curAlt - groundAlt;
         while (altDiff > THRESHOLD) {
             try {
-                groundAlt = myGeoTIFFParser.getAltFromLatLon(curLat, curLon);
+                groundAlt = myDEMParser.getAltFromLatLon(curLat, curLon);
             } catch (RequestedValueOOBException e) {
                 throw e;
             }

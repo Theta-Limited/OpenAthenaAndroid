@@ -40,23 +40,22 @@
     <string name="target_found_at_msg">다음에서 찾은 대상</string>
     <string name="drone_dist_to_target_msg">대상까지 드론 거리:</string>
     <string name="resolveTarget_oob_error_msg">오류: 계산이 범위를 벗어났습니다</string>
-    <string name="geotiff_coverage_reminder">GeoTIFF DEM 파일이 드론의 위치를 포함하는지 확인하세요!\n</string>
-    <string name="geotiff_coverage_precedent_message">GeoTIFF가 적용되는 영역⛰:\n</string>
-    <string name="geotiff_load_reminder_msg">대상을 확인할 수 없습니다. ⛰ 버튼을 사용하여 GeoTIFF 디지털 표고 모델 \".tif\" 를 로드하세요.\n
-</string>
+    <string name="geotiff_coverage_reminder">"DEM 파일이 드론의 위치를 포함하는지 확인하세요! "</string>
+    <string name="geotiff_coverage_precedent_message">DEM의 적용 범위는 ⛰입니다.</string>
+    <string name="geotiff_load_reminder_msg">대상을 확인할 수 없습니다. \"⛰\" 버튼을 사용하여 GeoTIFF Digital Elevation Model \".tif\" 또는 DTED2 \".dt2\" 파일을 로드하세요.</string>
     <string name="metadata_parse_error_msg">계산하기 위해 이미지 파일을 열 수 없습니다. 드론 이미지 🖼 메타데이터가 없거나 사용할 수 없습니다. 이것은 드론 이미지입니까? \n</string>
     <string name="text_copied_to_clipboard_msg">클립보드에 복사된 텍스트 📋</string>
     <string name="image_selected_msg">선택됨 🖼 \n</string>
     <string name="dem_loaded_size_is_msg">로드된⛰. 크기</string>
     <string name="dem_load_error_generic_msg">오류: DEM고도 모델 을 로드하지 못했습니다.</string>
-    <string name="dem_load_error_tiffexception_msg">오류: DEM을 로드하지 못했습니다. GeoTIFF \".tif\" 파일이 아닙니다.\n</string>
+    <string name="dem_load_error_tiffexception_msg">오류: DEM 파일을 로드하지 못했습니다. GeoTIFF \\\".tif\\\" 또는 DTED2 \\\".dt2\\\" 파일이 아닙니다.\\n</string>
     <string name="calculating_target_msg">계산 🧮:\n</string>
     <string name="no_image_selected_error_msg">오류: 계산할 수 없음 🚫🧮: 선택한 이미지 🚫🖼 없음\n</string>
     <string name="opened_exif_for_image_msg">이미지의 EXIF를 열었습니다.\n</string>
     <string name="autel_accuracy_warning_msg">⚠️ 위험: Autel 드론은 알려진 정확도 문제가 있습니다 ⚠️</string>
     <string name="i_understand_this_risk">이 위험을 이해합니다</string>
     <string name="image_is_too_large_error_msg">이미지가 너무 커서 표시할 수 없습니다!</string>
-    <string name="loading_geotiff_toast_msg">GeoTIFF 고도 모델을 로드 중입니다. 기다리세요...</string>
+    <string name="loading_geotiff_toast_msg">DEM 파일을 불러오는 중입니다. 기다리세요...</string>
     <string name="wgs84_standard_lat_lon">WGS84(기본값)\n위도, 경도</string>
     <string name="wgs84_tooltip">지구상의 위도 경도 위치를 설명하기 위해 널리 사용되는 표준</string>
     <string name="nato_mgrs_1m">NATO MGRS 1m</string>
@@ -68,7 +67,7 @@
     <string name="ck_42_lat_lon">CK-42 Красовский\nLat, Lon</string>
     <string name="ck_42_geodetic_tooltip">Krasovsky 1940 타원체를 사용하는 대체 측지 시스템. 이전 바르샤바 조약 국가에서 일반적으로 사용됨</string>
     <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
-    <string name="ck_42_gauss_kruger_tooltip">Krasovsky 1940 타원체를 사용하는 대체 측지 시스템. 종방향 ZONE(6° 증분, 가능한 값 1-60 포함), X 값으로 정의된 Northing 및 Y 값으로 정의된 Easting은 지구의 정확한 위치를 설명합니다.</string>
+    <string name="ck_42_gauss_kruger_tooltip">가우스-크루거: 1940년 크라소프스키 타원체를 사용하는 대체적인 지오데식 시스템. 북쪽은 X값으로 정의되며, 동쪽은 Y값으로 정의되어 지구상의 정확한 위치를 설명합니다.</string>
     <string name="target_output_mode_title">🎯 출력 모드:</string>
     <string name="gk_northing_text">동선:</string>
     <string name="gk_easting_text">북선:</string>
@@ -92,7 +91,7 @@
     <string name="step_2_load_drone_image">2단계: 드론 이미지 로드</string>
     <string name="step_3_press_calculate">3단계: 이 버튼을 눌러 다음을 계산합니다:</string>
     <string name="step_4_obtain_target">4단계: 아래에서 목표 위치를 얻습니다.</string>
-    <string name="wrong_filetype_toast_error_msg">오류: 잘못된 파일 형식입니다. \".tif\"로 끝나는 GeoTIFF 디지털 표고 모델 파일을 선택하십시오.</string>
+    <string name="wrong_filetype_toast_error_msg">오류: 잘못된 파일 형식입니다. \".tif\"로 끝나는 GeoTIFF 파일 또는 \".dt2\"로 끝나는 DTED2 파일을 선택하세요.</string>
     <string name="permissions_toast_success_msg">부여된 권한</string>
     <string name="permissions_toast_error_msg">필요한 권한을 얻지 못했습니다.</string>
     <string name="latitude_label_long">위도 :</string>
