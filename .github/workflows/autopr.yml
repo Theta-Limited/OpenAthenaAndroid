@@ -36,5 +36,5 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}        
         base_branch: 'master'
-        model: 'gpt-4-32k'
-        context_limit: 32768
+        model: 'gpt-4'
+        context_limit: 8192
