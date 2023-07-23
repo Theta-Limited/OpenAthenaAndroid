@@ -34,7 +34,7 @@ jobs:
       env:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}        
+        github_token: ${{ secrets.GH_TOKEN }}        
         base_branch: 'master'
         model: 'gpt-4'
         context_limit: 8192
