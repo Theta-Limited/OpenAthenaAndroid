@@ -193,6 +193,7 @@ public class MainActivity extends AthenaActivity {
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
 
         if (isDEMLoaded) {
             if (athenaApp != null && athenaApp.getDEMParser() != null) { // load DEM from App singleton instance in mem
@@ -202,7 +203,9 @@ public class MainActivity extends AthenaActivity {
             } else if (storedDEMUriString != null && !storedDEMUriString.equals("")) { // fallback, load DEM from disk (slower)
                 Log.d(TAG, "loading demUri: " + storedDEMUriString);
                 demUri = Uri.parse(storedDEMUriString);
-                demSelected(demUri);
+                prefsEditor.putString("lastDEM", null); // clear lastDEM just in case it is invalid to prevent crash loop
+                prefsEditor.apply(); // make the change persistent
+                demSelected(demUri); // If successful, this will update lastDEM again
             } else { // this shouldn't ever happen, but just to be safe...
                 isDEMLoaded = false;
                 setButtonReady(buttonSelectImage, false);
