@@ -103,14 +103,7 @@ public class SelectionActivity extends AthenaActivity{
             return;
         }
 
-        long filesize = fileDescriptor.getLength();
-        Log.d(TAG, "filesize: " + filesize);
-        if (filesize < 1024 * 1024 * 20) { // check if filesize below 20Mb
-            iView.setImageURI(uri);
-        }  else { // otherwise:
-            Toast.makeText(SelectionActivity.this, getString(R.string.image_is_too_large_error_msg), Toast.LENGTH_SHORT).show();
-            iView.setImageResource(R.drawable.athena); // put up placeholder icon
-        }
+        iView.setImageURI(uri);
 
         // constrain MarkableImageView rendered aspect ratio to that of original image
         constrainViewAspectRatio();

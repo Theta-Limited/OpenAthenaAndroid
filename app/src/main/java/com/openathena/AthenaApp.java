@@ -96,6 +96,20 @@ public class AthenaApp extends Application { // Android Singleton Class for hold
         return stringMap.get(key);
     }
 
+    private HashMap<String, Integer> intMap = new HashMap<String, Integer>();
+
+    public void putInt(String key, int value) {
+        intMap.put(key, value);
+    }
+
+    public int getInt(String key) {
+        Integer value = intMap.get(key);
+        if (value == null) {
+            return 0;
+        } else {
+            return value.intValue();
+        }
+    }
     private HashMap<String, Boolean> booleanMap = new HashMap<String, Boolean>();
 
     public void putBoolean(String key, Boolean value) {

@@ -142,7 +142,6 @@ public class MainActivity extends AthenaActivity {
         setButtonReady(buttonSelectImage, false);
         setButtonReady(buttonCalculate, false);
 
-        dangerousAutelAwarenessCount = 0;
         isImageLoaded = false;
         isDEMLoaded = false;
 
@@ -173,6 +172,8 @@ public class MainActivity extends AthenaActivity {
         // append
 
         clearText();
+
+        dangerousAutelAwarenessCount = athenaApp.getInt("dangerousAutelAwarenessCount");
 
         CharSequence textRestore = athenaApp.getCharSequence("textview");
         if (textRestore != null) {
@@ -216,7 +217,7 @@ public class MainActivity extends AthenaActivity {
             String lastDEM = sharedPreferences.getString("lastDEM", "");
             Log.d(TAG, "loading last used demUri: " + lastDEM);
             demUri = Uri.parse(lastDEM);
-            demSelected(demUri); // TODO add fail safe to prevent crash loop on invalid DEM
+            demSelected(demUri);
         }
 
         String storedUriString = athenaApp.getString("imageUri");
@@ -265,6 +266,7 @@ public class MainActivity extends AthenaActivity {
     // save the current state of this activity to the athenaApp Singleton object
     @Override
     protected void saveStateToSingleton() {
+        athenaApp.putInt("dangerousAutelAwarenessCount", dangerousAutelAwarenessCount);
         if (textView != null) {
             athenaApp.putCharSequence("textview", textView.getText());
         }
@@ -366,15 +368,7 @@ public class MainActivity extends AthenaActivity {
             return;
         }
 
-        long filesize = fileDescriptor.getLength();
-        Log.d(TAG, "filesize: " + filesize);
-        // TODO improve this check (see issue #80)
-        if (filesize < 1024 * 1024 * 20) { // check if filesize below 20Mb
-            iView.setImageURI(uri);
-        }  else { // otherwise:
-            Toast.makeText(MainActivity.this, getString(R.string.image_is_too_large_error_msg), Toast.LENGTH_SHORT).show();
-            iView.setImageResource(R.drawable.athena); // put up placeholder icon
-        }
+        iView.setImageURI(uri);
 
 //        appendLog("Selected image "+imageUri+"\n");
         appendText(getString(R.string.image_selected_msg) + "\n");
@@ -507,6 +501,9 @@ public class MainActivity extends AthenaActivity {
             return new Exception(failureOutput + "\n");
         } finally {
             setButtonReady(buttonSelectDEM, true);
+            if (isDEMLoaded && isImageLoaded) {
+                setButtonReady(buttonCalculate, true);
+            }
         }
     }
 
@@ -816,7 +813,7 @@ public class MainActivity extends AthenaActivity {
     }
 
     public void displayAutelAlert() {
-        if (dangerousAutelAwarenessCount < 3) {
+        if (dangerousAutelAwarenessCount < 1) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setMessage(R.string.autel_accuracy_warning_msg);
             builder.setPositiveButton(R.string.i_understand_this_risk, (DialogInterface.OnClickListener) (dialog, which) -> {

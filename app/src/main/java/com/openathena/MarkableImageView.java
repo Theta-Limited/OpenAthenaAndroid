@@ -2,9 +2,12 @@ package com.openathena;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -12,6 +15,8 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewTreeObserver;
+
+import java.io.FileNotFoundException;
 
 public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageView {
     Marker theMarker = null;
@@ -198,5 +203,83 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
             this.x_prop = x_prop;
             this.y_prop = y_prop;
         }
+    }
+
+    @Override
+    /**
+     * Override ImageView's setImageURI to make sure we scale down huge images instead of crashing
+     */
+    public void setImageURI(final Uri uri) {
+        if(getWidth() == 0 && getHeight() == 0) {
+            ViewTreeObserver vto = getViewTreeObserver();
+            vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                public boolean onPreDraw() {
+                    getViewTreeObserver().removeOnPreDrawListener(this);
+                    int render_width = getMeasuredWidth();
+                    int render_height = getMeasuredHeight();
+                    Bitmap bitmap = decodeSampledBitmapFromUri(uri, render_width, render_height);
+                    setImageBitmap(bitmap);
+                    return true;
+                }
+            });
+        } else {
+            int render_width = getMeasuredWidth();
+            int render_height = getMeasuredHeight();
+            Bitmap bitmap = decodeSampledBitmapFromUri(uri, render_width, render_height);
+            setImageBitmap(bitmap);
+        }
+    }
+
+    public Bitmap decodeSampledBitmapFromUri(Uri uri, int reqWidth, int reqHeight) {
+        if (uri == null) {
+            return null;
+        }
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        try {
+            BitmapFactory.decodeStream(parent.getContentResolver().openInputStream(uri), null, options);
+        } catch (FileNotFoundException fnfe) {
+            Log.e(AthenaActivity.TAG, "Could not find file: " + uri.toString());
+            fnfe.printStackTrace();
+            return null;
+        }
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        try {
+            return BitmapFactory.decodeStream(parent.getContentResolver().openInputStream(uri), null, options);
+        } catch (FileNotFoundException fnfe) {
+            Log.e(AthenaActivity.TAG, "Could not find file: " + uri.toString());
+            fnfe.printStackTrace();
+            return null;
+        }
+    }
+
+    public int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 }

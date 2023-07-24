@@ -226,9 +226,10 @@ public class MetadataExtractor {
         }
 
         // DJI altitude is usually orthometric (EGM96 AMSL), but will be ellipsoidal (WGS84 hae) if special RTK device is used (rare)
-        String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
+        String make = exif.getAttribute(ExifInterface.TAG_MAKE);
         if (!make.toLowerCase().contains("autel") /* I'm not sure if autel uses EGM96 AMSL or WGS84 hae for new firmware */ && !xmp_str.toLowerCase().contains("rtkflag")) {
             // convert the height from EGM96 AMSL to WGS84 hae if made by dji and rtk device not present
+            Log.i(TAG, "Converting from orthometric to ellipsoidal vertical datum for image metadata");
             z = z - offsetProvider.getEGM96OffsetAtLatLon(y,x);
         }
 
@@ -330,9 +331,15 @@ public class MetadataExtractor {
             Float[] yxz = exifGetYXZ(exif);
             y = yxz[0];
             x = yxz[1];
-            // Autel altitude is WGS84 height above ellipsoid
-            // therefore we do not need to convert
             z = yxz[2];
+
+            // Autel altitude is usually WGS84 height above ellipsoid
+            // BUT (fun fact):
+            // Old Autel Firmware uses MSL orthometric height despite
+            // it EXPLICITLY SAYING (wrongly) in the metadata the vertical datum is ellipsoidal not orthometric
+            //
+            // This is why we can't have nice things...
+            z = z - offsetProvider.getEGM96OffsetAtLatLon(y, x);
 
             String schemaNS = "http://pix4d.com/camera/1.0";
 
