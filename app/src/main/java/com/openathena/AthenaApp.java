@@ -29,7 +29,7 @@ public class AthenaApp extends Application { // Android Singleton Class for hold
             Geoid.init(getAssets().open("EGM96complete.bin")); // op may consume significant memory
             // example usage for calculating offset between WGS84 and EGM96 at a lat/lon:
             // EGMOffsetProvider = new EGM96OffsetAdapter();
-            // double height_diff = offsetAdapter.getEGM96OffsetAtLatLon(latitude, longitude)
+            // double height_diff = EGMOffsetProvider.getEGM96OffsetAtLatLon(latitude, longitude)
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, e.getMessage());
