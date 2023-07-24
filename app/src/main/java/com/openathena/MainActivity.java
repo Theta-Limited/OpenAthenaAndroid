@@ -192,13 +192,15 @@ public class MainActivity extends AthenaActivity {
             Log.d(TAG, "recovered demUri: " + storedDEMUriString);
         }
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         if (isDEMLoaded) {
             if (athenaApp != null && athenaApp.getDEMParser() != null) { // load DEM from App singleton instance in mem
                 theParser = athenaApp.getDEMParser();
                 theTGetter = new TargetGetter(theParser);
                 setButtonReady(buttonSelectImage, true);
             } else if (storedDEMUriString != null && !storedDEMUriString.equals("")) { // fallback, load DEM from disk (slower)
-                Log.d(TAG, "loaded demUri: " + storedDEMUriString);
+                Log.d(TAG, "loading demUri: " + storedDEMUriString);
                 demUri = Uri.parse(storedDEMUriString);
                 demSelected(demUri);
             } else { // this shouldn't ever happen, but just to be safe...
@@ -206,6 +208,12 @@ public class MainActivity extends AthenaActivity {
                 setButtonReady(buttonSelectImage, false);
                 setButtonReady(buttonCalculate, false);
             }
+          // Get DEM used last time the application was launched
+        } else if (sharedPreferences != null && sharedPreferences.getString("lastDEM", null) != null && !sharedPreferences.getString("lastDEM", "").equals("")) {
+            String lastDEM = sharedPreferences.getString("lastDEM", "");
+            Log.d(TAG, "loading last used demUri: " + lastDEM);
+            demUri = Uri.parse(lastDEM);
+            demSelected(demUri); // TODO add fail safe to prevent crash loop on invalid DEM
         }
 
         String storedUriString = athenaApp.getString("imageUri");
@@ -400,6 +408,8 @@ public class MainActivity extends AthenaActivity {
 
         Handler myHandler = new Handler();
 
+
+
         // Load GeoTIFF in a new thread, this is a long-running task
         new Thread(() -> {
             Exception e = loadDEMnewThread(uri);
@@ -464,12 +474,18 @@ public class MainActivity extends AthenaActivity {
                 return e;
             }
         }
+
         demUri = Uri.fromFile(fileInCache);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
 
         try {
             DEMParser parser = new DEMParser(fileInCache);
             theParser = parser;
             theTGetter = new TargetGetter(parser);
+            prefsEditor.putString("lastDEM", demUri.toString()); // store the uri for fileInCache for next time the app is launched
+            prefsEditor.apply(); // make change persistent
             return null;
         } catch (IllegalArgumentException e) {
             String failureOutput = getString(R.string.dem_load_error_generic_msg) + e.getMessage();

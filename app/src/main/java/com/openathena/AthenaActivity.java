@@ -59,13 +59,6 @@ public abstract class AthenaActivity extends AppCompatActivity {
         isImageLoaded = false;
         isDEMLoaded = false;
     }
-//    // selected image pixel for use in ray offset calculation
-//    // represents (u, v) in pixels from the top left corner of the image
-//    protected int selection_x = -1;
-//    protected int selection_y = -1;
-
-//    protected int cx = -1; // x position of the principal point (centerpoint of image). Measured from upper-left corner
-//    protected int cy = -1; // y position of the principal point (centerpoint of image). Measured from upper-left corner
 
     @SuppressLint("SetTextI18n")
     public void setOutputMode(int mode) {
@@ -236,7 +229,8 @@ public abstract class AthenaActivity extends AppCompatActivity {
     public abstract void calculateImage(View view);
     public abstract void calculateImage(View view, boolean shouldISendCoT);
 
-//    public int get_cx() {
+//    public int get_
+//    () {
 //        return cx;
 //    }
 //
@@ -320,7 +314,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
 
     protected void constrainViewAspectRatio() {
         // Force the aspect ratio to be same as original image
-        int[] width_and_height = getImageDimensionsFromUri(imageUri); // also updates cx and cy to that of new image
+        int[] width_and_height = getImageDimensionsFromUri(imageUri);
         float width = (float) width_and_height[0];
         float height = (float) width_and_height[1];
         String aspectRatio = "" + (width / height);
