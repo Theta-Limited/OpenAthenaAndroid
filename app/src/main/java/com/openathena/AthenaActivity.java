@@ -2,6 +2,7 @@ package com.openathena;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
@@ -9,8 +10,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.exifinterface.media.ExifInterface;
 
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
@@ -20,6 +23,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -182,28 +186,52 @@ public abstract class AthenaActivity extends AppCompatActivity {
     }
 
     public int[] getImageDimensionsFromUri(Uri imageUri) {
+        Context context = this;
         if (imageUri == null) {
-            return new int[] {0,0};
+            return new int[]{0, 0};
         }
+        ParcelFileDescriptor parcelFileDescriptor = null;
+        int[] dimensions = null;
+
         try {
-            ContentResolver cr = getContentResolver();
-            InputStream is = cr.openInputStream(imageUri);
-            ExifInterface exif = new ExifInterface(is);
-            int width = exif.getAttributeInt( ExifInterface.TAG_IMAGE_WIDTH, -1);
-            int height = exif.getAttributeInt( ExifInterface.TAG_IMAGE_LENGTH, -1);
-            if (width < 0 || height < 0) {
-                return null;
-            } else {
-//                cx = width / 2; // x coordinate of the principal point (center) of the image. Measured from Top-Left corner
-//                cy = height / 2; // y coordinate of the principal point (center) of the image. Measured from Top-Left corner
-                return new int[] {width, height};
+            parcelFileDescriptor = context.getContentResolver().openFileDescriptor(imageUri, "r");
+            if (parcelFileDescriptor != null) {
+                FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
+
+                dimensions = new int[]{options.outWidth, options.outHeight};
+
+                try {
+                    ExifInterface exif = new ExifInterface(fileDescriptor);
+                    int exifWidth = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, -1);
+                    int exifHeight = exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, -1);
+
+                    // If EXIF dimensions are inconsistent with actual dimensions, update the EXIF data.
+                    if (exifWidth != options.outWidth || exifHeight != options.outHeight) {
+                        exif.setAttribute(ExifInterface.TAG_IMAGE_WIDTH, String.valueOf(options.outWidth));
+                        exif.setAttribute(ExifInterface.TAG_IMAGE_LENGTH, String.valueOf(options.outHeight));
+                        exif.saveAttributes();
+                    }
+                } catch (IOException exifException) {
+                    Log.e(TAG, "Failed to update EXIF data!", exifException);
+                }
             }
-        } catch (IOException ioe) {
-            Log.e(TAG, "Failed to obtain image dimensions from EXIF metadata!");
-            ioe.printStackTrace();
-            return null;
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to obtain image dimensions from image itself!", e);
+        } finally {
+            if (parcelFileDescriptor != null) {
+                try {
+                    parcelFileDescriptor.close();
+                } catch (IOException e) {
+                    Log.e(TAG, "Failed to close ParcelFileDescriptor", e);
+                }
+            }
         }
+        return dimensions;
     }
+
 
     public abstract void calculateImage(View view);
     public abstract void calculateImage(View view, boolean shouldISendCoT);
@@ -293,9 +321,9 @@ public abstract class AthenaActivity extends AppCompatActivity {
     protected void constrainViewAspectRatio() {
         // Force the aspect ratio to be same as original image
         int[] width_and_height = getImageDimensionsFromUri(imageUri); // also updates cx and cy to that of new image
-        int width = width_and_height[0];
-        int height = width_and_height[1];
-        String aspectRatio = width + ":" + height;
+        float width = (float) width_and_height[0];
+        float height = (float) width_and_height[1];
+        String aspectRatio = "" + (width / height);
         Drawable drawable = iView.getDrawable();
         ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) iView.getLayoutParams();
         layoutParams.dimensionRatio = aspectRatio;

@@ -131,7 +131,7 @@ public class TargetGetter {
             if (iterCount > 0 && iterCount % iterPerEpoch == 0) {
                 double minArcAngle = minArcAngle(lastEpochLat, lastEpochLon, curLat, curLon);
                 Log.d(TAG, "iterCount: " + iterCount + ", minArcAngle: " + minArcAngle);
-                radTheta += Math.toRadians(minArcAngle); // rotate ray upwards by same amount Earth's curvature rotated it downwards
+                radTheta += Math.toRadians(minArcAngle); // rotate ray downwards by same amount Earth's curvature rotated it upwards
                 deltaZ = -1.0d * Math.sin(radTheta);
                 horizScalar = Math.cos(radTheta);
 

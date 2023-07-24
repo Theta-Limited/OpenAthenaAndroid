@@ -29,10 +29,12 @@ import android.content.ClipboardManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.text.Html;
 
 import androidx.exifinterface.media.ExifInterface;
@@ -355,6 +357,7 @@ public class MainActivity extends AthenaActivity {
 
         long filesize = fileDescriptor.getLength();
         Log.d(TAG, "filesize: " + filesize);
+        // TODO improve this check (see issue #80)
         if (filesize < 1024 * 1024 * 20) { // check if filesize below 20Mb
             iView.setImageURI(uri);
         }  else { // otherwise:
@@ -383,7 +386,6 @@ public class MainActivity extends AthenaActivity {
         if (isDEMLoaded) {
             setButtonReady(buttonCalculate, true);
         }
-
 
     }
 
