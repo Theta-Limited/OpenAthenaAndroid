@@ -116,4 +116,6 @@
     <string name="geoid_load_error_msg">Critical Error: could not load Earth geoid datafile!</string>
     <string name="nato_vertical_datum_notice">NATO and WGS84 output vertical datum is EGM96 meters above mean sea level.</string>
     <string name="warsaw_vertical_datum_notice">CK-42 output vertical datum is meters height above the Krassowsky 1940 ellipsoid.</string>
+    <string name="lens_type">Lens type:</string>
+    <string name="distortion_parameters">Distortion parameters:</string>
 </resources>
