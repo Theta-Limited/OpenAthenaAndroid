@@ -12,6 +12,7 @@ import com.adobe.xmp.XMPMetaFactory;
 
 import org.apache.commons.math3.fitting.leastsquares.LevenbergMarquardtOptimizer;
 import org.apache.commons.math3.fitting.leastsquares.MultivariateJacobianFunction;
+import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
 import org.json.JSONArray;
@@ -637,6 +638,9 @@ public class MetadataExtractor {
     }
 
     public static double[] getRayAnglesFromImgPixel(int x, int y, ExifInterface exifInterface) throws Exception {
+        JSONObject drone = getMatchingDrone(exifInterface); // Assuming this function fetches the drone details
+        String lensType = drone.getString("lensType");
+
         double[] intrinsics = getIntrinsicMatrixFromExif(exifInterface); // may throw Exception
 
         double fx = intrinsics[0];
@@ -644,12 +648,45 @@ public class MetadataExtractor {
         double cx = intrinsics[2];
         double cy = intrinsics[5];
 
-        // calculate ray angles
-        double pixelX = x - cx;
-        double pixelY = y - cy;
+        double xDistorted = x - cx;
+        double yDistorted = y - cy;
 
-        double azimuth = Math.atan2(pixelX, fx);
-        double elevation = Math.atan2(pixelY, fy);
+        double xUndistorted = xDistorted; // initial guess
+        double yUndistorted = yDistorted; // initial guess
+
+        if ("perspective".equalsIgnoreCase(lensType)) {
+            double k1 = drone.getDouble("radialR1");
+            double k2 = drone.getDouble("radialR2");
+            double k3 = drone.getDouble("radialR3");
+            double p1 = drone.getDouble("tangentialT1");
+            double p2 = drone.getDouble("tangentialT2");
+
+            // Use Levenberg-Marquardt to correct for distortion
+            MultivariateJacobianFunction function = new PerspectiveDistortionFunction(xDistorted, yDistorted, k1, k2, k3, p1, p2);
+            LevenbergMarquardtOptimizer optimizer = new LevenbergMarquardtOptimizer();
+            RealVector undistorted = optimizer.optimize(function, new ArrayRealVector(new double[]{xDistorted, yDistorted})).getPoint();
+
+            xUndistorted = undistorted.getEntry(0);
+            yUndistorted = undistorted.getEntry(1);
+
+        } else if ("fisheye".equalsIgnoreCase(lensType)) {
+            double c = drone.getDouble("c");
+            double d = drone.getDouble("d");
+            double e = drone.getDouble("e");
+            double f = drone.getDouble("f");
+
+            // Use Levenberg-Marquardt to correct for distortion
+            MultivariateJacobianFunction function = new FisheyeDistortionFunction(xDistorted, yDistorted, c, d, e, f);
+            LevenbergMarquardtOptimizer optimizer = new LevenbergMarquardtOptimizer();
+            RealVector undistorted = optimizer.optimize(function, new ArrayRealVector(new double[]{xDistorted, yDistorted})).getPoint();
+
+            xUndistorted = undistorted.getEntry(0);
+            yUndistorted = undistorted.getEntry(1);
+        }
+
+        // calculate ray angles using undistorted coordinates
+        double azimuth = Math.atan2(xUndistorted, fx);
+        double elevation = Math.atan2(yUndistorted, fy);
 
         azimuth = Math.toDegrees(azimuth);
         elevation = Math.toDegrees(elevation);
@@ -663,6 +700,7 @@ public class MetadataExtractor {
         Log.d(TAG, "Pixel (" + x + ", " + y + ", Roll: " + roll + ") -> Ray (" + azimuth + ", " + elevation + ")");
         return new double[] {azimuth, elevation};
     }
+
 
     /**
      * For an image taken where the camera lateral axis is not parallel with the ground, express the ray angle in terms of a frame of reference which is parallel to the ground
