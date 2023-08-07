@@ -14,6 +14,10 @@ import org.apache.commons.math3.fitting.leastsquares.LevenbergMarquardtOptimizer
 import org.apache.commons.math3.fitting.leastsquares.MultivariateJacobianFunction;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
+import org.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem;
+import org.apache.commons.math3.optim.ConvergenceChecker;
+import org.apache.commons.math3.optim.SimpleVectorValueChecker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -663,9 +667,15 @@ public class MetadataExtractor {
 
             // Use Levenberg-Marquardt to correct for distortion
             MultivariateJacobianFunction function = new PerspectiveDistortionFunction(xDistorted, yDistorted, k1, k2, k3, p1, p2);
-            LevenbergMarquardtOptimizer optimizer = new LevenbergMarquardtOptimizer();
-            RealVector undistorted = optimizer.optimize(function, new ArrayRealVector(new double[]{xDistorted, yDistorted})).getPoint();
-
+            LeastSquaresProblem problem = new LeastSquaresBuilder()
+                    .start(new double[]{xDistorted, yDistorted})
+                    .model(function)
+                    .target(new double[]{xDistorted, yDistorted})
+                    .checkerPair(new SimpleVectorValueChecker(1e-6, 1e-6)) // Convergence criteria
+                    .maxEvaluations(Integer.MAX_VALUE)
+                    .maxIterations(1000)
+                    .build();
+            RealVector undistorted = new LevenbergMarquardtOptimizer().optimize(problem).getPoint();
             xUndistorted = undistorted.getEntry(0);
             yUndistorted = undistorted.getEntry(1);
 
@@ -677,11 +687,19 @@ public class MetadataExtractor {
 
             // Use Levenberg-Marquardt to correct for distortion
             MultivariateJacobianFunction function = new FisheyeDistortionFunction(xDistorted, yDistorted, c, d, e, f);
-            LevenbergMarquardtOptimizer optimizer = new LevenbergMarquardtOptimizer();
-            RealVector undistorted = optimizer.optimize(function, new ArrayRealVector(new double[]{xDistorted, yDistorted})).getPoint();
-
+            LeastSquaresProblem problem = new LeastSquaresBuilder()
+                    .start(new double[]{xDistorted, yDistorted})
+                    .model(function)
+                    .target(new double[]{xDistorted, yDistorted})
+                    .checkerPair(new SimpleVectorValueChecker(1e-6, 1e-6)) // Convergence criteria
+                    .maxEvaluations(Integer.MAX_VALUE)
+                    .maxIterations(1000)
+                    .build();
+            RealVector undistorted = new LevenbergMarquardtOptimizer().optimize(problem).getPoint();
             xUndistorted = undistorted.getEntry(0);
             yUndistorted = undistorted.getEntry(1);
+        } else {
+            throw new IllegalArgumentException("Unknown lens type: " + lensType);
         }
 
         // calculate ray angles using undistorted coordinates
