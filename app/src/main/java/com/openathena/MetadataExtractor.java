@@ -23,7 +23,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.LinkedHashMap;
 import java.util.HashMap;
+import java.util.Map;
 
 public class MetadataExtractor {
     private static final String TAG = "MetadataExtractor";
@@ -49,6 +51,59 @@ public class MetadataExtractor {
         String make = exif.getAttribute(ExifInterface.TAG_MAKE);
         String model = exif.getAttribute(ExifInterface.TAG_MODEL);
         return (parameterProvider.getMatchingDrones(make, model).length() > 0);
+    }
+
+    /**
+     * Returns the lensType of a given drone make/model from droneModels.json database
+     * @param exif exif of an image to analyze for make and model
+     * @return String lensType either "perspective" or "fisheye", or "unknown"
+     */
+    public String getLensType(ExifInterface exif) {
+        JSONObject drone = getMatchingDrone(exif);
+        String lensType;
+        try {
+            lensType = drone.getString("lensType");
+            if (!(lensType.equalsIgnoreCase("perspective") || lensType.equalsIgnoreCase("fisheye"))) {
+                return "unknown";
+            }
+        } catch (JSONException e) {
+            return "unknown";
+        }
+        return lensType;
+    }
+
+    /**
+     * Returns an ordered Map of distortion parameter names and their values for the appropriate lensType
+     * @param exif exif of an image to analyze for make and model
+     * @return LinkedHashMap ordered Map containing distortion parameter names and their values
+     */
+    public LinkedHashMap<String, Double> getDistortionParameters(ExifInterface exif) {
+        JSONObject drone = getMatchingDrone(exif);
+        LinkedHashMap<String, Double> distortionParamMap = new LinkedHashMap<>();
+        if (drone == null) return null;
+        String lensType;
+        try {
+            lensType = drone.getString("lensType");
+            if (lensType == null) return null;
+            if ("perspective".equalsIgnoreCase(lensType)) {
+                distortionParamMap.put("k1", drone.getDouble("radialR1"));
+                distortionParamMap.put("k2", drone.getDouble("radialR2"));
+                distortionParamMap.put("k3", drone.getDouble("radialR3"));
+                distortionParamMap.put("p1", drone.getDouble("tangentialT1"));
+                distortionParamMap.put("p2", drone.getDouble("tangentialT2"));
+            } else if ("fisheye".equalsIgnoreCase(lensType)) {
+                distortionParamMap.put("c", drone.getDouble("c"));
+                distortionParamMap.put("d", drone.getDouble("d"));
+                distortionParamMap.put("e", drone.getDouble("e"));
+                distortionParamMap.put("f", drone.getDouble("f"));
+            } else {
+                throw new IllegalArgumentException("Unknown lens type: " + lensType);
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, e.getMessage());
+            return null;
+        }
+        return distortionParamMap;
     }
 
     /**
@@ -665,39 +720,42 @@ public class MetadataExtractor {
             double p1 = drone.getDouble("tangentialT1");
             double p2 = drone.getDouble("tangentialT2");
 
-            // Use Levenberg-Marquardt to correct for distortion
-            MultivariateJacobianFunction function = new PerspectiveDistortionFunction(xDistorted, yDistorted, k1, k2, k3, p1, p2);
-            LeastSquaresProblem problem = new LeastSquaresBuilder()
-                    .start(new double[]{xDistorted, yDistorted})
-                    .model(function)
-                    .target(new double[]{xDistorted, yDistorted})
-                    .checkerPair(new SimpleVectorValueChecker(1e-6, 1e-6)) // Convergence criteria
-                    .maxEvaluations(Integer.MAX_VALUE)
-                    .maxIterations(1000)
-                    .build();
-            RealVector undistorted = new LevenbergMarquardtOptimizer().optimize(problem).getPoint();
-            xUndistorted = undistorted.getEntry(0);
-            yUndistorted = undistorted.getEntry(1);
-
+            if (!(k1 == 0.0 && k2 == 0.0 && k3 == 0.0 && p1 == 0.0 && p2 == 0.0)) {
+                // Use Levenberg-Marquardt to correct for distortion
+                MultivariateJacobianFunction function = new PerspectiveDistortionFunction(xDistorted, yDistorted, k1, k2, k3, p1, p2);
+                LeastSquaresProblem problem = new LeastSquaresBuilder()
+                        .start(new double[]{xDistorted, yDistorted})
+                        .model(function)
+                        .target(new double[]{xDistorted, yDistorted})
+                        .checkerPair(new SimpleVectorValueChecker(1e-6, 1e-6)) // Convergence criteria
+                        .maxEvaluations(Integer.MAX_VALUE)
+                        .maxIterations(1000)
+                        .build();
+                RealVector undistorted = new LevenbergMarquardtOptimizer().optimize(problem).getPoint();
+                xUndistorted = undistorted.getEntry(0);
+                yUndistorted = undistorted.getEntry(1);
+            }
         } else if ("fisheye".equalsIgnoreCase(lensType)) {
             double c = drone.getDouble("c");
             double d = drone.getDouble("d");
             double e = drone.getDouble("e");
             double f = drone.getDouble("f");
 
-            // Use Levenberg-Marquardt to correct for distortion
-            MultivariateJacobianFunction function = new FisheyeDistortionFunction(xDistorted, yDistorted, c, d, e, f);
-            LeastSquaresProblem problem = new LeastSquaresBuilder()
-                    .start(new double[]{xDistorted, yDistorted})
-                    .model(function)
-                    .target(new double[]{xDistorted, yDistorted})
-                    .checkerPair(new SimpleVectorValueChecker(1e-6, 1e-6)) // Convergence criteria
-                    .maxEvaluations(Integer.MAX_VALUE)
-                    .maxIterations(1000)
-                    .build();
-            RealVector undistorted = new LevenbergMarquardtOptimizer().optimize(problem).getPoint();
-            xUndistorted = undistorted.getEntry(0);
-            yUndistorted = undistorted.getEntry(1);
+            if (!(c == 0.0 && d == 0.0 && e == 0.0 && f == 0.0)) {
+                // Use Levenberg-Marquardt to correct for distortion
+                MultivariateJacobianFunction function = new FisheyeDistortionFunction(xDistorted, yDistorted, c, d, e, f);
+                LeastSquaresProblem problem = new LeastSquaresBuilder()
+                        .start(new double[]{xDistorted, yDistorted})
+                        .model(function)
+                        .target(new double[]{xDistorted, yDistorted})
+                        .checkerPair(new SimpleVectorValueChecker(1e-6, 1e-6)) // Convergence criteria
+                        .maxEvaluations(Integer.MAX_VALUE)
+                        .maxIterations(1000)
+                        .build();
+                RealVector undistorted = new LevenbergMarquardtOptimizer().optimize(problem).getPoint();
+                xUndistorted = undistorted.getEntry(0);
+                yUndistorted = undistorted.getEntry(1);
+            }
         } else {
             throw new IllegalArgumentException("Unknown lens type: " + lensType);
         }

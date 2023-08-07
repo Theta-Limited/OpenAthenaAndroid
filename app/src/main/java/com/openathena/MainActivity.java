@@ -60,6 +60,9 @@ import java.io.OutputStream;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 // Libraries from the U.S. National Geospatial Intelligence Agency https://www.nga.mil
 import mil.nga.mgrs.grid.GridType;
@@ -581,6 +584,14 @@ public class MainActivity extends AthenaActivity {
             String make = exif.getAttribute(ExifInterface.TAG_MAKE);
             attribs += theMeta.getTagString(ExifInterface.TAG_MODEL, exif);
             attribs += getString(R.string.isCameraModelRecognized) + " " + (theMeta.isDroneModelRecognized(exif) ? getString(R.string.yes) : getString(R.string.no)) + "\n";
+            attribs += getString(R.string.lens_type) + " " + (theMeta.getLensType(exif)) + "\n";
+            attribs += getString(R.string.distortion_parameters) + "\n";
+            LinkedHashMap<String, Double> paramMap = theMeta.getDistortionParameters(exif);
+            if (paramMap != null) {
+                for (Map.Entry<String, Double> entry : paramMap.entrySet()) {
+                    attribs += "    " + entry.getKey() + ": " + entry.getValue() + "\n";
+                }
+            }
             attribs += theMeta.getTagString(ExifInterface.TAG_FOCAL_LENGTH, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_DIGITAL_ZOOM_RATIO, exif);
