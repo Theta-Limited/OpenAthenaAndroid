@@ -116,4 +116,6 @@
     <string name="geoid_load_error_msg">Erreur critique : impossible de charger le fichier de données du géoïde terrestre !</string>
     <string name="nato_vertical_datum_notice">Le référentiel vertical de sortie OTAN et WGS84 est EGM96 mètres au-dessus du niveau moyen de la mer.</string>
     <string name="warsaw_vertical_datum_notice">Le référentiel vertical de sortie du CK-42 est en mètres de hauteur au-dessus de l\'ellipsoïde de Krassowsky 1940.</string>
+    <string name="lens_type">Type de lentille:</string>
+    <string name="distortion_parameters">Paramètres de distorsion:</string>
 </resources>

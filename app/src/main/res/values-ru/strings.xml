@@ -116,4 +116,6 @@
     <string name="geoid_load_error_msg">Критическая ошибка: не удалось загрузить файл данных геоида Земли!</string>
     <string name="nato_vertical_datum_notice">Вертикальная исходная точка для выходных данных НАТО и WGS84 составляет EGM96 метров над средним уровнем моря.</string>
     <string name="warsaw_vertical_datum_notice">Вертикальная исходная точка данных CK-42 - это метровая высота над эллипсоидом Красовского 1940 года.</string>
+    <string name="lens_type">Тип объектива:</string>
+    <string name="distortion_parameters">Параметры искажения:</string>
 </resources>
