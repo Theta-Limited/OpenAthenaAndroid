@@ -116,4 +116,6 @@
     <string name="geoid_load_error_msg">严重错误：无法加载地球大地水准面数据文件！</string>
     <string name="nato_vertical_datum_notice">NATO 和 WGS84 输出垂直基准是平均海平面以上 EGM96 米。</string>
     <string name="warsaw_vertical_datum_notice">CK-42 输出垂直基准是 Krassowsky 1940 椭球上方米高。</string>
+    <string name="lens_type">镜头类型:</string>
+    <string name="distortion_parameters">畸变参数:</string>
 </resources>

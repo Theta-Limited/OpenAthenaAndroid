@@ -116,4 +116,6 @@
     <string name="geoid_load_error_msg">重大なエラー: Earth ジオイド データファイルをロードできませんでした。</string>
     <string name="nato_vertical_datum_notice">NATO と WGS84 の出力鉛直基準系は平均海抜 EGM96 メートルです。</string>
     <string name="warsaw_vertical_datum_notice">CK-42 出力垂直基準線は、Krassowsky 1940 楕円体上のメートルの高さです。</string>
+    <string name="lens_type">レンズ種類:</string>
+    <string name="distortion_parameters">歪みパラメータ:</string>
 </resources>

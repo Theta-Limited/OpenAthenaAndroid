@@ -116,4 +116,6 @@
     <string name="nato_vertical_datum_notice">NATO i WGS84 używają pionowego układu odniesienia EGM96, wyrażonego w metrach powyżej średniego poziomu morza.</string>
     <string name="warsaw_vertical_datum_notice">CK-42 używa pionowego układu odniesienia opartego na wysokości w metrach nad elipsoidą Krassowskiego z 1940 roku.</string>
     <string name="geotiff_coverage_reminder">Upewnij się, że plik DEM obejmuje lokalizację drona!</string>
+    <string name="lens_type">Typ obiektywu:</string>
+    <string name="distortion_parameters">Parametry zniekształceń:</string>
 </resources>

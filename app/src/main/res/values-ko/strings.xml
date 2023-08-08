@@ -116,4 +116,6 @@
     <string name="geoid_load_error_msg">심각한 오류: 지구 지오이드 데이터 파일을 로드할 수 없습니다!</string>
     <string name="nato_vertical_datum_notice">NATO 및 WGS84 출력 수직 데이텀은 평균 해수면 위 EGM96미터입니다.</string>
     <string name="warsaw_vertical_datum_notice">CK-42 출력 수직 데이텀은 Krassowsky 1940 타원체 위의 미터 높이입니다.</string>
+    <string name="lens_type">렌즈 유형:</string>
+    <string name="distortion_parameters">왜곡 파라미터:</string>
 </resources>

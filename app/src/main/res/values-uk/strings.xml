@@ -116,4 +116,6 @@
     <string name="geoid_load_error_msg">Критична помилка: не вдалося завантажити файл даних геоїда Землі!</string>
     <string name="nato_vertical_datum_notice">Вертикальна точка відліку для виходу НАТО та WGS84 становить EGM96 метрів над середнім рівнем моря.</string>
     <string name="warsaw_vertical_datum_notice">Вертикальна точка даних CK-42 — це висота метрів над еліпсоїдом Красовського 1940 року.</string>
+    <string name="lens_type">Тип об\'єктива:</string>
+    <string name="distortion_parameters">Параметри спотворення:</string>
 </resources>
