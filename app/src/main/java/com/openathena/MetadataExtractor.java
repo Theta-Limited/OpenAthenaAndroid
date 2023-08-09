@@ -761,19 +761,34 @@ public class MetadataExtractor {
         }
 
         // calculate ray angles using undistorted coordinates
+        // TODO these calculations may be wrong for fisheye lenses
         double azimuth = Math.atan2(xUndistorted, fx);
         double elevation = Math.atan2(yUndistorted, fy);
 
         azimuth = Math.toDegrees(azimuth);
         elevation = Math.toDegrees(elevation);
 
+        // calculation of what the ray angle would be without distortion correction
+        // for debug use only
+        double azDistorted = Math.atan2(xDistorted, fx);
+        double elDistorted = Math.atan2(yDistorted, fy);
+        azDistorted = Math.toDegrees(azDistorted);
+        elDistorted = Math.toDegrees(elDistorted);
+
+        // physical roll angle of the camera
         double roll = getMetadataValues(exifInterface)[5];
 
         double[] TBAngle = correctRayAnglesForRoll(azimuth, elevation, roll);
         azimuth = TBAngle[0];
         elevation = TBAngle[1];
 
-        Log.d(TAG, "Pixel (" + x + ", " + y + ", Roll: " + roll + ") -> Ray (" + azimuth + ", " + elevation + ")");
+        // for debug use only
+        TBAngle = correctRayAnglesForRoll(azDistorted, elDistorted, roll);
+        azDistorted = TBAngle[0];
+        elDistorted = TBAngle[1];
+
+        Log.d(TAG, "Pixel (" + (xUndistorted + cx) + ", " + (yUndistorted + cy) + ", Roll: " + roll + ") -> Ray (" + azimuth + ", " + elevation + ")");
+        Log.d(TAG, "Without distortion correction, would have been:\n"+"Pixel (" + x + ", " + y + ", Roll: " + roll + ") -> Ray (" + azDistorted + ", " + elDistorted + ")");
         return new double[] {azimuth, elevation};
     }
 
