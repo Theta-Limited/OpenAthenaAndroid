@@ -470,10 +470,6 @@ public class DEMParser implements Serializable {
 
         for (Location neighbor : neighbors) {
             double distance = TargetGetter.haversine(target.longitude, target.latitude, neighbor.longitude, neighbor.latitude, neighbor.elevation);
-            if (distance <= 0.5d) { // if distance from sample is  < 0.5 meter, just use the raw sample
-                return neighbor.elevation;
-            }
-
             double weight = 1.0d / Math.pow(distance, power);
             sumWeights += weight;
             sumWeightedElevations += weight * neighbor.elevation;
@@ -579,7 +575,7 @@ public class DEMParser implements Serializable {
          * on the interpolated value. A higher power will result in a higher influence
          * of closer points and a lower influence of more distant points.
          */
-        double power = 2.0d;
+        double power = 1.875d;
 
         // Inverse Distance Weighting interpolation using 4 neighbors
         // see: https://doi.org/10.3846/gac.2023.16591
