@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:text="@string/target_output_mode_title"
         android:textAlignment="center"
@@ -31,13 +31,11 @@
         android:layout_width="249dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toTopOf="@+id/reset_prefs_button"
+        app:layout_constraintTop_toBottomOf="@+id/textViewOutputModeTitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewOutputModeTitle">
+        app:layout_constraintStart_toStartOf="parent">
 
         <RadioButton
             android:id="@+id/radioButtonWGS84"
@@ -96,15 +94,45 @@
 
     </RadioGroup>
 
+    <TextView
+        android:id="@+id/compassCorrectionValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/prefs_compass_offset_label"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/actionMenuTextColor"
+        android:textSize="18sp"
+        android:tooltipText="@string/tooltip_correct_bad_compass_data_this_is_not_for_setting_mag_declination"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/outputModeRadioGroup" />
+
+    <SeekBar
+        android:id="@+id/compassCorrectionSeekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
+        android:max="200"
+        android:progress="100"
+        app:layout_constraintTop_toBottomOf="@+id/compassCorrectionValue"
+        app:layout_constraintBottom_toTopOf="@+id/reset_prefs_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <Button
         android:id="@+id/reset_prefs_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="80dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
         android:onClick="prefsReset"
         android:text="@string/reset_prefs_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/compassCorrectionSeekBar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

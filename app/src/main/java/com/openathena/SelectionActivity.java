@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,7 +27,7 @@ public class SelectionActivity extends AthenaActivity{
         setContentView(R.layout.activity_selection);
         iView = (MarkableImageView) findViewById(R.id.selection_image_view);
 
-        restorePrefOutputMode();
+        restorePrefs();
 
         isImageLoaded = athenaApp.getBoolean("isImageLoaded");
         isDEMLoaded = athenaApp.getBoolean("isDEMLoaded");

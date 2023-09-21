@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,28 +10,62 @@
 
     <TextView
         android:id="@+id/textViewOutputModeTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
         android:text="@string/target_output_mode_title"
         android:textAlignment="textStart"
         android:textColor="?attr/actionMenuTextColor"
         android:textSize="34sp"
+        app:layout_constraintEnd_toStartOf="@+id/outputModesScrollView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/compassCorrectionValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:text="@string/prefs_compass_offset_label"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/actionMenuTextColor"
+        android:textSize="20sp"
+        android:tooltipText="@string/tooltip_correct_bad_compass_data_this_is_not_for_setting_mag_declination"
+        app:layout_constraintEnd_toStartOf="@+id/outputModesScrollView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewOutputModeTitle" />
+
+    <SeekBar
+        android:id="@+id/compassCorrectionSeekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:max="200"
+        android:progress="100"
+        app:layout_constraintEnd_toStartOf="@+id/outputModesScrollView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/compassCorrectionValue" />
+
     <ScrollView
         android:id="@+id/outputModesScrollView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
         android:fadeScrollbars="false"
         android:scrollbarAlwaysDrawVerticalTrack="true"
         android:scrollbarSize="8dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textViewOutputModeTitle"
+        app:layout_constraintStart_toEndOf="@+id/compassCorrectionSeekBar"
         app:layout_constraintTop_toTopOf="parent">
 
         <RadioGroup
@@ -106,11 +139,12 @@
         android:id="@+id/reset_prefs_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
         android:onClick="prefsReset"
         android:text="@string/reset_prefs_text"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewOutputModeTitle" />
+        app:layout_constraintEnd_toEndOf="@+id/compassCorrectionSeekBar"
+        app:layout_constraintStart_toStartOf="@+id/compassCorrectionSeekBar"
+        app:layout_constraintTop_toBottomOf="@+id/compassCorrectionSeekBar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

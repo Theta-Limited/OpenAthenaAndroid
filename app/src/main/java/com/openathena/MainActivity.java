@@ -61,7 +61,6 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 // Libraries from the U.S. National Geospatial Intelligence Agency https://www.nga.mil
@@ -250,7 +249,7 @@ public class MainActivity extends AthenaActivity {
             }
         }
 
-        restorePrefOutputMode(); // restore the outputMode from persistent settings
+        restorePrefs(); // restore the outputMode from persistent settings
         if (athenaApp.needsToCalculateForNewSelection && isDEMLoaded && isImageLoaded) {
             calculateImage(iView, athenaApp.shouldISendCoT);
             athenaApp.needsToCalculateForNewSelection = false;
@@ -347,7 +346,7 @@ public class MainActivity extends AthenaActivity {
         if (imageUri != null && !uri.equals(imageUri)) {
             clearText(); // clear attributes textView
             isTargetCoordDisplayed = false;
-            restorePrefOutputMode(); // reset textViewTargetCoord to mode descriptor
+            restorePrefs(); // reset textViewTargetCoord to mode descriptor
 
             isImageLoaded = false;
             iView.mark(0.5d, 0.5d); // reset the marker to the principle point (center)

@@ -1,7 +1,6 @@
 package com.openathena;
 
 import android.annotation.SuppressLint;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,12 +19,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.Locale;
 
 public abstract class AthenaActivity extends AppCompatActivity {
 
@@ -45,6 +45,11 @@ public abstract class AthenaActivity extends AppCompatActivity {
 
     protected static PrefsActivity.outputModes outputMode;
     static RadioGroup radioGroup;
+
+    static SeekBar compassCorrectionSeekBar;
+    static TextView compassCorrectionValue;
+
+    protected double compassCorrectionOffset = 0.0d; // default value
     protected TextView textViewTargetCoord;
     protected boolean isTargetCoordDisplayed;
 
@@ -162,6 +167,26 @@ public abstract class AthenaActivity extends AppCompatActivity {
         }
     }
 
+    protected double calculateCompassCorrectionOffset(int seekBarValue) {
+        // Convert the seekBarValue (0-200) to a range of -1 to 1
+        double mappedValue = (seekBarValue / 100.0) - 1;
+
+        // Use a log function to gradually increase effect of SeekBar as further away from middle
+        final double LOG_SCALE = 0.05;
+        double logValue;
+        if (mappedValue > 0) {
+            logValue = Math.log(mappedValue * LOG_SCALE + 1);
+        } else if (mappedValue < 0) {
+            logValue = -Math.log(-mappedValue * LOG_SCALE + 1);
+        } else {
+            logValue = 0;
+        }
+
+        // Scale the result to fit within the range of [-10, 10]
+        double offset = logValue * (10.0 / Math.log(1 + LOG_SCALE));
+        return offset;
+    }
+
     public static int get_selection_x() {
         return athenaApp.get_selection_x();
     }
@@ -247,12 +272,29 @@ public abstract class AthenaActivity extends AppCompatActivity {
         }
     }
 
-    public void restorePrefOutputMode() {
+    public void restorePrefs() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (sharedPreferences != null) {
             int outputModeFromPref = sharedPreferences.getInt("outputMode", 0);
             setOutputMode(outputModeFromPref);
+
+            int savedSeekBarValue = sharedPreferences.getInt("compassCorrectionSeekBarValue", 100);
+            setCompassCorrectionSeekBar(savedSeekBarValue);
+        }
+    }
+
+    public void setCompassCorrectionSeekBar(int value) {
+        if (compassCorrectionSeekBar != null) {
+            compassCorrectionSeekBar.setProgress(value);
+            updateCompassCorrection(value);
+        }
+    }
+
+    public void updateCompassCorrection(int value) {
+        if (compassCorrectionSeekBar != null) {
+            compassCorrectionOffset = calculateCompassCorrectionOffset(value);
+            compassCorrectionValue.setText(getString(R.string.prefs_compass_offset_label) + " " + String.format(Locale.US, "%.2f°", compassCorrectionOffset));
         }
     }
 
@@ -346,7 +388,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
             }
         }
         if (!isTargetCoordDisplayed) {
-            restorePrefOutputMode(); // reset the textViewTargetCoord display
+            restorePrefs(); // reset the textViewTargetCoord display
         }
     }
 

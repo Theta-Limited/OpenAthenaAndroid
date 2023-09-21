@@ -1,25 +1,22 @@
-// PrefsActivity.java
 // OpenAthena for Android
-// Bobby Krupczak, rdk@krupczak.org Matthew Krupczak, mwk@krupczak.org, et. al
+// Bobby Krupczak, rdk@theta.limited Matthew Krupczak, matthew@theta.limited, et. al
 
 package com.openathena;
 
 import android.content.Context;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
-
-// handle permissions for accessing photos and
-// log file (local storage) XXX
-
+import java.util.Locale;
 
 public class PrefsActivity extends AthenaActivity {
 
@@ -32,6 +29,11 @@ public class PrefsActivity extends AthenaActivity {
         setContentView(R.layout.activity_prefs);
 
         radioGroup = (RadioGroup) findViewById(R.id.outputModeRadioGroup);
+        compassCorrectionSeekBar = findViewById(R.id.compassCorrectionSeekBar);
+        compassCorrectionValue = findViewById(R.id.compassCorrectionValue);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         // Listener which changes outputMode when a radio button is selected
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -73,7 +75,28 @@ public class PrefsActivity extends AthenaActivity {
             }
         });
 
-        restorePrefOutputMode();
+        restorePrefs();
+
+        compassCorrectionSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                updateCompassCorrection(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // Do nothing
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // Save the new value to SharedPreferences
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt("compassCorrectionSeekBarValue", seekBar.getProgress());
+                editor.apply();
+            }
+        });
+
     } // end onCreate()
 
     protected void saveStateToSingleton() {
@@ -106,6 +129,7 @@ public class PrefsActivity extends AthenaActivity {
     {
         appendLog("Resetting settings \uD83D\uDD04\n");
         setOutputMode(outputModes.WGS84);
+        setCompassCorrectionSeekBar(100);
     }
 
     private void appendLog(String str)
