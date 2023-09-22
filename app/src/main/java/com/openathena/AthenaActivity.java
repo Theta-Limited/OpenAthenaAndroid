@@ -148,7 +148,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
             case 5:
                 prefsEditor.putInt("outputMode", mode);
                 prefsEditor.apply(); // make the outputMode change persistent
-                outputMode = PrefsActivity.outputModes.CK42GaussKrüger; // An alternative geodetic system using the Krasovsky 1940 ellipsoid. A longitudinal ZONE (in 6° increments, possible values 1-60 inclusive), Northing defined by X value, and Easting defined by Y value describe an exact position on Earth
+                outputMode = PrefsActivity.outputModes.CK42GaussKrüger; // An alternative geodetic system using the Krasovsky 1940 ellipsoid. Northing defined by X value, and Easting defined by Y value describe an exact position on Earth
                 if (radioGroup != null && radioGroup.getVisibility() == View.VISIBLE) {
                     radioGroup.check(R.id.radioButtonCK42GaussKrüger);
                 }
@@ -167,7 +167,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
         }
     }
 
-    protected double calculateCompassCorrectionOffset(int seekBarValue) {
+    public double calculateCompassCorrectionOffset(int seekBarValue) {
         // Convert the seekBarValue (0-200) to a range of -1 to 1
         double mappedValue = (seekBarValue / 100.0) - 1;
 
@@ -294,6 +294,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
     public void updateCompassCorrection(int value) {
         if (compassCorrectionSeekBar != null) {
             compassCorrectionOffset = calculateCompassCorrectionOffset(value);
+            athenaApp.putDouble("userOffset", compassCorrectionOffset); // update the Singleton
             compassCorrectionValue.setText(getString(R.string.prefs_compass_offset_label) + " " + String.format(Locale.US, "%.2f°", compassCorrectionOffset));
         }
     }

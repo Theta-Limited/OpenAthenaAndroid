@@ -120,4 +120,5 @@
     <string name="distortion_parameters">Distortion parameters:</string>
     <string name="prefs_compass_offset_label">Compass Offset 🧭:</string>
     <string name="tooltip_correct_bad_compass_data_this_is_not_for_setting_mag_declination">Use this to correct bad compass data. This is NOT for setting mag declination!</string>
+    <string name="manual_correction_label">Manual Azimuth Correction:</string>
 </resources>

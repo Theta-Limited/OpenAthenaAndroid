@@ -603,6 +603,12 @@ public class MainActivity extends AthenaActivity {
 //            attribs += "cy: " + intrinsics[5] + "\n";
             attribs += getString(R.string.roll_label) + " " + roll + "°\n";
 
+            double azimuthOffsetUserCorrection = athenaApp.getDouble("userOffset");
+            if (azimuthOffsetUserCorrection != 0.0d) {
+                attribs += getString(R.string.manual_correction_label) + " " + roundDouble(azimuthOffsetUserCorrection) + "\n";
+            }
+            azimuth += azimuthOffsetUserCorrection;
+
             double[] relativeRay;
             try {
                 if (get_selection_x() < 0 || get_selection_y() < 0) {
@@ -617,14 +623,14 @@ public class MainActivity extends AthenaActivity {
                 Log.i(TAG, "No point was selected in image. Using principal point (center) for calculation.");
             }
 
-            double azimuthOffset = relativeRay[0];
-            double thetaOffset = relativeRay[1];
+            double azimuthOffsetSelectedPoint = relativeRay[0];
+            double thetaOffsetSelectedPoint = relativeRay[1];
 
-            attribs += getString(R.string.azimuth_offset_label) + " " + Math.round(azimuthOffset) + "°\n";
-            attribs += getString(R.string.pitch_offset_label) + " " + -1 * Math.round(thetaOffset) + "°\n";
+            attribs += getString(R.string.azimuth_offset_label) + " " + Math.round(azimuthOffsetSelectedPoint) + "°\n";
+            attribs += getString(R.string.pitch_offset_label) + " " + -1 * Math.round(thetaOffsetSelectedPoint) + "°\n";
 
-            azimuth += azimuthOffset;
-            theta += thetaOffset;
+            azimuth += azimuthOffsetSelectedPoint;
+            theta += thetaOffsetSelectedPoint;
 
             if (!outputModeIsSlavic()) {
                 attribs += getString(R.string.latitude_label_long) + " "+ roundDouble(y) + "°\n";

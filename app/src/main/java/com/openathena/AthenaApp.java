@@ -110,6 +110,20 @@ public class AthenaApp extends Application { // Android Singleton Class for hold
             return value.intValue();
         }
     }
+
+    private HashMap<String, Double> doubleMap = new HashMap<String, Double>();
+
+    public void putDouble(String key, double value) { doubleMap.put(key, value); }
+
+    public double getDouble(String key) {
+        Double value = doubleMap.get(key);
+        if (value == null) {
+            return 0.0d;
+        } else {
+            return value.doubleValue();
+        }
+    }
+
     private HashMap<String, Boolean> booleanMap = new HashMap<String, Boolean>();
 
     public void putBoolean(String key, Boolean value) {
