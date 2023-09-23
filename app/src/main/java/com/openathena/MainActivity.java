@@ -605,7 +605,7 @@ public class MainActivity extends AthenaActivity {
 
             double azimuthOffsetUserCorrection = athenaApp.getDouble("userOffset");
             if (azimuthOffsetUserCorrection != 0.0d) {
-                attribs += getString(R.string.manual_correction_label) + " " + roundDouble(azimuthOffsetUserCorrection) + "\n";
+                attribs += getString(R.string.manual_correction_label) + " " + roundDouble(azimuthOffsetUserCorrection) + "°" + "\n";
             }
             azimuth += azimuthOffsetUserCorrection;
 

@@ -91,13 +91,18 @@ public class PrefsActivity extends AthenaActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 // Save the new value to SharedPreferences
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putInt("compassCorrectionSeekBarValue", seekBar.getProgress());
-                editor.apply();
+                saveCurSeekBarProgress();
             }
         });
 
     } // end onCreate()
+
+    protected void saveCurSeekBarProgress() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("compassCorrectionSeekBarValue", compassCorrectionSeekBar.getProgress());
+        editor.apply();
+    }
 
     protected void saveStateToSingleton() {
         return; // do nothing
@@ -130,6 +135,7 @@ public class PrefsActivity extends AthenaActivity {
         appendLog("Resetting settings \uD83D\uDD04\n");
         setOutputMode(outputModes.WGS84);
         setCompassCorrectionSeekBar(100);
+        saveCurSeekBarProgress();
     }
 
     private void appendLog(String str)
