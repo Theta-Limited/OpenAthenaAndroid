@@ -182,8 +182,8 @@ public abstract class AthenaActivity extends AppCompatActivity {
             logValue = 0;
         }
 
-        // Scale the result to fit within the range of [-10, 10]
-        double offset = logValue * (10.0 / Math.log(1 + LOG_SCALE));
+        // Scale the result to fit within the range of [-15, 15]
+        double offset = logValue * (15.0 / Math.log(1 + LOG_SCALE));
         return offset;
     }
 
