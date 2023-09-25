@@ -118,4 +118,8 @@
     <string name="geotiff_coverage_reminder">Upewnij się, że plik DEM obejmuje lokalizację drona!</string>
     <string name="lens_type">Typ obiektywu:</string>
     <string name="distortion_parameters">Parametry zniekształceń:</string>
+    <string name="prefs_compass_offset_label">Ręczna Korekta Azymutu 🧭:</string>
+    <string name="tooltip_correct_bad_compass_data_this_is_not_for_setting_mag_declination">Użyj tego, aby skorygować błędne dane kompasu. To NIE służy do ustawiania deklinacji magnetycznej!</string>
+    <string name="manual_correction_label">Ręczna Korekta Azymutu :</string>
+    <string name="CalibrationReminderSnippet">Aby uzyskać najlepsze wyniki, proszę skalibrować kompas 🧭 swojego drona przed lotem!</string>
 </resources>
