@@ -118,4 +118,8 @@
     <string name="warsaw_vertical_datum_notice">CK-42 출력 수직 데이텀은 Krassowsky 1940 타원체 위의 미터 높이입니다.</string>
     <string name="lens_type">렌즈 유형:</string>
     <string name="distortion_parameters">왜곡 파라미터:</string>
+    <string name="prefs_compass_offset_label">수동 방위각 보정 🧭:</string>
+    <string name="tooltip_correct_bad_compass_data_this_is_not_for_setting_mag_declination">이 기능을 사용하여 잘못된 나침반 데이터를 수정하세요. 이것은 자기 편차 설정용이 아닙니다!</string>
+    <string name="manual_correction_label">수동 방위각 보정 :</string>
+    <string name="CalibrationReminderSnippet">최상의 결과를 얻으려면 비행 전에 드론의 나침반 🧭을 보정해 주세요!</string>
 </resources>

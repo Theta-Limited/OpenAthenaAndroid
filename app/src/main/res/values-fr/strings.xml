@@ -118,4 +118,8 @@
     <string name="warsaw_vertical_datum_notice">Le référentiel vertical de sortie du CK-42 est en mètres de hauteur au-dessus de l\'ellipsoïde de Krassowsky 1940.</string>
     <string name="lens_type">Type de lentille:</string>
     <string name="distortion_parameters">Paramètres de distorsion:</string>
+    <string name="prefs_compass_offset_label">Correction manuelle de l\'azimut 🧭:</string>
+    <string name="tooltip_correct_bad_compass_data_this_is_not_for_setting_mag_declination">Utilisez ceci pour corriger les données de boussole incorrectes. Ce n\'est PAS pour régler la déclinaison magnétique!</string>
+    <string name="manual_correction_label">Correction manuelle de l\'azimut:</string>
+    <string name="CalibrationReminderSnippet">Pour de meilleurs résultats, veuillez calibrer la boussole 🧭 de votre drone avant le vol !</string>
 </resources>

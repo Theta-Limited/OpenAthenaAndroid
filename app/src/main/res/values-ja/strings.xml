@@ -118,4 +118,8 @@
     <string name="warsaw_vertical_datum_notice">CK-42 出力垂直基準線は、Krassowsky 1940 楕円体上のメートルの高さです。</string>
     <string name="lens_type">レンズ種類:</string>
     <string name="distortion_parameters">歪みパラメータ:</string>
+    <string name="prefs_compass_offset_label">手動方位角補正 🧭:</string>
+    <string name="tooltip_correct_bad_compass_data_this_is_not_for_setting_mag_declination">これを使用して、不正確なコンパスデータを修正します。これは磁気偏角を設定するためのものではありません!</string>
+    <string name="manual_correction_label">手動方位角補正 :</string>
+    <string name="CalibrationReminderSnippet">最適な結果を得るために、飛行前にドローンのコンパス🧭をキャリブレートしてください！</string>
 </resources>

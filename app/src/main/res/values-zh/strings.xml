@@ -118,4 +118,8 @@
     <string name="warsaw_vertical_datum_notice">CK-42 输出垂直基准是 Krassowsky 1940 椭球上方米高。</string>
     <string name="lens_type">镜头类型:</string>
     <string name="distortion_parameters">畸变参数:</string>
+    <string name="prefs_compass_offset_label">手动方位校正 🧭:</string>
+    <string name="tooltip_correct_bad_compass_data_this_is_not_for_setting_mag_declination">使用此功能来校正错误的指南针数据。这不是用来设置磁偏角的！</string>
+    <string name="manual_correction_label">手动方位校正:</string>
+    <string name="CalibrationReminderSnippet">为了获得最佳效果，请在飞行前校准您的无人机指南针 🧭!</string>
 </resources>
