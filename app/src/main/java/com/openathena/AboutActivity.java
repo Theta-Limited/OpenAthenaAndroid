@@ -63,7 +63,7 @@ public class AboutActivity extends AppCompatActivity {
                         + "Theta Informatics LLC<br>"
                         + getString(R.string.GPL3Notice)
                         + "<br> <a href=\"https://openathena.com/\">OpenAthena.com</a> <br>"
-                        + getString(R.string.AboutSnippet)
+                        + getString(R.string.AboutSnippet) + "<br>"
                         + getString(R.string.CalibrationReminderSnippet) + "<br>"
                         + "<br><a href=\"https://github.com/Theta-Limited/OpenAthena/blob/main/EIO_fetch_geotiff_example.md\">"
                         + "Obtain a Digital Elevation Model Here</a>"
