@@ -46,10 +46,21 @@ Load the DEM file (e.g. cobb.tif) using the "⛰" button. The app will display t
 
 It is _**strongly suggested**_ that you should [calibrate the drone's compass sensor for the local environment](https://phantompilots.com/threads/compass-calibration-a-complete-primer.32829/) before taking photos to be used with OpenAthena. Consult your drone's operation manual for this procedure. The image metadata from an un-calibrated drone can be several degrees off from the correct heading. This can result in dramatic target-resolution inaccuracies if the sensor is not calibrated. _**Always**_ verify a target match location from OpenAthena before use!
 
-E.x.:
+E.g.:
 
 <img width="586" alt="OpenAthena Android an example of a bad target resolution due to an un-calibrated magnetometer compass sensor" src="./assets/magnetometer_fail.png">
 
+### Optional: use the "Manual Azimuth Correction" slider to correct bad compass data
+
+If you find your aircraft's compass sensor is still not providing correct heading information, you can use this slider to manually apply a configurable offset anywhere in the range of [-15.0°, +15.0°]. This offset will be added to your aircraft's camera heading before target calculation is performed:
+
+<img width="330" alt="OpenAthena Android Manual Azimuth Correction Slider" src="./assets/Settings_Manual_Azimuth_Correction_Demo.png">
+
+Once you find a suitable correction value, you may then use the value for all other images taken during the same flight.
+
+**NOTE:** This value is _**NOT**_ for setting [magnetic declination](https://ngdc.noaa.gov/geomag/declination.shtml)! Magnetic declination is already accounted for by your drone's onboard digital World Magnetic Model (WMM). Improper use of this Manual Offset setting will result in bad target calculation output. 
+
+Your selected manual correction value is saved automatically between launches of the app. To reset the value, tap the "RESET" button in the Settings screen or move the slider to the middle.
 
 ## Select an Image 🖼:
 
@@ -144,7 +155,3 @@ git submodule update --remote
 ### Setting Up Android Studio with this project
 **TODO add instructions for setting up Android Studio**
 
-## UI language translation
-If you speak another language in addition to English, please consider contributing to the UI translation using the link below. The insights of a native-speaker are the only way to provide a good user experience for the program in a given language:
-
-[https://www.transifex.com/thetalimited/openathena-for-android/](https://www.transifex.com/thetalimited/openathena-for-android/)
