@@ -81,8 +81,6 @@ public class AboutActivity extends AppCompatActivity {
                         + "<a href=\"https://github.com/ThreeTen/threetenbp\">ThreeTen/threetenbp</a> BSD 3-Clause<br>"
                         + "<a href=\"https://github.com/apache/commons-lang\">Apache Commons Lang</a> Apache License<br>"
                         + "<a href=\"https://github.com/apache/commons-io\">Apache Commons IO</a> Apache License<br>"
-                        + "<a href=\"https://commons.apache.org/proper/commons-math/\">Apache Commons Math</a> Apache License<br>"
-
 
                 ,0,null, null)
         );
