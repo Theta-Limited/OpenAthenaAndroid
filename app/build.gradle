@@ -3,14 +3,14 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.openathena"
         minSdk 28
-        targetSdk 32
-        versionCode 23
-        versionName "0.18.0"
+        targetSdk 33
+        versionCode 25
+        versionName "0.19.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -707,11 +707,14 @@ public class MetadataExtractor {
         double cx = intrinsics[2];
         double cy = intrinsics[5];
 
+        // convert u,v to undistorted pixel coordinates (based on principal point and focal length)
         double xDistorted = x - cx;
         double yDistorted = y - cy;
+        double xNormalized = (xDistorted) / fx;
+        double yNormalized = (yDistorted) / fy;
 
-        double xUndistorted = xDistorted; // initial guess
-        double yUndistorted = yDistorted; // initial guess
+        double xUndistorted = xDistorted;
+        double yUndistorted = yDistorted;
 
         if ("perspective".equalsIgnoreCase(lensType)) {
             try {
@@ -722,36 +725,16 @@ public class MetadataExtractor {
                 double p2 = drone.getDouble("tangentialT2");
 
                 if (!(k1 == 0.0 && k2 == 0.0 && k3 == 0.0 && p1 == 0.0 && p2 == 0.0)) {
-                    // Use Levenberg-Marquardt to correct for distortion
-                    MultivariateJacobianFunction function = new PerspectiveDistortionFunction(xDistorted, yDistorted, k1, k2, k3, p1, p2);
-                    LeastSquaresProblem problem = new LeastSquaresBuilder()
-                            .start(new double[]{xUndistorted, yUndistorted})
-                            .model(function)
-                            .target(new double[]{xDistorted, yDistorted})
-                            .checkerPair(new SimpleVectorValueChecker(1e-6, 1e-6)) // Convergence criteria
-                            .maxEvaluations(Integer.MAX_VALUE)
-                            .maxIterations(100000)
-                            .build();
+                    // "A simplification of the standard OpenCV model with the denominator coefficients and tangential coefficients omitted."
+                    // https://support.skydio.com/hc/en-us/articles/4417425974683-Skydio-camera-and-metadata-overview
+                    // simplified distortion correction model based on Brown-Conrady model, omitting some terms
+                    //  A Flexible New Technique for Camera Calibration, 1998
+                    // https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr98-71.pdf
+                    PerspectiveDistortionCorrector pdc = new PerspectiveDistortionCorrector(k1, k2, p1, p2);
+                    double[] undistortedNormalized = pdc.correctDistortion(xNormalized, yNormalized);
 
-                    // Define the optimizer parameters
-                    double initialStepBoundFactor = 10.0; // Default is 1.0, adjust as needed
-                    double costRelativeTolerance = 1e-12; // Default is 1e-10, adjust as needed
-                    double parRelativeTolerance = 1e-12; // Default is 1e-10, adjust as needed
-                    double orthoTolerance = 1e-12; // Default is 1e-10, adjust as needed
-                    double qrRankingThreshold = 1e-8; // Default is 1e-10, adjust as needed
-
-                    // Create the optimizer with the custom parameters
-                    LevenbergMarquardtOptimizer optimizer = new LevenbergMarquardtOptimizer(
-                            initialStepBoundFactor,
-                            costRelativeTolerance,
-                            parRelativeTolerance,
-                            orthoTolerance,
-                            qrRankingThreshold
-                    );
-
-                    RealVector undistorted = optimizer.optimize(problem).getPoint();
-                    xUndistorted = undistorted.getEntry(0);
-                    yUndistorted = undistorted.getEntry(1);
+                    xUndistorted = undistortedNormalized[0] * fx;
+                    yUndistorted = undistortedNormalized[1] * fy;
                 } else {
                     Log.e(TAG, "DISTORTION PARAMETERS WERE MISSING!");
                 }
@@ -760,6 +743,9 @@ public class MetadataExtractor {
             }
         } else if ("fisheye".equalsIgnoreCase(lensType)) {
             try {
+                // Fisheye distortion goes BRRRRRRRRRRRrrrrrrrrrrr
+                // https://support.pix4d.com/hc/en-us/articles/202559089-How-are-the-Internal-and-External-Camera-Parameters-defined
+                // https://www.mathworks.com/help/vision/ug/fisheye-calibration-basics.html
                 double p0 = drone.getDouble("poly0");
                 double p1 = drone.getDouble("poly1");
                 double p2 = drone.getDouble("poly2");
@@ -771,19 +757,10 @@ public class MetadataExtractor {
                 double f = drone.getDouble("f");
 
                 if (!(c == 0.0 && d == 0.0 && e == 0.0 && f == 0.0)) {
-                    // Use Levenberg-Marquardt to correct for distortion
-                    MultivariateJacobianFunction function = new FisheyeDistortionFunction(xDistorted, yDistorted, p2, p3, p4, c, d, e, f);
-                    LeastSquaresProblem problem = new LeastSquaresBuilder()
-                            .start(new double[]{xUndistorted, yUndistorted})
-                            .model(function)
-                            .target(new double[]{xDistorted, yDistorted})
-                            .checkerPair(new SimpleVectorValueChecker(1e-9, 1e-9)) // Convergence criteria
-                            .maxEvaluations(Integer.MAX_VALUE)
-                            .maxIterations(100000)
-                            .build();
-                    RealVector undistorted = new LevenbergMarquardtOptimizer().optimize(problem).getPoint();
-                    xUndistorted = undistorted.getEntry(0);
-                    yUndistorted = undistorted.getEntry(1);
+                    FisheyeDistortionCorrector fdc = new FisheyeDistortionCorrector(p0, p1, p2, p3, p4, c, d, e, f);
+                    double[] undistortedNormalized = fdc.correctDistortion(xNormalized, yNormalized);
+                    xUndistorted = undistortedNormalized[0] * fx;
+                    yUndistorted = undistortedNormalized[1] * fy;
                 } else {
                     Log.e(TAG, "DISTORTION PARAMETERS WERE MISSING!");
                 }
