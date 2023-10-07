@@ -584,9 +584,10 @@ public class MainActivity extends AthenaActivity {
             attribs += theMeta.getTagString(ExifInterface.TAG_MODEL, exif);
             attribs += getString(R.string.isCameraModelRecognized) + " " + (theMeta.isDroneModelRecognized(exif) ? getString(R.string.yes) : getString(R.string.no)) + "\n";
             attribs += getString(R.string.lens_type) + " " + (theMeta.getLensType(exif)) + "\n";
-            attribs += getString(R.string.distortion_parameters) + "\n";
+
             LinkedHashMap<String, Double> paramMap = theMeta.getDistortionParameters(exif);
-            if (paramMap != null) {
+            if (paramMap != null && paramMap.size() > 0) {
+                attribs += getString(R.string.distortion_parameters) + "\n";
                 for (Map.Entry<String, Double> entry : paramMap.entrySet()) {
                     attribs += "    " + entry.getKey() + ": " + entry.getValue() + "\n";
                 }

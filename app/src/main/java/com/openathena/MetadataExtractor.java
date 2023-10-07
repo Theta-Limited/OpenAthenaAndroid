@@ -57,7 +57,7 @@ public class MetadataExtractor {
             if (!(lensType.equalsIgnoreCase("perspective") || lensType.equalsIgnoreCase("fisheye"))) {
                 return "unknown";
             }
-        } catch (JSONException e) {
+        } catch (JSONException | NullPointerException e) {
             return "unknown";
         }
         return lensType;
@@ -87,6 +87,11 @@ public class MetadataExtractor {
                 distortionParamMap.put("d", drone.getDouble("d"));
                 distortionParamMap.put("e", drone.getDouble("e"));
                 distortionParamMap.put("f", drone.getDouble("f"));
+                distortionParamMap.put("poly0", drone.getDouble("poly0"));
+                distortionParamMap.put("poly1", drone.getDouble("poly1"));
+                distortionParamMap.put("poly2", drone.getDouble("poly2"));
+                distortionParamMap.put("poly3", drone.getDouble("poly3"));
+                distortionParamMap.put("poly4", drone.getDouble("poly4"));
             } else {
                 throw new IllegalArgumentException("Unknown lens type: " + lensType);
             }
@@ -688,8 +693,11 @@ public class MetadataExtractor {
     }
 
     public static double[] getRayAnglesFromImgPixel(int x, int y, ExifInterface exifInterface) throws Exception {
-        JSONObject drone = getMatchingDrone(exifInterface); // Assuming this function fetches the drone details
-        String lensType = drone.getString("lensType");
+        JSONObject drone = getMatchingDrone(exifInterface);
+        String lensType = "";
+        if (drone != null) {
+            lensType = drone.getString("lensType");
+        }
 
         double[] intrinsics = getIntrinsicMatrixFromExif(exifInterface); // may throw Exception
 
@@ -759,6 +767,8 @@ public class MetadataExtractor {
                 Log.e(TAG, "CRITICAL ERROR: CAMERA TYPE WAS FISHEYE BUT LENS DATA MISSING");
                 throw new IllegalArgumentException("No lens parameters given for fisheye lens");
             }
+        } else if ("".equals(lensType) || lensType == null){
+            Log.i(TAG, "Missing lensType for " + exifInterface.getAttribute(ExifInterface.TAG_MAKE) + " " + exifInterface.getAttribute(ExifInterface.TAG_MODEL));
         } else {
             throw new IllegalArgumentException("Unknown lens type: " + lensType);
         }
@@ -779,7 +789,14 @@ public class MetadataExtractor {
         elDistorted = Math.toDegrees(elDistorted);
 
         // physical roll angle of the camera
-        double roll = getMetadataValues(exifInterface)[5];
+        double roll;
+        try {
+            roll = getMetadataValues(exifInterface)[5];
+        } catch (MissingDataException | XMPException | NullPointerException e) {
+            Log.e(TAG, "ERROR: could not obtain camera roll angle. Defaulting to 0.0°");
+            Log.e(TAG, e.getMessage());
+            roll = 0.0d;
+        }
 
         double[] TBAngle = correctRayAnglesForRoll(azimuth, elevation, roll);
         azimuth = TBAngle[0];
