@@ -1,0 +1,1 @@
+This is a hotfix release which improves support for drone models not in the DroneModels database.

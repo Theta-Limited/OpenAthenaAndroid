@@ -1,0 +1,1 @@
+This is a major release which implements a mathematical correction for lens distortion (fixing #74). This may result in improved target accuracy for many drone models

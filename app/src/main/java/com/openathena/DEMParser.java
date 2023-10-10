@@ -529,12 +529,18 @@ public class DEMParser implements Serializable {
             throw new RequestedValueOOBException("getAltFromLatLon arguments out of bounds!", lat, lon);
         }
 
-        long[] xNeighbors = binarySearchNearest(x0, ncols, lon, dx);
-        long[] yNeighbors = binarySearchNearest(y0, nrows, lat, dy);
-        long xL = xNeighbors[0];
-        long xR = xNeighbors[1];
-        long yT = yNeighbors[0];
-        long yB = yNeighbors[1];
+        // Calculate indices algebraically
+        long xL = (long) Math.floor((lon - x0) / dx);
+        long xR = xL + 1;
+        long yT = (long) Math.floor((lat - y0) / dy);
+        long yB = yT + 1;
+
+        if (lon == x0 || lon == x1) {
+            xR = xL;
+        }
+        if (lat == y0 || lat == y1) {
+            yB = yT;
+        }
 
         double altitude;
 
@@ -588,68 +594,5 @@ public class DEMParser implements Serializable {
         }
 
         return altitude;
-    }
-
-    /**
-     * Performs a binary search, returning indices pointing to the two closest values to the input
-     * @param start the start value, in degrees, of an axis of the geofile
-     * @param n the number of items in an axis of the geofile
-     * @param val an input value for which to find the two closest indices
-     * @param dN the change in value for each increment of the index along an axis of the geofile
-     * @return
-     */
-    long[] binarySearchNearest(double start, long n, double val, double dN) {
-        long[] out = new long[2];
-        if ( n <= 0 ) { // dataset is empty
-            return null;
-        }
-
-        if ( n == 1 ) { // if only one elevation datapoint; exceedingly rare
-            if (Double.compare(start, val) <= 0.00000001d) {
-                return new long[]{(long) 0, (long) 0};
-            } else {
-                return null;
-            }
-        }
-
-        if (dN == 0.0d) {
-            return null;
-        }
-
-        boolean isDecreasing = (dN < 0.0d);
-        if (isDecreasing) {
-            // if it's in decreasing order, uh, don't do that. Make it increasing instead!
-            double reversedStart = start + n * dN;
-            double reversedDN = -1.0d * dN;
-
-            long[] recurseResult = binarySearchNearest(reversedStart, n, val, reversedDN);
-            long a1 = recurseResult[0];
-            long a2 = recurseResult[1];
-
-            // kinda weird, but we reverse index result since we reversed the list
-            a1 = n - a1 - 1;
-            a2 = n - a2 - 1;
-            return new long[]{a1, a2};
-        }
-
-        long L = 0;
-        long lastIndex = n - 1;
-        long R = lastIndex;
-        while (L <= R) {
-            long m = (long) Math.floor((L + R) / 2);
-            if (start + m * dN < val) {
-                L = m + 1;
-            } else if (start + m * dN > val) {
-                R = m - 1;
-            } else {
-                // exact match
-                return new long[]{m, m};
-            }
-        }
-
-        // if we've broken out of the loop, L > R
-        //     which means the markers have flipped
-        //     therefore, either list[L] or list[R] must be closest to val
-        return new long[]{R, L};
     }
 }

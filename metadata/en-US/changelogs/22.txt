@@ -1,0 +1,3 @@
+* Fix an accuracy issue which caused intrinsic information to fail to load for all Autel drone models
+* Fix #80, huge drone images will no longer crash the app or fail to display
+* Usability improvement #78, the last loaded DEM will now automatically load upon the next start of the app.
