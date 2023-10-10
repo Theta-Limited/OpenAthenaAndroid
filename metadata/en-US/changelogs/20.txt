@@ -1,0 +1,7 @@
+* Improve elevation accuracy using Inverse Distance Weighting interpolation #70
+* Improve accuracy of arbitrary point selection bc768dc
+* Significantly improve accuracy for Autel and Parrot AnafiAI drones #71
+* Significantly improve accuracy of Cursor on Target location for integration with ATAK #71
+* Remove lengthy DEM reload upon screen rotation or app resumption #43
+* Double tap or pinch to zoom on ImageView will enlarge it to full screen #55
+* other various small fixes

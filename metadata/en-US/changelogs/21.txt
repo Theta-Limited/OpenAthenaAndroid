@@ -1,0 +1,1 @@
+This is a major release which has adds support for DTED2 ".dt2" DEM files for terrain elevation and fixes support for images taken by thermal cameras. For more info, see PR #77 and issue #52. This version also adds the Polish language and improves upon other existing translations.
