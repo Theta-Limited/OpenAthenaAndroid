@@ -2,4 +2,4 @@ Android용 OpenAthena™는 일반 드론이 정확한 위치를 탐지할 수 �
 
 🖼️👨‍💻 + 🧮⛰️ = 🎯📍
 
-자세한 내용은 https://OpenAthena.com을 참조하세요.
+자세한 내용은 <a href='https://OpenAthena.com/'>https://OpenAthena.com</a> 을 참조하세요.

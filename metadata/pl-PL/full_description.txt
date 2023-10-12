@@ -2,4 +2,4 @@ OpenAthena™ dla systemu Android to bezpłatne oprogramowanie o otwartym kodzie
 
 🖼️👨‍💻 + 🧮⛰️ = 🎯📍
 
-Więcej informacji można znaleźć na stronie https://OpenAthena.com
+Więcej informacji można znaleźć na stronie <a href='https://OpenAthena.com/'>https://OpenAthena.com</a>
