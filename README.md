@@ -22,6 +22,10 @@ OpenAthena™ allows common drones to spot precise geodetic locations.
 
 <a href='https://play.google.com/store/apps/details?id=com.openathena&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img width="216" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
 
+
+<a href='https://apt.izzysoft.de/fdroid/index/apk/com.openathena'><img width="216" alt='Get it on izzysoft.de' src='https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png'/></a>
+
+
 # Operation Guide
 
 
@@ -58,7 +62,7 @@ If you find your aircraft's compass sensor is still not providing correct headin
 
 Once you find a suitable correction value, you may then use the value for all other images taken during the same flight.
 
-**NOTE:** This value is _**NOT**_ for setting [magnetic declination](https://ngdc.noaa.gov/geomag/declination.shtml)! Magnetic declination is already accounted for by your drone's onboard digital World Magnetic Model (WMM). Improper use of this Manual Offset setting will result in bad target calculation output. 
+**NOTE:** This value is _**NOT**_ for setting [magnetic declination](https://ngdc.noaa.gov/geomag/declination.shtml)! Magnetic declination is already accounted for by your drone's onboard digital World Magnetic Model (WMM). Improper use of this Manual Offset setting will result in bad target calculation output.
 
 Your selected manual correction value is saved automatically between launches of the app. To reset the value, tap the "RESET" button in the Settings screen or move the slider to the middle.
 
@@ -154,4 +158,3 @@ git submodule update --remote
 
 ### Setting Up Android Studio with this project
 **TODO add instructions for setting up Android Studio**
-

@@ -2,4 +2,4 @@ OpenAthena™ for Android は、一般的なドローンが正確な位置を特
 
 🖼️👨‍💻 + 🧮⛰️ = 🎯📍
 
-詳細については、https://OpenAthena.com をご覧ください。
+詳細については、<a href='https://OpenAthena.com/'>https://OpenAthena.com</a> をご覧ください。

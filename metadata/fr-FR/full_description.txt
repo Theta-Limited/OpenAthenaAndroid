@@ -2,4 +2,4 @@ OpenAthena™ pour Android est un logiciel gratuit et open source qui permet aux
 
 🖼️👨‍💻 + 🧮⛰️ = 🎯📍
 
-Veuillez consulter https://OpenAthena.com pour plus d'informations
+Veuillez consulter <a href='https://OpenAthena.com/'>https://OpenAthena.com</a> pour plus d'informations
