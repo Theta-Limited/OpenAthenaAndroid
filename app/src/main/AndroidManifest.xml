@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.openathena">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- If your app doesn't need to access media files that other apps created,
          set the "maxSdkVersion" attribute to "28" instead. -->
