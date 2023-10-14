@@ -19,6 +19,7 @@ OpenAthena™ allows common drones to spot precise geodetic locations.
 <img width="586" alt="OpenAthena Android DJI_0419.JPG target shown in Google Maps satellite view" src="./assets/0419_maps_screenshot.png">
 
 <img width="586" alt="OpenAthena for Android triggers a waypoint to show in Android Team Awarness Kit at the calculated location" src="./assets/ATAK_OpenAthena_CoT_Demo_landscape.png">
+
 # License
 
 Copyright (C) 2023 Theta Informatics LLC
