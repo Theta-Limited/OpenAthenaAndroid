@@ -28,7 +28,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>. 
+You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 # Install
 
@@ -168,6 +168,10 @@ If you wish to update the contents of submodules from their source:
 ```bash
 git submodule update --remote
 ```
+
+# Acknowledgements
+
+This software project would not be possible without the tireless work of many U.S. public servants and open source maintainers. Please see [CREDITS.md](./CREDITS.md) for a full list of included software libraries, and their authors and licenses.
 
 ### Setting Up Android Studio with this project
 **TODO add instructions for setting up Android Studio**
