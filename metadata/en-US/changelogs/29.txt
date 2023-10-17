@@ -1,0 +1,1 @@
+This minor release contains a hotfix for the manual compass offset feature. The previously-saved offset will now be correctly applied when the app is re-opened.
