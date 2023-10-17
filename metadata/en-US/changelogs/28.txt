@@ -1,0 +1,1 @@
+This is a minor release that changes the compiler from Java 9 to Java 17. This change will have no impact on most users, but is needed for submission to FDroid

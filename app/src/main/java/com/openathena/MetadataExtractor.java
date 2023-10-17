@@ -774,7 +774,6 @@ public class MetadataExtractor {
         }
 
         // calculate ray angles using undistorted coordinates
-        // TODO these calculations may be wrong for fisheye lenses
         double azimuth = Math.atan2(xUndistorted, fx);
         double elevation = Math.atan2(yUndistorted, fy);
 

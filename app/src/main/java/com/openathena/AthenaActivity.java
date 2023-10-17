@@ -285,18 +285,19 @@ public abstract class AthenaActivity extends AppCompatActivity {
     }
 
     public void setCompassCorrectionSeekBar(int value) {
+        compassCorrectionOffset = calculateCompassCorrectionOffset(value);
         if (compassCorrectionSeekBar != null) {
             compassCorrectionSeekBar.setProgress(value);
-            updateCompassCorrection(value);
         }
+        updateCompassCorrection(value);
     }
 
     public void updateCompassCorrection(int value) {
+        compassCorrectionOffset = calculateCompassCorrectionOffset(value);
         if (compassCorrectionSeekBar != null) {
-            compassCorrectionOffset = calculateCompassCorrectionOffset(value);
-            athenaApp.putDouble("userOffset", compassCorrectionOffset); // update the Singleton
             compassCorrectionValue.setText(getString(R.string.prefs_compass_offset_label) + " " + String.format(Locale.US, "%.2f°", compassCorrectionOffset));
         }
+        athenaApp.putDouble("userOffset", compassCorrectionOffset); // update the Singleton
     }
 
     @Override
