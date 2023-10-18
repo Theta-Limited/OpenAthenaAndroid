@@ -1,5 +1,1 @@
-OpenAthena™ for Android is free and opensource software which allows common drones to spot precise locations
-
-🖼️👨‍💻 + 🧮⛰️ = 🎯📍
-
-Please see <a href='https://OpenAthena.com/'>https://OpenAthena.com</a> for more information
+<p><i>OpenAthena™</i> is a project that enables consumer and professional drones to identify precise locations based on their images.This is achieved by combining their sensor metadata with an offline digital elevation model to provide the instant location of the observed.</p><p>🖼️👨.💻 + 🧮 ⛰️ = 🎯📍</p><p>Use <a href='https://github.com/mkrupczak3/OpenAthena/blob/main/EIO_fetch_geotiff_example.md'>this link</a> to get instructions on how to get a GeoTIFF file for digital elevation models needed for OpenAthena.</p>
