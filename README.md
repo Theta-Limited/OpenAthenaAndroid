@@ -32,6 +32,11 @@ You should have received a copy of the GNU General Public License along with thi
 
 # Install
 
+<a href="https://f-droid.org/packages/com.openathena">
+    <img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+    alt="Get it on F-Droid"
+    height="80">
+</a>
 <a href='https://apt.izzysoft.de/fdroid/index/apk/com.openathena'><img width="216" alt='Get it on izzysoft.de' src='https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png'/></a>
 <a href='https://play.google.com/store/apps/details?id=com.openathena&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img width="216" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
 
