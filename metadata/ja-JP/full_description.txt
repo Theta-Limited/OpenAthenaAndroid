@@ -1,5 +1,1 @@
-OpenAthena™ for Android は、一般的なドローンが正確な位置を特定できるようにする無料のオープンソース ソフトウェアです
-
-🖼️👨‍💻 + 🧮⛰️ = 🎯📍
-
-詳細については、<a href='https://OpenAthena.com/'>https://OpenAthena.com</a> をご覧ください。
+<p><i>OpenAthena™</i> は、消費者やプロのドローンが画像に基づいて正確な位置を識別できるようにするプロジェクトです。 これは、センサーのメタデータをオフラインのデジタル標高モデルと組み合わせて、画像内の選択したポイントの即時位置を提供することで実現されます。</p><p>🖼️👨.💻 + 🧮 ⛰️ = 🎯📍</p><p ><a href='https://github.com/mkrupczak3/OpenAthena/blob/main/EIO_fetch_geotiff_example.md'>このリンク</a>を使用して、OpenAthena に必要な GeoTIFF 数値標高モデル ファイルを取得する方法を確認してください。 .</p>
