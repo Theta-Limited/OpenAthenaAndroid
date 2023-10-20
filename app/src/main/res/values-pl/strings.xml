@@ -122,4 +122,5 @@
     <string name="tooltip_correct_bad_compass_data_this_is_not_for_setting_mag_declination">Użyj tego, aby skorygować błędne dane kompasu. To NIE służy do ustawiania deklinacji magnetycznej!</string>
     <string name="manual_correction_label">Ręczna Korekta Azymutu :</string>
     <string name="CalibrationReminderSnippet">Aby uzyskać najlepsze wyniki, proszę skalibrować kompas 🧭 swojego drona przed lotem!</string>
+    <string name="obtain_a_digital_elevation_model_here">Uzyskaj tutaj cyfrowy model elewacji (DEM).</string>
 </resources>

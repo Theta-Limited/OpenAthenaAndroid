@@ -66,7 +66,7 @@ public class AboutActivity extends AppCompatActivity {
                         + getString(R.string.AboutSnippet) + "<br>"
                         + getString(R.string.CalibrationReminderSnippet) + "<br>"
                         + "<br><a href=\"https://github.com/Theta-Limited/OpenAthena/blob/main/EIO_fetch_geotiff_example.md\">"
-                        + "Obtain a Digital Elevation Model Here</a>"
+                        + getString(R.string.obtain_a_digital_elevation_model_here) + "</a>"
                         + "<br><br><a href=\"https://github.com/mkrupczak3/OpenAthenaAndroid\">"
                         + getString(R.string.CallToActionSnippet)
                         + "<br>" + getString(R.string.nato_vertical_datum_notice) + "<br>"

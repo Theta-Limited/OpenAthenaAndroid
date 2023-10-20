@@ -122,4 +122,5 @@
     <string name="tooltip_correct_bad_compass_data_this_is_not_for_setting_mag_declination">Use this to correct bad compass data. This is NOT for setting magnetic declination!</string>
     <string name="manual_correction_label">Manual Azimuth Correction:</string>
     <string name="CalibrationReminderSnippet">For best results, please calibrate your drone\'s compass 🧭 before flight!</string>
+    <string name="obtain_a_digital_elevation_model_here">Obtain a Digital Elevation Model Here</string>
 </resources>

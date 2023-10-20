@@ -84,7 +84,7 @@
     <string name="missing_data_exception_altitude_and_theta_error_msg">ПОМИЛКА: Метадані тангаж камери знайдено, але вони недійсні! Цей дрон несумісний з OpenAthena! 😭</string>
     <string name="latitude_label_short">широта</string>
     <string name="longitude_label_short">довгота</string>
-    <string name="altitude_label_short">висота:</string>
+    <string name="altitude_label_short">вис:</string>
     <string name="cot_remarks">Згенеровано OpenAthena для Android із даних sUAS</string>
     <string name="version_word">версія</string>
     <string name="step_1_load_a_DEM">Крок 1: завантажте цифрову модель рельєфу (DEM)</string>
@@ -122,4 +122,5 @@
     <string name="tooltip_correct_bad_compass_data_this_is_not_for_setting_mag_declination">Використовуйте це для корекції невірних даних компасу. Це НЕ для налаштування магнітного відхилення!</string>
     <string name="manual_correction_label">Використовуйте це для корекції невірних даних компасу. Це НЕ для налаштування магнітного відхилення!</string>
     <string name="CalibrationReminderSnippet">Для точних результатів, будь ласка, відкалібруйте компас 🧭 вашого дрону перед польотом!</string>
+    <string name="obtain_a_digital_elevation_model_here">Отримайте цифрову модель рельєфу (DEM) тут</string>
 </resources>
