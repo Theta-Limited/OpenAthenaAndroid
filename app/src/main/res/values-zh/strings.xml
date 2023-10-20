@@ -122,4 +122,5 @@
     <string name="tooltip_correct_bad_compass_data_this_is_not_for_setting_mag_declination">使用此功能来校正错误的指南针数据。这不是用来设置磁偏角的！</string>
     <string name="manual_correction_label">手动方位校正:</string>
     <string name="CalibrationReminderSnippet">为了获得最佳效果，请在飞行前校准您的无人机指南针 🧭!</string>
+    <string name="obtain_a_digital_elevation_model_here">在此处获取数字高程模型 (DEM)</string>
 </resources>
