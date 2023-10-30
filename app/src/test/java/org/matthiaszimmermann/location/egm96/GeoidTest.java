@@ -1,8 +1,10 @@
 package org.matthiaszimmermann.location.egm96;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -13,6 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.matthiaszimmermann.location.Location;
 import org.matthiaszimmermann.location.Point;
+
 
 
 public class GeoidTest {
@@ -27,13 +30,18 @@ public class GeoidTest {
 	
 	@BeforeClass
 	public static void oneTimeSetUp() {
-		Assert.assertTrue(GeoidTest.init());
-		Assert.assertTrue(Geoid.init());
+		URL url = GeoidTest.class.getClassLoader().getResource("EGM96complete.bin");
+		try {
+			InputStream inputStream = url.openStream();
+			Assert.assertTrue(GeoidTest.init(inputStream));
+			Assert.assertTrue(Geoid.init(inputStream));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	private static boolean init() {
+	private static boolean init(InputStream is) {
 		try {
-			InputStream is = GeoidTest.class.getResourceAsStream(FILE_GEOID_TEST_GZ);
 			GZIPInputStream gis = new GZIPInputStream(is);
 			InputStreamReader isr = new InputStreamReader(gis);
 			BufferedReader br = new BufferedReader(isr);
@@ -78,8 +86,8 @@ public class GeoidTest {
 	}
 
 	@Test
-	public void testInit() {
-		boolean resultInit = Geoid.init();
+	public void testInit(InputStream is) {
+		boolean resultInit = Geoid.init(is);
 		Assert.assertTrue(resultInit);
 	}
 
