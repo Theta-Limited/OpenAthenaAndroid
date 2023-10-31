@@ -721,10 +721,9 @@ public class MainActivity extends AthenaActivity {
             attribs = attribs.replaceAll("(\r\n|\n)", "<br>"); // replace newline with HTML equivalent
             textView.append(Html.fromHtml(attribs, 0, null, null));
             // Obtain NATO MGRS from mil.nga.mgrs library
-            MGRS mgrsObj = MGRS.from(new Point(longitude, latitude));
-            String mgrs1m = mgrsObj.coordinate(GridType.METER);
-            String mgrs10m = mgrsObj.coordinate(GridType.TEN_METER);
-            String mgrs100m = mgrsObj.coordinate(GridType.HUNDRED_METER);
+            String mgrs1m = CoordTranslator.toMGRS1m(latitude, longitude);
+            String mgrs10m = CoordTranslator.toMGRS10m(latitude, longitude);
+            String mgrs100m = CoordTranslator.toMGRS100m(latitude, longitude);
             String targetCoordString;
             if (!outputModeIsSlavic()) {
                 targetCoordString = "<a href=\"https://maps.google.com/?q=";

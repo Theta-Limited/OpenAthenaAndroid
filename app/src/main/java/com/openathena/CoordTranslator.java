@@ -11,19 +11,19 @@ public class CoordTranslator {
         super();
     }
 
-    public String toMGRS1m(double latitude, double longitude) {
+    public static String toMGRS1m(double latitude, double longitude) {
         return toMGRS(latitude, longitude, GridType.METER);
     }
 
-    public String toMGRS10m(double latitude, double longitude) {
+    public static String toMGRS10m(double latitude, double longitude) {
         return toMGRS(latitude, longitude, GridType.TEN_METER);
     }
 
-    public String toMGRS100m(double latitude, double longitude) {
+    public static String toMGRS100m(double latitude, double longitude) {
         return toMGRS(latitude, longitude, GridType.HUNDRED_METER);
     }
 
-    private String toMGRS(double latitude, double longitude, GridType gridType) {
+    private static String toMGRS(double latitude, double longitude, GridType gridType) {
         MGRS mgrsObj = MGRS.from(new Point(longitude, latitude));
         String mgrsText = mgrsObj.coordinate(gridType);
         return mgrsText;
