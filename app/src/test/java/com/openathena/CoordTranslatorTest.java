@@ -9,7 +9,7 @@ public class CoordTranslatorTest {
     public void testToMGRS1m() {
         // values from generated from https://www.earthpoint.us/convert.aspx
         assertEquals("31NAA6602100000", CoordTranslator.toMGRS1m(0.0,0.0));
-        // NGA mgrs-java and mgrs-android libraries don't handle polar regions correctly yet: https://github.com/ngageoint/mgrs-android/issues/3
+        // NGA mgrs-java and mgrs-android libraries don't handle special polar regions correctly yet: https://github.com/ngageoint/mgrs-android/issues/3
         assertEquals("ZAH0000000000", CoordTranslator.toMGRS1m(90.0, 0.0));
         assertEquals("BAN0000000000", CoordTranslator.toMGRS1m(-90.0,0.0));
     }

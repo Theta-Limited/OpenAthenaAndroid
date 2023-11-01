@@ -18,6 +18,7 @@ public class WGS84_CK42_Geodetic_TranslatorTest {
 
     @Test
     public void testWGS84_CK42_Lon() {
+        // test fails, off by about 10m, when expected accuracy is within 4.5m
         assertEquals(37.6249302, WGS84_CK42_Geodetic_Translator.WGS84_CK42_Long(55.7525, 37.623056, 148.0),delta);
     }
 
