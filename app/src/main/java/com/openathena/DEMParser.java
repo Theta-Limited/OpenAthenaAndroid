@@ -143,6 +143,9 @@ public class DEMParser implements Serializable {
         }
 
         List<Double> pixelAxisScales = directory.getModelPixelScale();
+        if (pixelAxisScales == null || pixelAxisScales.isEmpty()) {
+            throw new IllegalArgumentException("ERROR: GeoTIFF file is corrupted, this DEM is unusable!");
+        }
         if (pixelAxisScales.get(2) != 0.0d) {
             throw new IllegalArgumentException("ERROR: failed to load a rotated or skewed GeoTIFF!");
         }
