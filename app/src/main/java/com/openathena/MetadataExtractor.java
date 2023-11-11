@@ -285,9 +285,13 @@ public class MetadataExtractor {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_altitude_and_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
         }
 
-        // DJI altitude is usually orthometric (EGM96 AMSL), but will be ellipsoidal (WGS84 hae) if special RTK device is used (rare)
+        // DJI altitude is usually orthometric (EGM96 AMSL), but will be ellipsoidal (WGS84 hae) if special RTK device is used
+        boolean isRTKGPS = false;
+        String altitudeType = xmpMeta.getPropertyString(schemaNS, "AltitudeType");
+        isRTKGPS = altitudeType != null && altitudeType.toLowerCase().contains("rtkalt") || xmp_str.toLowerCase().contains("rtkflag");
+        
         String make = exif.getAttribute(ExifInterface.TAG_MAKE);
-        if (!make.toLowerCase().contains("autel") /* I'm not sure if autel uses EGM96 AMSL or WGS84 hae for new firmware */ && !xmp_str.toLowerCase().contains("rtkflag")) {
+        if (!isRTKGPS && !make.toLowerCase().contains("autel") /* I'm not sure if autel uses EGM96 AMSL or WGS84 hae for new firmware */) {
             // convert the height from EGM96 AMSL to WGS84 hae if made by dji and rtk device not present
             Log.i(TAG, "Converting from orthometric to ellipsoidal vertical datum for image metadata");
             z = z - offsetProvider.getEGM96OffsetAtLatLon(y,x);
