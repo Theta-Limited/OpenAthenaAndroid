@@ -1,0 +1,1 @@
+This minor release improves camera calibration for the DJI Mavic 2 Zoom and Mini 3 Pro
