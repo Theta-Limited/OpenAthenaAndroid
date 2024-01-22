@@ -1,0 +1,1 @@
+This minor release adds support for the DJI Mini 4 Pro and improves accuracy for the DJI Mavic 2 Zoom
