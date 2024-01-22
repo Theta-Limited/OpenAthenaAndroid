@@ -92,7 +92,7 @@ On DJI drones, this indicator shows the number of GPS satellites visible to the 
 
 <img width="586" alt="A screenshot of the UI for DJI Go 4 during flight of a Mavic 2 Zoom drone. The GPS connection indicator is highlighted" src="./assets/dji_good_gps_lock_ex.png">
 
-Wait until at least 6 GPS satellites are visible or you can confirm the GPS fix is good.
+Wait until at least 6 GPS satellites are visible (or you can confirm the GPS fix is good) before starting flight.
 
 ## Select an Image 🖼:
 
