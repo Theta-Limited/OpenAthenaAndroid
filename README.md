@@ -22,7 +22,7 @@ OpenAthena™ allows common drones to spot precise geodetic locations.
 
 # License
 
-Copyright (C) 2023 Theta Informatics LLC
+Copyright (C) 2024 Theta Informatics LLC
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
@@ -64,7 +64,9 @@ Load the DEM file (e.g. cobb.tif) using the "⛰" button. The app will display t
 
 <img width="586" alt="OpenAthena™ Android GeoTIFF DEM loading demo using cobb.tif" src="./assets/cobb_tif_DEM_Loading_Demo_landscape.png">
 
-## Calibrate your drone's compass sensor 🧭 and take photos :
+## Calibrate your drone's compass sensor 🧭, let your drone acquire GPS lock, then fly and take photos :
+
+### Compass sensor calibration
 
 It is _**strongly suggested**_ that you should [calibrate the drone's compass sensor for the local environment](https://phantompilots.com/threads/compass-calibration-a-complete-primer.32829/) before taking photos to be used with OpenAthena. Consult your drone's operation manual for this procedure. The image metadata from an un-calibrated drone can be several degrees off from the correct heading. This can result in dramatic target-resolution inaccuracies if the sensor is not calibrated. _**Always**_ verify a target match location from OpenAthena before use!
 
@@ -72,17 +74,25 @@ E.g.:
 
 <img width="586" alt="OpenAthena Android an example of a bad target resolution due to an un-calibrated magnetometer compass sensor" src="./assets/magnetometer_fail.png">
 
-### Optional: use the "Manual Azimuth Correction" slider to correct bad compass data
+#### Optional: use the "Manual Azimuth Correction" slider to correct bad compass data
 
 If you find your aircraft's compass sensor is still not providing correct heading information, you can use this slider to manually apply a configurable offset anywhere in the range of [-15.0°, +15.0°]. This offset will be added to your aircraft's camera heading before target calculation is performed:
 
 <img width="330" alt="OpenAthena Android Manual Azimuth Correction Slider" src="./assets/Settings_Manual_Azimuth_Correction_Demo.png">
 
-Once you find a suitable correction value, you may then use the value for all other images taken during the same flight.
-
 **NOTE:** This value is _**NOT**_ for setting [magnetic declination](https://ngdc.noaa.gov/geomag/declination.shtml)! Magnetic declination is already accounted for by your drone's onboard digital World Magnetic Model (WMM). Improper use of this Manual Offset setting will result in bad target calculation output.
 
 Your selected manual correction value is saved automatically between launches of the app. To reset the value, tap the "RESET" button in the Settings screen or move the slider to the middle.
+
+### Let your drone acquire GPS lock before flying
+
+For the best results for target calculation, it's important to let your drone sit at the launch position until it can get an accurate GPS fix. This is important for it to be able measure altitude correctly during flight.
+
+On DJI drones, this indicator shows the number of GPS satellites visible to the drone:
+
+<img width="586" alt="A screenshot of the UI for DJI Go 4 during flight of a Mavic 2 Zoom drone. The GPS connection indicator is highlighted" src="./assets/dji_good_gps_lock_ex.png">
+
+Wait until at least 6 GPS satellites are visible or you can confirm the GPS fix is good.
 
 ## Select an Image 🖼:
 
