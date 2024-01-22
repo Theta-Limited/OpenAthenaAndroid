@@ -60,7 +60,7 @@ public class AboutActivity extends AppCompatActivity {
 
         // set About text
         aboutText.setText(Html.fromHtml( getString(R.string.app_name) + " " + getString(R.string.version_word) + " " + versionName+"<br>"
-                        + "Theta Informatics LLC<br>"
+                        + "© 2024 Theta Informatics LLC<br>"
                         + getString(R.string.GPL3Notice)
                         + "<br> <a href=\"https://openathena.com/\">OpenAthena.com</a> <br>"
                         + getString(R.string.AboutSnippet) + "<br>"

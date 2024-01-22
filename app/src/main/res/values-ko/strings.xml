@@ -123,4 +123,5 @@
     <string name="manual_correction_label">수동 방위각 보정 :</string>
     <string name="CalibrationReminderSnippet">최상의 결과를 얻으려면 비행 전에 드론의 나침반 🧭을 보정해 주세요!</string>
     <string name="obtain_a_digital_elevation_model_here">여기서 DEM(디지털 고도 모델)을 얻으세요.</string>
+    <string name="terrain_altitude">지형 고도 :</string>
 </resources>

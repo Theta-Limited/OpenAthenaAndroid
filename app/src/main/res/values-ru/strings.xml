@@ -123,4 +123,5 @@
     <string name="manual_correction_label">Ручная Коррекция Азимута:</string>
     <string name="CalibrationReminderSnippet">Для достижения наилучших результатов, пожалуйста, откалибруйте компас 🧭 вашего дрона перед полетом!</string>
     <string name="obtain_a_digital_elevation_model_here">Получите цифровую модель рельефа (DEM) здесь</string>
+    <string name="terrain_altitude">Высота рельефа :</string>
 </resources>

@@ -140,7 +140,6 @@ public class TargetGetter {
             }
 
             double avgAlt = curAlt;
-            // deltaZ should always be negative
             curAlt += deltaZ;
             avgAlt = (avgAlt + curAlt) / 2.0d;
             double[] nextIter = inverse_haversine(curLat, curLon, horizScalar*INCREMENT, radAzimuth, avgAlt);

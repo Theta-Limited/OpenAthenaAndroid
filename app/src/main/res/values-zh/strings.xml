@@ -123,4 +123,5 @@
     <string name="manual_correction_label">手动方位校正:</string>
     <string name="CalibrationReminderSnippet">为了获得最佳效果，请在飞行前校准您的无人机指南针 🧭!</string>
     <string name="obtain_a_digital_elevation_model_here">在此处获取数字高程模型 (DEM)</string>
+    <string name="terrain_altitude">地形高度 :</string>
 </resources>

@@ -123,4 +123,5 @@
     <string name="manual_correction_label">Correction manuelle de l\'azimut:</string>
     <string name="CalibrationReminderSnippet">Pour de meilleurs résultats, veuillez calibrer la boussole 🧭 de votre drone avant le vol !</string>
     <string name="obtain_a_digital_elevation_model_here">Obtenez un modèle numérique d\'élévation (DEM) ici</string>
+    <string name="terrain_altitude">Altitude du terrain :</string>
 </resources>

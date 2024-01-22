@@ -645,6 +645,13 @@ public class MainActivity extends AthenaActivity {
                 attribs += getString(R.string.altiude_wgs84_label_long) + " " + Math.round(z) + "m\n";
             }
 
+            try {
+                double terrainAltitude = theParser.getAltFromLatLon(y, x);
+                attribs += getString(R.string.terrain_altitude) + " " + Math.round(terrainAltitude) + "m\n";
+            } catch (RequestedValueOOBException | CorruptTerrainException e){
+                attribs += getString(R.string.dem_load_error_generic_msg);
+            }
+
             attribs += getString(R.string.attribute_text_drone_azimuth) + " " + Math.round(degNormalize(azimuth)) + "°\n";
             attribs += getString(R.string.attribute_text_drone_camera_pitch) + " " + -1 * Math.round(theta) + "°\n";
             appendText(attribs);
