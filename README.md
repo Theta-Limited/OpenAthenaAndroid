@@ -64,9 +64,9 @@ Load the DEM file (e.g. cobb.tif) using the "⛰" button. The app will display t
 
 <img width="586" alt="OpenAthena™ Android GeoTIFF DEM loading demo using cobb.tif" src="./assets/cobb_tif_DEM_Loading_Demo_landscape.png">
 
-## Calibrate your drone's compass sensor 🧭, let your drone acquire GPS lock, then fly and take photos :
+## Setup for drone flight
 
-### Compass sensor calibration
+### Compass sensor 🧭 calibration
 
 It is _**strongly suggested**_ that you should [calibrate the drone's compass sensor for the local environment](https://phantompilots.com/threads/compass-calibration-a-complete-primer.32829/) before taking photos to be used with OpenAthena. Consult your drone's operation manual for this procedure. The image metadata from an un-calibrated drone can be several degrees off from the correct heading. This can result in dramatic target-resolution inaccuracies if the sensor is not calibrated. _**Always**_ verify a target match location from OpenAthena before use!
 
