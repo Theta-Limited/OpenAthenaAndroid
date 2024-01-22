@@ -123,4 +123,5 @@
     <string name="manual_correction_label">Manual Azimuth Correction:</string>
     <string name="CalibrationReminderSnippet">For best results, please calibrate your drone\'s compass 🧭 before flight!</string>
     <string name="obtain_a_digital_elevation_model_here">Obtain a Digital Elevation Model Here</string>
+    <string name="terrain_altitude">Terrain Altitude :</string>
 </resources>

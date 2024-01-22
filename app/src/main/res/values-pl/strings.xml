@@ -123,4 +123,5 @@
     <string name="manual_correction_label">Ręczna Korekta Azymutu :</string>
     <string name="CalibrationReminderSnippet">Aby uzyskać najlepsze wyniki, proszę skalibrować kompas 🧭 swojego drona przed lotem!</string>
     <string name="obtain_a_digital_elevation_model_here">Uzyskaj tutaj cyfrowy model elewacji (DEM).</string>
+    <string name="terrain_altitude">Wysokość terenu :</string>
 </resources>
