@@ -11,6 +11,7 @@
         android:layout_width="391dp"
         android:layout_height="258dp"
         android:layout_marginEnd="323dp"
+        android:tooltipText="@string/icon_credit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.082"
