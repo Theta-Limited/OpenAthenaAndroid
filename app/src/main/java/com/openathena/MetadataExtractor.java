@@ -635,8 +635,8 @@ public class MetadataExtractor {
             Log.d(TAG, "digitalZoomRatio is: " + digitalZoomRatio);
             // Some thermal cameras perform undocumented integer upscaling on digitally zoomed thermal images
             //     (which seems to be atypical for images with digital zoom)
-            //     to compensate, we divide the scaled pixel count by the scale ratio (zoom factor) to get
-            //     the true number of pixels for width and height
+            //     to compensate, we ignore the digitalZoomRatio when calculating
+            //     the number of pixels for width and height
             //
             // Known behavior for Autel Evo III 640T, (TODO) might affect other make/models and/or color cameras as well!
             if (isThermal(exif) && exif.getAttribute(ExifInterface.TAG_MAKE).equalsIgnoreCase("AUTEL ROBOTICS")) {
