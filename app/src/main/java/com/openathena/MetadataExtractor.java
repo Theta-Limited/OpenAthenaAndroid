@@ -49,7 +49,7 @@ public class MetadataExtractor {
      * @param exif exif of an image to analyze for make and model
      * @return String lensType either "perspective" or "fisheye", or "unknown"
      */
-    public String getLensType(ExifInterface exif) {
+    public static String getLensType(ExifInterface exif) {
         JSONObject drone = getMatchingDrone(exif);
         String lensType;
         try {
@@ -63,12 +63,27 @@ public class MetadataExtractor {
         return lensType;
     }
 
+    public static boolean isThermal(ExifInterface exif) {
+        JSONObject drone = getMatchingDrone(exif);
+        boolean isThermal = false;
+        try {
+            String jsonBoolean = drone.getString("isThermal");
+            if (jsonBoolean.equalsIgnoreCase("true")) {
+                isThermal = true;
+            }
+        } catch (JSONException | NullPointerException e) {
+            assert(true); // do nothing
+        }
+
+        return isThermal;
+    }
+
     /**
      * Returns an ordered Map of distortion parameter names and their values for the appropriate lensType
      * @param exif exif of an image to analyze for make and model
      * @return LinkedHashMap ordered Map containing distortion parameter names and their values
      */
-    public LinkedHashMap<String, Double> getDistortionParameters(ExifInterface exif) {
+    public static LinkedHashMap<String, Double> getDistortionParameters(ExifInterface exif) {
         JSONObject drone = getMatchingDrone(exif);
         LinkedHashMap<String, Double> distortionParamMap = new LinkedHashMap<>();
         if (drone == null) return null;
@@ -588,6 +603,10 @@ public class MetadataExtractor {
         String focalRational = exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
         double focalLength = rationalToFloat(focalRational);
         if (focalLength == -1.0d || focalLength == 0.0d) {
+            // Some cameras (such as thermal cameras) don't report their focal length in EXIF
+            //     but if their focal length is a fixed known value stored in droneModels.json,
+            //     we can use it as a fallback method for calculation.
+            //     Otherwise: if focal length is still unknown will fall back to 35mm guess-timate method
             if (drone != null && drone.has("focalLength")) {
                 focalLength = drone.getDouble("focalLength");
             } else {
@@ -596,6 +615,13 @@ public class MetadataExtractor {
                 return getIntrinsicMatrixFromExif35mm(exif);
             }
         }
+        Log.i(TAG, "focalLength is: " + focalLength + "mm");
+
+        double mmWidthPerPixel = pixelDimensions[0];
+        double mmHeightPerPixel = pixelDimensions[1];
+        double pixelAspectRatio = mmWidthPerPixel / mmHeightPerPixel;
+        double ccdWidthPixels = pixelDimensions[2];
+        double ccdHeightPixels = pixelDimensions[3];
 
         String digitalZoomRational = exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO);
         float digitalZoomRatio = 1.0f;
@@ -605,12 +631,19 @@ public class MetadataExtractor {
                 digitalZoomRatio = 1.0f;
             }
         }
-
-        double mmWidthPerPixel = pixelDimensions[0];
-        double mmHeightPerPixel = pixelDimensions[1];
-        double pixelAspectRatio = mmWidthPerPixel / mmHeightPerPixel;
-        double ccdWidthPixels = pixelDimensions[2];
-        double ccdHeightPixels = pixelDimensions[3];
+        if (digitalZoomRatio != 1.0f) {
+            Log.d(TAG, "digitalZoomRatio is: " + digitalZoomRatio);
+            // Some thermal cameras perform undocumented integer upscaling on digitally zoomed thermal images
+            //     (which seems to be atypical for images with digital zoom)
+            //     to compensate, we divide the scaled pixel count by the scale ratio (zoom factor) to get
+            //     the true number of pixels for width and height
+            //
+            // Known behavior for Autel Evo III 640T, (TODO) might affect other make/models and/or color cameras as well!
+            if (isThermal(exif) && exif.getAttribute(ExifInterface.TAG_MAKE).equalsIgnoreCase("AUTEL ROBOTICS")) {
+                Log.d(TAG, "edge case detected: image had undocumented pixel upscaling. Ignoring digitalZoomRatio");
+                digitalZoomRatio = 1.0f;
+            }
+        }
 
         double imageWidth = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, -1);
         double imageHeight = exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, -1); // Image Height

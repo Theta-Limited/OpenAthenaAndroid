@@ -15,7 +15,7 @@ import java.io.OutputStream;
 
 public class SelectionActivity extends AthenaActivity{
     public static String TAG = SelectionActivity.class.getSimpleName();
-    /**
+    /** 
      * All the important point selection logic is handled by parent, so we don't change much here
      *
      */
