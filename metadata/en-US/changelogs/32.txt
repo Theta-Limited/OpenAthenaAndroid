@@ -1,0 +1,1 @@
+This minor release adds support for the Autel Evo II v3 640T and improves compatibility with thermal cameras
