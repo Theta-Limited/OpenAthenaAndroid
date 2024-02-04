@@ -9,8 +9,8 @@ android {
         applicationId "com.openathena"
         minSdk 28
         targetSdk 33
-        versionCode 32
-        versionName "0.19.7"
+        versionCode 33
+        versionName "0.19.8"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.debug
