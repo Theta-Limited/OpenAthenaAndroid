@@ -656,8 +656,7 @@ public class MetadataExtractor {
         double alpha_x = focalLength / mmWidthPerPixel; // focal length in pixel units
         alpha_x = alpha_x * scaleRatio; // scale down if image is scaled down
         double alpha_y = alpha_x / pixelAspectRatio; // focal length equivalent in pixel units, for the homogenous y axis in the image frame
-        alpha_y = alpha_y * scaleRatio; // use the x-axis scale ratio because y axis is often cropped (and not EXIF tagged appropriately) and x axis usually isn't
-
+        
         double[] intrinsicMatrix = new double[9];
         intrinsicMatrix[0] = alpha_x;
         intrinsicMatrix[1] = 0.0d; // gamma, the skew coefficient between the x and the y axis, and is often 0.
