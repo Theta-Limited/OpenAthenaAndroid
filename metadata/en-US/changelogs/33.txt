@@ -1,0 +1,1 @@
+fixed an bug which affected pitch angle calculation, improved Autel Evo II v3 camera calibration
