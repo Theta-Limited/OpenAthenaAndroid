@@ -102,9 +102,9 @@ After loading a GeoTIFF DEM, use the "🖼" button to select a drone image conta
 
 <img width="586" alt="OpenAthena™ Android Image Selection demo using DJI_0419.JPG" src="./assets/DJI_0419_Image_Selection_Demo_landscape.png">
 
-## Calculate a target 🧮 🎯:
+## Calculate a target 🎯:
 
-Press the "🧮" button to calculate the target location on the ground. You can tap the result display box to copy the result text to your clipboard or open the position in Google Maps by clicking the blue hyperlink:
+Tap anywhere on the displayed image to calculate the corresponding target location on the ground. You can tap the result display box to copy the result text to your clipboard or open the position in Google Maps by clicking the blue hyperlink:
 
 <img width="586" alt="OpenAthena™ Android Target Calculation demo using cobb.tif and DJI_0419.JPG, output mode WGS84" src="./assets/DJI_0419_Target_Res_Demo_landscape.png">
 
@@ -116,7 +116,7 @@ Press the "🧮" button to calculate the target location on the ground. You can 
 
 ## [ATAK](https://en.wikipedia.org/wiki/Android_Team_Awareness_Kit) Cursor on Target
 
-When the "🧮" button is pressed, OpenAthena will automatically send a multicast packet to udp://239.2.3.1:6969 . Under default settings, this will cause a marker to show up in ATAK at the target location:
+When the "✉️" button is pressed, OpenAthena will automatically send a Cursor on Target multicast UDP packet to udp://239.2.3.1:6969 to all devices connected via network. Under default settings, this will cause a marker to show up in ATAK at the target location for all recipients:
 
 <img width="586" alt="OpenAthena for Android triggers a waypoint to show in Android Team Awarness Kit at the calculated location" src="./assets/ATAK_OpenAthena_CoT_Demo_landscape.png">
 
@@ -124,7 +124,7 @@ Change the marker to its appropriate type (friend, suspect, hostile) then send t
 
 ## Arbitrary Point Selection
 
-OpenAthena allows users to tap any point in the image to locate it. Tapping on any point in the image will move the marker and calculate the new location. A new Cursor-on-Target message will not be sent to ATAK until the "🧮" button is pressed:
+OpenAthena allows users to tap any point in the image to locate it. Tapping on any point in the image will move the marker and calculate the new location. A new Cursor-on-Target message will not be sent to ATAK until the "✉️" button is pressed:
 
 <img width="586" alt="OpenAthena for Android demo of arbitrary point selection for raycast calculation" src="./assets/DJI_0419_Target_Res_Arbitrary_Point_Demo_landscape.png">
 
