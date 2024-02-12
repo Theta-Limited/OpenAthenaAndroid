@@ -553,7 +553,7 @@ public class MainActivity extends AthenaActivity {
         clearText();
         textViewTargetCoord.setText("");
 
-        appendText(getString(R.string.calculating_target_msg));
+        appendText(getString(R.string.calculating_target_msg) + "\n");
 //        appendLog("Going to start calculation\n");
 
         if (imageUri == null) {
