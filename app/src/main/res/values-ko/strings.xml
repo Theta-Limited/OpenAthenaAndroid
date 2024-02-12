@@ -9,10 +9,6 @@
     <string name="action_about_openathena">OpenAthena 소개</string>
     <string name="action_settings">설정</string>
 
-    <string name="button_selectImage">🖼️</string>
-    <string name="button_calculate">🧮</string>
-    <string name="button_loadDEM">⛰️</string>
-
     <string name="text_view_value">ChangeMe</string>
     <string name="log_text_view_value">Android용 OpenAthena™ . . .</string>
     <string name="test_button_text">계산하다</string>
