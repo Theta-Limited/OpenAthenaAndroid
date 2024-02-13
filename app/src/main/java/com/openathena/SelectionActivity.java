@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -54,6 +55,11 @@ public class SelectionActivity extends AthenaActivity{
             } else{
                 iView.mark(0.5d, 0.5d); // put marker on center of iView if no current selection
             }
+        }
+
+        // Display UI prompt only when activity is first opened, not upon return to activity (e.g. multitasking switch or screen rotation)
+        if (savedInstanceState == null) {
+            Toast.makeText(this, "Zoom out or press \"Back\" to return", Toast.LENGTH_SHORT).show();
         }
     }
 
