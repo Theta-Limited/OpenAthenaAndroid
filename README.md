@@ -52,6 +52,8 @@ You should have received a copy of the GNU General Public License along with thi
 
 To use this app, you need a GeoTIFF or DTED (resolution 2 or higher) Digital Elevation Model (DEM) file. DEM files store terrain elevation data for an area on Earth. OpenAthena performs a ray-cast from a drone camera's position and orientation towards the terrain, which can be used to precisely locate any point within a given drone image.
 
+GeoTIFF DEM files obtained from the [STRM GL1 30m](https://portal.opentopography.org/raster?opentopoID=OTSRTM.082015.4326.1) tend to produce more accurate target results than DTED (per spec, DTED stores treetop height, not terrain height)
+
 To obtain a GeoTIFF file for a certain area, use [this link](https://github.com/mkrupczak3/OpenAthena/blob/main/EIO_fetch_geotiff_example.md).
 
 ## Load a GeoTIFF Digital Elevation Model  ⛰:
