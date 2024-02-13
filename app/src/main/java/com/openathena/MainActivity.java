@@ -553,7 +553,7 @@ public class MainActivity extends AthenaActivity {
         clearText();
         textViewTargetCoord.setText("");
 
-        appendText(getString(R.string.calculating_target_msg));
+        appendText(getString(R.string.calculating_target_msg) + "\n");
 //        appendLog("Going to start calculation\n");
 
         if (imageUri == null) {
@@ -944,7 +944,7 @@ public class MainActivity extends AthenaActivity {
                String placeholderText = getString(R.string.openathena_for_android) +  " " + getString(R.string.version_word) + " " + versionName + "\n\n";
                placeholderText += getString(R.string.step_1_load_a_DEM) + " \u26F0\n";
                placeholderText += getString(R.string.step_2_load_drone_image) + " \uD83D\uDDBC\n";
-               placeholderText += getString(R.string.step_3_press_calculate) + " \uD83E\uDDEE\n";
+               placeholderText += getString(R.string.step_3_press_calculate) + " \n";
                placeholderText += getString(R.string.step_4_obtain_target) + " \uD83C\uDFAF\n\n";
                textView.setText(placeholderText);
            }

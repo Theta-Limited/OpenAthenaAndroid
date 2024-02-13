@@ -9,9 +9,9 @@
     <string name="action_about_openathena">About OpenAthena</string>
     <string name="action_settings">Settings</string>
 
-    <string name="button_selectImage">🖼️</string>
-    <string name="button_calculate">🧮</string>
-    <string name="button_loadDEM">⛰️</string>
+    <string name="button_selectImage" translatable="false">🖼️</string>
+    <string name="button_calculate" translatable="false">✉️</string>
+    <string name="button_loadDEM" translatable="false">⛰️</string>
 
     <string name="text_view_value">ChangeMe</string>
     <string name="log_text_view_value">OpenAthena™ for Android . . . </string>
@@ -49,7 +49,7 @@
     <string name="dem_loaded_size_is_msg">loaded ⛰. Size </string>
     <string name="dem_load_error_generic_msg">ERROR: failed to load DEM, </string>
     <string name="dem_load_error_tiffexception_msg">ERROR: failed to load DEM, not a GeoTIFF \".tif\" or DTED2 \".dt2\" file.\n</string>
-    <string name="calculating_target_msg">Calculating 🧮:\n</string>
+    <string name="calculating_target_msg">"Calculating 🧮: "</string>
     <string name="no_image_selected_error_msg">ERROR: Cannot calculate 🚫🧮: no image 🚫🖼 selected\n</string>
     <string name="opened_exif_for_image_msg">Opened EXIF for image\n</string>
     <string name="autel_accuracy_warning_msg">⚠️ DANGER: Autel drones have known accuracy problems ⚠️</string>
@@ -89,7 +89,7 @@
     <string name="version_word"> version </string>
     <string name="step_1_load_a_DEM">Step 1: load a Digital Elevation Model (DEM) </string>
     <string name="step_2_load_drone_image">Step 2: load a Drone Image </string>
-    <string name="step_3_press_calculate">Step 3: press this button to calculate: </string>
+    <string name="step_3_press_calculate">Step 3: tap anywhere on the image to calculate </string>
     <string name="step_4_obtain_target">Step 4: obtain your target location below </string>
     <string name="wrong_filetype_toast_error_msg">ERROR: wrong filetype. Please select a GeoTIFF file ending in \".tif\" or DTED2 file ending in \".dt2\"</string>
     <string name="permissions_toast_success_msg">Permissions Granted</string>

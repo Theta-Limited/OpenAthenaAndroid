@@ -50,7 +50,9 @@ You should have received a copy of the GNU General Public License along with thi
 
 ## Obtain a GeoTIFF Digital Elevation Model:
 
-To use this app, you need a GeoTIFF Digital Elevation Model (DEM) file. GeoTIFF files store terrain elevation data for an area on Earth. OpenAthena performs a ray-cast from a drone camera's position and orientation towards the terrain, which can be used to precisely locate any point within a given picture.
+To use this app, you need a GeoTIFF or DTED (resolution 2 or higher) Digital Elevation Model (DEM) file. DEM files store terrain elevation data for an area on Earth. OpenAthena performs a ray-cast from a drone camera's position and orientation towards the terrain, which can be used to precisely locate any point within a given drone image.
+
+GeoTIFF DEM files obtained from the [STRM GL1 30m](https://portal.opentopography.org/raster?opentopoID=OTSRTM.082015.4326.1) tend to produce more accurate target results than DTED (per spec, DTED stores treetop height, not terrain height)
 
 To obtain a GeoTIFF file for a certain area, use [this link](https://github.com/mkrupczak3/OpenAthena/blob/main/EIO_fetch_geotiff_example.md).
 
@@ -59,7 +61,7 @@ To obtain a GeoTIFF file for a certain area, use [this link](https://github.com/
 Load the DEM file (e.g. cobb.tif) using the "⛰" button. The app will display the size of the file and its latitude and longitude boundaries:
 
 
-(NOTE: during file selection, the thumbnail  image preview for any GeoTIFF ".tif" file will be blank. This is normal.)
+(NOTE: during file selection, the thumbnail  image preview for any GeoTIFF ".tif" or DTED ".dt#" file will be blank. This is normal.)
 
 
 <img width="586" alt="OpenAthena™ Android GeoTIFF DEM loading demo using cobb.tif" src="./assets/cobb_tif_DEM_Loading_Demo_landscape.png">
@@ -102,9 +104,9 @@ After loading a GeoTIFF DEM, use the "🖼" button to select a drone image conta
 
 <img width="586" alt="OpenAthena™ Android Image Selection demo using DJI_0419.JPG" src="./assets/DJI_0419_Image_Selection_Demo_landscape.png">
 
-## Calculate a target 🧮 🎯:
+## Calculate a target 🎯:
 
-Press the "🧮" button to calculate the target location on the ground. You can tap the result display box to copy the result text to your clipboard or open the position in Google Maps by clicking the blue hyperlink:
+Tap anywhere on the displayed image to calculate the corresponding target location on the ground. You can tap the result display box to copy the result text to your clipboard or open the position in Google Maps by clicking the blue hyperlink:
 
 <img width="586" alt="OpenAthena™ Android Target Calculation demo using cobb.tif and DJI_0419.JPG, output mode WGS84" src="./assets/DJI_0419_Target_Res_Demo_landscape.png">
 
@@ -116,7 +118,7 @@ Press the "🧮" button to calculate the target location on the ground. You can 
 
 ## [ATAK](https://en.wikipedia.org/wiki/Android_Team_Awareness_Kit) Cursor on Target
 
-When the "🧮" button is pressed, OpenAthena will automatically send a multicast packet to udp://239.2.3.1:6969 . Under default settings, this will cause a marker to show up in ATAK at the target location:
+When the "✉️" button is pressed, OpenAthena will automatically send a Cursor on Target multicast UDP packet to udp://239.2.3.1:6969 to all devices connected via network. Under default settings, this will cause a marker to show up in ATAK at the target location for all recipients:
 
 <img width="586" alt="OpenAthena for Android triggers a waypoint to show in Android Team Awarness Kit at the calculated location" src="./assets/ATAK_OpenAthena_CoT_Demo_landscape.png">
 
@@ -124,7 +126,7 @@ Change the marker to its appropriate type (friend, suspect, hostile) then send t
 
 ## Arbitrary Point Selection
 
-OpenAthena allows users to tap any point in the image to locate it. Tapping on any point in the image will move the marker and calculate the new location. A new Cursor-on-Target message will not be sent to ATAK until the "🧮" button is pressed:
+OpenAthena allows users to tap any point in the image to locate it. Tapping on any point in the image will move the marker and calculate the new location. A new Cursor-on-Target message will not be sent to ATAK until the "✉️" button is pressed:
 
 <img width="586" alt="OpenAthena for Android demo of arbitrary point selection for raycast calculation" src="./assets/DJI_0419_Target_Res_Arbitrary_Point_Demo_landscape.png">
 
@@ -150,14 +152,14 @@ Select your desired output mode by pressing its button in the list:
 <img width="270" alt="OpenAthena™ Android 🎯 Output Modes Activity demo NATO MGRS 10m" src="./assets/Settings_MGRS10m_Demo.png">
 
 
-Then press the back button or again tap the kebab menu icon (three dots) to return to the "Calculate" screen. Finally, press the "🧮" button to re-calculate the target location according to your chosen output mode:
+Then press the back button or again tap the kebab menu icon (three dots) to return to the "Calculate" screen:
 
 <img width="270" alt="OpenAthena™ Android Target Calculation demo using cobb.tif and DJI_0419.JPG, output mode NATO MGRS 10m" src="./assets/DJI_0419_Target_Res_MGRS10m_Demo.png">
 
 
-## LIVE Telemetry from DJI-SDK
+## Telemetry and localization from live video feed
 
-**TBD**
+The end goal of this project is to enable UAS operators to perform terrain-raycast localization from any point within live video feed. The target resolution engine of this application is highly modular, and may be extended to operate on any such telemetry data source. This capability will be specific to each UAS manufactuer's SDK however, therefore this capability will take time to develop.
 
 # Contributing
 
@@ -187,6 +189,3 @@ git submodule update --remote
 # Acknowledgements
 
 This software project would not be possible without the tireless work of many U.S. public servants and open source maintainers. Please see [CREDITS.md](./CREDITS.md) for a full list of included software libraries, and their authors and licenses.
-
-### Setting Up Android Studio with this project
-**TODO add instructions for setting up Android Studio**
