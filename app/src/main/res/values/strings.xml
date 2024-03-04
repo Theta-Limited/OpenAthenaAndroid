@@ -68,7 +68,7 @@
     <string name="ck_42_geodetic_tooltip">An alternative geodetic system using the Krasovsky 1940 ellipsoid. Commonly used in former Warsaw pact countries</string>
     <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
     <string name="ck_42_gauss_kruger_tooltip">An alternative geodetic system using the Krasovsky 1940 ellipsoid. A Northing defined by X value, and Easting defined by Y value describe an exact position on Earth</string>
-    <string name="target_output_mode_title">🎯 Output Mode:</string>
+    <string name="target_output_mode_title">🎯 Output Settings:</string>
     <string name="gk_northing_text">Northing:</string>
     <string name="gk_easting_text">Easting:</string>
     <string name="gk_zone_text">ZONE:</string>

@@ -63,7 +63,7 @@
     <string name="ck_42_geodetic_tooltip">Alternatywny system geodezyjny wykorzystujący elipsoidę Krasowskiego 1940. Powszechnie używany w krajach byłego Układu Warszawskiego</string>
     <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
     <string name="ck_42_gauss_kruger_tooltip">Gauss-Krüger: Alternatywny system geodezyjny korzystający z elipsoidy Krasowskiego z 1940 roku. Północ jest określana przez wartość X, a Wschód jest określany przez wartość Y, co opisuje dokładną pozycję na Ziemi.</string>
-    <string name="target_output_mode_title">🎯 Tryb wyjściowy:</string>
+    <string name="target_output_mode_title">🎯 Ustawienia wyjściowe:</string>
     <string name="gk_northing_text">Północ:</string>
     <string name="gk_easting_text">Wschodnia:</string>
     <string name="gk_zone_text">STREFA:</string>

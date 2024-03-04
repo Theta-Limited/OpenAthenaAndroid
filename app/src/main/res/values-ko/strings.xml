@@ -64,7 +64,7 @@
     <string name="ck_42_geodetic_tooltip">Krasovsky 1940 타원체를 사용하는 대체 측지 시스템. 이전 바르샤바 조약 국가에서 일반적으로 사용됨</string>
     <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
     <string name="ck_42_gauss_kruger_tooltip">가우스-크루거: 1940년 크라소프스키 타원체를 사용하는 대체적인 지오데식 시스템. 북쪽은 X값으로 정의되며, 동쪽은 Y값으로 정의되어 지구상의 정확한 위치를 설명합니다.</string>
-    <string name="target_output_mode_title">🎯 출력 모드:</string>
+    <string name="target_output_mode_title">🎯 출력 설정:</string>
     <string name="gk_northing_text">동선:</string>
     <string name="gk_easting_text">북선:</string>
     <string name="gk_zone_text">ZONE:</string>

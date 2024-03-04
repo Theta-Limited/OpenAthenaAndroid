@@ -64,10 +64,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 // Libraries from the U.S. National Geospatial Intelligence Agency https://www.nga.mil
-import mil.nga.mgrs.grid.GridType;
 import mil.nga.tiff.util.TiffException;
-import mil.nga.mgrs.*;
-import mil.nga.grid.features.Point;
 
 public class MainActivity extends AthenaActivity {
     public static String TAG = MainActivity.class.getSimpleName();
@@ -132,7 +129,7 @@ public class MainActivity extends AthenaActivity {
         //setContentView(R.layout.activity_main);
         setContentView(R.layout.activity_main);
 
-        radioGroup = null;
+        outputModeRadioGroup = null;
 
         progressBar = (ProgressBar)  findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);

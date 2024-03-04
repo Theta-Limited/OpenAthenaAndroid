@@ -64,7 +64,7 @@
     <string name="ck_42_geodetic_tooltip">Krasovsky 1940 楕円体を使用した代替測地系。旧ワルシャワ協定国で一般的に使用されている</string>
     <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
     <string name="ck_42_gauss_kruger_tooltip">1940年のクラソフスキー楕円体を使用した代替測地系。北向きはY値により定義され、東向きはX値により定義され、地球上の正確な位置を記述します。</string>
-    <string name="target_output_mode_title">🎯 出力モード:</string>
+    <string name="target_output_mode_title">🎯 出力設定:</string>
     <string name="gk_northing_text">N:</string>
     <string name="gk_easting_text">E:</string>
     <string name="gk_zone_text">ZONE:</string>

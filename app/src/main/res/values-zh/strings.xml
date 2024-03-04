@@ -64,7 +64,7 @@
     <string name="ck_42_geodetic_tooltip">使用 Krasovsky 1940 椭球体的替代大地测量系统。常用于前华约国家</string>
     <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
     <string name="ck_42_gauss_kruger_tooltip">高斯-克吕格：使用1940年克拉索夫斯基椭球体的替代大地测量系统。北坐标由Y值定义，东坐标由X值定义，描述地球上的精确位置。</string>
-    <string name="target_output_mode_title">🎯 输出模式：</string>
+    <string name="target_output_mode_title">🎯 输出设置：</string>
     <string name="gk_northing_text">网格向北:</string>
     <string name="gk_easting_text">网格向东:</string>
     <string name="gk_zone_text">ZONE:</string>

@@ -64,7 +64,7 @@
     <string name="ck_42_geodetic_tooltip">Un système géodésique alternatif utilisant l\'ellipsoïde de Krasovsky 1940. Couramment utilisé dans les anciens pays du pacte de Varsovie</string>
     <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
     <string name="ck_42_gauss_kruger_tooltip">Un système géodésique alternatif utilisant l\'ellipsoïde de Krasovsky 1940. Une abscisse est définie par la valeur X, et une ordonnée est définie par la valeur Y pour décrire une position exacte sur la Terre.</string>
-    <string name="target_output_mode_title">🎯 Méthode de sortie :</string>
+    <string name="target_output_mode_title">🎯 Paramètres de sortie :</string>
     <string name="gk_northing_text">Abscisse :</string>
     <string name="gk_easting_text">Ordonnée :</string>
     <string name="gk_zone_text">ZONE:</string>

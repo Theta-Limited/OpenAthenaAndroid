@@ -12,11 +12,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
-import java.util.Locale;
 
 public class PrefsActivity extends AthenaActivity {
 
@@ -28,50 +27,68 @@ public class PrefsActivity extends AthenaActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prefs);
 
-        radioGroup = (RadioGroup) findViewById(R.id.outputModeRadioGroup);
+        outputModeRadioGroup = (RadioGroup) findViewById(R.id.outputModeRadioGroup);
+        measurementUnitRadioGroup = (RadioGroup) findViewById(R.id.measurementUnitRadioGroup);
         compassCorrectionSeekBar = findViewById(R.id.compassCorrectionSeekBar);
         compassCorrectionValue = findViewById(R.id.compassCorrectionValue);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        Context parent = this;
+
         // Listener which changes outputMode when a radio button is selected
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        outputModeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.radioButtonWGS84:
-                        if (outputMode != outputModes.WGS84) {
-                            setOutputMode(outputModes.WGS84);
-                        }
-                        break;
-                    case R.id.radioButtonMGRS1m:
-                        if (outputMode != outputModes.MGRS1m) {
-                            setOutputMode(outputModes.MGRS1m);
-                        }
-                        break;
-                    case R.id.radioButtonMGRS10m:
-                        if (outputMode != outputModes.MGRS10m) {
-                            setOutputMode(outputModes.MGRS10m);
-                        }
-                        break;
-                    case R.id.radioButtonMGRS100m:
-                        if (outputMode != outputModes.MGRS100m) {
-                            setOutputMode(outputModes.MGRS100m);
-                        }
-                        break;
-                    case R.id.radioButtonCK42Geodetic:
-                        if (outputMode != outputModes.CK42Geodetic) {
-                            setOutputMode(outputModes.CK42Geodetic);
-                        }
-                        break;
-                    case R.id.radioButtonCK42GaussKrüger:
-                        if (outputMode != outputModes.CK42GaussKrüger) {
-                            setOutputMode(outputModes.CK42GaussKrüger);
-                        }
-                        break;
-                    default:
-                        setOutputMode(-1); // should never happen
+                if (checkedId == R.id.radioButtonWGS84) {
+                    if (outputMode != outputModes.WGS84) {
+                        setOutputMode(outputModes.WGS84);
+                    }
+                } else if (checkedId == R.id.radioButtonMGRS1m) {
+                    if (outputMode != outputModes.MGRS1m) {
+                        setOutputMode(outputModes.MGRS1m);
+                    }
+                } else if (checkedId == R.id.radioButtonMGRS10m) {
+                    if (outputMode != outputModes.MGRS10m) {
+                        setOutputMode(outputModes.MGRS10m);
+                    }
+                } else if (checkedId == R.id.radioButtonMGRS100m) {
+                    if (outputMode != outputModes.MGRS100m) {
+                        setOutputMode(outputModes.MGRS100m);
+                    }
+                } else if (checkedId == R.id.radioButtonCK42Geodetic) {
+                    if (outputMode != outputModes.CK42Geodetic) {
+                        setOutputMode(outputModes.CK42Geodetic);
+                    }
+                } else if (checkedId == R.id.radioButtonCK42GaussKrüger) {
+                    if (outputMode != outputModes.CK42GaussKrüger) {
+                        setOutputMode(outputModes.CK42GaussKrüger);
+                    }
+                } else {
+                    setOutputMode(-1); // should never happen
                 }
+            }
+        });
+
+        measurementUnitRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckChanged(RadioGroup group, int checkedId) {
+              if (checkedId == R.id.radioButtonMETER) {
+                  if (measurementUnit != measurementUnits.METER) {
+                      setMeasurementUnit(measurementUnits.METER);
+                  }
+              } else if (checkedId == R.id.radioButtonFOOT) {
+                  if (measurementUnit != measurementUnits.FOOT) {
+                      if (outputModeIsSlavic() ) {
+                          Toast.makeText(parent, "This option not compatible with CK42 Output Mode(s)", Toast.LENGTH_SHORT).show();
+                          // TODO do this visually instead by disabling radioButtonFoot when a CK42 mode is active
+                      } else {
+                          setMeasurementUnit(measurementUnits.FOOT);
+                      }
+                  }
+              } else {
+                  setOutputMode(-1); // should never happen
+              }
             }
         });
 
@@ -113,6 +130,9 @@ public class PrefsActivity extends AthenaActivity {
         super.onSaveInstanceState(saveInstanceState);
         if (outputMode != null) {
             saveInstanceState.putInt("outputMode", outputMode.ordinal());
+        }
+        if (measurementUnit != null) {
+            saveInstanceState.putInt("measurementUnit", measurementUnit.ordinal());
         }
     }
 
