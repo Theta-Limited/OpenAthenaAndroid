@@ -72,7 +72,7 @@ public class PrefsActivity extends AthenaActivity {
 
         measurementUnitRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onCheckChanged(RadioGroup group, int checkedId) {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
               if (checkedId == R.id.radioButtonMETER) {
                   if (measurementUnit != measurementUnits.METER) {
                       setMeasurementUnit(measurementUnits.METER);

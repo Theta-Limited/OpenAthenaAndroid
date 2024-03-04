@@ -27,7 +27,7 @@
         android:id="@+id/compassCorrectionValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="32dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:text="@string/prefs_compass_offset_label"
@@ -139,12 +139,46 @@
         android:id="@+id/reset_prefs_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         android:onClick="prefsReset"
         android:text="@string/reset_prefs_text"
         app:layout_constraintEnd_toEndOf="@+id/compassCorrectionSeekBar"
         app:layout_constraintStart_toStartOf="@+id/compassCorrectionSeekBar"
         app:layout_constraintTop_toBottomOf="@+id/compassCorrectionSeekBar" />
+
+    <TextView
+        android:id="@+id/textViewUnitMeasurementTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Distance Unit:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/actionMenuTextColor"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/compassCorrectionSeekBar"
+        app:layout_constraintStart_toStartOf="@+id/compassCorrectionSeekBar"
+        app:layout_constraintTop_toBottomOf="@+id/reset_prefs_button" />
+
+    <RadioGroup
+        android:id="@+id/measurementUnitRadioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@+id/compassCorrectionSeekBar"
+        app:layout_constraintStart_toStartOf="@+id/compassCorrectionSeekBar"
+        app:layout_constraintTop_toBottomOf="@+id/textViewUnitMeasurementTitle" >
+
+        <RadioButton
+            android:id="@+id/radioButtonMETER"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="US Foot" />
+
+        <RadioButton
+            android:id="@+id/radioButtonFOOT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Meter" />
+    </RadioGroup>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

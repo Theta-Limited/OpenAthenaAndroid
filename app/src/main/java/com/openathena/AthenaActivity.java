@@ -333,6 +333,9 @@ public abstract class AthenaActivity extends AppCompatActivity {
             int outputModeFromPref = sharedPreferences.getInt("outputMode", 0);
             setOutputMode(outputModeFromPref);
 
+            int measurementUnitFromPref = sharedPreferences.getInt("measurementUnit", 0);
+            setMeasurementUnit(measurementUnitFromPref);
+
             int savedSeekBarValue = sharedPreferences.getInt("compassCorrectionSeekBarValue", 100);
             setCompassCorrectionSeekBar(savedSeekBarValue);
         }

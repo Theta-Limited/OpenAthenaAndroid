@@ -95,6 +95,42 @@
     </RadioGroup>
 
     <TextView
+        android:id="@+id/textViewUnitMeasurementTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Distance Unit:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/actionMenuTextColor"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/outputModeRadioGroup" />
+
+    <RadioGroup
+        android:id="@+id/measurementUnitRadioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="72dp"
+        tools:layout_editor_absoluteY="493dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewUnitMeasurementTitle" >
+
+        <RadioButton
+            android:id="@+id/radioButtonMETER"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="US Foot" />
+
+        <RadioButton
+            android:id="@+id/radioButtonFOOT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Meter" />
+    </RadioGroup>
+
+    <TextView
         android:id="@+id/compassCorrectionValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -106,7 +142,7 @@
         android:tooltipText="@string/tooltip_correct_bad_compass_data_this_is_not_for_setting_mag_declination"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/outputModeRadioGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/measurementUnitRadioGroup" />
 
     <SeekBar
         android:id="@+id/compassCorrectionSeekBar"
