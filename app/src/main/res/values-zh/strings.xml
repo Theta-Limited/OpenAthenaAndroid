@@ -64,7 +64,7 @@
     <string name="ck_42_geodetic_tooltip">使用 Krasovsky 1940 椭球体的替代大地测量系统。常用于前华约国家</string>
     <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
     <string name="ck_42_gauss_kruger_tooltip">高斯-克吕格：使用1940年克拉索夫斯基椭球体的替代大地测量系统。北坐标由Y值定义，东坐标由X值定义，描述地球上的精确位置。</string>
-    <string name="target_output_mode_title">🎯 输出模式：</string>
+    <string name="target_output_mode_title">🎯 输出设置：</string>
     <string name="gk_northing_text">网格向北:</string>
     <string name="gk_easting_text">网格向东:</string>
     <string name="gk_zone_text">ZONE:</string>
@@ -110,7 +110,7 @@
     <string name="no">否</string>
     <string name="title_activity_selection">选择目标</string>
     <string name="geoid_load_error_msg">严重错误：无法加载地球大地水准面数据文件！</string>
-    <string name="nato_vertical_datum_notice">NATO 和 WGS84 输出垂直基准是平均海平面以上 EGM96 米。</string>
+    <string name="nato_vertical_datum_notice">NATO和WGS84输出垂直基准为EGM96米（或英尺）高于平均海平面。</string>
     <string name="warsaw_vertical_datum_notice">CK-42 输出垂直基准是 Krassowsky 1940 椭球上方米高。</string>
     <string name="lens_type">镜头类型:</string>
     <string name="distortion_parameters">畸变参数:</string>
@@ -120,4 +120,7 @@
     <string name="CalibrationReminderSnippet">为了获得最佳效果，请在飞行前校准您的无人机指南针 🧭!</string>
     <string name="obtain_a_digital_elevation_model_here">在此处获取数字高程模型 (DEM)</string>
     <string name="terrain_altitude">地形高度 :</string>
+    <string name="distance_unit_label">距离单位:</string>
+    <string name="meter_label">" 米"</string>
+    <string name="us_foot_label">美国英尺</string>
 </resources>
