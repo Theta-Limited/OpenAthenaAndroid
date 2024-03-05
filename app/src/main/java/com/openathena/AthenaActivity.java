@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.exifinterface.media.ExifInterface;
 
+
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -43,8 +44,15 @@ public abstract class AthenaActivity extends AppCompatActivity {
         CK42GaussKrüger
     }
 
+    public enum measurementUnits {
+        METER,
+        FOOT // US survey foot used in Aviation, 1200/3937 = 0.30480061 meters
+    }
+
     protected static PrefsActivity.outputModes outputMode;
-    static RadioGroup radioGroup;
+    protected static AthenaActivity.measurementUnits measurementUnit;
+    static RadioGroup outputModeRadioGroup;
+    static RadioGroup measurementUnitRadioGroup;
 
     static SeekBar compassCorrectionSeekBar;
     static TextView compassCorrectionValue;
@@ -65,6 +73,15 @@ public abstract class AthenaActivity extends AppCompatActivity {
         isDEMLoaded = false;
     }
 
+    // Overloaded
+    public void setOutputMode(outputModes aMode) {
+        if (aMode == null) {
+            setOutputMode(-1); // should never happen
+        } else {
+            setOutputMode(aMode.ordinal()); // overloaded method call
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     public void setOutputMode(int mode) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -73,9 +90,9 @@ public abstract class AthenaActivity extends AppCompatActivity {
             case 0:
                 prefsEditor.putInt("outputMode", mode);
                 prefsEditor.apply(); // make the outputMode change persistent
-                outputMode = PrefsActivity.outputModes.WGS84; // standard lat, lon format
-                if (radioGroup != null && radioGroup.getVisibility() == View.VISIBLE) {
-                    radioGroup.check(R.id.radioButtonWGS84);
+                outputMode = outputModes.WGS84; // standard lat, lon format
+                if (outputModeRadioGroup != null && outputModeRadioGroup.getVisibility() == View.VISIBLE) {
+                    outputModeRadioGroup.check(R.id.radioButtonWGS84);
                 }
                 if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
                     if(!isTargetCoordDisplayed) {
@@ -88,9 +105,9 @@ public abstract class AthenaActivity extends AppCompatActivity {
             case 1:
                 prefsEditor.putInt("outputMode", mode);
                 prefsEditor.apply(); // make the outputMode change persistent
-                outputMode = PrefsActivity.outputModes.MGRS1m; // NATO Military Grid Ref, 1m square area
-                if (radioGroup != null && radioGroup.getVisibility() == View.VISIBLE) {
-                    radioGroup.check(R.id.radioButtonMGRS1m);
+                outputMode = outputModes.MGRS1m; // NATO Military Grid Ref, 1m square area
+                if (outputModeRadioGroup != null && outputModeRadioGroup.getVisibility() == View.VISIBLE) {
+                    outputModeRadioGroup.check(R.id.radioButtonMGRS1m);
                 }
                 if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
                     if(!isTargetCoordDisplayed) {
@@ -103,9 +120,9 @@ public abstract class AthenaActivity extends AppCompatActivity {
             case 2:
                 prefsEditor.putInt("outputMode", mode);
                 prefsEditor.apply(); // make the outputMode change persistent
-                outputMode = PrefsActivity.outputModes.MGRS10m; // NATO Military Grid Ref, 10m square area
-                if (radioGroup != null && radioGroup.getVisibility() == View.VISIBLE) {
-                    radioGroup.check(R.id.radioButtonMGRS10m);
+                outputMode = outputModes.MGRS10m; // NATO Military Grid Ref, 10m square area
+                if (outputModeRadioGroup != null && outputModeRadioGroup.getVisibility() == View.VISIBLE) {
+                    outputModeRadioGroup.check(R.id.radioButtonMGRS10m);
                 }
                 if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
                     if(!isTargetCoordDisplayed) {
@@ -118,9 +135,9 @@ public abstract class AthenaActivity extends AppCompatActivity {
             case 3:
                 prefsEditor.putInt("outputMode", mode);
                 prefsEditor.apply(); // make the outputMode change persistent
-                outputMode= PrefsActivity.outputModes.MGRS100m; // NATO Military Grid Ref, 100m square area
-                if (radioGroup != null && radioGroup.getVisibility() == View.VISIBLE) {
-                    radioGroup.check(R.id.radioButtonMGRS100m);
+                outputMode= outputModes.MGRS100m; // NATO Military Grid Ref, 100m square area
+                if (outputModeRadioGroup != null && outputModeRadioGroup.getVisibility() == View.VISIBLE) {
+                    outputModeRadioGroup.check(R.id.radioButtonMGRS100m);
                 }
                 if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
                     if(!isTargetCoordDisplayed) {
@@ -133,9 +150,12 @@ public abstract class AthenaActivity extends AppCompatActivity {
             case 4:
                 prefsEditor.putInt("outputMode", mode);
                 prefsEditor.apply(); // make the outputMode change persistent
-                outputMode = PrefsActivity.outputModes.CK42Geodetic; // An alternative geodetic system using the Krasovsky 1940 ellipsoid. Commonly used in former Warsaw pact countries
-                if (radioGroup != null && radioGroup.getVisibility() == View.VISIBLE) {
-                    radioGroup.check(R.id.radioButtonCK42Geodetic);
+                outputMode = outputModes.CK42Geodetic; // An alternative geodetic system using the Krasovsky 1940 ellipsoid. Commonly used in former Warsaw pact countries
+                // There is no reason anyone would ever use anything but Meter as the unit for CK42
+                setMeasurementUnit(measurementUnits.METER);
+                // TODO disable all other buttons in the measurementUnitRadioGroup when this outputMode is active!
+                if (outputModeRadioGroup != null && outputModeRadioGroup.getVisibility() == View.VISIBLE) {
+                    outputModeRadioGroup.check(R.id.radioButtonCK42Geodetic);
                 }
                 if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
                     if(!isTargetCoordDisplayed) {
@@ -148,9 +168,12 @@ public abstract class AthenaActivity extends AppCompatActivity {
             case 5:
                 prefsEditor.putInt("outputMode", mode);
                 prefsEditor.apply(); // make the outputMode change persistent
-                outputMode = PrefsActivity.outputModes.CK42GaussKrüger; // An alternative geodetic system using the Krasovsky 1940 ellipsoid. Northing defined by X value, and Easting defined by Y value describe an exact position on Earth
-                if (radioGroup != null && radioGroup.getVisibility() == View.VISIBLE) {
-                    radioGroup.check(R.id.radioButtonCK42GaussKrüger);
+                outputMode = outputModes.CK42GaussKrüger; // An alternative geodetic system using the Krasovsky 1940 ellipsoid. Northing defined by X value, and Easting defined by Y value describe an exact position on Earth
+                // There is no reason anyone would ever use anything but Meter as the unit for CK42
+                setMeasurementUnit(measurementUnits.METER);
+                // TODO disable all other buttons in the measurementUnitRadioGroup when this outputMode is active!
+                if (outputModeRadioGroup != null && outputModeRadioGroup.getVisibility() == View.VISIBLE) {
+                    outputModeRadioGroup.check(R.id.radioButtonCK42GaussKrüger);
                 }
                 if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
                     if(!isTargetCoordDisplayed) {
@@ -163,6 +186,44 @@ public abstract class AthenaActivity extends AppCompatActivity {
             default:
                 Log.e(TAG, "ERROR: unrecognized value for output mode: " + mode + ". reverting to WGS84...");
                 setOutputMode(0);
+                break;
+        }
+    }
+
+    public void setMeasurementUnit(measurementUnits aUnit) {
+        if (aUnit == null) {
+            setMeasurementUnit(-1); // should never happen
+        }
+        else {
+            setMeasurementUnit(aUnit.ordinal());
+        }
+    }
+
+    public void setMeasurementUnit(int unit) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+        switch(unit) {
+            case 0:
+                prefsEditor.putInt("measurementUnit", unit);
+                prefsEditor.apply(); // make the measurementUnit change persistent
+                measurementUnit = measurementUnits.METER;
+                if (measurementUnitRadioGroup != null && measurementUnitRadioGroup.getVisibility() == View.VISIBLE) {
+                    measurementUnitRadioGroup.check(R.id.radioButtonMETER);
+                }
+                Log.i(TAG, "Measurement unit changed to METER");
+                break;
+            case 1:
+                prefsEditor.putInt("measurementUnit", unit);
+                prefsEditor.apply(); // make the measurementUnit change persistent
+                measurementUnit = measurementUnits.FOOT;
+                if (measurementUnitRadioGroup != null && measurementUnitRadioGroup.getVisibility() == View.VISIBLE) {
+                    measurementUnitRadioGroup.check(R.id.radioButtonFOOT);
+                }
+                Log.i(TAG, "Measurement unit changed to us survey FOOT");
+                break;
+            default:
+                Log.e(TAG, "ERROR: unrecognized value for measurement unit: " + unit + ". reverting to METER...");
+                setMeasurementUnit(0);
                 break;
         }
     }
@@ -263,14 +324,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
 //        return cy;
 //    }
 
-    // Overloaded
-    public void setOutputMode(outputModes aMode) {
-        if (aMode == null) {
-            setOutputMode(-1); // should never happen
-        } else {
-            setOutputMode(aMode.ordinal()); // overloaded method call
-        }
-    }
+
 
     public void restorePrefs() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -278,6 +332,9 @@ public abstract class AthenaActivity extends AppCompatActivity {
         if (sharedPreferences != null) {
             int outputModeFromPref = sharedPreferences.getInt("outputMode", 0);
             setOutputMode(outputModeFromPref);
+
+            int measurementUnitFromPref = sharedPreferences.getInt("measurementUnit", 0);
+            setMeasurementUnit(measurementUnitFromPref);
 
             int savedSeekBarValue = sharedPreferences.getInt("compassCorrectionSeekBarValue", 100);
             setCompassCorrectionSeekBar(savedSeekBarValue);
@@ -420,5 +477,9 @@ public abstract class AthenaActivity extends AppCompatActivity {
 
     public boolean outputModeIsMGRS() {
         return (outputMode == outputModes.MGRS1m || outputMode == outputModes.MGRS10m || outputMode == outputModes.MGRS100m);
+    }
+
+    public boolean isUnitFoot() {
+        return (measurementUnit == measurementUnits.FOOT);
     }
 }

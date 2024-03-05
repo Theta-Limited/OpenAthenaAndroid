@@ -64,7 +64,7 @@
     <string name="ck_42_geodetic_tooltip">Krasovsky 1940 타원체를 사용하는 대체 측지 시스템. 이전 바르샤바 조약 국가에서 일반적으로 사용됨</string>
     <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
     <string name="ck_42_gauss_kruger_tooltip">가우스-크루거: 1940년 크라소프스키 타원체를 사용하는 대체적인 지오데식 시스템. 북쪽은 X값으로 정의되며, 동쪽은 Y값으로 정의되어 지구상의 정확한 위치를 설명합니다.</string>
-    <string name="target_output_mode_title">🎯 출력 모드:</string>
+    <string name="target_output_mode_title">🎯 출력 설정:</string>
     <string name="gk_northing_text">동선:</string>
     <string name="gk_easting_text">북선:</string>
     <string name="gk_zone_text">ZONE:</string>
@@ -110,7 +110,7 @@
     <string name="no">아니요</string>
     <string name="title_activity_selection">대상 선택</string>
     <string name="geoid_load_error_msg">심각한 오류: 지구 지오이드 데이터 파일을 로드할 수 없습니다!</string>
-    <string name="nato_vertical_datum_notice">NATO 및 WGS84 출력 수직 데이텀은 평균 해수면 위 EGM96미터입니다.</string>
+    <string name="nato_vertical_datum_notice">NATO 및 WGS84 출력 수직 기준은 평균 해수면보다 EGM96 미터(또는 피트) 위입니다.</string>
     <string name="warsaw_vertical_datum_notice">CK-42 출력 수직 데이텀은 Krassowsky 1940 타원체 위의 미터 높이입니다.</string>
     <string name="lens_type">렌즈 유형:</string>
     <string name="distortion_parameters">왜곡 파라미터:</string>
@@ -120,4 +120,7 @@
     <string name="CalibrationReminderSnippet">최상의 결과를 얻으려면 비행 전에 드론의 나침반 🧭을 보정해 주세요!</string>
     <string name="obtain_a_digital_elevation_model_here">여기서 DEM(디지털 고도 모델)을 얻으세요.</string>
     <string name="terrain_altitude">지형 고도 :</string>
+    <string name="distance_unit_label">거리 단위:</string>
+    <string name="meter_label">미터</string>
+    <string name="us_foot_label">미국 피트</string>
 </resources>

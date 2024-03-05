@@ -64,7 +64,7 @@
     <string name="ck_42_geodetic_tooltip">Krasovsky 1940 楕円体を使用した代替測地系。旧ワルシャワ協定国で一般的に使用されている</string>
     <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
     <string name="ck_42_gauss_kruger_tooltip">1940年のクラソフスキー楕円体を使用した代替測地系。北向きはY値により定義され、東向きはX値により定義され、地球上の正確な位置を記述します。</string>
-    <string name="target_output_mode_title">🎯 出力モード:</string>
+    <string name="target_output_mode_title">🎯 出力設定:</string>
     <string name="gk_northing_text">N:</string>
     <string name="gk_easting_text">E:</string>
     <string name="gk_zone_text">ZONE:</string>
@@ -110,7 +110,7 @@
     <string name="no">いいえ</string>
     <string name="title_activity_selection">ターゲットを選択してください</string>
     <string name="geoid_load_error_msg">重大なエラー: Earth ジオイド データファイルをロードできませんでした。</string>
-    <string name="nato_vertical_datum_notice">NATO と WGS84 の出力鉛直基準系は平均海抜 EGM96 メートルです。</string>
+    <string name="nato_vertical_datum_notice">NATOおよびWGS84の出力垂直基準は、平均海面上EGM96メートル（またはフィート）です。</string>
     <string name="warsaw_vertical_datum_notice">CK-42 出力垂直基準線は、Krassowsky 1940 楕円体上のメートルの高さです。</string>
     <string name="lens_type">レンズ種類:</string>
     <string name="distortion_parameters">歪みパラメータ:</string>
@@ -120,4 +120,7 @@
     <string name="CalibrationReminderSnippet">最適な結果を得るために、飛行前にドローンのコンパス🧭をキャリブレートしてください！</string>
     <string name="obtain_a_digital_elevation_model_here">ここから数値標高モデルを入手してください。</string>
     <string name="terrain_altitude">地形の高度 :</string>
+    <string name="distance_unit_label">距離の単位:</string>
+    <string name="meter_label">メートル</string>
+    <string name="us_foot_label">アメリカフィート</string>
 </resources>

@@ -38,7 +38,7 @@
     <string name="CallToActionSnippet"><![CDATA[View the project on GitHub</a><br>]]></string>
     <string name="bad_altitude_data_error_msg">ERROR: bad altitude or terrain data. This image is unusable. 🖼🚫🎯</string>
     <string name="target_found_at_msg">Target found at </string>
-    <string name="drone_dist_to_target_msg">Drone distance to target:</string>
+    <string name="drone_dist_to_target_msg">Drone distance to target (slant range):</string>
     <string name="resolveTarget_oob_error_msg">ERROR: resolveTarget ran OOB at</string>
     <string name="geotiff_coverage_reminder">Please ensure your DEM file covers the drone\'s location!</string>
     <string name="geotiff_coverage_precedent_message">Your DEM\'s coverage ⛰:\n</string>
@@ -68,7 +68,7 @@
     <string name="ck_42_geodetic_tooltip">An alternative geodetic system using the Krasovsky 1940 ellipsoid. Commonly used in former Warsaw pact countries</string>
     <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
     <string name="ck_42_gauss_kruger_tooltip">An alternative geodetic system using the Krasovsky 1940 ellipsoid. A Northing defined by X value, and Easting defined by Y value describe an exact position on Earth</string>
-    <string name="target_output_mode_title">🎯 Output Mode:</string>
+    <string name="target_output_mode_title">🎯 Output Settings:</string>
     <string name="gk_northing_text">Northing:</string>
     <string name="gk_easting_text">Easting:</string>
     <string name="gk_zone_text">ZONE:</string>
@@ -114,7 +114,7 @@
     <string name="no">No</string>
     <string name="title_activity_selection">Select a Target</string>
     <string name="geoid_load_error_msg">Critical Error: could not load Earth geoid datafile!</string>
-    <string name="nato_vertical_datum_notice">NATO and WGS84 output vertical datum is EGM96 meters above mean sea level.</string>
+    <string name="nato_vertical_datum_notice">NATO and WGS84 output vertical datum is EGM96 meters (or feet) above mean sea level.</string>
     <string name="warsaw_vertical_datum_notice">CK-42 output vertical datum is meters height above the Krassowsky 1940 ellipsoid.</string>
     <string name="lens_type">Lens type:</string>
     <string name="distortion_parameters">Distortion parameters:</string>
@@ -125,4 +125,7 @@
     <string name="obtain_a_digital_elevation_model_here">Obtain a Digital Elevation Model Here</string>
     <string name="terrain_altitude">Terrain Altitude :</string>
     <string name="icon_credit" translatable="false">Credit Carole Raddato, Statue of Athena wearing a Corinthian helmet. 2014 CC BY-SA 2.0</string>
+    <string name="distance_unit_label">Distance Unit:</string>
+    <string name="meter_label">Meter</string>
+    <string name="us_foot_label">US Foot</string>
 </resources>
