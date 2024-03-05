@@ -41,7 +41,7 @@
             android:id="@+id/radioButtonWGS84"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:padding="8dp"
             android:text="@string/wgs84_standard_lat_lon"
             android:textSize="20sp"
             android:tooltipText="@string/wgs84_tooltip" />
@@ -50,7 +50,7 @@
             android:id="@+id/radioButtonMGRS1m"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:padding="8dp"
             android:text="@string/nato_mgrs_1m"
             android:textSize="20sp"
             android:tooltipText="@string/nato_mgrs_1m_tooltip" />
@@ -59,7 +59,7 @@
             android:id="@+id/radioButtonMGRS10m"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:padding="8dp"
             android:text="@string/nato_mgrs_10m"
             android:textSize="20sp"
             android:tooltipText="@string/nato_mgrs_10m_tooltip" />
@@ -68,7 +68,7 @@
             android:id="@+id/radioButtonMGRS100m"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:padding="8dp"
             android:text="@string/nato_mgrs_100m"
             android:textSize="20sp"
             android:tooltipText="@string/nato_mgrs_100m_tooltip" />
@@ -77,7 +77,7 @@
             android:id="@+id/radioButtonCK42Geodetic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:padding="8dp"
             android:text="@string/ck_42_lat_lon"
             android:textSize="20sp"
             android:tooltipText="@string/ck_42_geodetic_tooltip" />
@@ -86,8 +86,7 @@
             android:id="@+id/radioButtonCK42GaussKrüger"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:padding="16dp"
+            android:padding="8dp"
             android:text="@string/ck_42_gauss_kruger_n_e"
             android:textSize="20sp"
             android:tooltipText="@string/ck_42_gauss_kruger_tooltip" />
@@ -121,13 +120,13 @@
             android:id="@+id/radioButtonMETER"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="US Foot" />
+            android:text="Meter" />
 
         <RadioButton
             android:id="@+id/radioButtonFOOT"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Meter" />
+            android:text="US Foot" />
     </RadioGroup>
 
     <TextView

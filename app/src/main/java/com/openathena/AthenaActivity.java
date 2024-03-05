@@ -191,7 +191,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
     }
 
     public void setMeasurementUnit(measurementUnits aUnit) {
-        if (aUnit != null) {
+        if (aUnit == null) {
             setMeasurementUnit(-1); // should never happen
         }
         else {
@@ -477,5 +477,9 @@ public abstract class AthenaActivity extends AppCompatActivity {
 
     public boolean outputModeIsMGRS() {
         return (outputMode == outputModes.MGRS1m || outputMode == outputModes.MGRS10m || outputMode == outputModes.MGRS100m);
+    }
+
+    public boolean isUnitFoot() {
+        return (measurementUnit == measurementUnits.FOOT);
     }
 }
