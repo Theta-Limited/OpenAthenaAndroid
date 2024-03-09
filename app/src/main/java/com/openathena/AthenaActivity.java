@@ -316,6 +316,16 @@ public abstract class AthenaActivity extends AppCompatActivity {
 
         int id = item.getItemId();
 
+        if (id == R.id.action_managedems) {
+            Log.d(TAG,"AthenaActivity: going to launch manage dems");
+            // jump to manage dems activity
+            intent = new Intent(getApplicationContext(),ManageDemsActivity.class);
+            Log.d(TAG,"AthenaActivity: created intent, going to start");
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent);
+            return true;
+        }
+
         if (id == R.id.action_calculate) {
             // jump to main activity
             // its already created

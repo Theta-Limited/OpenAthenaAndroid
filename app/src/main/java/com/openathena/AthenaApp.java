@@ -112,6 +112,7 @@ public class AthenaApp extends Application { // Android Singleton Class for hold
     }
 
     private HashMap<String, Double> doubleMap = new HashMap<String, Double>();
+    public DemCache demCache = null;
 
     public void putDouble(String key, double value) { doubleMap.put(key, value); }
 

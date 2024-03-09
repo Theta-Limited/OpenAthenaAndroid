@@ -104,6 +104,14 @@ public class AboutActivity extends AppCompatActivity {
 
         int id = item.getItemId();
 
+        if (id == R.id.action_managedems) {
+            // jump to manage dem cache activity
+            intent = new Intent(getApplicationContext(),ManageDemsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent);
+            return true;
+        }
+        
         if (id == R.id.action_calculate) {
             // jump to main activity
             // its already created
