@@ -3,7 +3,8 @@
 // rdk@theta.limited
 
 // Manage DEMs activity; from where, search, view,
-// add, delete, import, export DEMs
+// add/download, delete, import, export DEMs
+// Re issue #85
 
 package com.openathena;
 
