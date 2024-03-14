@@ -165,10 +165,23 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
     private class MyScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
+            long currentTime = System.currentTimeMillis();
+            float lastScale = scale;
             scale *= detector.getScaleFactor();
-            scale = Math.max(0.1f, Math.min(scale, 5.0f)); // Constrain scale between 0.1 and 5.0
+            if (currentTime - lastIntentTime > INTENT_COOLDOWN_MS) {
+                if (parent instanceof SelectionActivity) {
+                    final float scaleThreshold = 0.90f;
+                    if (scale < scaleThreshold && lastScale < scaleThreshold) { // Check for pinch-to-zoom-out gesture
+                        Intent intent = new Intent(parent, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        parent.startActivity(intent);
+                        lastIntentTime = currentTime;
+                    }
+                }
+            }
+            scale = Math.max(0.85f, Math.min(scale, 5.0f)); // Constrain scale between 0.9 and 5.0
             invalidate();
-            return true;
+            return super.onScale(detector);
         }
     }
 
