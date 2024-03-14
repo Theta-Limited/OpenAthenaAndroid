@@ -69,41 +69,6 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
             private final float clickThreshold = 25f;
             private float lastX, lastY;
             private boolean isDragging = false;
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                // Detect gestures
-//                scaleGestureDetector.onTouchEvent(event);
-//                gestureDetector.onTouchEvent(event);
-//                long currentTime = System.currentTimeMillis();
-//
-//                if (event.getAction() == MotionEvent.ACTION_UP && currentTime - lastIntentTime > INTENT_COOLDOWN_MS){
-//                    if (!parent.isImageLoaded || parent.imageUri == null || parent.iView == null) {
-//                        return true;
-//                    }
-//                    int original_width;
-//                    int original_height;
-//                    int[] original_dimensions = parent.getImageDimensionsFromUri(parent.imageUri);
-//                    if (original_dimensions == null) {
-//                        return true;
-//                    } else {
-//                        original_width = original_dimensions[0];
-//                        original_height = original_dimensions[1];
-//                    }
-//                    double render_width = yahweh.getWidth();
-//                    double render_height = yahweh.getHeight();
-//                    parent.set_selection_x((int) Math.round(((1.0d * event.getX()) / render_width) * original_width));
-//                    parent.set_selection_y((int) Math.round(((1.0d * event.getY()) / render_height) * original_height));
-//                    Log.d("X",parent.get_selection_x() + "");
-//                    Log.d("Y",parent.get_selection_y() + "");
-//
-//                    if (parent.isImageLoaded && parent.isDEMLoaded) {
-//                        parent.calculateImage(yahweh, false); // this may cause the view to re-size due to constraint layout
-//                        yahweh.mark((double) event.getX() / (1.0d * render_width), (double) event.getY() / (1.0d * render_height));
-//                    }
-//                }
-//
-//                return true;
-//            }
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -163,18 +128,22 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                 double render_width = yahweh.getWidth();
                 double render_height = yahweh.getHeight();
 
-                // Adjust for scale and translation
-                float adjustedX = (x - translationX) / scale;
-                float adjustedY = (y - translationY) / scale;
+                // Correctly adjust tap coordinates for scale and translation
+                float adjustedX = (x - translationX * scale) / scale;
+                float adjustedY = (y - translationY * scale) / scale;
 
-                parent.set_selection_x((int) Math.round((adjustedX / render_width) * original_width));
-                parent.set_selection_y((int) Math.round((adjustedY / render_height) * original_height));
+                // Calculate the proportion of the tap within the image dimensions
+                float proportionX = adjustedX / getWidth();
+                float proportionY = adjustedY / getHeight();
+
+                parent.set_selection_x((int) Math.round(proportionX * original_width));
+                parent.set_selection_y((int) Math.round(proportionY * original_height));
                 Log.d("X", parent.get_selection_x() + "");
                 Log.d("Y", parent.get_selection_y() + "");
 
                 if (parent.isImageLoaded && parent.isDEMLoaded) {
                     parent.calculateImage(yahweh, false); // this may cause the view to re-size due to constraint layout
-                    yahweh.mark(adjustedX / render_width, adjustedY / render_height);
+                    yahweh.mark(proportionX, proportionY);
                 }
             }
         });
@@ -192,29 +161,6 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
         });
 
     }
-
-//    private class MyScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-//        @Override
-//        public boolean onScale(ScaleGestureDetector detector) {
-//            long currentTime = System.currentTimeMillis();
-//            if (currentTime - lastIntentTime > INTENT_COOLDOWN_MS) {
-//                if (parent instanceof MainActivity && detector.getCurrentSpan() > 125 && detector.getTimeDelta() > 75) {
-//                    Intent intent = new Intent(parent, SelectionActivity.class);
-//                    parent.startActivity(intent);
-//                    lastIntentTime = currentTime;
-//                } else if (parent instanceof SelectionActivity) {
-//                    final float scaleFactorThreshold = 0.97f;
-//                    if (detector.getScaleFactor() < scaleFactorThreshold) { // Check for pinch-to-zoom-out gesture
-//                        Intent intent = new Intent(parent, MainActivity.class);
-//                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        parent.startActivity(intent);
-//                        lastIntentTime = currentTime;
-//                    }
-//                }
-//            }
-//            return super.onScale(detector);
-//        }
-//    }
 
     private class MyScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
