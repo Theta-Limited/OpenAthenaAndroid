@@ -1,5 +1,7 @@
 package com.openathena;
 
+import static com.openathena.AthenaActivity.TAG;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -28,6 +30,10 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
     private long lastIntentTime = 0;
     // Cooldown period of 1 second
     private static final long INTENT_COOLDOWN_MS = 1000;
+
+    private float scale = 1f; // Initial scale
+    private float translationX = 0f; // Initial translation
+    private float translationY = 0f; // Initial translation
 
     public MarkableImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -60,42 +66,117 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
         MarkableImageView yahweh = this; // reference to this MarkableImageView, for use in listener
 
         this.setOnTouchListener(new View.OnTouchListener() {
+            private final float clickThreshold = 25f;
+            private float lastX, lastY;
+            private boolean isDragging = false;
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                // Detect gestures
+//                scaleGestureDetector.onTouchEvent(event);
+//                gestureDetector.onTouchEvent(event);
+//                long currentTime = System.currentTimeMillis();
+//
+//                if (event.getAction() == MotionEvent.ACTION_UP && currentTime - lastIntentTime > INTENT_COOLDOWN_MS){
+//                    if (!parent.isImageLoaded || parent.imageUri == null || parent.iView == null) {
+//                        return true;
+//                    }
+//                    int original_width;
+//                    int original_height;
+//                    int[] original_dimensions = parent.getImageDimensionsFromUri(parent.imageUri);
+//                    if (original_dimensions == null) {
+//                        return true;
+//                    } else {
+//                        original_width = original_dimensions[0];
+//                        original_height = original_dimensions[1];
+//                    }
+//                    double render_width = yahweh.getWidth();
+//                    double render_height = yahweh.getHeight();
+//                    parent.set_selection_x((int) Math.round(((1.0d * event.getX()) / render_width) * original_width));
+//                    parent.set_selection_y((int) Math.round(((1.0d * event.getY()) / render_height) * original_height));
+//                    Log.d("X",parent.get_selection_x() + "");
+//                    Log.d("Y",parent.get_selection_y() + "");
+//
+//                    if (parent.isImageLoaded && parent.isDEMLoaded) {
+//                        parent.calculateImage(yahweh, false); // this may cause the view to re-size due to constraint layout
+//                        yahweh.mark((double) event.getX() / (1.0d * render_width), (double) event.getY() / (1.0d * render_height));
+//                    }
+//                }
+//
+//                return true;
+//            }
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 // Detect gestures
                 scaleGestureDetector.onTouchEvent(event);
                 gestureDetector.onTouchEvent(event);
+
+                // record event time
                 long currentTime = System.currentTimeMillis();
 
-                if (event.getAction() == MotionEvent.ACTION_UP && currentTime - lastIntentTime > INTENT_COOLDOWN_MS){
-                    if (!parent.isImageLoaded || parent.imageUri == null || parent.iView == null) {
-                        return true;
-                    }
-                    int original_width;
-                    int original_height;
-                    int[] original_dimensions = parent.getImageDimensionsFromUri(parent.imageUri);
-                    if (original_dimensions == null) {
-                        return true;
-                    } else {
-                        original_width = original_dimensions[0];
-                        original_height = original_dimensions[1];
-                    }
-                    double render_width = yahweh.getWidth();
-                    double render_height = yahweh.getHeight();
-                    parent.set_selection_x((int) Math.round(((1.0d * event.getX()) / render_width) * original_width));
-                    parent.set_selection_y((int) Math.round(((1.0d * event.getY()) / render_height) * original_height));
-                    Log.d("X",parent.get_selection_x() + "");
-                    Log.d("Y",parent.get_selection_y() + "");
-
-                    if (parent.isImageLoaded && parent.isDEMLoaded) {
-                        parent.calculateImage(yahweh, false); // this may cause the view to re-size due to constraint layout
-                        yahweh.mark((double) event.getX() / (1.0d * render_width), (double) event.getY() / (1.0d * render_height));
-                    }
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        lastX = event.getX();
+                        lastY = event.getY();
+                        isDragging = false;
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        float dx = event.getX() - lastX;
+                        float dy = event.getY() - lastY;
+                        if (!isDragging) {
+                            isDragging = Math.sqrt((dx * dx) + (dy * dy)) >= clickThreshold;
+                        }
+                        if (isDragging) {
+                            translationX += dx / scale;
+                            translationY += dy / scale;
+                            invalidate();
+                        }
+                        lastX = event.getX();
+                        lastY = event.getY();
+                        break;
+                    case MotionEvent.ACTION_POINTER_DOWN:
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_POINTER_UP:
+                        if (!isDragging) {
+                            handleTap(event.getX(), event.getY());
+                        }
+                        isDragging = false;
+                        break;
                 }
-
                 return true;
             }
 
+            private void handleTap(float x, float y) {
+                if (!parent.isImageLoaded || parent.imageUri == null || parent.iView == null) {
+                    return;
+                }
+                int original_width;
+                int original_height;
+                int[] original_dimensions = parent.getImageDimensionsFromUri(parent.imageUri);
+                if (original_dimensions == null) {
+                    return;
+                } else {
+                    original_width = original_dimensions[0];
+                    original_height = original_dimensions[1];
+                }
+                double render_width = yahweh.getWidth();
+                double render_height = yahweh.getHeight();
+
+                // Adjust for scale and translation
+                float adjustedX = (x - translationX) / scale;
+                float adjustedY = (y - translationY) / scale;
+
+                parent.set_selection_x((int) Math.round((adjustedX / render_width) * original_width));
+                parent.set_selection_y((int) Math.round((adjustedY / render_height) * original_height));
+                Log.d("X", parent.get_selection_x() + "");
+                Log.d("Y", parent.get_selection_y() + "");
+
+                if (parent.isImageLoaded && parent.isDEMLoaded) {
+                    parent.calculateImage(yahweh, false); // this may cause the view to re-size due to constraint layout
+                    yahweh.mark(adjustedX / render_width, adjustedY / render_height);
+                }
+            }
         });
 
         this.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -112,26 +193,36 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
 
     }
 
+//    private class MyScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+//        @Override
+//        public boolean onScale(ScaleGestureDetector detector) {
+//            long currentTime = System.currentTimeMillis();
+//            if (currentTime - lastIntentTime > INTENT_COOLDOWN_MS) {
+//                if (parent instanceof MainActivity && detector.getCurrentSpan() > 125 && detector.getTimeDelta() > 75) {
+//                    Intent intent = new Intent(parent, SelectionActivity.class);
+//                    parent.startActivity(intent);
+//                    lastIntentTime = currentTime;
+//                } else if (parent instanceof SelectionActivity) {
+//                    final float scaleFactorThreshold = 0.97f;
+//                    if (detector.getScaleFactor() < scaleFactorThreshold) { // Check for pinch-to-zoom-out gesture
+//                        Intent intent = new Intent(parent, MainActivity.class);
+//                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        parent.startActivity(intent);
+//                        lastIntentTime = currentTime;
+//                    }
+//                }
+//            }
+//            return super.onScale(detector);
+//        }
+//    }
+
     private class MyScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            long currentTime = System.currentTimeMillis();
-            if (currentTime - lastIntentTime > INTENT_COOLDOWN_MS) {
-                if (parent instanceof MainActivity && detector.getCurrentSpan() > 125 && detector.getTimeDelta() > 75) {
-                    Intent intent = new Intent(parent, SelectionActivity.class);
-                    parent.startActivity(intent);
-                    lastIntentTime = currentTime;
-                } else if (parent instanceof SelectionActivity) {
-                    final float scaleFactorThreshold = 0.97f;
-                    if (detector.getScaleFactor() < scaleFactorThreshold) { // Check for pinch-to-zoom-out gesture
-                        Intent intent = new Intent(parent, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        parent.startActivity(intent);
-                        lastIntentTime = currentTime;
-                    }
-                }
-            }
-            return super.onScale(detector);
+            scale *= detector.getScaleFactor();
+            scale = Math.max(0.1f, Math.min(scale, 5.0f)); // Constrain scale between 0.1 and 5.0
+            invalidate();
+            return true;
         }
     }
 
@@ -144,9 +235,6 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
         int[] original_dimensions = parent.getImageDimensionsFromUri(parent.imageUri);
         int original_x = original_dimensions[0];
         int original_y = original_dimensions[1];
-
-        int render_width = getMeasuredWidth();
-        int render_height = getMeasuredHeight();
 
         double x = (1.0d * selection_x) / original_x;
         double y = (1.0d * selection_y) / original_y;
@@ -165,9 +253,30 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
         this.invalidate();
     }
 
+    private void setMarkerPosition(float x, float y) {
+        float x_prop; float y_prop;
+        if (getWidth() > 0 && getHeight() > 0) {
+            // Adjust the marker position to account for the current zoom and pan
+            x_prop = (x - translationX) / (getWidth() * scale);
+            y_prop = (y - translationY) /  (getHeight() * scale);
+        } else {
+            Log.e(TAG, "Error: width or height was zero at time of marking");
+            return;
+        }
+        mark(x_prop, y_prop);
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
+
+        // Save the current canvas matrix
+        canvas.save();
+
+        // Apply zoom and translation
+        canvas.scale(scale, scale);
+        canvas.translate(translationX, translationY);
         super.onDraw(canvas);
+
         if (theMarker != null) {
             float length = Math.max(getWidth() / 48, getHeight() / 48);
             float gap = length / 1.5f;
@@ -193,6 +302,9 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                 invalidate();
             }
         }
+
+        // Restore the canvas matrix
+        canvas.restore();
     }
 
     protected class Marker {
@@ -241,7 +353,7 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
         try {
             BitmapFactory.decodeStream(parent.getContentResolver().openInputStream(uri), null, options);
         } catch (FileNotFoundException fnfe) {
-            Log.e(AthenaActivity.TAG, "Could not find file: " + uri.toString());
+            Log.e(TAG, "Could not find file: " + uri.toString());
             fnfe.printStackTrace();
             return null;
         }
@@ -254,7 +366,7 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
         try {
             return BitmapFactory.decodeStream(parent.getContentResolver().openInputStream(uri), null, options);
         } catch (FileNotFoundException fnfe) {
-            Log.e(AthenaActivity.TAG, "Could not find file: " + uri.toString());
+            Log.e(TAG, "Could not find file: " + uri.toString());
             fnfe.printStackTrace();
             return null;
         }
