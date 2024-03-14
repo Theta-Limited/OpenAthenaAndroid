@@ -35,6 +35,10 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
     private float translationX = 0f; // Initial translation
     private float translationY = 0f; // Initial translation
 
+    private int activePointerId = MotionEvent.INVALID_POINTER_ID;
+    protected boolean isDragging = false;
+    protected boolean isScaling = false;
+
     public MarkableImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
         if (!(context instanceof AthenaActivity)) {
@@ -68,7 +72,7 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
         this.setOnTouchListener(new View.OnTouchListener() {
             private final float clickThreshold = 25f;
             private float lastX, lastY;
-            private boolean isDragging = false;
+
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -76,37 +80,76 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                 scaleGestureDetector.onTouchEvent(event);
                 gestureDetector.onTouchEvent(event);
 
+                final int action = event.getActionMasked();
+                int pointerId = -1;
+                int pointerIndex = -1;
+
+                if (isScaling) {
+                    // Ignore taps if pinch to zoom scaling is being performed
+                    return true;
+                }
+
                 // record event time
                 long currentTime = System.currentTimeMillis();
 
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
+                        pointerIndex = event.getActionIndex();
+
                         lastX = event.getX();
                         lastY = event.getY();
                         isDragging = false;
+
+                        activePointerId = event.getPointerId(0);
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        float dx = event.getX() - lastX;
-                        float dy = event.getY() - lastY;
-                        if (!isDragging) {
-                            isDragging = Math.sqrt((dx * dx) + (dy * dy)) >= clickThreshold;
+                        pointerIndex = event.findPointerIndex(activePointerId);
+                        if (pointerIndex != -1) {
+                            float x = event.getX(pointerIndex);
+                            float y = event.getY(pointerIndex);
+                            float dx = event.getX() - lastX;
+                            float dy = event.getY() - lastY;
+                            if (!isDragging) {
+                                isDragging = Math.sqrt((dx * dx) + (dy * dy)) >= clickThreshold;
+                            }
+                            if (isDragging) {
+                                translationX += dx / scale;
+                                translationY += dy / scale;
+                                invalidate();
+                            }
+                            lastX = event.getX();
+                            lastY = event.getY();
                         }
-                        if (isDragging) {
-                            translationX += dx / scale;
-                            translationY += dy / scale;
-                            invalidate();
-                        }
-                        lastX = event.getX();
-                        lastY = event.getY();
                         break;
                     case MotionEvent.ACTION_POINTER_DOWN:
                         break;
+                    case MotionEvent.ACTION_CANCEL: {
+                        activePointerId = MotionEvent.INVALID_POINTER_ID;
+                        break;
+                    }
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_POINTER_UP:
                         if (!isDragging) {
                             handleTap(event.getX(), event.getY());
                         }
                         isDragging = false;
+
+                        pointerIndex = event.getActionIndex();
+                        pointerId = event.getPointerId(pointerIndex);
+                        if (pointerId == activePointerId) {
+                            // This was our active pointer going up. Choose a new active pointer and adjust accordingly.
+                            // In a multi-pointer scenario, find the next available pointer that isn't lifting up.
+                            int newPointerIndex = 0;
+                            for (int i = 0; i < event.getPointerCount(); i++) {
+                                if (i != pointerIndex) {
+                                    newPointerIndex = i;
+                                    break;
+                                }
+                            }
+                            lastX = event.getX(newPointerIndex);
+                            lastY = event.getY(newPointerIndex);
+                            activePointerId = event.getPointerId(newPointerIndex);
+                        }
                         break;
                 }
                 return true;
@@ -164,6 +207,11 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
 
     private class MyScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            isScaling = true; // Scaling begins
+            return true;
+        }
+        @Override
         public boolean onScale(ScaleGestureDetector detector) {
             long currentTime = System.currentTimeMillis();
             float lastScale = scale;
@@ -182,6 +230,11 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
             scale = Math.max(0.85f, Math.min(scale, 5.0f)); // Constrain scale between 0.9 and 5.0
             invalidate();
             return super.onScale(detector);
+        }
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+            isScaling = false; // Scaling ends
+            super.onScaleEnd(detector);
         }
     }
 
