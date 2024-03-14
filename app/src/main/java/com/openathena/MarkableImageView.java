@@ -31,6 +31,9 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
     // Cooldown period of 1 second
     private static final long INTENT_COOLDOWN_MS = 1000;
 
+    private long lastScaleGestureTime = 0;
+    private static final long SCALE_COOLDOWN_MS = 350;
+
     private float scale = 1f; // Initial scale
     private float translationX = 0f; // Initial translation
     private float translationY = 0f; // Initial translation
@@ -129,7 +132,7 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                     }
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_POINTER_UP:
-                        if (!isDragging) {
+                        if (!isDragging && currentTime - lastScaleGestureTime > SCALE_COOLDOWN_MS) {
                             handleTap(event.getX(), event.getY());
                         }
                         isDragging = false;
@@ -208,18 +211,21 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
     private class MyScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScaleBegin(ScaleGestureDetector detector) {
+            long currentTime = System.currentTimeMillis();
+            lastScaleGestureTime = currentTime;
+
             isScaling = true; // Scaling begins
             return true;
         }
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             long currentTime = System.currentTimeMillis();
-            float lastScale = scale;
+            float lastScaleValue = scale;
             scale *= detector.getScaleFactor();
             if (currentTime - lastIntentTime > INTENT_COOLDOWN_MS) {
                 if (parent instanceof SelectionActivity) {
                     final float scaleThreshold = 0.90f;
-                    if (scale < scaleThreshold && lastScale < scaleThreshold) { // Check for pinch-to-zoom-out gesture
+                    if (scale < scaleThreshold && lastScaleValue < scaleThreshold) { // Check for pinch-to-zoom-out gesture
                         Intent intent = new Intent(parent, MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         parent.startActivity(intent);
@@ -228,11 +234,15 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                 }
             }
             scale = Math.max(0.85f, Math.min(scale, 5.0f)); // Constrain scale between 0.9 and 5.0
+            lastScaleGestureTime = currentTime;
             invalidate();
             return super.onScale(detector);
         }
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
+            long currentTime = System.currentTimeMillis();
+            lastScaleGestureTime = currentTime;
+            
             isScaling = false; // Scaling ends
             super.onScaleEnd(detector);
         }
