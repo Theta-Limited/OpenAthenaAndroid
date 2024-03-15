@@ -116,8 +116,18 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                                 isDragging = Math.sqrt((dx * dx) + (dy * dy)) >= clickThreshold;
                             }
                             if (isDragging) {
+                                // Adjust translations based on drag, accounting for scale
                                 translationX += dx / scale;
                                 translationY += dy / scale;
+
+                                // Calculate the boundaries for translation
+                                float minTransX = (getWidth() / scale) - getWidth();
+                                float minTransY = (getHeight() / scale) - getHeight();
+
+                                // Apply boundaries
+                                translationX = clamp(translationX, minTransX, 0);
+                                translationY = clamp(translationY, minTransY, 0);
+
                                 invalidate();
                             }
                             lastX = event.getX();
@@ -158,6 +168,10 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                 return true;
             }
 
+            // Clamp function to restrict a value between a minimum and a maximum
+            private float clamp(float value, float min, float max) {
+                return Math.max(min, Math.min(value, max));
+            }
             private void handleTap(float x, float y) {
                 if (!parent.isImageLoaded || parent.imageUri == null || parent.iView == null) {
                     return;
@@ -242,7 +256,7 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
         public void onScaleEnd(ScaleGestureDetector detector) {
             long currentTime = System.currentTimeMillis();
             lastScaleGestureTime = currentTime;
-            
+
             isScaling = false; // Scaling ends
             super.onScaleEnd(detector);
         }
