@@ -120,13 +120,7 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                                 translationX += dx / scale;
                                 translationY += dy / scale;
 
-                                // Calculate the boundaries for translation
-                                float minTransX = (getWidth() / scale) - getWidth();
-                                float minTransY = (getHeight() / scale) - getHeight();
-
-                                // Apply boundaries
-                                translationX = clamp(translationX, minTransX, 0);
-                                translationY = clamp(translationY, minTransY, 0);
+                                restrictTranslationToContent();
 
                                 invalidate();
                             }
@@ -152,26 +146,29 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                         if (pointerId == activePointerId) {
                             // This was our active pointer going up. Choose a new active pointer and adjust accordingly.
                             // In a multi-pointer scenario, find the next available pointer that isn't lifting up.
-                            int newPointerIndex = 0;
+                            int newPointerIndex = -1;
                             for (int i = 0; i < event.getPointerCount(); i++) {
                                 if (i != pointerIndex) {
                                     newPointerIndex = i;
                                     break;
                                 }
                             }
-                            lastX = event.getX(newPointerIndex);
-                            lastY = event.getY(newPointerIndex);
-                            activePointerId = event.getPointerId(newPointerIndex);
+                            if (newPointerIndex != -1) { // We found a new pointer index
+                                lastX = event.getX(newPointerIndex);
+                                lastY = event.getY(newPointerIndex);
+                                activePointerId = event.getPointerId(newPointerIndex);
+                            } else {
+                                // No valid new pointer found, reset activePointerId
+                                activePointerId = MotionEvent.INVALID_POINTER_ID;
+                            }
                         }
                         break;
                 }
                 return true;
             }
 
-            // Clamp function to restrict a value between a minimum and a maximum
-            private float clamp(float value, float min, float max) {
-                return Math.max(min, Math.min(value, max));
-            }
+
+
             private void handleTap(float x, float y) {
                 if (!parent.isImageLoaded || parent.imageUri == null || parent.iView == null) {
                     return;
@@ -249,6 +246,7 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
             }
             scale = Math.max(0.85f, Math.min(scale, 5.0f)); // Constrain scale between 0.9 and 5.0
             lastScaleGestureTime = currentTime;
+            restrictTranslationToContent();
             invalidate();
             return super.onScale(detector);
         }
@@ -260,6 +258,31 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
             isScaling = false; // Scaling ends
             super.onScaleEnd(detector);
         }
+    }
+
+    private void restrictTranslationToContent() {
+        float minTransX; float maxTransX;
+        float minTransY; float maxTransY;
+        if (scale > 1.0f) { // constrain view window to be within content when zoomed
+            // Calculate the boundaries for translation
+            minTransX = (getWidth() / scale) - getWidth();
+            maxTransX = 0.0f;
+            minTransY = (getHeight() / scale) - getHeight();
+            maxTransY = 0.0f;
+        } else { // constrain content to center of view window when un-zoomed
+            minTransX = ((getWidth() / scale) - getWidth()) / 2.0f;
+            maxTransX = minTransX;
+            minTransY = ((getHeight() / scale) - getHeight()) / 2.0f;
+            maxTransY = minTransY;
+        }
+        // Apply boundaries
+        translationX = clamp(translationX, minTransX, maxTransX);
+        translationY = clamp(translationY, minTransY, maxTransY);
+    }
+
+    // Clamp function to restrict a value between a minimum and a maximum
+    private float clamp(float value, float min, float max) {
+        return Math.max(min, Math.min(value, max));
     }
 
     /**
