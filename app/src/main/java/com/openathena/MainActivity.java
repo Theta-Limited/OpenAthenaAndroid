@@ -240,13 +240,11 @@ public class MainActivity extends AthenaActivity {
 //        set_selection_x(athenaApp.get_selection_x());
 //        set_selection_y(athenaApp.get_selection_y());
 
-
-
         if (isImageLoaded) {
             if (get_selection_x() != -1 && get_selection_y() != -1) {
                 iView.restoreMarker(get_selection_x(), get_selection_y());
             } else{
-                iView.mark(0.5d, 0.5d); // put marker on center of iView if no current selection
+                iView.reset();
             }
         }
 
@@ -350,7 +348,7 @@ public class MainActivity extends AthenaActivity {
             restorePrefs(); // reset textViewTargetCoord to mode descriptor
 
             isImageLoaded = false;
-            iView.mark(0.5d, 0.5d); // reset the marker to the principle point (center)
+            iView.reset();// reset the marker to the center and reset pan and zoom values
             set_selection_x(-1);
             set_selection_y(-1);
         }

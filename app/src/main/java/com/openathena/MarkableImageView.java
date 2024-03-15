@@ -279,6 +279,13 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
         mark(x,y);
     }
 
+    public void reset() {
+        this.mark(0.5d, 0.5d);
+        scale = 1.0f;
+        translationX = 0.0f;
+        translationY = 0.0f;
+    }
+
     /**
      * Given an x and y proportion (range [0, 1]) draw a mark that point
      * @param x The x proportion of a point on this imageView to draw a mark on. 0.0d is left, 0.5d is mid, 1.0d is right
