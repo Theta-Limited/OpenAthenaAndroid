@@ -636,7 +636,7 @@ public class MainActivity extends AthenaActivity {
             if (!outputModeIsSlavic()) {
                 attribs += getString(R.string.latitude_label_long) + " "+ roundDouble(y) + "°\n";
                 attribs += getString(R.string.longitude_label_long) + " " + roundDouble(x) + "°\n";
-                attribs += getString(R.string.altitude_label_long) + " " + Math.round(z * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + "m\n";
+                attribs += getString(R.string.altitude_label_long) + " " + Math.round(z * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + (isUnitFoot() ? "ft.":"m") + "\n";
             } else {
                 attribs += getString(R.string.latitude_wgs84_label_long) + " " + roundDouble(y) + "°\n";
                 attribs += getString(R.string.longitude_wgs84_label_long) + " " + roundDouble(x) + "°\n";
