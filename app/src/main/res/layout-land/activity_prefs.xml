@@ -8,7 +8,7 @@
 
     <TextView
         android:id="@+id/textViewOutputModeTitle"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
@@ -64,7 +64,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/compassCorrectionSeekBar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewOutputModeTitle">
+        app:layout_constraintTop_toBottomOf="@+id/textViewOutputModeTitle"
+        app:layout_constraintVertical_bias="0.0">
 
         <RadioGroup
             android:id="@+id/outputModeRadioGroup"
@@ -137,24 +138,24 @@
         android:id="@+id/reset_prefs_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:onClick="prefsReset"
         android:text="@string/reset_prefs_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/outputModesScrollView"
+        app:layout_constraintEnd_toEndOf="@+id/compassCorrectionSeekBar"
+        app:layout_constraintStart_toStartOf="@+id/compassCorrectionSeekBar"
         app:layout_constraintTop_toBottomOf="@+id/compassCorrectionSeekBar" />
 
     <TextView
         android:id="@+id/textViewUnitMeasurementTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:text="@string/distance_unit_label"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="?attr/actionMenuTextColor"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/outputModesScrollView"
+        app:layout_constraintEnd_toEndOf="@+id/compassCorrectionSeekBar"
+        app:layout_constraintStart_toStartOf="@+id/compassCorrectionSeekBar"
         app:layout_constraintTop_toBottomOf="@+id/reset_prefs_button" />
 
     <RadioGroup
@@ -163,8 +164,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/outputModesScrollView"
+        app:layout_constraintEnd_toEndOf="@+id/compassCorrectionSeekBar"
+        app:layout_constraintStart_toStartOf="@+id/compassCorrectionSeekBar"
         app:layout_constraintTop_toBottomOf="@+id/textViewUnitMeasurementTitle">
 
         <RadioButton
