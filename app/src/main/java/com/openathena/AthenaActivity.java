@@ -153,7 +153,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 outputMode = outputModes.CK42Geodetic; // An alternative geodetic system using the Krasovsky 1940 ellipsoid. Commonly used in former Warsaw pact countries
                 // There is no reason anyone would ever use anything but Meter as the unit for CK42
                 setMeasurementUnit(measurementUnits.METER);
-                // TODO disable all other buttons in the measurementUnitRadioGroup when this outputMode is active!
+                // TODO make the disablement of imperial units more clear to user in the UI when this output mode is active
                 if (outputModeRadioGroup != null && outputModeRadioGroup.getVisibility() == View.VISIBLE) {
                     outputModeRadioGroup.check(R.id.radioButtonCK42Geodetic);
                 }
@@ -171,7 +171,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 outputMode = outputModes.CK42GaussKrüger; // An alternative geodetic system using the Krasovsky 1940 ellipsoid. Northing defined by X value, and Easting defined by Y value describe an exact position on Earth
                 // There is no reason anyone would ever use anything but Meter as the unit for CK42
                 setMeasurementUnit(measurementUnits.METER);
-                // TODO disable all other buttons in the measurementUnitRadioGroup when this outputMode is active!
+                // TODO make the disablement of imperial units more clear to user in the UI when this output mode is active
                 if (outputModeRadioGroup != null && outputModeRadioGroup.getVisibility() == View.VISIBLE) {
                     outputModeRadioGroup.check(R.id.radioButtonCK42GaussKrüger);
                 }
