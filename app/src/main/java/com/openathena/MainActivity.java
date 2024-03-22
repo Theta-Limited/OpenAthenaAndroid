@@ -636,16 +636,16 @@ public class MainActivity extends AthenaActivity {
             if (!outputModeIsSlavic()) {
                 attribs += getString(R.string.latitude_label_long) + " "+ roundDouble(y) + "°\n";
                 attribs += getString(R.string.longitude_label_long) + " " + roundDouble(x) + "°\n";
-                attribs += getString(R.string.altitude_label_long) + " " + Math.round(z * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + (isUnitFoot() ? "ft.":"m") + "\n";
+                attribs += getString(R.string.altitude_label_long) + " " + Math.round(z * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
             } else {
                 attribs += getString(R.string.latitude_wgs84_label_long) + " " + roundDouble(y) + "°\n";
                 attribs += getString(R.string.longitude_wgs84_label_long) + " " + roundDouble(x) + "°\n";
-                attribs += getString(R.string.altiude_wgs84_label_long) + " " + Math.round(z * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + (isUnitFoot() ? "ft.":"m") + "\n";
+                attribs += getString(R.string.altiude_wgs84_label_long) + " " + Math.round(z * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
             }
 
             try {
                 double terrainAltitude = theParser.getAltFromLatLon(y, x);
-                attribs += getString(R.string.terrain_altitude) + " " + Math.round(terrainAltitude * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + (isUnitFoot() ? "ft.":"m") + "\n";
+                attribs += getString(R.string.terrain_altitude) + " " + Math.round(terrainAltitude * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
             } catch (RequestedValueOOBException | CorruptTerrainException e){
                 attribs += getString(R.string.dem_load_error_generic_msg);
             }
@@ -688,12 +688,12 @@ public class MainActivity extends AthenaActivity {
 
                     altitude = Math.round(result[3]);
                     if (!outputModeIsSlavic()) {
-                        attribs += getString(R.string.target_found_at_msg) + ": " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt (hae): " + Math.round(altitude * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + (isUnitFoot() ? "ft.":"m") + "\n";
+                        attribs += getString(R.string.target_found_at_msg) + ": " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt (hae): " + Math.round(altitude * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
                     } else {
-                        attribs += getString(R.string.target_found_at_msg) + " (WGS84): " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt (hae): " + altitude + "m" + "\n";
-                        attribs += getString(R.string.target_found_at_msg) + " (CK-42): " + roundDouble(latCK42) + "," + roundDouble(lonCK42) + " Alt (hae): " + altCK42 + "m" + "\n";
+                        attribs += getString(R.string.target_found_at_msg) + " (WGS84): " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt (hae): " + altitude + " " + "m" + "\n";
+                        attribs += getString(R.string.target_found_at_msg) + " (CK-42): " + roundDouble(latCK42) + "," + roundDouble(lonCK42) + " Alt (hae): " + altCK42 + " " + "m" + "\n";
                     }
-                    attribs += getString(R.string.drone_dist_to_target_msg) + " " + Math.round(distance * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + (isUnitFoot() ? "ft.":"m") + "\n";
+                    attribs += getString(R.string.drone_dist_to_target_msg) + " " + Math.round(distance * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
                     if (!outputModeIsSlavic()) { // to avoid confusion with WGS84, no Google Maps link is provided when outputModeIsSlavic()
                         attribs += "<a href=\"https://maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "\">";
                         attribs += "maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "</a>\n\n";
@@ -759,9 +759,11 @@ public class MainActivity extends AthenaActivity {
 
                 // convert from WGS84 height above ellipsoid to EGM96 above mean sea level (much more commonly used)
                 double mslAlt = altitudeDouble + offsetAdapter.getEGM96OffsetAtLatLon(latitude, longitude);
+                // convert from meters to feet if user setting indicates to do so
                 mslAlt *= (isUnitFoot() ? FEET_PER_METER : 1.0d);
+                // round to nearest whole number
                 long altEGM96 = Math.round(mslAlt);
-                targetCoordString += getString(R.string.altitude_label_short) + " " + altEGM96 + (isUnitFoot() ? "ft.":"m");
+                targetCoordString += getString(R.string.altitude_label_short) + " " + altEGM96 + " " + (isUnitFoot() ? "ft.":"m");
             } else { // to avoid confusion with WGS84, no Google Maps link is provided when outputModeIsSlavic()
                 if (outputMode == outputModes.CK42Geodetic) {
                     targetCoordString = "(CK-42) " + roundDouble(latCK42) + ", " + roundDouble(lonCK42) + " Alt: " + altCK42 + "m" + "<br>";
