@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/prefs_content"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/textViewOutputModeTitle"
@@ -16,7 +16,7 @@
         android:textAlignment="textStart"
         android:textColor="?attr/actionMenuTextColor"
         android:textSize="34sp"
-        app:layout_constraintEnd_toEndOf="@+id/outputModesScrollView"
+        app:layout_constraintEnd_toStartOf="@+id/compassCorrectionValue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,9 +24,8 @@
         android:id="@+id/compassCorrectionValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/prefs_compass_offset_label"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -34,7 +33,7 @@
         android:textSize="20sp"
         android:tooltipText="@string/tooltip_correct_bad_compass_data_this_is_not_for_setting_mag_declination"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/outputModesScrollView"
+        app:layout_constraintStart_toEndOf="@+id/textViewOutputModeTitle"
         app:layout_constraintTop_toTopOf="parent" />
 
     <SeekBar
@@ -46,24 +45,22 @@
         android:layout_marginEnd="32dp"
         android:max="200"
         android:progress="100"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/outputModesScrollView"
+        app:layout_constraintEnd_toEndOf="@+id/compassCorrectionValue"
+        app:layout_constraintStart_toStartOf="@+id/compassCorrectionValue"
         app:layout_constraintTop_toBottomOf="@+id/compassCorrectionValue" />
 
     <ScrollView
         android:id="@+id/outputModesScrollView"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginStart="32dp"
         android:layout_marginTop="12dp"
-        android:layout_marginEnd="32dp"
         android:fadeScrollbars="false"
         android:scrollbarAlwaysDrawVerticalTrack="true"
         android:scrollbarSize="8dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/compassCorrectionSeekBar"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/textViewOutputModeTitle"
+        app:layout_constraintStart_toStartOf="@+id/textViewOutputModeTitle"
         app:layout_constraintTop_toBottomOf="@+id/textViewOutputModeTitle"
         app:layout_constraintVertical_bias="0.0">
 
@@ -163,10 +160,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/compassCorrectionSeekBar"
         app:layout_constraintStart_toStartOf="@+id/compassCorrectionSeekBar"
-        app:layout_constraintTop_toBottomOf="@+id/textViewUnitMeasurementTitle">
+        app:layout_constraintTop_toBottomOf="@+id/textViewUnitMeasurementTitle"
+        tools:ignore="NotSibling">
 
         <RadioButton
             android:id="@+id/radioButtonMETER"
