@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/new_dem_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_enter_coordinates"
+        android:textAllCaps="false"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"/>
+
+    <EditText
+        android:id="@+id/new_dem_latlon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAllCaps="false"
+        android:hint="@string/hint_lat_lon"
+        android:inputType="text"
+        android:layout_below="@id/new_dem_label"
+        android:layout_marginTop="8dp"/>
+
+    <EditText
+        android:id="@+id/new_dem_meters"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/hint_fifteen_thousand_meters"
+        android:textAllCaps="false"
+        android:inputType="numberDecimal"
+        android:gravity="center"
+        android:layout_below="@id/new_dem_latlon"
+        android:layout_marginTop="8dp"/>
+
+    <Button
+        android:id="@+id/new_dem_downloadbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAllCaps="false"
+        android:text="@string/button_download_elevation_map"
+        android:layout_below="@id/new_dem_meters"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"/>
+
+    <Button
+        android:id="@+id/new_dem_importbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="@string/button_import_elevation_map"
+        android:layout_below="@id/new_dem_downloadbutton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/new_dem_results"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAllCaps="false"
+        android:text="Results"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"/>
+
+</RelativeLayout>

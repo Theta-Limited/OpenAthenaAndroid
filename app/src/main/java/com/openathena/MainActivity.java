@@ -253,9 +253,13 @@ public class MainActivity extends AthenaActivity {
             calculateImage(iView, athenaApp.shouldISendCoT);
             athenaApp.needsToCalculateForNewSelection = false;
         }
-    }
 
+        // load DEM cache for late reference
+        athenaApp.demCache = new DemCache(getApplicationContext());
+        Log.d(TAG,"DemCache: total storage "+athenaApp.demCache.totalStorage());
+        Log.d(TAG,"DemCache: count "+athenaApp.demCache.count());
 
+    } // onCreate
 
     @Override
     protected void onSaveInstanceState(Bundle saveInstanceState) {
