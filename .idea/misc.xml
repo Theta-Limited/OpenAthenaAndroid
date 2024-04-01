@@ -2,13 +2,6 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="../../../../columbia1/krupczak/rdk/repos/OpenAthenaAndroid/app/src/main/res/layout/activity_about.xml" value="0.24010416666666667" />
-        <entry key="../../../../columbia1/krupczak/rdk/repos/OpenAthenaAndroid/app/src/main/res/layout/activity_log.xml" value="0.24010416666666667" />
-        <entry key="../../../../columbia1/krupczak/rdk/repos/OpenAthenaAndroid/app/src/main/res/layout/activity_main.xml" value="0.24010416666666667" />
-        <entry key="../../../../columbia1/krupczak/rdk/repos/OpenAthenaAndroid/app/src/main/res/layout/activity_prefs.xml" value="0.24010416666666667" />
-        <entry key="../../../../columbia1/krupczak/rdk/repos/OpenAthenaAndroid/app/src/main/res/layout/content_about.xml" value="0.24010416666666667" />
-        <entry key="../../../../columbia1/krupczak/rdk/repos/OpenAthenaAndroid/app/src/main/res/layout/test_layout.xml" value="0.44947916666666665" />
-        <entry key="../../../../columbia1/krupczak/rdk/repos/OpenAthenaAndroid/app/src/main/res/menu/menu_main.xml" value="0.24010416666666667" />
         <entry key="app/src/main/res/layout/activity_about.xml" value="0.28229166666666666" />
         <entry key="app/src/main/res/layout/activity_log.xml" value="0.28229166666666666" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="1.0" />
@@ -26,7 +19,7 @@
   <component name="VisualizationToolProject">
     <option name="state">
       <ProjectState>
-        <option name="scale" value="0.24010416666666667" />
+        <option name="scale" value="1.0" />
       </ProjectState>
     </option>
   </component>
