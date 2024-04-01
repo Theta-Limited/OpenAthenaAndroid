@@ -89,7 +89,7 @@
     <string name="ck_42_geodetic_tooltip">Un système géodésique alternatif utilisant l\'ellipsoïde de Krasovsky 1940. Couramment utilisé dans les anciens pays du pacte de Varsovie</string>
     <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
     <string name="ck_42_gauss_kruger_tooltip">Un système géodésique alternatif utilisant l\'ellipsoïde de Krasovsky 1940. Une abscisse est définie par la valeur X, et une ordonnée est définie par la valeur Y pour décrire une position exacte sur la Terre.</string>
-    <string name="target_output_mode_title">🎯 Méthode de sortie :</string>
+    <string name="target_output_mode_title">🎯 Paramètres de sortie :</string>
     <string name="gk_northing_text">Abscisse :</string>
     <string name="gk_easting_text">Ordonnée :</string>
     <string name="gk_zone_text">ZONE:</string>
@@ -135,7 +135,7 @@
     <string name="no">Non</string>
     <string name="title_activity_selection">Choisir une cible</string>
     <string name="geoid_load_error_msg">Erreur critique : impossible de charger le fichier de données du géoïde terrestre !</string>
-    <string name="nato_vertical_datum_notice">Le référentiel vertical de sortie OTAN et WGS84 est EGM96 mètres au-dessus du niveau moyen de la mer.</string>
+    <string name="nato_vertical_datum_notice">Le datum vertical de sortie de l\'OTAN et WGS84 est de EGM96 mètres (ou pieds) au-dessus du niveau moyen de la mer.</string>
     <string name="warsaw_vertical_datum_notice">Le référentiel vertical de sortie du CK-42 est en mètres de hauteur au-dessus de l\'ellipsoïde de Krassowsky 1940.</string>
     <string name="lens_type">Type de lentille:</string>
     <string name="distortion_parameters">Paramètres de distorsion:</string>
@@ -145,4 +145,7 @@
     <string name="CalibrationReminderSnippet">Pour de meilleurs résultats, veuillez calibrer la boussole 🧭 de votre drone avant le vol !</string>
     <string name="obtain_a_digital_elevation_model_here">Obtenez un modèle numérique d\'élévation (DEM) ici</string>
     <string name="terrain_altitude">Altitude du terrain :</string>
+    <string name="distance_unit_label">Unité de distance:</string>
+    <string name="meter_label">Mètre</string>
+    <string name="us_foot_label">Pied US</string>
 </resources>

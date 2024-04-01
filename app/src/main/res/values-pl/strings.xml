@@ -87,7 +87,7 @@
     <string name="ck_42_geodetic_tooltip">Alternatywny system geodezyjny wykorzystujący elipsoidę Krasowskiego 1940. Powszechnie używany w krajach byłego Układu Warszawskiego</string>
     <string name="ck_42_gauss_kruger_n_e">CK-42 Красовский\nGauss-Krüger N, E</string>
     <string name="ck_42_gauss_kruger_tooltip">Gauss-Krüger: Alternatywny system geodezyjny korzystający z elipsoidy Krasowskiego z 1940 roku. Północ jest określana przez wartość X, a Wschód jest określany przez wartość Y, co opisuje dokładną pozycję na Ziemi.</string>
-    <string name="target_output_mode_title">🎯 Tryb wyjściowy:</string>
+    <string name="target_output_mode_title">🎯 Ustawienia wyjściowe:</string>
     <string name="gk_northing_text">Północ:</string>
     <string name="gk_easting_text">Wschodnia:</string>
     <string name="gk_zone_text">STREFA:</string>
@@ -133,7 +133,7 @@
     <string name="no">Nie</string>
     <string name="title_activity_selection">Wybierz cel</string>
     <string name="geoid_load_error_msg">Błąd krytyczny: nie można załadować pliku danych geoidy Ziemi!</string>
-    <string name="nato_vertical_datum_notice">NATO i WGS84 używają pionowego układu odniesienia EGM96, wyrażonego w metrach powyżej średniego poziomu morza.</string>
+    <string name="nato_vertical_datum_notice">Daty wysokościowe wyjściowe NATO i WGS84 to EGM96 metrów (lub stóp) powyżej średniego poziomu morza.</string>
     <string name="warsaw_vertical_datum_notice">CK-42 używa pionowego układu odniesienia opartego na wysokości w metrach nad elipsoidą Krassowskiego z 1940 roku.</string>
     <string name="geotiff_coverage_reminder">Upewnij się, że plik DEM obejmuje lokalizację drona!</string>
     <string name="lens_type">Typ obiektywu:</string>
@@ -144,4 +144,7 @@
     <string name="CalibrationReminderSnippet">Aby uzyskać najlepsze wyniki, proszę skalibrować kompas 🧭 swojego drona przed lotem!</string>
     <string name="obtain_a_digital_elevation_model_here">Uzyskaj tutaj cyfrowy model elewacji (DEM).</string>
     <string name="terrain_altitude">Wysokość terenu :</string>
+    <string name="distance_unit_label">Jednostka odległości:</string>
+    <string name="meter_label">Metr</string>
+    <string name="us_foot_label">Stopa amerykańska</string>
 </resources>
