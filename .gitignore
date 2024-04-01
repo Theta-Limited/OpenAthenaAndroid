@@ -22,7 +22,7 @@ android/local.properties
 
 # IntelliJ
 *.iml
-.idea/
+.idea
 .idea/*
 .idea*
 misc.xml
