@@ -64,10 +64,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 // Libraries from the U.S. National Geospatial Intelligence Agency https://www.nga.mil
-import mil.nga.mgrs.grid.GridType;
 import mil.nga.tiff.util.TiffException;
-import mil.nga.mgrs.*;
-import mil.nga.grid.features.Point;
 
 public class MainActivity extends AthenaActivity {
     public static String TAG = MainActivity.class.getSimpleName();
@@ -77,6 +74,8 @@ public class MainActivity extends AthenaActivity {
     public static int dangerousAutelAwarenessCount;
 
     public static EGMOffsetProvider offsetAdapter = new EGM96OffsetAdapter(); // calculates diff between WGS84 reference ellipsoid and EGM96 geoid
+
+    public static final double FEET_PER_METER = 3937.0d/1200.0d; // Exact constant for US Survey Foot per Meter
 
     TextView textView;
 
@@ -132,7 +131,7 @@ public class MainActivity extends AthenaActivity {
         //setContentView(R.layout.activity_main);
         setContentView(R.layout.activity_main);
 
-        radioGroup = null;
+        outputModeRadioGroup = null;
 
         progressBar = (ProgressBar)  findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
@@ -241,13 +240,11 @@ public class MainActivity extends AthenaActivity {
 //        set_selection_x(athenaApp.get_selection_x());
 //        set_selection_y(athenaApp.get_selection_y());
 
-
-
         if (isImageLoaded) {
             if (get_selection_x() != -1 && get_selection_y() != -1) {
                 iView.restoreMarker(get_selection_x(), get_selection_y());
             } else{
-                iView.mark(0.5d, 0.5d); // put marker on center of iView if no current selection
+                iView.reset();
             }
         }
 
@@ -355,7 +352,7 @@ public class MainActivity extends AthenaActivity {
             restorePrefs(); // reset textViewTargetCoord to mode descriptor
 
             isImageLoaded = false;
-            iView.mark(0.5d, 0.5d); // reset the marker to the principle point (center)
+            iView.reset();// reset the marker to the center and reset pan and zoom values
             set_selection_x(-1);
             set_selection_y(-1);
         }
@@ -576,6 +573,7 @@ public class MainActivity extends AthenaActivity {
             double[] values = theMeta.getMetadataValues(exif);
             double y = values[0];
             double x  = values[1];
+            // MetadataExctractor.getMetadataValues auto converts vertical datum to EGM96 AMSL
             double z = values[2];
             double azimuth = values[3];
             double theta = values[4];
@@ -642,16 +640,16 @@ public class MainActivity extends AthenaActivity {
             if (!outputModeIsSlavic()) {
                 attribs += getString(R.string.latitude_label_long) + " "+ roundDouble(y) + "°\n";
                 attribs += getString(R.string.longitude_label_long) + " " + roundDouble(x) + "°\n";
-                attribs += getString(R.string.altitude_label_long) + " " + Math.round(z) + "m\n";
+                attribs += getString(R.string.altitude_label_long) + " " + Math.round(z * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
             } else {
                 attribs += getString(R.string.latitude_wgs84_label_long) + " " + roundDouble(y) + "°\n";
                 attribs += getString(R.string.longitude_wgs84_label_long) + " " + roundDouble(x) + "°\n";
-                attribs += getString(R.string.altiude_wgs84_label_long) + " " + Math.round(z) + "m\n";
+                attribs += getString(R.string.altiude_wgs84_label_long) + " " + Math.round(z * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
             }
 
             try {
                 double terrainAltitude = theParser.getAltFromLatLon(y, x);
-                attribs += getString(R.string.terrain_altitude) + " " + Math.round(terrainAltitude) + "m\n";
+                attribs += getString(R.string.terrain_altitude) + " " + Math.round(terrainAltitude * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
             } catch (RequestedValueOOBException | CorruptTerrainException e){
                 attribs += getString(R.string.dem_load_error_generic_msg);
             }
@@ -694,12 +692,12 @@ public class MainActivity extends AthenaActivity {
 
                     altitude = Math.round(result[3]);
                     if (!outputModeIsSlavic()) {
-                        attribs += getString(R.string.target_found_at_msg) + ": " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt (hae): " + altitude + "m" + "\n";
+                        attribs += getString(R.string.target_found_at_msg) + ": " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt (hae): " + Math.round(altitude * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
                     } else {
-                        attribs += getString(R.string.target_found_at_msg) + " (WGS84): " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt (hae): " + altitude + "m" + "\n";
-                        attribs += getString(R.string.target_found_at_msg) + " (CK-42): " + roundDouble(latCK42) + "," + roundDouble(lonCK42) + " Alt (hae): " + altCK42 + "m" + "\n";
+                        attribs += getString(R.string.target_found_at_msg) + " (WGS84): " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt (hae): " + altitude + " " + "m" + "\n";
+                        attribs += getString(R.string.target_found_at_msg) + " (CK-42): " + roundDouble(latCK42) + "," + roundDouble(lonCK42) + " Alt (hae): " + altCK42 + " " + "m" + "\n";
                     }
-                    attribs += getString(R.string.drone_dist_to_target_msg) + " " + Math.round(distance) + "m\n";
+                    attribs += getString(R.string.drone_dist_to_target_msg) + " " + Math.round(distance * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
                     if (!outputModeIsSlavic()) { // to avoid confusion with WGS84, no Google Maps link is provided when outputModeIsSlavic()
                         attribs += "<a href=\"https://maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "\">";
                         attribs += "maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "</a>\n\n";
@@ -764,8 +762,12 @@ public class MainActivity extends AthenaActivity {
                 targetCoordString += "</a> "; // end href tag
 
                 // convert from WGS84 height above ellipsoid to EGM96 above mean sea level (much more commonly used)
-                long altEGM96 = Math.round(altitudeDouble + offsetAdapter.getEGM96OffsetAtLatLon(latitude, longitude));
-                targetCoordString += getString(R.string.altitude_label_short) + " " + altEGM96 + "m";
+                double mslAlt = altitudeDouble + offsetAdapter.getEGM96OffsetAtLatLon(latitude, longitude);
+                // convert from meters to feet if user setting indicates to do so
+                mslAlt *= (isUnitFoot() ? FEET_PER_METER : 1.0d);
+                // round to nearest whole number
+                long altEGM96 = Math.round(mslAlt);
+                targetCoordString += getString(R.string.altitude_label_short) + " " + altEGM96 + " " + (isUnitFoot() ? "ft.":"m");
             } else { // to avoid confusion with WGS84, no Google Maps link is provided when outputModeIsSlavic()
                 if (outputMode == outputModes.CK42Geodetic) {
                     targetCoordString = "(CK-42) " + roundDouble(latCK42) + ", " + roundDouble(lonCK42) + " Alt: " + altCK42 + "m" + "<br>";
