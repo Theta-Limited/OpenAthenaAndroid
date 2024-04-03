@@ -4,7 +4,9 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="action_demcache">Manage Elevation Maps</string>
+    <!-- TODO add proper translations once AUTODEM feature is complete!!! -->
+    <string name="action_demcache" translatable="false">Manage Elevation Maps</string>
+
     <string name="action_prefs">Settings</string>
     <string name="action_calculate">Calculate</string>
     <string name="action_about_openathena">About OpenAthena</string>
@@ -24,35 +26,36 @@
     <string name="save_prefs_text">💾</string>
     <string name="reset_prefs_text">Reset</string>
 
-    <string name="are_you_sure_delete_map">Delete this elevation map?</string>
+    <!-- TODO add proper translations once AUTODEM feature is complete!!! -->
+    <string name="are_you_sure_delete_map" translatable="false">Delete this elevation map?</string>
 
     <string name="title_activity_log">OpenAthena™ for Android Log</string>
     <string name="title_activity_prefs">OpenAthena™ for Android Settings</string>
     <string name="title_activity_about">About OpenAthena™ for Android</string>
-    <string name="title_activity_demcache">Manage Elevation Map Cache</string>
-    <string name="title_activity_newelevationmap">New Elevation Map</string>
-    <string name="title_activity_managedems">Manage Elevation Maps</string>
-    <string name="title_activity_mapsdetail">Elevation Map Details</string>
+    <!-- TODO add proper translations once AUTODEM feature is complete!!! -->
+    <string name="title_activity_demcache" translatable="false">Manage Elevation Map Cache</string>
+    <string name="title_activity_newelevationmap" translatable="false">New Elevation Map</string>
+    <string name="title_activity_managedems" translatable="false">Manage Elevation Maps</string>
+    <string name="title_activity_mapsdetail" translatable="false">Elevation Map Details</string>
 
-    <string name="button_download_elevation_map">Download Elevation Map (Internet)</string>
-    <string name="button_import_elevation_map">Import Elevation Map (File)</string>
-    <string name="label_enter_coordinates">Enter center coordinates and h/w in meters</string>
+    <!-- TODO add proper translations once AUTODEM feature is complete!!! -->
+    <string name="button_download_elevation_map" translatable="false">Download Elevation Map (Internet)</string>
+    <string name="button_import_elevation_map" translatable="false">Import Elevation Map (File)</string>
+    <string name="label_enter_coordinates" translatable="false">Enter center coordinates and h/w in meters</string>
 
-    <string name="button_manage_cache">Manage Cache</string>
-    <string name="button_lookup_coordinates">Lookup Coordinates</string>
-    <string name="button_lookup_results">Lookup results</string>
-    <string name="button_lookup_please_enter">Please enter lat,lon in degrees separated by comma</string>
-    <string name="button_lookup_no_data">No elevation data for the middle of the ocean!</string>
-    <string name="button_lookup_nothing_found">Nothing found</string>
-
-    <string name="hint_lat_lon_in_degrees">lat,lon in degrees</string>
-    <string name="hint_lat_lon">lat,lon</string>
-    <string name="hint_fifteen_thousand_meters">15000 meters</string>
-
-    <string name="download_succeeded">Download succeeded</string>
-    <string name="download_failed">Download failed</string>
-
-    <string name="lookup_nothing_found">No DEM found for coordinates</string>
+    <!-- TODO add proper translations once AUTODEM feature is complete!!! -->
+    <string name="button_manage_cache" translatable="false">Manage Cache</string>
+    <string name="button_lookup_coordinates" translatable="false">Lookup Coordinates</string>
+    <string name="button_lookup_results" translatable="false">Lookup results</string>
+    <string name="button_lookup_please_enter" translatable="false">Please enter lat,lon in degrees separated by comma</string>
+    <string name="button_lookup_no_data" translatable="false">No elevation data for the middle of the ocean!</string>
+    <string name="button_lookup_nothing_found" translatable="false">Nothing found</string>
+    <string name="hint_lat_lon_in_degrees" translatable="false">lat,lon in degrees</string>
+    <string name="hint_lat_lon" translatable="false">lat,lon</string>
+    <string name="hint_fifteen_thousand_meters" translatable="false">15000 meters</string>
+    <string name="download_succeeded" translatable="false">Download succeeded</string>
+    <string name="download_failed" translatable="false">Download failed</string>
+    <string name="lookup_nothing_found" translatable="false">No DEM found for coordinates</string>
 
 
 
@@ -155,10 +158,11 @@
     <string name="distance_unit_label">Distance Unit:</string>
     <string name="meter_label">Meter</string>
     <string name="us_foot_label">US Foot</string>
+    <!-- TODO remove these extraneous Strings -->
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="lorem_ipsum">
+    <string name="first_fragment_label" translatable="false">First Fragment</string>
+    <string name="second_fragment_label" translatable="false">Second Fragment</string>
+    <string name="lorem_ipsum" translatable="false">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
         volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
         dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad
