@@ -101,7 +101,7 @@ public class DemDownloader
 
     // down a DEM async or in background
     // callback will indicate success or error
-    // pass an object that implements a callback metho
+    // pass an object that implements a callback method
     // onCallback() method
 
     public void asyncDownload(Consumer<String> consumer)

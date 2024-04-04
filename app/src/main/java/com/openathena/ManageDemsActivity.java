@@ -51,10 +51,10 @@ public class ManageDemsActivity extends AthenaActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_dems);
 
+        manageButton = (Button)findViewById(R.id.manageCacheButton);
         latLonText = (EditText)findViewById(R.id.lookup_latlon_text);
         lookupButton = (Button)findViewById(R.id.lookupButton);
         resultsButton = (Button)findViewById(R.id.lookupResultsButton);
-        manageButton = (Button)findViewById(R.id.manageCacheButton);
 
         lookupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,7 +89,7 @@ public class ManageDemsActivity extends AthenaActivity
         Intent i;
 
         // cache selected item set in button callback; could be set here
-        // as well; frankly, this function coulbe be eliminated too
+        // as well; frankly, this function could be eliminated too
         // and rolled into the callback
 
         // create, launch intent
@@ -116,18 +116,21 @@ public class ManageDemsActivity extends AthenaActivity
 
         Log.d(TAG,"ManageDems: splitting up "+latLonStr);
 
-        // remove any () or degrees
-        latLonStr = latLonStr.replaceAll("\\(","");
-        latLonStr = latLonStr.replaceAll("\\)","");
-        latLonStr = latLonStr.replaceAll("[Dd]egrees","");
-        String pieces[] = latLonStr.split(",");
-        if (pieces.length != 2) {
+        // remove any () or degrees or leading/trailing whitespace
+        latLonStr = latLonStr.trim();
+        latLonStr = latLonStr.toUpperCase();
+        latLonStr = latLonStr.toUpperCase().replaceAll("[()]", "");
+        latLonStr = latLonStr.replaceAll("[Dd]egrees","°");
+        latLonStr = latLonStr.replaceAll("[Dd]eg","°");
+
+        try {
+            double[] latLonPair = CoordTranslator.parseCoordinates(latLonStr);
+            lat = latLonPair[0];
+            lon = latLonPair[1];
+        } catch (java.text.ParseException pe) {
             resultsButton.setText(R.string.button_lookup_please_enter);
             return;
         }
-
-        lat = Double.parseDouble(pieces[0]);
-        lon = Double.parseDouble(pieces[1]);
 
         if (lat == 0.0 && lon == 0.0) {
             resultsButton.setText(R.string.button_lookup_no_data);
