@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/elevationMapDetailText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Info about an elevation map"
+            android:clickable="true"
+            android:scrollbars="vertical"
+            android:gravity="top|start"/>
+
+    </ScrollView>
+</LinearLayout>

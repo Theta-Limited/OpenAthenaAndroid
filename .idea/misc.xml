@@ -1,15 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="../../../../columbia1/krupczak/rdk/repos/OpenAthenaAndroid/app/src/main/res/layout/activity_about.xml" value="0.24010416666666667" />
-        <entry key="../../../../columbia1/krupczak/rdk/repos/OpenAthenaAndroid/app/src/main/res/layout/activity_log.xml" value="0.24010416666666667" />
-        <entry key="../../../../columbia1/krupczak/rdk/repos/OpenAthenaAndroid/app/src/main/res/layout/activity_main.xml" value="0.24010416666666667" />
-        <entry key="../../../../columbia1/krupczak/rdk/repos/OpenAthenaAndroid/app/src/main/res/layout/activity_prefs.xml" value="0.24010416666666667" />
-        <entry key="../../../../columbia1/krupczak/rdk/repos/OpenAthenaAndroid/app/src/main/res/layout/content_about.xml" value="0.24010416666666667" />
-        <entry key="../../../../columbia1/krupczak/rdk/repos/OpenAthenaAndroid/app/src/main/res/layout/test_layout.xml" value="0.44947916666666665" />
-        <entry key="../../../../columbia1/krupczak/rdk/repos/OpenAthenaAndroid/app/src/main/res/menu/menu_main.xml" value="0.24010416666666667" />
         <entry key="app/src/main/res/layout/activity_about.xml" value="0.28229166666666666" />
         <entry key="app/src/main/res/layout/activity_log.xml" value="0.28229166666666666" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="1.0" />
@@ -18,7 +10,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
@@ -27,7 +19,7 @@
   <component name="VisualizationToolProject">
     <option name="state">
       <ProjectState>
-        <option name="scale" value="0.24010416666666667" />
+        <option name="scale" value="1.0" />
       </ProjectState>
     </option>
   </component>
