@@ -1,0 +1,1 @@
+Improve support for Skydio X2 drone and variants (not yet tested)
