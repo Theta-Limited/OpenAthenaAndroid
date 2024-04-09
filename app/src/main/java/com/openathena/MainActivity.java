@@ -32,9 +32,11 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.OpenableColumns;
 import android.text.Html;
 
 import androidx.exifinterface.media.ExifInterface;
@@ -317,7 +319,8 @@ public class MainActivity extends AthenaActivity {
 
         // Android 10/11, we can't access this file directly
         // We will copy the file into app's own package cache
-        File fileInCache = new File(appCacheDir, uri.getLastPathSegment());
+        String fileName = getFileName(uri);
+        File fileInCache = new File(appCacheDir, fileName);
         if (!isCacheUri(uri)) {
             try {
                 try (InputStream inputStream = getContentResolver().openInputStream(uri);
@@ -406,8 +409,6 @@ public class MainActivity extends AthenaActivity {
 
         Handler myHandler = new Handler();
 
-
-
         // Load GeoTIFF in a new thread, this is a long-running task
         new Thread(() -> {
             Exception e = loadDEMnewThread(uri);
@@ -415,9 +416,8 @@ public class MainActivity extends AthenaActivity {
                 @Override
                 public void run() {
                     if (e == null) {
-                        String prefix = theParser.isDTED ? "DTED2 DEM " : "GeoTIFF DEM ";
+                        String prefix = theParser.isDTED ? "DTED DEM " : "GeoTIFF DEM ";
                         String successOutput = prefix;
-//            successOutput += "\"" + uri.getLastPathSegment(); + "\" ";
                         successOutput += getString(R.string.dem_loaded_size_is_msg) + " " + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
                         appendText(successOutput);
                         printDEMBounds();
@@ -444,7 +444,8 @@ public class MainActivity extends AthenaActivity {
 
         // Android 10/11, we can't access this file directly
         // We will copy the file into app's own package cache
-        File fileInCache = new File(appCacheDir, uri.getLastPathSegment());
+        String fileName = getFileName(uri);
+        File fileInCache = new File(appCacheDir, fileName);
         if (!isCacheUri(uri)) {
             try {
                 try (InputStream inputStream = getContentResolver().openInputStream(uri);
@@ -508,6 +509,24 @@ public class MainActivity extends AthenaActivity {
         }
     }
 
+    private String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME));
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
+    }
 
 
     @Override
@@ -906,11 +925,16 @@ public class MainActivity extends AthenaActivity {
     }
 
     private void requestExternStorage() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[] {Manifest.permission.READ_MEDIA_IMAGES}, requestNo);
+            }
+            requestNo++;
+        } else {
             if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
                 // Permission is not granted
-                Log.d(TAG, "Attempting to Obtain unobtained storage permissions");
+                Log.d(TAG, "Attempting to Obtain unobtained permission READ_EXTERNAL_STORAGE");
                 requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, requestNo);
                 requestNo++;
             }
