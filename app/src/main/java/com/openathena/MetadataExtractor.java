@@ -138,18 +138,21 @@ public class MetadataExtractor {
             throw new RuntimeException("could not determine width and height of image!");
         }
 
-        int smallestDifference = Integer.MAX_VALUE;
+        double smallestDifference = Double.MAX_VALUE;
         JSONObject closestDrone = null;
 
         for (int i = 0; i < matchingDrones.length(); i++) {
             try {
                 JSONObject drone = matchingDrones.getJSONObject(i);
-                int droneWidth = drone.getInt("widthPixels");
+                double droneWidth = drone.getInt("widthPixels");
 
-                int difference = (int) Math.abs(droneWidth - targetWidth);
-                if (difference < smallestDifference) {
+                double difference_ratio = droneWidth / targetWidth;
+                if (difference_ratio < 1.0d) {
+                    difference_ratio = 1 / difference_ratio;
+                }
+                if (difference_ratio < smallestDifference) {
                     closestDrone = drone;
-                    smallestDifference = difference;
+                    smallestDifference = difference_ratio;
                 }
             } catch (JSONException e) {
                 return null;
