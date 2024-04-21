@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -49,6 +50,10 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
         }
         parent = (AthenaActivity) context;
 
+        DisplayMetrics metrics = new DisplayMetrics();
+        float screen_pixel_density = getResources().getDisplayMetrics().density;
+        final float clickThreshold = 15f * screen_pixel_density;
+
         scaleGestureDetector = new ScaleGestureDetector(context, new MyScaleGestureListener());
         gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -73,7 +78,6 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
         MarkableImageView yahweh = this; // reference to this MarkableImageView, for use in listener
 
         this.setOnTouchListener(new View.OnTouchListener() {
-            private final float clickThreshold = 25f;
             private float lastX, lastY;
 
 
