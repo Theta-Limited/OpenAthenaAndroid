@@ -1,0 +1,4 @@
+<ul>
+  <li>Fix bug which could cause a drone's color camera to be incorrectly treated as its thermal one</li>
+  <li>Improve UI touch gestures on low DPI screens</li>
+</ul>
