@@ -32,6 +32,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -707,7 +708,7 @@ public class MainActivity extends AthenaActivity {
 
                     altitude = Math.round(result[3]);
                     if (!outputModeIsSlavic()) {
-                        attribs += getString(R.string.target_found_at_msg) + ": " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt (hae): " + Math.round(altitude * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
+                        attribs += getString(R.string.target_found_at_msg) + ": " + roundDouble(latitude) + "," + roundDouble(longitude) + "\nAlt (hae): " + Math.round(altitude * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
                     } else {
                         attribs += getString(R.string.target_found_at_msg) + " (WGS84): " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt (hae): " + altitude + " " + "m" + "\n";
                         attribs += getString(R.string.target_found_at_msg) + " (CK-42): " + roundDouble(latCK42) + "," + roundDouble(lonCK42) + " Alt (hae): " + altCK42 + " " + "m" + "\n";
@@ -746,27 +747,33 @@ public class MainActivity extends AthenaActivity {
             textView.append(Html.fromHtml(attribs, 0, null, null));
             // Obtain NATO MGRS from mil.nga.mgrs library
             String mgrs1m = CoordTranslator.toMGRS1m(latitude, longitude);
-            String mgrs10m = CoordTranslator.toMGRS10m(latitude, longitude);
-            String mgrs100m = CoordTranslator.toMGRS100m(latitude, longitude);
+            Log.d(TAG, "mgrs1m: " + mgrs1m);
+//            String mgrs10m = CoordTranslator.toMGRS10m(latitude, longitude);
+//            String mgrs100m = CoordTranslator.toMGRS100m(latitude, longitude);
+            String mgrs1m_space_separated = CoordTranslator.toMGRS1m_Space_Separated(latitude, longitude);
+            String mgrs10m_space_separated = CoordTranslator.toMGRS10m_Space_Separated(latitude, longitude);
+            String mgrs100m_space_separated = CoordTranslator.toMGRS100m_Space_Separated(latitude, longitude);
             String targetCoordString;
             if (!outputModeIsSlavic()) {
+                // open link portion of href tag
                 targetCoordString = "<a href=\"https://maps.google.com/?q=";
                 if (outputModeIsMGRS()) {
                     targetCoordString += mgrs1m; // use MGRS 1m for maps link, even if on 10m or 100m mode
                 } else {
                     targetCoordString += roundDouble(latitude) + "," + roundDouble(longitude); // otherwise just use normal WGS84
                 }
-                targetCoordString += "\">"; // close start of href tag
+                targetCoordString += "\">"; // close link portion of href tag
+                // start building display text portion of href tag
                 if (outputModeIsMGRS()) {
                     switch(outputMode) {
                         case MGRS1m:
-                            targetCoordString += mgrs1m;
+                            targetCoordString += mgrs1m_space_separated;
                             break;
                         case MGRS10m:
-                            targetCoordString += mgrs10m;
+                            targetCoordString += mgrs10m_space_separated;
                             break;
                         case MGRS100m:
-                            targetCoordString += mgrs100m;
+                            targetCoordString += mgrs100m_space_separated;
                             break;
                         default:
                             throw new RuntimeException("Program entered an inoperable state due to outputMode"); // this shouldn't ever happen
@@ -775,6 +782,10 @@ public class MainActivity extends AthenaActivity {
                     targetCoordString += roundDouble(latitude) + ", " + roundDouble(longitude);
                 }
                 targetCoordString += "</a> "; // end href tag
+
+                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    targetCoordString += "<br>";
+                }
 
                 // convert from WGS84 height above ellipsoid to EGM96 above mean sea level (much more commonly used)
                 double mslAlt = altitudeDouble + offsetAdapter.getEGM96OffsetAtLatLon(latitude, longitude);
@@ -785,7 +796,13 @@ public class MainActivity extends AthenaActivity {
                 targetCoordString += getString(R.string.altitude_label_short) + " " + altEGM96 + " " + (isUnitFoot() ? "ft.":"m");
             } else { // to avoid confusion with WGS84, no Google Maps link is provided when outputModeIsSlavic()
                 if (outputMode == outputModes.CK42Geodetic) {
-                    targetCoordString = "(CK-42) " + roundDouble(latCK42) + ", " + roundDouble(lonCK42) + " Alt: " + altCK42 + "m" + "<br>";
+                    targetCoordString = "(CK-42) " + roundDouble(latCK42) + ", " + roundDouble(lonCK42);
+                    if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        targetCoordString += "<br>";
+                    } else {
+                        targetCoordString += " ";
+                    }
+                    targetCoordString += "Alt: " + altCK42 + "m";
                 } else if (outputMode == outputModes.CK42GaussKrüger) {
                     String northing_string = makeGKHumanReadable(GK_northing);
                     String easting_string = makeGKHumanReadable(GK_easting);
@@ -873,8 +890,13 @@ public class MainActivity extends AthenaActivity {
     public void copyTargetCoordText(View view) {
         if (isTargetCoordDisplayed) {
             String text = textViewTargetCoord.getText().toString();
+            Log.d(TAG, "clipboard text: " + text);
             text = text.replaceAll("<[^>]*>", ""); // remove HTML link tag(s)
-
+            // don't remove newline characters for copy/paste text if output mode is CK42 GK gridref
+            if (outputMode != outputModes.CK42GaussKrüger) {
+                text = text.replaceAll("<br>", ""); // remove HTML <br> newlines
+                text = text.replaceAll("(\r\n|\n)", ""); // remove string literal newlines
+            }
             // Copy the text to the clipboard
             ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clip = ClipData.newPlainText("Text", text);
