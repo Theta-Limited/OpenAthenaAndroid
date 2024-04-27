@@ -1,0 +1,4 @@
+<ul>
+  <li>Improve readability of output in MGRS mode using whitespace characters</li>
+  <li>Significantly improved pinch to zoom implementation</li>
+</ul>
