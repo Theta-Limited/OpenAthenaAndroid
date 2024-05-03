@@ -68,7 +68,7 @@
     <string name="CallToActionSnippet"><![CDATA[View the project on GitHub</a><br>]]></string>
     <string name="bad_altitude_data_error_msg">ERROR: bad altitude or terrain data. This image is unusable. 🖼🚫🎯</string>
     <string name="target_found_at_msg">Target found at </string>
-    <string name="drone_dist_to_target_msg">Drone distance to target (slant range):</string>
+    <string name="drone_dist_to_target_msg">Distance to target:</string>
     <string name="resolveTarget_oob_error_msg">ERROR: resolveTarget ran OOB at</string>
     <string name="geotiff_coverage_reminder">Please ensure your DEM file covers the drone\'s location!</string>
     <string name="geotiff_coverage_precedent_message">Your DEM\'s coverage ⛰:\n</string>
