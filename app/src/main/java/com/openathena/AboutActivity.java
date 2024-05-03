@@ -80,8 +80,9 @@ public class AboutActivity extends AppCompatActivity {
                         + "<a href=\"https://github.com/agilesrc/dem4j\">agilesrc/dem4j</a> Apache-2.0 license<br>"
                         + "<a href=\"https://github.com/ThreeTen/threetenbp\">ThreeTen/threetenbp</a> BSD 3-Clause<br>"
                         + "<a href=\"https://github.com/apache/commons-lang\">Apache Commons Lang</a> Apache License<br>"
-                        + "<a href=\"https://github.com/apache/commons-io\">Apache Commons IO</a> Apache License<br>"
-
+                        + "<a href=\"https://github.com/apache/commons-io\">Apache Commons IO</a> Apache License<br><br>"
+                        + "This project uses services of the website OpenTopography.org for DEM downloading within the app. The privacy policy of this website is available here: <a href=\"https://opentopography.org/privacypolicy\">https://opentopography.org/privacypolicy</a><br>"
+                        + "OpenTopography is operated by the University of California San Diego with support from the National Science Foundation. It is not affiliated with Theta Informatics LLC or the OpenAthena project."
                 ,0,null, null)
         );
 
