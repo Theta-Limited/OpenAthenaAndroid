@@ -220,25 +220,30 @@ public class DemCache {
         return entry != null ? entry.filename : "";
     }
 
-    // search cache to find an entry closest to the point or null if
+    // search cache to find an entry with most coverage around the point or null if
     // no matching entry
-    // use haversine() to find distance in meters between two lat,lon coordinates
-
     public DemCacheEntry searchCacheEntry(double lat, double lon) {
-        double leastDistanceToCenter = Double.MAX_VALUE;
-        DemCacheEntry closestEntry = null;
+        double maxCoverage = -1;  // We want to maximize this value
+        DemCacheEntry bestEntry = null;
 
         for (DemCacheEntry entry : cache) {
             if (lat < entry.n && lat > entry.s && lon > entry.w && lon < entry.e) {
-                double distanceToCenter = TargetGetter.haversine(lon, lat, entry.cLon, entry.cLat, 0);
-                // TODO change this logic to prefer the cache entry with maximum coverage any direction out from the search position rather than center distance
-                if (distanceToCenter < leastDistanceToCenter) {
-                    closestEntry = entry;
-                    leastDistanceToCenter = distanceToCenter;
+                // Calculate coverage as the minimum distance to the boundary from the search position
+                double northCoverage = Math.abs(entry.n - lat);
+                double southCoverage = Math.abs(lat - entry.s);
+                double eastCoverage = Math.abs(entry.e - lon);
+                double westCoverage = Math.abs(lon - entry.w);
+
+                // The minimum of these distances tells us how "well" the point is covered in the smallest dimension
+                double coverage = Math.min(Math.min(northCoverage, southCoverage), Math.min(eastCoverage, westCoverage));
+
+                if (coverage > maxCoverage) {
+                    maxCoverage = coverage;
+                    bestEntry = entry;
                 }
             }
         }
-        return closestEntry;
+        return bestEntry;
     }
 
     // get center and diameter from bounding box
