@@ -89,17 +89,14 @@ public class DemCacheActivity extends AthenaActivity implements DemListAdapter.I
         Intent intent;
 
         // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.action_add_dem:
-                // Handle settings action
-                Log.d(TAG,"DemCacheActivity: going to add/create a new DEM");
-                intent = new Intent(getApplicationContext(),NewElevationMapActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                return true;
-            default:
-            return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.action_add_dem) {// Handle settings action
+            Log.d(TAG, "DemCacheActivity: going to add/create a new DEM");
+            intent = new Intent(getApplicationContext(), NewElevationMapActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent);
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
