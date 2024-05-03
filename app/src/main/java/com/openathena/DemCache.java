@@ -95,9 +95,9 @@ public class DemCache {
     } // DemCache() constructor
 
     // refresh the cache after say new downloads or imports XXX
+
     public void refreshCache()
     {
-        DEMParser aParser;
 
         File appDir = context.getFilesDir();
 
@@ -151,14 +151,6 @@ public class DemCache {
                             totalBytes += aDem.bytes;
 
                             Log.d(TAG,"DemCache: successfully parse filename and created cache entry");
-
-                            // load/parse it as a test; remove this later on
-                            aParser = new DEMParser(file);
-                            Log.d(TAG,"DemCache: successfully loaded/parsed "+filename);
-                            String params = "s="+aParser.getMinLat()+" n="+aParser.getMaxLat()+" w="+aParser.getMaxLon()+
-                                    " e="+aParser.getMinLon();
-                            Log.d(TAG,"DemCache: "+params);
-
                         } // pieces
 
                     } // DEM_
@@ -191,7 +183,7 @@ public class DemCache {
             File file = new File(context.getFilesDir(),aFilename);
             boolean ret = file.delete();
 
-            if (ret == false) {
+            if (!ret) {
                 Log.d(TAG,"DemCache: failed to delete file");
             }
             else {
@@ -207,7 +199,7 @@ public class DemCache {
         selectedItem = -1;
 
         for (DemCacheEntry entry : cache) {
-            if (entry.filename.equals(filename) == true) {
+            if (entry.filename.equals(filename)) {
                 selectedItem = cache.indexOf(entry);
             }
         }

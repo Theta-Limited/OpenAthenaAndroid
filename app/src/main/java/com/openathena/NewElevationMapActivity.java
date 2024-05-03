@@ -62,6 +62,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Locale;
+import java.text.ParseException;
 
 public class NewElevationMapActivity extends DemManagementActivity
 {
@@ -166,6 +167,13 @@ public class NewElevationMapActivity extends DemManagementActivity
     private void onClickDownload()
     {
         String latlon = latLonText.getText().toString();
+        latlon = latlon.trim();
+        Log.d(TAG, "latlon is: " + latlon);
+        if (latlon.equals("")) {
+            postResults(getString(R.string.button_lookup_please_enter));
+            return;
+        }
+
         String meters = metersText.getText().toString();
         double lat = 0, lon = 0, h = 15000;
 
@@ -179,6 +187,10 @@ public class NewElevationMapActivity extends DemManagementActivity
 
         // process meters or length field
         meters = meters.replaceAll("meters","");
+        meters = meters.replaceAll("metres", "");
+        meters = meters.replaceAll("m", "");
+        meters = meters.trim();
+
         if (meters.equals("")) {
             h = 15000.00;
         }
@@ -186,13 +198,12 @@ public class NewElevationMapActivity extends DemManagementActivity
             h = Double.parseDouble(meters);
         }
 
-
-        // remove any () or degrees or leading/trailing whitespace
-        latlon = latlon.trim();
+        // remove any () or degrees
         latlon = latlon.toUpperCase();
         latlon = latlon.toUpperCase().replaceAll("[()]", "");
         latlon = latlon.replaceAll("[Dd]egrees","°");
         latlon = latlon.replaceAll("[Dd]eg","°");
+
 
         try {
             double[] latLonPair = CoordTranslator.parseCoordinates(latlon);
@@ -313,9 +324,10 @@ public class NewElevationMapActivity extends DemManagementActivity
             @Override
             public void run() {
                 resultsLabel.setText(resultStr);
-                athenaApp.demCache.refreshCache();
             }
         });
+        // no need for this op to block the UI thread
+        athenaApp.demCache.refreshCache();
     }
 
     // handle an import button click

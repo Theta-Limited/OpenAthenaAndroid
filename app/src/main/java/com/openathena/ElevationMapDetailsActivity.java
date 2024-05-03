@@ -113,15 +113,34 @@ public class ElevationMapDetailsActivity extends AthenaActivity
         htmlString += "<b>"+dEntry.filename + "</b><br>";
         htmlString += "Modified: " + df_ISO8601.format(dEntry.modDate) + "<br>";
 
-        // load the DEM into object
-        DEMParser aParser;
-        File file = new File(getApplicationContext().getFilesDir(),dEntry.filename+".tiff");
-        aParser = new DEMParser(file);
+        // example DEM filename: DEM_LatLon_29.502361_-95.960694_30.172639_-94.881528
+        String[] filename_pieces = dEntry.filename.split("_");
+        for (String aString : filename_pieces) {
+            if (filename_pieces.length != 6 || aString.isEmpty()) {
+                htmlString += "ERROR: invalid filename: " + dEntry.filename + "<br>";
+                htmlString += "This entry could not be analyzed!";
+                demInfo.setText(Html.fromHtml(htmlString,0,null,null));
+                return;
+            }
+        }
 
-        htmlString += "n: " + truncateDouble(aParser.getMaxLat(),6)+"<br>";
-        htmlString += "s: " + truncateDouble(aParser.getMinLat(),6)+"<br>";
-        htmlString += "e: " + truncateDouble(aParser.getMaxLon(),6)+"<br>";
-        htmlString += "w: " + truncateDouble(aParser.getMinLon(),6)+"<br>";
+        double minLat, maxLat, minLon, maxLon;
+        try {
+            minLat = Double.parseDouble(filename_pieces[2]);
+            minLon = Double.parseDouble(filename_pieces[3]);
+            maxLat = Double.parseDouble(filename_pieces[4]);
+            maxLon = Double.parseDouble(filename_pieces[5]);
+        } catch (NumberFormatException nfe) {
+            htmlString += "ERROR: invalid filename: " + dEntry.filename + "<br>";
+            htmlString += "This entry could not be analyzed!";
+            demInfo.setText(Html.fromHtml(htmlString,0,null,null));
+            return;
+        }
+
+        htmlString += "n: " + truncateDouble(maxLat,6)+"<br>";
+        htmlString += "s: " + truncateDouble(minLat,6)+"<br>";
+        htmlString += "e: " + truncateDouble(maxLon,6)+"<br>";
+        htmlString += "w: " + truncateDouble(minLon,6)+"<br>";
         htmlString += "length: " + truncateDouble(dEntry.l,0)+"<br>";
         String coordStr = truncateDouble(dEntry.cLat, 6)+","+truncateDouble(dEntry.cLon, 6);
         // make sure layout xml has clickable=true in for the textview widget
@@ -131,9 +150,6 @@ public class ElevationMapDetailsActivity extends AthenaActivity
         Log.d(TAG,"DemDetail: center link line is "+lineStr);
         htmlString += lineStr;
         htmlString += "size: "+dEntry.bytes/1024+" KB<br>";
-        htmlString += "loaded ok: true<br>";
-
-        Log.d(TAG,"DemDetail: url is "+urlStr);
 
         demInfo.setText(Html.fromHtml(htmlString,0,null,null));
 
@@ -164,14 +180,12 @@ public class ElevationMapDetailsActivity extends AthenaActivity
         Intent intent;
 
         // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.action_export_dem:
-                Log.d(TAG,"DemDetail: going to export a DEM "+exportFilename);
-                copyDemLauncher.launch(exportFilename);
-                return true;
-            default:
-            return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.action_export_dem) {
+            Log.d(TAG, "DemDetail: going to export a DEM " + exportFilename);
+            copyDemLauncher.launch(exportFilename);
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     public void calculateImage(View view) { return; } // not used in this activity
