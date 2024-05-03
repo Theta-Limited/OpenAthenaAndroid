@@ -34,6 +34,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -71,6 +72,9 @@ public class ManageDemsActivity extends DemManagementActivity
         latLonText = (EditText)findViewById(R.id.lookup_latlon_text);
         lookupButton = (Button)findViewById(R.id.lookupButton);
         resultsButton = (Button)findViewById(R.id.lookupResultsButton);
+
+        progressBar = (ProgressBar)  findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
 
         manageButton.setOnClickListener(new View.OnClickListener() {
             @Override

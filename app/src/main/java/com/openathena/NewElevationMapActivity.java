@@ -39,6 +39,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,15 +68,17 @@ import java.text.ParseException;
 public class NewElevationMapActivity extends DemManagementActivity
 {
     public static String TAG = NewElevationMapActivity.class.getSimpleName();
+
+    private TextView instructionsLabel;
+    private ImageButton getPosGPSButton;
     private EditText latLonText;
     private EditText metersText;
-    private ImageButton getPosGPSButton;
     private Button downloadButton;
-    private TextView resultsLabel;
-    private TextView instructionsLabel;
     private Button importButton;
-    private ActivityResultLauncher<String> importLauncher;
 
+
+    private TextView resultsLabel;
+    private ActivityResultLauncher<String> importLauncher;
     private LocationManager locationManager;
     private LocationListener locationListener;
 
@@ -87,13 +90,18 @@ public class NewElevationMapActivity extends DemManagementActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_dem);
 
+        instructionsLabel = (TextView)findViewById(R.id.new_dem_label);
+        getPosGPSButton = (ImageButton) findViewById(R.id.get_pos_gps_button);
         latLonText = (EditText)findViewById(R.id.new_dem_latlon);
         metersText = (EditText)findViewById(R.id.new_dem_meters);
-        getPosGPSButton = (ImageButton) findViewById(R.id.get_pos_gps_button);
         downloadButton = (Button)findViewById(R.id.new_dem_downloadbutton);
-        resultsLabel = (TextView)findViewById(R.id.new_dem_results);
-        instructionsLabel = (TextView)findViewById(R.id.new_dem_label);
         importButton = (Button)findViewById(R.id.new_dem_importbutton);
+
+        progressBar = (ProgressBar)  findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
+        showProgressBarSemaphore = 0;
+
+        resultsLabel = (TextView)findViewById(R.id.new_dem_results);
 
         getPosGPSButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,11 +174,18 @@ public class NewElevationMapActivity extends DemManagementActivity
     // handle a download
     private void onClickDownload()
     {
+        showProgressBarSemaphore++;
+        progressBar.setVisibility(View.VISIBLE);
+
         String latlon = latLonText.getText().toString();
         latlon = latlon.trim();
         Log.d(TAG, "latlon is: " + latlon);
         if (latlon.equals("")) {
             postResults(getString(R.string.button_lookup_please_enter));
+            showProgressBarSemaphore--;
+            if (showProgressBarSemaphore<=0) {
+                progressBar.setVisibility(View.GONE);
+            }
             return;
         }
 
@@ -211,6 +226,10 @@ public class NewElevationMapActivity extends DemManagementActivity
             lon = latLonPair[1];
         } catch (java.text.ParseException pe) {
             postResults(getString(R.string.button_lookup_please_enter));
+            showProgressBarSemaphore--;
+            if (showProgressBarSemaphore<=0) {
+                progressBar.setVisibility(View.GONE);
+            }
             return;
         }
 
@@ -218,6 +237,10 @@ public class NewElevationMapActivity extends DemManagementActivity
 
         if (lat == 0 && lon == 0) {
             postResults("No elevation data for the middle of the ocean!");
+            showProgressBarSemaphore--;
+            if (showProgressBarSemaphore<=0) {
+                progressBar.setVisibility(View.GONE);
+            }
             return;
         }
 
@@ -232,6 +255,10 @@ public class NewElevationMapActivity extends DemManagementActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        showProgressBarSemaphore--;
+                        if (showProgressBarSemaphore<=0) {
+                            progressBar.setVisibility(View.GONE);
+                        }
                         Toast t = Toast.makeText(NewElevationMapActivity.this,s,Toast.LENGTH_SHORT);
                         t.setGravity(Gravity.CENTER,0,0);
                         t.show();

@@ -9,6 +9,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +18,10 @@ import androidx.appcompat.app.AppCompatActivity;
 public abstract class DemManagementActivity extends AthenaActivity {
     protected LocationManager locationManager;
     protected LocationListener locationListener;
+
+    protected ProgressBar progressBar;
+    // semaphore value will be > 0 if a long process is currently running
+    protected int showProgressBarSemaphore = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +36,10 @@ public abstract class DemManagementActivity extends AthenaActivity {
             public void onLocationChanged(Location location) {
                 updateLatLonText(location);
                 locationManager.removeUpdates(this);
+                showProgressBarSemaphore--;
+                if (showProgressBarSemaphore<=0) {
+                    progressBar.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -65,6 +75,9 @@ public abstract class DemManagementActivity extends AthenaActivity {
     }
 
     protected void onClickGetPosGPS() {
+        showProgressBarSemaphore++;
+        progressBar.setVisibility(View.VISIBLE);
+
         boolean hasGPSAccess = requestPermissionGPS();
         if (hasGPSAccess) {
             try {

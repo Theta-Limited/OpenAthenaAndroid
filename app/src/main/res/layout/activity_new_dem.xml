@@ -116,6 +116,22 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"/>
 
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/new_dem_importbutton"
+        android:layout_above="@id/new_dem_results"
+        android:layout_centerHorizontal="true"
+        android:gravity="bottom"
+        android:indeterminate="true"
+        android:indeterminateBehavior="cycle"
+        android:indeterminateOnly="true"
+        android:visibility="gone" />
+
+
     <TextView
         android:id="@+id/new_dem_results"
         android:layout_width="wrap_content"

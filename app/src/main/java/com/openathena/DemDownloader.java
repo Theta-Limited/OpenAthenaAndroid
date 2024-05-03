@@ -125,6 +125,16 @@ public class DemDownloader
                         }
                     }
                 }
+                catch (java.net.UnknownHostException uhe) {
+                    if (consumer != null) {
+                        consumer.accept("Could not connect to" + " portal.opentopography.org.\n " + "Is your device connected to the Internet?");
+                    }
+                }
+                catch (java.net.SocketException se) {
+                    if (consumer != null) {
+                        consumer.accept("Internet connection was interrupted during download operation. Please try again.");
+                    }
+                }
                 catch (Exception e) {
                     if (consumer != null) {
                         consumer.accept(e.toString());
