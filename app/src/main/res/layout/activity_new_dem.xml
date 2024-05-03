@@ -51,9 +51,10 @@
 
     <EditText
         android:id="@+id/new_dem_latlon"
-        android:layout_width="match_parent"
+        android:layout_width="256dp"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:layout_centerHorizontal="true"
         android:textAllCaps="false"
         android:hint="@string/hint_lat_lon_in_degrees"
         android:inputType="text"
@@ -62,8 +63,9 @@
 
     <EditText
         android:id="@+id/new_dem_meters"
-        android:layout_width="match_parent"
+        android:layout_width="256dp"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:hint="@string/hint_fifteen_thousand_meters"
         android:textAllCaps="false"
         android:inputType="numberDecimal"
