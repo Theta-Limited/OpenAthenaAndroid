@@ -47,6 +47,9 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 public class ElevationMapDetailsActivity extends AthenaActivity
 {
@@ -56,6 +59,10 @@ public class ElevationMapDetailsActivity extends AthenaActivity
     String exportFilename = "";
     DemCache.DemCacheEntry dEntry;
 
+    static TimeZone local_tz = TimeZone.getDefault();
+    static DateFormat df_ISO8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -64,11 +71,13 @@ public class ElevationMapDetailsActivity extends AthenaActivity
         demInfo = (TextView)findViewById(R.id.elevationMapDetailText);
         demInfo.setMovementMethod(LinkMovementMethod.getInstance());
 
+        df_ISO8601.setTimeZone(local_tz);
+
         // create the activity launcher here;
         // Storage Access Framework(SAF) does not require us to request permission
         // to access
         copyDemLauncher = registerForActivityResult(new ActivityResultContracts.CreateDocument(), uri -> {
-            if (uri != null && exportFilename != "") {
+            if (uri != null && !exportFilename.equals("")) {
                 // copy the file to uri; since we have a File and
                 // dialog gives us a URI, we need to open/read/write exported file
                 // the try with resources statement automatically closes the streams
@@ -102,7 +111,7 @@ public class ElevationMapDetailsActivity extends AthenaActivity
         exportFilename = dEntry.filename + ".tiff";
 
         htmlString += "<b>"+dEntry.filename + "</b><br>";
-        htmlString += "Modified: <br>";
+        htmlString += "Modified: " + df_ISO8601.format(dEntry.modDate) + "<br>";
 
         // load the DEM into object
         DEMParser aParser;

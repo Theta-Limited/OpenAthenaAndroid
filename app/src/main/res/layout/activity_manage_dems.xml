@@ -16,12 +16,33 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp" />
 
+    <TextView
+        android:id="@+id/cache_management_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Manage Cache:"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/actionMenuTextColor"
+        android:textSize="34sp"
+        android:layout_marginTop="16dp"
+        />
+
     <Button
         android:id="@+id/manageCacheButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/button_manage_cache"
+        android:textAllCaps="false"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/loadNewMapButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Load New Map"
         android:textAllCaps="false"
         android:layout_marginTop="16dp" />
 

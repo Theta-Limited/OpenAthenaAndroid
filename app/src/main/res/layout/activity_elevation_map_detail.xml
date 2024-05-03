@@ -14,6 +14,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Info about an elevation map"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="?attr/actionMenuTextColor"
+            android:textSize="20sp"
             android:clickable="true"
             android:scrollbars="vertical"
             android:gravity="top|start"/>

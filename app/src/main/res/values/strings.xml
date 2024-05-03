@@ -44,7 +44,7 @@
     <string name="label_enter_coordinates" translatable="false">Enter center coordinates and h/w in meters:</string>
 
     <!-- TODO add proper translations once AUTODEM feature is complete!!! -->
-    <string name="button_manage_cache" translatable="false">Manage Cached Maps</string>
+    <string name="button_manage_cache" translatable="false">Cached Maps List</string>
     <string name="button_lookup_coordinates" translatable="false">Check Coverage in Cache</string>
     <string name="button_lookup_results" translatable="false">Lookup results</string>
     <string name="button_lookup_please_enter" translatable="false">Please enter coordinates in lat,lon or NATO MGRS format</string>

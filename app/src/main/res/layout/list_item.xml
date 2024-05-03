@@ -4,4 +4,7 @@
     android:id="@+id/textView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+    android:textColor="?attr/actionMenuTextColor"
+    android:textSize="20sp"
     android:padding="16dp"/>

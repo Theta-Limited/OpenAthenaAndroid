@@ -48,9 +48,10 @@ public class ManageDemsActivity extends DemManagementActivity
 {
     public static String TAG = ManageDemsActivity.class.getSimpleName();
     private EditText latLonText;
-
-    private ImageButton getPosGPSButton;
     private Button manageButton;
+    private Button loadNewMapButton;
+    private ImageButton getPosGPSButton;
+
     private Button lookupButton;
     private Button resultsButton;
 
@@ -64,6 +65,7 @@ public class ManageDemsActivity extends DemManagementActivity
         setContentView(R.layout.activity_manage_dems);
 
         manageButton = (Button)findViewById(R.id.manageCacheButton);
+        loadNewMapButton = (Button) findViewById(R.id.loadNewMapButton);
 
         getPosGPSButton = (ImageButton) findViewById(R.id.get_pos_gps_button);
         latLonText = (EditText)findViewById(R.id.lookup_latlon_text);
@@ -77,6 +79,17 @@ public class ManageDemsActivity extends DemManagementActivity
                 i = new Intent(getApplicationContext(),DemCacheActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(i);
+            }
+        });
+        loadNewMapButton.setOnClickListener(new View.OnClickListener() {
+            Intent intent;
+
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG,"ManageDemsActivity: going to add/create a new DEM");
+                intent = new Intent(getApplicationContext(),NewElevationMapActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
             }
         });
 

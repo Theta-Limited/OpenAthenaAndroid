@@ -231,6 +231,7 @@ public class DemCache {
         for (DemCacheEntry entry : cache) {
             if (lat < entry.n && lat > entry.s && lon > entry.w && lon < entry.e) {
                 double distanceToCenter = TargetGetter.haversine(lon, lat, entry.cLon, entry.cLat, 0);
+                // TODO change this logic to prefer the cache entry with maximum coverage any direction out from the search position rather than center distance
                 if (distanceToCenter < leastDistanceToCenter) {
                     closestEntry = entry;
                     leastDistanceToCenter = distanceToCenter;
@@ -273,6 +274,7 @@ public class DemCache {
 
     private double[] getCenterAndLength(double s, double w, double n, double e)
     {
+        // TODO improve this math use funcs in TargetGetter instead!
         double EARTH_RADIUS = 6378137; // in meters
         double METERS_PER_DEGREE_LATITUDE = 111320; // Approximate meters per degree
 
@@ -296,6 +298,7 @@ public class DemCache {
         double latRadians = Math.toRadians(lat);
         double lonRadians = Math.toRadians(lon);
         double bearingRadians = Math.toRadians(bearing);
+        // TODO improve this math and reduce repeated code, use funcs in TargetGetter instead!
         double EARTH_RADIUS = 6371e3;
 
         double newLatRadians = Math.asin(Math.sin(latRadians) * Math.cos(arcLen / EARTH_RADIUS) +
