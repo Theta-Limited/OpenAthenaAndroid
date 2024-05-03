@@ -63,13 +63,14 @@
 
     <ScrollView
         android:id="@+id/scrollView2"
-        android:layout_width="243dp"
-        android:layout_height="234dp"
-        android:layout_marginStart="16dp"
+        android:layout_width="300sp"
+        android:layout_height="0dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="128dp"
-        android:layout_marginBottom="23dp"
+        android:layout_marginBottom="4dp"
         android:maxHeight="480dp"
+
         android:minHeight="48dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/progressBar"
@@ -88,7 +89,7 @@
             android:text="@string/openathena_for_android"
             android:textColor="?attr/actionMenuTextColor"
             android:textIsSelectable="true"
-            android:textSize="18dp" />
+            android:textSize="18sp" />
     </ScrollView>
 
     <Button
@@ -107,7 +108,7 @@
 
     <TextView
         android:id="@+id/textViewTargetCoord"
-        android:layout_width="243dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"

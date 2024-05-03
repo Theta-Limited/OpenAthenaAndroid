@@ -2,15 +2,19 @@ package com.openathena;
 
 import static com.openathena.AthenaActivity.TAG;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -34,20 +38,24 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
     private long lastScaleGestureTime = 0;
     private static final long SCALE_COOLDOWN_MS = 350;
 
-    private float scale = 1f; // Initial scale
-    private float translationX = 0f; // Initial translation
-    private float translationY = 0f; // Initial translation
+    private float screen_pixel_density = getResources().getDisplayMetrics().density;
+
+    private Matrix matrix = new Matrix();
 
     private int activePointerId = MotionEvent.INVALID_POINTER_ID;
     protected boolean isDragging = false;
     protected boolean isScaling = false;
 
+    @SuppressLint("ClickableViewAccessibility")
     public MarkableImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
         if (!(context instanceof AthenaActivity)) {
             return;
         }
         parent = (AthenaActivity) context;
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        final float clickThreshold = 6f * screen_pixel_density;
 
         scaleGestureDetector = new ScaleGestureDetector(context, new MyScaleGestureListener());
         gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
@@ -73,10 +81,10 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
         MarkableImageView yahweh = this; // reference to this MarkableImageView, for use in listener
 
         this.setOnTouchListener(new View.OnTouchListener() {
-            private final float clickThreshold = 25f;
             private float lastX, lastY;
 
 
+            @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 // Detect gestures
@@ -84,8 +92,8 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                 gestureDetector.onTouchEvent(event);
 
                 final int action = event.getActionMasked();
-                int pointerId = -1;
-                int pointerIndex = -1;
+                int pointerIndex = event.getActionIndex();
+                int pointerId = event.getPointerId(pointerIndex);
 
                 if (isScaling) {
                     // Ignore taps if pinch to zoom scaling is being performed
@@ -107,28 +115,36 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                         break;
                     case MotionEvent.ACTION_MOVE:
                         pointerIndex = event.findPointerIndex(activePointerId);
-                        if (pointerIndex != -1) {
+                        if (isScaling) {
+                            // Ignore move if pinch to zoom scaling is being performed
+                            return true;
+                        }
+                        if (pointerIndex != -1 && event.getPointerCount() == 1) {
                             float x = event.getX(pointerIndex);
                             float y = event.getY(pointerIndex);
-                            float dx = event.getX() - lastX;
-                            float dy = event.getY() - lastY;
+                            float dx = x - lastX;
+                            float dy = y - lastY;
                             if (!isDragging) {
                                 isDragging = Math.sqrt((dx * dx) + (dy * dy)) >= clickThreshold;
                             }
+
                             if (isDragging) {
-                                // Adjust translations based on drag, accounting for scale
-                                translationX += dx / scale;
-                                translationY += dy / scale;
-
+                                matrix.postTranslate(event.getX() - lastX, event.getY() - lastY);
                                 restrictTranslationToContent();
-
-                                invalidate();
+                                setImageMatrix(matrix);
                             }
-                            lastX = event.getX();
-                            lastY = event.getY();
+                            lastX = x;
+                            lastY = y;
                         }
                         break;
                     case MotionEvent.ACTION_POINTER_DOWN:
+                        // When a new pointer is added, evaluate and possibly reset the drag start coordinates
+                        if (event.getPointerCount() == 2) {  // Start of a pinch-to-zoom gesture
+                            int newPointerIndex = (pointerIndex == 0) ? 1 : 0;
+                            lastX = event.getX(newPointerIndex);
+                            lastY = event.getY(newPointerIndex);
+                            activePointerId = event.getPointerId(newPointerIndex);
+                        }
                         break;
                     case MotionEvent.ACTION_CANCEL: {
                         activePointerId = MotionEvent.INVALID_POINTER_ID;
@@ -173,33 +189,32 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                 if (!parent.isImageLoaded || parent.imageUri == null || parent.iView == null) {
                     return;
                 }
-                int original_width;
-                int original_height;
+
                 int[] original_dimensions = parent.getImageDimensionsFromUri(parent.imageUri);
                 if (original_dimensions == null) {
                     return;
-                } else {
-                    original_width = original_dimensions[0];
-                    original_height = original_dimensions[1];
                 }
-                double render_width = yahweh.getWidth();
-                double render_height = yahweh.getHeight();
 
-                // Correctly adjust tap coordinates for scale and translation
-                float adjustedX = (x - translationX * scale) / scale;
-                float adjustedY = (y - translationY * scale) / scale;
+                int original_width = original_dimensions[0];
+                int original_height = original_dimensions[1];
+
+                // Get the inverse of the current matrix transformation
+                Matrix inversedMatrix = new Matrix();
+                matrix.invert(inversedMatrix);
+
+                // Transform the tap coordinates to the original image coordinates
+                float[] transformedCoords = { x, y };
+                inversedMatrix.mapPoints(transformedCoords);
 
                 // Calculate the proportion of the tap within the image dimensions
-                float proportionX = adjustedX / getWidth();
-                float proportionY = adjustedY / getHeight();
+                float proportionX = transformedCoords[0] / getWidth();
+                float proportionY = transformedCoords[1] / getHeight();
 
                 parent.set_selection_x((int) Math.round(proportionX * original_width));
                 parent.set_selection_y((int) Math.round(proportionY * original_height));
-                Log.d("X", parent.get_selection_x() + "");
-                Log.d("Y", parent.get_selection_y() + "");
 
                 if (parent.isImageLoaded && parent.isDEMLoaded) {
-                    parent.calculateImage(yahweh, false); // this may cause the view to re-size due to constraint layout
+                    parent.calculateImage(yahweh, false);
                     yahweh.mark(proportionX, proportionY);
                 }
             }
@@ -226,34 +241,28 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
             lastScaleGestureTime = currentTime;
 
             isScaling = true; // Scaling begins
+            isDragging = false;
+
             return true;
         }
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            long currentTime = System.currentTimeMillis();
-            final float SCALE_SENSITIVITY = 0.5f;
-            float lastScaleValue = scale;
+            float adjustScaleFactor = detector.getScaleFactor();
 
-            float scaleFactor = detector.getScaleFactor();
-            scaleFactor = 1 + SCALE_SENSITIVITY * (scaleFactor - 1);
+            // Get current scale
+            float[] matrixValues = new float[9];
+            matrix.getValues(matrixValues);
+            float currentScale = matrixValues[Matrix.MSCALE_X]; // Assumes uniform scaling
 
-            scale *= scaleFactor;
-            if (currentTime - lastIntentTime > INTENT_COOLDOWN_MS) {
-                if (parent instanceof SelectionActivity) {
-                    final float scaleThreshold = 0.92f;
-                    if (scale < scaleThreshold && lastScaleValue < scaleThreshold) { // Check for pinch-to-zoom-out gesture
-                        Intent intent = new Intent(parent, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        parent.startActivity(intent);
-                        lastIntentTime = currentTime;
-                    }
-                }
-            }
-            scale = Math.max(0.90f, Math.min(scale, 5.0f)); // Constrain scale between 0.9 and 5.0
-            lastScaleGestureTime = currentTime;
+            // Calculate the scale factor to apply considering the constraints
+            float targetScale = currentScale * adjustScaleFactor;
+            float clampedScaleFactor = clamp(targetScale, 0.90f, 5.0f) / currentScale;
+
+            matrix.postScale(clampedScaleFactor, clampedScaleFactor, detector.getFocusX(), detector.getFocusY());
             restrictTranslationToContent();
-            invalidate();
-            return super.onScale(detector);
+            setImageMatrix(matrix);
+
+            return true;
         }
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
@@ -261,28 +270,49 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
             lastScaleGestureTime = currentTime;
 
             isScaling = false; // Scaling ends
+            isDragging = false;
             super.onScaleEnd(detector);
         }
     }
 
     private void restrictTranslationToContent() {
+        // Get drawable dimensions
+        float drawableWidth = getDrawable().getIntrinsicWidth();
+        float drawableHeight = getDrawable().getIntrinsicHeight();
+
+        // Create a matrix values array
+        float[] values = new float[9];
+        matrix.getValues(values);
+
+        // Extract the scale and translation from the matrix
+        float scale = values[Matrix.MSCALE_X]; // Assuming uniform scale in X and Y
+        float transX = values[Matrix.MTRANS_X];
+        float transY = values[Matrix.MTRANS_Y];
+
         float minTransX; float maxTransX;
         float minTransY; float maxTransY;
-        if (scale > 1.0f) { // constrain view window to be within content when zoomed
-            // Calculate the boundaries for translation
-            minTransX = (getWidth() / scale) - getWidth();
-            maxTransX = 0.0f;
-            minTransY = (getHeight() / scale) - getHeight();
-            maxTransY = 0.0f;
-        } else { // constrain content to center of view window when un-zoomed
-            minTransX = ((getWidth() / scale) - getWidth()) / 2.0f;
+
+        if (scale > 1.0f) {
+            minTransX = getWidth() - getWidth() * scale; // Maximum leftward translation
+            minTransY = getHeight() - getHeight() * scale; // Maximum upward translation
+            maxTransX = 0; // Image cannot translate right beyond original position
+            maxTransY = 0; // Image cannot translate down beyond original position
+        } else {
+            minTransX = (getWidth() - getWidth() * scale) / 2.0f;
             maxTransX = minTransX;
-            minTransY = ((getHeight() / scale) - getHeight()) / 2.0f;
+            minTransY = (getHeight() - getHeight() * scale) / 2.0f;
             maxTransY = minTransY;
         }
-        // Apply boundaries
-        translationX = clamp(translationX, minTransX, maxTransX);
-        translationY = clamp(translationY, minTransY, maxTransY);
+        // Clamp current translations
+        float clampedTransX = clamp(transX, minTransX, maxTransX);
+        float clampedTransY = clamp(transY, minTransY, maxTransY);
+
+        // Calculate the delta to correct any out-of-bound positions
+        float deltaX = clampedTransX - transX;
+        float deltaY = clampedTransY - transY;
+
+        // Apply translation to the matrix
+        matrix.postTranslate(deltaX, deltaY);
     }
 
     // Clamp function to restrict a value between a minimum and a maximum
@@ -309,9 +339,8 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
 
     public void reset() {
         this.mark(0.5d, 0.5d);
-        scale = 1.0f;
-        translationX = 0.0f;
-        translationY = 0.0f;
+        matrix.reset();
+        setImageMatrix(matrix);
     }
 
     /**
@@ -325,11 +354,19 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
     }
 
     private void setMarkerPosition(float x, float y) {
-        float x_prop; float y_prop;
+        float x_prop, y_prop;
         if (getWidth() > 0 && getHeight() > 0) {
-            // Adjust the marker position to account for the current zoom and pan
-            x_prop = (x - translationX) / (getWidth() * scale);
-            y_prop = (y - translationY) /  (getHeight() * scale);
+            // Get the inverse of the current matrix transformation
+            Matrix inversedMatrix = new Matrix();
+            matrix.invert(inversedMatrix);
+
+            // Transform the coordinates to the original image coordinates
+            float[] transformedCoords = {x, y};
+            inversedMatrix.mapPoints(transformedCoords);
+
+            // Calculate the marker position as a proportion of the view dimensions
+            x_prop = transformedCoords[0] / getWidth();
+            y_prop = transformedCoords[1] / getHeight();
         } else {
             Log.e(TAG, "Error: width or height was zero at time of marking");
             return;
@@ -339,15 +376,16 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
 
     @Override
     protected void onDraw(Canvas canvas) {
-
-        // Save the current canvas matrix
+        // Save the current canvas state
         canvas.save();
 
-        // Apply zoom and translation
-        canvas.scale(scale, scale);
-        canvas.translate(translationX, translationY);
+        // Apply the combined transformations from the matrix
+        canvas.concat(matrix);
+
+        // Draw the image
         super.onDraw(canvas);
 
+        // Draw the marker if it exists
         if (theMarker != null) {
             float length = Math.max(getWidth() / 48, getHeight() / 48);
             float gap = length / 1.5f;
@@ -368,13 +406,14 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
             canvas.drawLine(actualX, actualY - length - gap, actualX, actualY - gap, paint);
             canvas.drawLine(actualX, actualY + gap, actualX, actualY + length + gap, paint);
         } else {
+            // If no marker exists and the image is loaded, create a default marker at the center
             if (parent.isImageLoaded) {
                 theMarker = new Marker(0.5d, 0.5d);
                 invalidate();
             }
         }
 
-        // Restore the canvas matrix
+        // Restore the canvas state
         canvas.restore();
     }
 
