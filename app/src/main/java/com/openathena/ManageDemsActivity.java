@@ -8,8 +8,10 @@
 
 package com.openathena;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -41,7 +43,7 @@ public class ManageDemsActivity extends AthenaActivity
     public static String TAG = ManageDemsActivity.class.getSimpleName();
     private EditText latLonText;
 
-    private ImageButton getPosGPS;
+    private ImageButton getPosGPSButton;
     private Button manageButton;
     private Button lookupButton;
     private Button resultsButton;
@@ -55,16 +57,11 @@ public class ManageDemsActivity extends AthenaActivity
         setContentView(R.layout.activity_manage_dems);
 
         manageButton = (Button)findViewById(R.id.manageCacheButton);
+
+        getPosGPSButton = (ImageButton) findViewById(R.id.get_pos_gps_button);
         latLonText = (EditText)findViewById(R.id.lookup_latlon_text);
         lookupButton = (Button)findViewById(R.id.lookupButton);
         resultsButton = (Button)findViewById(R.id.lookupResultsButton);
-
-        lookupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickLookup();
-            }
-        });
 
         manageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +73,19 @@ public class ManageDemsActivity extends AthenaActivity
             }
         });
 
+
+        getPosGPSButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { onClickGetPosGPS(); }
+        });
+
+        lookupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickLookup();
+            }
+        });
+
         resultsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { onClickResults(); }
@@ -84,6 +94,29 @@ public class ManageDemsActivity extends AthenaActivity
         resultsButton.setEnabled(false);
 
     } // onCreate()
+
+    private void onClickGetPosGPS() {
+        boolean hasGPSAccess = requestPermissionGPS();
+        if (!hasGPSAccess) {
+            Toast.makeText(this, getString(R.string.permissions_toast_error_msg), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean requestPermissionGPS() {
+        if (!hasAccessCoarseLocation() && !hasAccessFineLocation()) {
+            requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, requestNo);
+            requestNo++;
+        }
+        return (hasAccessCoarseLocation() || hasAccessFineLocation());
+    }
+
+    private boolean hasAccessFineLocation() {
+        return checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean hasAccessCoarseLocation() {
+        return checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
 
     // we have looked up a DEM and found an answer; click the results button
     // and we will jump to the ElevationMapDetails activity

@@ -35,6 +35,8 @@ public abstract class AthenaActivity extends AppCompatActivity {
 
     public static AthenaApp athenaApp; // singleton for storing persistent state information between activities
 
+    public static int requestNo = 0;
+
     public enum outputModes {
         WGS84,
         MGRS1m,

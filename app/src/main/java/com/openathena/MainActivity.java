@@ -73,7 +73,7 @@ public class MainActivity extends AthenaActivity {
     public static String TAG = MainActivity.class.getSimpleName();
     public final static String PREFS_NAME = "openathena.preferences";
     public final static String LOG_NAME = "openathena.log";
-    public static int requestNo = 0;
+
     public static int dangerousAutelAwarenessCount;
 
     public static EGMOffsetProvider offsetAdapter = new EGM96OffsetAdapter(); // calculates diff between WGS84 reference ellipsoid and EGM96 geoid
