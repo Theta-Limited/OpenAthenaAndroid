@@ -44,8 +44,8 @@
     <string name="label_enter_coordinates" translatable="false">Enter center coordinates and h/w in meters</string>
 
     <!-- TODO add proper translations once AUTODEM feature is complete!!! -->
-    <string name="button_manage_cache" translatable="false">Manage Cache</string>
-    <string name="button_lookup_coordinates" translatable="false">Lookup Coordinates</string>
+    <string name="button_manage_cache" translatable="false">Manage Cached Maps</string>
+    <string name="button_lookup_coordinates" translatable="false">Check Coverage in Cache</string>
     <string name="button_lookup_results" translatable="false">Lookup results</string>
     <string name="button_lookup_please_enter" translatable="false">Please enter coordinates in lat,lon or NATO MGRS format</string>
     <string name="button_lookup_no_data" translatable="false">No elevation data for the middle of the ocean!</string>
