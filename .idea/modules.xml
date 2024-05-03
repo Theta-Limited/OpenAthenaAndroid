@@ -2,11 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1073890867/OpenAthenaAndroid.app.iml" filepath="$PROJECT_DIR$/.idea/modules/1073890867/OpenAthenaAndroid.app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1073890867/OpenAthenaAndroid.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/1073890867/OpenAthenaAndroid.app.androidTest.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1073890867/OpenAthenaAndroid.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/1073890867/OpenAthenaAndroid.app.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1073890867/OpenAthenaAndroid.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/1073890867/OpenAthenaAndroid.app.unitTest.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1050286303/repos.OpenAthenaAndroid.iml" filepath="$PROJECT_DIR$/.idea/modules/-1050286303/repos.OpenAthenaAndroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/OpenAthenaAndroid.iml" filepath="$PROJECT_DIR$/.idea/OpenAthenaAndroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/OpenAthenaAndroid.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/OpenAthenaAndroid.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/OpenAthenaAndroid.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/OpenAthenaAndroid.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/OpenAthenaAndroid.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/OpenAthenaAndroid.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/OpenAthenaAndroid.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/OpenAthenaAndroid.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/projects.OpenAthenaAndroid.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/projects.OpenAthenaAndroid.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/projects.OpenAthenaAndroid.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/projects.OpenAthenaAndroid.app.unitTest.iml" />
     </modules>
   </component>
 </project>
