@@ -168,9 +168,11 @@ public class DemDownloader
     // calculate bounding box; return [n,s,e,w]
     private double[] getBoundingBox(double centerLat, double centerLon, double length)
     {
+        // yuck
         final double metersInDegreeLatitude = 111320; // Approximate meters in one degree of latitude
 
         // Calculate deltas
+        // TODO Improve this calculation
         double deltaLat = (length / 2) / metersInDegreeLatitude;
         double deltaLon = (length / 2) / (metersInDegreeLatitude * Math.cos(Math.toRadians(centerLat)));
 

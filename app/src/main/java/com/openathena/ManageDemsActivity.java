@@ -136,23 +136,10 @@ public class ManageDemsActivity extends AthenaActivity
                 // Request location updates; you might want to customize the request parameters
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
             } catch (SecurityException se) {
-                Toast.makeText(this, "Need GPS permission to fetch location", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.permissions_toast_error_msg), Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(this, getString(R.string.permissions_toast_error_msg), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void updateLatLonText(Location location) {
-        if (location != null) {
-            double lat = location.getLatitude();
-            double lon = location.getLongitude();
-            String mgrs = CoordTranslator.toMGRS1m(lat,lon);
-            if (outputModeIsMGRS() ) {
-                latLonText.setText(mgrs);
-            } else {
-                latLonText.setText(String.format(Locale.getDefault(), "%f,%f", lat, lon));
-            }
         }
     }
 
@@ -171,6 +158,20 @@ public class ManageDemsActivity extends AthenaActivity
     private boolean hasAccessCoarseLocation() {
         return checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
+
+    private void updateLatLonText(Location location) {
+        if (location != null) {
+            double lat = location.getLatitude();
+            double lon = location.getLongitude();
+            String mgrs = CoordTranslator.toMGRS1m(lat,lon);
+            if (outputModeIsMGRS() ) {
+                latLonText.setText(mgrs);
+            } else {
+                latLonText.setText(String.format(Locale.getDefault(), "%f,%f", lat, lon));
+            }
+        }
+    }
+
 
     // we have looked up a DEM and found an answer; click the results button
     // and we will jump to the ElevationMapDetails activity

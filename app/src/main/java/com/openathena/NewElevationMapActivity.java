@@ -6,8 +6,13 @@
 
 package com.openathena;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -21,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -32,6 +38,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,17 +61,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Locale;
 
 public class NewElevationMapActivity extends AthenaActivity
 {
     public static String TAG = NewElevationMapActivity.class.getSimpleName();
     private EditText latLonText;
     private EditText metersText;
+    private ImageButton getPosGPSButton;
     private Button downloadButton;
     private TextView resultsLabel;
     private TextView instructionsLabel;
     private Button importButton;
     private ActivityResultLauncher<String> importLauncher;
+
+    private LocationManager locationManager;
+    private LocationListener locationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -76,10 +88,16 @@ public class NewElevationMapActivity extends AthenaActivity
 
         latLonText = (EditText)findViewById(R.id.new_dem_latlon);
         metersText = (EditText)findViewById(R.id.new_dem_meters);
+        getPosGPSButton = (ImageButton) findViewById(R.id.get_pos_gps_button);
         downloadButton = (Button)findViewById(R.id.new_dem_downloadbutton);
         resultsLabel = (TextView)findViewById(R.id.new_dem_results);
         instructionsLabel = (TextView)findViewById(R.id.new_dem_label);
         importButton = (Button)findViewById(R.id.new_dem_importbutton);
+
+        getPosGPSButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { onClickGetPosGPS(); }
+        });
 
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,7 +122,74 @@ public class NewElevationMapActivity extends AthenaActivity
             }
         });
 
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                // Update the EditText with the latest location
+                updateLatLonText(location);
+                // Remove updates to save battery after location is obtained
+                locationManager.removeUpdates(this);
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            @Override
+            public void onProviderEnabled(String provider) {}
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                // Prompt user to enable GPS if disabled
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        };
+
     } // onCreate()
+
+    private void updateLatLonText(Location location) {
+        if (location != null) {
+            double lat = location.getLatitude();
+            double lon = location.getLongitude();
+            String mgrs = CoordTranslator.toMGRS1m(lat,lon);
+            if (outputModeIsMGRS() ) {
+                latLonText.setText(mgrs);
+            } else {
+                latLonText.setText(String.format(Locale.getDefault(), "%f,%f", lat, lon));
+            }
+        }
+    }
+
+    private void onClickGetPosGPS() {
+        boolean hasGPSAccess = requestPermissionGPS();
+        if (hasGPSAccess) {
+            try {
+                // Request location updates; you might want to customize the request parameters
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+            } catch (SecurityException se) {
+                Toast.makeText(this, getString(R.string.permissions_toast_error_msg), Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, getString(R.string.permissions_toast_error_msg), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean requestPermissionGPS() {
+        if (!hasAccessCoarseLocation() && !hasAccessFineLocation()) {
+            requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, requestNo);
+            requestNo++;
+        }
+        return (hasAccessCoarseLocation() || hasAccessFineLocation());
+    }
+
+    private boolean hasAccessFineLocation() {
+        return checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean hasAccessCoarseLocation() {
+        return checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
 
     // handle a download
     private void onClickDownload()
@@ -130,19 +215,22 @@ public class NewElevationMapActivity extends AthenaActivity
             h = Double.parseDouble(meters);
         }
 
-        // process lat,lon
-        // remove () in case its copy/pasted
-        latlon = latlon.replaceAll("\\(","");
-        latlon = latlon.replaceAll("\\)","");
-        // split using ',' as separator
-        String pieces[] = latlon.split(",");
-        if (pieces.length != 2) {
-            Log.d(TAG,"NewDemActivity: need both a lat and lon in degrees");
-            postResults("Please enter lat,lon in degrees separated by comma");
+
+        // remove any () or degrees or leading/trailing whitespace
+        latlon = latlon.trim();
+        latlon = latlon.toUpperCase();
+        latlon = latlon.toUpperCase().replaceAll("[()]", "");
+        latlon = latlon.replaceAll("[Dd]egrees","°");
+        latlon = latlon.replaceAll("[Dd]eg","°");
+
+        try {
+            double[] latLonPair = CoordTranslator.parseCoordinates(latlon);
+            lat = latLonPair[0];
+            lon = latLonPair[1];
+        } catch (java.text.ParseException pe) {
+            postResults(getString(R.string.button_lookup_please_enter));
             return;
         }
-        lat = Double.parseDouble(pieces[0]);
-        lon = Double.parseDouble(pieces[1]);
 
         Log.d(TAG,"NewDemActivity going to fetch elevation map from the InterWebs");
 

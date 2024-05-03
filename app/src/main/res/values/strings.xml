@@ -39,9 +39,9 @@
     <string name="title_activity_mapsdetail" translatable="false">Elevation Map Details</string>
 
     <!-- TODO add proper translations once AUTODEM feature is complete!!! -->
-    <string name="button_download_elevation_map" translatable="false">Download Elevation Map (Internet)</string>
-    <string name="button_import_elevation_map" translatable="false">Import Elevation Map (File)</string>
-    <string name="label_enter_coordinates" translatable="false">Enter center coordinates and h/w in meters</string>
+    <string name="button_download_elevation_map" translatable="false">Download</string>
+    <string name="button_import_elevation_map" translatable="false">Import DEM File</string>
+    <string name="label_enter_coordinates" translatable="false">Enter center coordinates and h/w in meters:</string>
 
     <!-- TODO add proper translations once AUTODEM feature is complete!!! -->
     <string name="button_manage_cache" translatable="false">Manage Cached Maps</string>

@@ -127,7 +127,7 @@ public class CoordTranslator {
     }
 
     // Method to handle Lat/Lon String parsing
-    public static double[] parseLatLon(String latLonStr) throws ParseException {
+    protected static double[] parseLatLon(String latLonStr) throws ParseException {
         if (latLonStr == null || latLonStr.isEmpty()) {
             throw new java.text.ParseException("ERROR: input string was null or empty!", 0);
         }

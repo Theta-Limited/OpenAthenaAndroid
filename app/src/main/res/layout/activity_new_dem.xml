@@ -5,14 +5,49 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
+    <View
+        android:id="@+id/view_sep_1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#D3D3D3"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/download_from_internet_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Download Elevation Map (Internet)"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/actionMenuTextColor"
+        android:textSize="34sp"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/view_sep_1"
+        />
+
     <TextView
         android:id="@+id/new_dem_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/label_enter_coordinates"
         android:textAllCaps="false"
-        android:layout_alignParentTop="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/actionMenuTextColor"
+        android:layout_below="@id/download_from_internet_label"
+        android:layout_marginTop="8dp"
         android:layout_centerHorizontal="true"/>
+
+    <ImageButton
+        android:id="@+id/get_pos_gps_button"
+        android:layout_width="64dp"
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:src="@android:drawable/ic_menu_mylocation"
+        android:background="@drawable/rounded_corner_square"
+        android:layout_below="@id/new_dem_label"
+        android:layout_marginTop="16dp" />
 
     <EditText
         android:id="@+id/new_dem_latlon"
@@ -20,10 +55,10 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textAllCaps="false"
-        android:hint="@string/hint_lat_lon"
+        android:hint="@string/hint_lat_lon_in_degrees"
         android:inputType="text"
-        android:layout_below="@id/new_dem_label"
-        android:layout_marginTop="8dp"/>
+        android:layout_below="@id/get_pos_gps_button"
+        android:layout_marginTop="16dp"/>
 
     <EditText
         android:id="@+id/new_dem_meters"
@@ -47,13 +82,35 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"/>
 
+    <View
+        android:id="@+id/view_sep_2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#D3D3D3"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_below="@id/new_dem_downloadbutton" />
+
+    <TextView
+        android:id="@+id/import_from_local_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Import Elevation Map (Local)"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/actionMenuTextColor"
+        android:textSize="34sp"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/view_sep_2"
+        />
+
     <Button
         android:id="@+id/new_dem_importbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAllCaps="false"
         android:text="@string/button_import_elevation_map"
-        android:layout_below="@id/new_dem_downloadbutton"
+        android:layout_below="@id/import_from_local_label"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"/>
 
@@ -64,6 +121,7 @@
         android:gravity="center"
         android:textAllCaps="false"
         android:text="Results"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"/>
