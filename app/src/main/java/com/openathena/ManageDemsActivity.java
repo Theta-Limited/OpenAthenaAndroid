@@ -38,6 +38,13 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.provider.Settings;
+
+import java.util.Locale;
+
 public class ManageDemsActivity extends AthenaActivity
 {
     public static String TAG = ManageDemsActivity.class.getSimpleName();
@@ -47,6 +54,9 @@ public class ManageDemsActivity extends AthenaActivity
     private Button manageButton;
     private Button lookupButton;
     private Button resultsButton;
+
+    private LocationManager locationManager;
+    private LocationListener locationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -93,12 +103,56 @@ public class ManageDemsActivity extends AthenaActivity
 
         resultsButton.setEnabled(false);
 
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                // Update the EditText with the latest location
+                updateLatLonText(location);
+                // Remove updates to save battery after location is obtained
+                locationManager.removeUpdates(this);
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            @Override
+            public void onProviderEnabled(String provider) {}
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                // Prompt user to enable GPS if disabled
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        };
+
     } // onCreate()
 
     private void onClickGetPosGPS() {
         boolean hasGPSAccess = requestPermissionGPS();
-        if (!hasGPSAccess) {
+        if (hasGPSAccess) {
+            try {
+                // Request location updates; you might want to customize the request parameters
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+            } catch (SecurityException se) {
+                Toast.makeText(this, "Need GPS permission to fetch location", Toast.LENGTH_SHORT).show();
+            }
+        } else {
             Toast.makeText(this, getString(R.string.permissions_toast_error_msg), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void updateLatLonText(Location location) {
+        if (location != null) {
+            double lat = location.getLatitude();
+            double lon = location.getLongitude();
+            String mgrs = CoordTranslator.toMGRS1m(lat,lon);
+            if (outputModeIsMGRS() ) {
+                latLonText.setText(mgrs);
+            } else {
+                latLonText.setText(String.format(Locale.getDefault(), "%f,%f", lat, lon));
+            }
         }
     }
 
