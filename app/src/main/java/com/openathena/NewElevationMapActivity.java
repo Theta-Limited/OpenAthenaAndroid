@@ -63,7 +63,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Locale;
 
-public class NewElevationMapActivity extends AthenaActivity
+public class NewElevationMapActivity extends DemManagementActivity
 {
     public static String TAG = NewElevationMapActivity.class.getSimpleName();
     private EditText latLonText;
@@ -148,7 +148,8 @@ public class NewElevationMapActivity extends AthenaActivity
 
     } // onCreate()
 
-    private void updateLatLonText(Location location) {
+    @Override
+    protected void updateLatLonText(Location location) {
         if (location != null) {
             double lat = location.getLatitude();
             double lon = location.getLongitude();
@@ -159,36 +160,6 @@ public class NewElevationMapActivity extends AthenaActivity
                 latLonText.setText(String.format(Locale.getDefault(), "%f,%f", lat, lon));
             }
         }
-    }
-
-    private void onClickGetPosGPS() {
-        boolean hasGPSAccess = requestPermissionGPS();
-        if (hasGPSAccess) {
-            try {
-                // Request location updates; you might want to customize the request parameters
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
-            } catch (SecurityException se) {
-                Toast.makeText(this, getString(R.string.permissions_toast_error_msg), Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            Toast.makeText(this, getString(R.string.permissions_toast_error_msg), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private boolean requestPermissionGPS() {
-        if (!hasAccessCoarseLocation() && !hasAccessFineLocation()) {
-            requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, requestNo);
-            requestNo++;
-        }
-        return (hasAccessCoarseLocation() || hasAccessFineLocation());
-    }
-
-    private boolean hasAccessFineLocation() {
-        return checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private boolean hasAccessCoarseLocation() {
-        return checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
     // handle a download

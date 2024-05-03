@@ -12,6 +12,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -38,14 +39,12 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.provider.Settings;
+
 
 import java.util.Locale;
 
-public class ManageDemsActivity extends AthenaActivity
+//                                      Parent Abstract class with common functionality
+public class ManageDemsActivity extends DemManagementActivity
 {
     public static String TAG = ManageDemsActivity.class.getSimpleName();
     private EditText latLonText;
@@ -55,8 +54,6 @@ public class ManageDemsActivity extends AthenaActivity
     private Button lookupButton;
     private Button resultsButton;
 
-    private LocationManager locationManager;
-    private LocationListener locationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -103,63 +100,10 @@ public class ManageDemsActivity extends AthenaActivity
 
         resultsButton.setEnabled(false);
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                // Update the EditText with the latest location
-                updateLatLonText(location);
-                // Remove updates to save battery after location is obtained
-                locationManager.removeUpdates(this);
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-            @Override
-            public void onProviderEnabled(String provider) {}
-
-            @Override
-            public void onProviderDisabled(String provider) {
-                // Prompt user to enable GPS if disabled
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent);
-            }
-        };
-
     } // onCreate()
 
-    private void onClickGetPosGPS() {
-        boolean hasGPSAccess = requestPermissionGPS();
-        if (hasGPSAccess) {
-            try {
-                // Request location updates; you might want to customize the request parameters
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
-            } catch (SecurityException se) {
-                Toast.makeText(this, getString(R.string.permissions_toast_error_msg), Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            Toast.makeText(this, getString(R.string.permissions_toast_error_msg), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private boolean requestPermissionGPS() {
-        if (!hasAccessCoarseLocation() && !hasAccessFineLocation()) {
-            requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, requestNo);
-            requestNo++;
-        }
-        return (hasAccessCoarseLocation() || hasAccessFineLocation());
-    }
-
-    private boolean hasAccessFineLocation() {
-        return checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private boolean hasAccessCoarseLocation() {
-        return checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void updateLatLonText(Location location) {
+    @Override
+    protected void updateLatLonText(Location location) {
         if (location != null) {
             double lat = location.getLatitude();
             double lon = location.getLongitude();
