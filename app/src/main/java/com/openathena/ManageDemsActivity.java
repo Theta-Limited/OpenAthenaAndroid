@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -39,6 +40,8 @@ public class ManageDemsActivity extends AthenaActivity
 {
     public static String TAG = ManageDemsActivity.class.getSimpleName();
     private EditText latLonText;
+
+    private ImageButton getPosGPS;
     private Button manageButton;
     private Button lookupButton;
     private Button resultsButton;

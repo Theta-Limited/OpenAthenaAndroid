@@ -5,32 +5,62 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_horizontal"
+
     android:padding="16dp">
+
+    <View
+        android:id="@+id/view_sep_1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#D3D3D3"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp" />
 
     <Button
         android:id="@+id/manageCacheButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAllCaps="false"
         android:gravity="center"
-        android:text="@string/button_manage_cache" />
+        android:text="@string/button_manage_cache"
+        android:textAllCaps="false"
+        android:layout_marginTop="16dp" />
 
-     <View
+    <View
+        android:id="@+id/view_sep_2"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#D3D3D3"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/coverage_lookup_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Map Coverage Lookup:"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/actionMenuTextColor"
+        android:textSize="34sp"
+        android:layout_marginTop="16dp"
+        />
+
+    <ImageButton
+        android:id="@+id/get_pos_gps_button"
+        android:layout_width="64dp"
+        android:layout_height="48dp"
+        android:src="@android:drawable/ic_menu_mylocation"
+        android:background="@drawable/rounded_corner_square"
+        android:layout_marginTop="16dp" />
 
     <EditText
         android:id="@+id/lookup_latlon_text"
-        android:layout_width="match_parent"
+        android:layout_width="256dp"
         android:layout_height="wrap_content"
         android:hint="@string/hint_lat_lon_in_degrees"
         android:inputType="text"
         android:textAllCaps="false"
         android:gravity="center"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp" />
 
     <Button
