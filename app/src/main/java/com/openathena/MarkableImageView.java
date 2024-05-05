@@ -32,11 +32,15 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
     private GestureDetector gestureDetector;
     // Time when last intent was fired
     private long lastIntentTime = 0;
+    // Time when last scale gesture was performed
+
     // Cooldown period of 1 second
     private static final long INTENT_COOLDOWN_MS = 1000;
 
     private long lastScaleGestureTime = 0;
     private static final long SCALE_COOLDOWN_MS = 350;
+    private static final long SCALE_EXIT_FULLSCREEN_COOLDOWN_MS = 550;
+    private static float lastScaleValue = 1.0f;
 
     private float screen_pixel_density = getResources().getDisplayMetrics().density;
 
@@ -237,8 +241,8 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
     private class MyScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScaleBegin(ScaleGestureDetector detector) {
-            long currentTime = System.currentTimeMillis();
-            lastScaleGestureTime = currentTime;
+//            long currentTime = System.currentTimeMillis();
+//            lastScaleGestureTime = currentTime;
 
             isScaling = true; // Scaling begins
             isDragging = false;
@@ -247,6 +251,7 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
         }
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
+            long currentTime = System.currentTimeMillis();
             float adjustScaleFactor = detector.getScaleFactor();
 
             // Get current scale
@@ -256,6 +261,20 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
 
             // Calculate the scale factor to apply considering the constraints
             float targetScale = currentScale * adjustScaleFactor;
+            if (currentTime - lastIntentTime > INTENT_COOLDOWN_MS) {
+                if (parent instanceof SelectionActivity) {
+                    final float scaleThreshold = 0.92f;
+                    if (targetScale < scaleThreshold && lastScaleValue < scaleThreshold) { // Check for pinch-to-zoom-out gesture
+                        if (currentTime - lastScaleGestureTime > SCALE_EXIT_FULLSCREEN_COOLDOWN_MS) {
+                            Intent intent = new Intent(parent, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            parent.startActivity(intent);
+                            lastIntentTime = currentTime;
+                        }
+                    }
+                }
+            }
+
             float clampedScaleFactor = clamp(targetScale, 0.90f, 5.0f) / currentScale;
 
             matrix.postScale(clampedScaleFactor, clampedScaleFactor, detector.getFocusX(), detector.getFocusY());
@@ -271,6 +290,11 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
 
             isScaling = false; // Scaling ends
             isDragging = false;
+
+            float[] matrixValues = new float[9];
+            matrix.getValues(matrixValues);
+            lastScaleValue = matrixValues[Matrix.MSCALE_X]; // Assumes uniform scaling
+
             super.onScaleEnd(detector);
         }
     }
