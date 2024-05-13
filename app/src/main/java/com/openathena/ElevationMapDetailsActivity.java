@@ -137,11 +137,17 @@ public class ElevationMapDetailsActivity extends AthenaActivity
             return;
         }
 
-        htmlString += "n: " + truncateDouble(maxLat,6)+"<br>";
-        htmlString += "s: " + truncateDouble(minLat,6)+"<br>";
-        htmlString += "e: " + truncateDouble(maxLon,6)+"<br>";
-        htmlString += "w: " + truncateDouble(minLon,6)+"<br>";
-        htmlString += "length: " + truncateDouble(dEntry.l,0)+"<br>";
+        htmlString += "<br>";
+
+        htmlString += "DEM lat/lon bounds (WGS84):" + "<br>";
+        htmlString += "N: " + truncateDouble(maxLat,6)+"<br>";
+        htmlString += "E: " + truncateDouble(maxLon,6)+"<br>";
+        htmlString += "S: " + truncateDouble(minLat,6)+"<br>";
+        htmlString += "W: " + truncateDouble(minLon,6)+"<br>";
+
+        htmlString += "<br>";
+
+        htmlString += "length: " + ((isUnitFoot()) ? truncateDouble(dEntry.l * AthenaApp.FEET_PER_METER, 0) : truncateDouble(dEntry.l,0)) + " " + (isUnitFoot() ? "ft." : getString(R.string.meter_label)) + "²" + "<br>";
         String coordStr = truncateDouble(dEntry.cLat, 6)+","+truncateDouble(dEntry.cLon, 6);
         // make sure layout xml has clickable=true in for the textview widget
         // and make sure to add LinkMovementMethod too

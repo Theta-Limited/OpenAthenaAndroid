@@ -16,6 +16,8 @@ public class AthenaApp extends Application { // Android Singleton Class for hold
 
     public static String TAG = AthenaApp.class.getSimpleName();
 
+    public static final double FEET_PER_METER = 3937.0d/1200.0d; // Exact constant for US Survey Foot per Meter
+
     @Override
     public void onCreate() {
         Log.d(TAG, "AthenaApp onCreate() called");

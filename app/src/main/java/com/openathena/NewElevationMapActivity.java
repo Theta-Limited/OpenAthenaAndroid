@@ -132,28 +132,7 @@ public class NewElevationMapActivity extends DemManagementActivity
         });
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                // Update the EditText with the latest location
-                updateLatLonText(location);
-                // Remove updates to save battery after location is obtained
-                locationManager.removeUpdates(this);
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-            @Override
-            public void onProviderEnabled(String provider) {}
-
-            @Override
-            public void onProviderDisabled(String provider) {
-                // Prompt user to enable GPS if disabled
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent);
-            }
-        };
+        locationListener = createLocationListener();
 
     } // onCreate()
 
@@ -174,6 +153,10 @@ public class NewElevationMapActivity extends DemManagementActivity
     // handle a download
     private void onClickDownload()
     {
+        // Sanity check to prevent user from spamming the download button
+        if (isGPSFixInProgress == false && showProgressBarSemaphore > 0) {
+            return;
+        }
         showProgressBarSemaphore++;
         progressBar.setVisibility(View.VISIBLE);
 

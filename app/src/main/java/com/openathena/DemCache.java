@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.util.Log;
 
+
 import androidx.core.util.Consumer;
 
 public class DemCache {
@@ -33,8 +34,8 @@ public class DemCache {
     public class DemCacheEntry {
         String filename;
         double n; // north lat
-        double s; // south lat
         double e; // east lon
+        double s; // south lat
         double w; // west lon
         double l; // len or width/height of box in meters
         double cLat; // center lat
@@ -272,43 +273,25 @@ public class DemCache {
     private double[] getCenterAndLength(double s, double w, double n, double e)
     {
         // TODO improve this math use funcs in TargetGetter instead!
-        double EARTH_RADIUS = 6378137; // in meters
-        double METERS_PER_DEGREE_LATITUDE = 111320; // Approximate meters per degree
+        double EARTH_RADIUS = TargetGetter.radius_at_lat_lon(n+s / 2.0d, 0.0d);
+//        double METERS_PER_DEGREE_LATITUDE = 111320; // Approximate meters per degree
 
         // Center coordinates
         double centerLat = (n + s) / 2;
         double centerLon = (e + w) / 2;
 
         // Height in meters (difference in latitude)
-        double height = Math.abs(n - s) * METERS_PER_DEGREE_LATITUDE;
+//        double height = Math.abs(n - s) * METERS_PER_DEGREE_LATITUDE;
+        double height = TargetGetter.haversine(0.0d,n,0.0d,s,0.0d);
 
         // Width in meters (difference in longitude), considering the average latitude for more accuracy
         double averageLatitude = Math.abs(n + s) / 2;
-        double width = Math.abs(e - w) * METERS_PER_DEGREE_LATITUDE * Math.cos(Math.toRadians(averageLatitude));
+//        double width = Math.abs(e - w) * METERS_PER_DEGREE_LATITUDE * Math.cos(Math.toRadians(averageLatitude));
+        double width = TargetGetter.haversine(w,s,e,s,0.0d);
 
-        double l = (width + height)/2.0;
+        double l = width*height;
 
         return new double[]{centerLat, centerLon, l};
-    }
-
-    public static double[] translateCoordinate(double lat, double lon, double bearing, double arcLen) {
-        double latRadians = Math.toRadians(lat);
-        double lonRadians = Math.toRadians(lon);
-        double bearingRadians = Math.toRadians(bearing);
-        // TODO improve this math and reduce repeated code, use funcs in TargetGetter instead!
-        double EARTH_RADIUS = 6371e3;
-
-        double newLatRadians = Math.asin(Math.sin(latRadians) * Math.cos(arcLen / EARTH_RADIUS) +
-                Math.cos(latRadians) * Math.sin(arcLen / EARTH_RADIUS) * Math.cos(bearingRadians));
-
-        double newLonRadians = lonRadians + Math.atan2(Math.sin(bearingRadians) * Math.sin(arcLen / EARTH_RADIUS) * Math.cos(latRadians),
-                Math.cos(arcLen / EARTH_RADIUS) - Math.sin(latRadians) * Math.sin(newLatRadians));
-
-        // Convert radians back to degrees
-        double newLat = Math.toDegrees(newLatRadians);
-        double newLon = Math.toDegrees(newLonRadians);
-
-        return new double[]{newLat, newLon};
     }
 
 } // class DemCache

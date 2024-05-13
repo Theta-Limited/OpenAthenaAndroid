@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public abstract class DemManagementActivity extends AthenaActivity {
     protected LocationManager locationManager;
     protected LocationListener locationListener;
+    protected boolean isGPSFixInProgress = false;
 
     protected ProgressBar progressBar;
     // semaphore value will be > 0 if a long process is currently running
@@ -40,6 +41,7 @@ public abstract class DemManagementActivity extends AthenaActivity {
                 if (showProgressBarSemaphore<=0) {
                     progressBar.setVisibility(View.GONE);
                 }
+                isGPSFixInProgress = false;
             }
 
             @Override
@@ -51,6 +53,13 @@ public abstract class DemManagementActivity extends AthenaActivity {
             @Override
             public void onProviderDisabled(String provider) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                if (showProgressBarSemaphore > 0 && isGPSFixInProgress) {
+                    showProgressBarSemaphore--;
+                    if (showProgressBarSemaphore <= 0) {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                    isGPSFixInProgress = false;
+                }
                 startActivity(intent);
             }
         };
@@ -75,8 +84,14 @@ public abstract class DemManagementActivity extends AthenaActivity {
     }
 
     protected void onClickGetPosGPS() {
+        // Sanity check to prevent user from spamming the GPS button
+        if (isGPSFixInProgress) {
+            return;
+        }
+
         showProgressBarSemaphore++;
         progressBar.setVisibility(View.VISIBLE);
+        isGPSFixInProgress = true;
 
         boolean hasGPSAccess = requestPermissionGPS();
         if (hasGPSAccess) {
@@ -84,9 +99,19 @@ public abstract class DemManagementActivity extends AthenaActivity {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
             } catch (SecurityException se) {
                 Toast.makeText(this, getString(R.string.permissions_toast_error_msg), Toast.LENGTH_SHORT).show();
+                showProgressBarSemaphore--;
+                if (showProgressBarSemaphore<=0) {
+                    progressBar.setVisibility(View.GONE);
+                }
+                isGPSFixInProgress = false;
             }
         } else {
             Toast.makeText(this, getString(R.string.permissions_toast_error_msg), Toast.LENGTH_SHORT).show();
+            showProgressBarSemaphore--;
+            if (showProgressBarSemaphore<=0) {
+                progressBar.setVisibility(View.GONE);
+            }
+            isGPSFixInProgress = false;
         }
     }
 }
