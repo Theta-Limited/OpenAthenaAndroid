@@ -22,19 +22,6 @@ OpenAthena™ allows common drones to spot precise geodetic locations.
 
 <img width="586" alt="OpenAthena for Android triggers a waypoint to show in Android Team Awarness Kit at the calculated location" src="./assets/ATAK_OpenAthena_CoT_Demo_landscape.png">
 
-# License
-
-Copyright (C) 2024 Theta Informatics LLC
-
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
-
-
-# Troubleshooting Manual
-
 ## Preface
 
 OpenAthena for Android is designed to be usable by operators without the need for explicit technical training. A downside of this however is that fail conditions of the software can occur without the user having technical insight into why.
@@ -89,7 +76,7 @@ This error indicates that the attempted raycast for your target calcuation went 
 
 ### ERROR: bad altitude or terrain data. This image is unusable. 🖼🚫🎯
 
-<img width="586" alt="OpenAthena Android an example of an unusable image error" src="./assets/troubleshooting/ERROR_drone_image_metadata_missing_or_unusable.jpg">
+<img width="586" alt="OpenAthena Android an example of an unusable image error" src="./assets/troubleshooting/ERROR_bad_altitude_or_terrain_data_unusable_image.jpg">
 
 This error indicates that the attempted raycast's start heigh was already below that of the terrain model. This only occurs in situations where either the drone altitude, the terrain model, or both are inaccurate.
 
@@ -147,7 +134,14 @@ This error can occur in rare cases where a certain necessary parameter, such as 
 
 This error occurs in rare cases with specific low end consumer-oriented DJI drone models (such as the Mini 2 and Mini 3, not inc. Pro versions). For these models, the manufacturer has intentionally removed camera pitch and yaw metadata, likely for the purpose of [market segmentation](https://en.wikipedia.org/wiki/Market_segmentation) to prevent these models from being used with professional image post-processing software.
 
-### Compass sensor 🧭 calibration
+### Resolving accuracy issues which occur during operation
+
+Accuracy issues occuring during the app's opperation are typically caused by three factors:
+* Slant angle from drone camera to target is nearly parallel to the ground. Cicrular Error via terrain-raycast is much higher than normal in such cases
+* Poor magnetometer (compass sensor) calibration of the drone. Unless a calibration procedure is performed for the drone's compass while within 100 miles of the operating AO, heading information from the drone's compass can be off by up to 10 degrees or so, causing significant cirular error which increases with distance.
+* Camera intrinsic parameters are not present within the DroneModels database for the loaded drone image. In the target calculation output trace text, if the `Is camera model recognized?` value is `No`, this means internal properties of the camera were calculated using a less accurate fallback method. In this case, calculations will become more inaccurate the further the selected pixel is from the central point of the image.
+
+#### Compass sensor 🧭 calibration
 
 It is _**strongly suggested**_ that you should [calibrate the drone's compass sensor for the local environment](https://phantompilots.com/threads/compass-calibration-a-complete-primer.32829/) before taking photos to be used with OpenAthena. Consult your drone's operation manual for this procedure. The image metadata from an un-calibrated drone can be several degrees off from the correct heading. This can result in dramatic target-resolution inaccuracies if the sensor is not calibrated. _**Always**_ verify a target match location from OpenAthena before use!
 
@@ -165,7 +159,7 @@ If you find your aircraft's compass sensor is still not providing correct headin
 
 Your selected manual correction value is saved automatically between launches of the app. To reset the value, tap the "RESET" button in the Settings screen or move the slider to the middle.
 
-### Let your drone acquire GPS lock before flying
+#### Let your drone acquire GPS lock before flying
 
 For the best results for target calculation, it's important to let your drone sit at the launch position until it can get an accurate GPS fix. This is important for it to be able measure altitude correctly during flight.
 
@@ -175,43 +169,7 @@ On DJI drones, this indicator shows the number of GPS satellites visible to the 
 
 Wait until at least 6 GPS satellites are visible (or you can confirm the GPS fix is good) before starting flight.
 
-## Select an Image 🖼:
-
-This app is compatible with images taken by select models of DJI, Skydio, Autel, and Parrot aircraft models. The drone's position and its camera's orientation are automatically extracted from the image metadata.
-
-After loading a GeoTIFF DEM, use the "🖼" button to select a drone image containing the necessary metadata:
-
-<img width="586" alt="OpenAthena™ Android Image Selection demo using DJI_0419.JPG" src="./assets/DJI_0419_Image_Selection_Demo_landscape.png">
-
-## Calculate a target 🎯:
-
-Tap anywhere on the displayed image to calculate the corresponding target location on the ground. You can tap the result display box to copy the result text to your clipboard or open the position in Google Maps by clicking the blue hyperlink:
-
-<img width="586" alt="OpenAthena™ Android Target Calculation demo using cobb.tif and DJI_0419.JPG, output mode WGS84" src="./assets/DJI_0419_Target_Res_Demo_landscape.png">
-
-<img width="586" alt="OpenAthena Android DJI_0419.JPG target location text copied to clipboard" src="./assets/0419_text_copied_to_clipboard.png">
-
-<!-- <img width="340" alt="Gif showing text copied to clipboard toast after taping on results box" src="./assets/TextCopiedOptimized.gif"> -->
-
-<img width="586" alt="OpenAthena Android DJI_0419.JPG target shown in Google Maps satellite view" src="./assets/0419_maps_screenshot.png">
-
-## [ATAK](https://en.wikipedia.org/wiki/Android_Team_Awareness_Kit) Cursor on Target
-
-When the "✉️" button is pressed, OpenAthena will send a Cursor on Target multicast UDP packet to udp://239.2.3.1:6969 to all devices on the same network as your device. Under default settings, this will cause a marker to show up in ATAK at the target location for all recipients:
-
-<img width="586" alt="OpenAthena for Android triggers a waypoint to show in Android Team Awarness Kit at the calculated location" src="./assets/ATAK_OpenAthena_CoT_Demo_landscape.png">
-
-Change the marker to its appropriate type (friend, suspect, hostile) in ATAK, then send the updated target to other networked users.
-
-## Arbitrary Point Selection
-
-OpenAthena allows users to tap any point in the image to locate it. Tapping on any point in the image will move the marker and calculate the new location. A new Cursor-on-Target message will not be sent to ATAK until the "✉️" button is pressed:
-
-<img width="586" alt="OpenAthena for Android demo of arbitrary point selection for raycast calculation" src="./assets/DJI_0419_Target_Res_Arbitrary_Point_Demo_landscape.png">
-
-<img width="586" alt="OpenAthena for Android demo of a cursor on target message calculated for an arbitrary point selected in a drone image" src="./assets/ATAK_OpenAthena_CoT_Arbitrary_Point_Demo_landscape.png">
-
-# Application Settings (optional) ⚙:
+# Application Settings ⚙:
 
 OpenAthena for Android supports multiple output modes for target calculation, including:
 
@@ -236,6 +194,16 @@ Then press the back button or again tap the kebab menu icon (three dots) to retu
 <img width="270" alt="OpenAthena™ Android Target Calculation demo using cobb.tif and DJI_0419.JPG, output mode NATO MGRS 10m" src="./assets/DJI_0419_Target_Res_MGRS10m_Demo.png">
 
 The app also supports selection between `Meter` and `US Foot` as the Distance Unit for the apps's output.
+
+
+### [ATAK](https://en.wikipedia.org/wiki/Android_Team_Awareness_Kit) Cursor on Target
+
+When the "✉️" button is pressed, OpenAthena will send a Cursor on Target (CoT) multicast UDP packet to udp://239.2.3.1:6969 to all devices on the same network as your device. Under default settings, this will cause a marker to show up in ATAK at the target location for all recipients:
+
+<img width="586" alt="OpenAthena for Android triggers a waypoint to show in Android Team Awarness Kit at the calculated location" src="./assets/ATAK_OpenAthena_CoT_Demo_landscape.png">
+
+If your Android device running OpenAthena is not connected to any network at all, the ability to send CoT from OpenAthena to your locally-running ATAK app will be degraded. This is a known bug with the current version of the app.
+
 
 ### OPENTOPOGRAPHY_API_KEY in local.properties for DEM downloading
 
