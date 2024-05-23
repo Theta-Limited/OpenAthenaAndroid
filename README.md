@@ -46,7 +46,9 @@ You should have received a copy of the GNU General Public License along with thi
 
 # Operation manual
 
-## Certain error conditions may occur during regular use of this software. For troubleshooting information and a detailed description of the cause of possible errors, review the following document [TROUBLESHOOTING.md](./TROUBLESHOOTING.md):
+## Troubleshooting
+
+Certain error conditions may occur during regular use of this software. For troubleshooting information and a detailed description of the cause of possible errors, review the following document [TROUBLESHOOTING.md](./TROUBLESHOOTING.md):
 
 [https://github.com/Theta-Limited/OpenAthenaAndroid/blob/master/TROUBLESHOOTING.md](https://github.com/Theta-Limited/OpenAthenaAndroid/blob/master/TROUBLESHOOTING.md)
 
