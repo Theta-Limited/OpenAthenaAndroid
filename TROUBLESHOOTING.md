@@ -26,7 +26,7 @@ OpenAthena™ allows common drones to spot precise geodetic locations.
 
 OpenAthena for Android is designed to be usable by operators without the need for explicit technical training. A downside of this however is that fail conditions of the software can occur without the user having technical insight into why.
 
-OpenAthena is designed to fail safe. If data is inaccurate, unusable, or incomplete enough for a calculation, the software will abort the calculataion rather than provide an inaccurate result.
+OpenAthena is designed to fail safe. If data is known to be inaccurate, unusable, or incomplete enough for a calculation, the software will abort the calculation rather than provide an inaccurate result.
 
 This troubleshooting manual provides important context on common fail conditions and why they occur. This context is important for operators so they may overcome fail conditions which occur in certain specific conditions and adapt their use of the software to overcome them.
 
@@ -72,18 +72,18 @@ To obtain a GeoTIFF file for a certain area, review the document "EIO_fetch_geot
 
 <img width="586" alt="OpenAthena Android an example of a raycast calculation out of bounds error" src="./assets/troubleshooting/ERROR_resolveTarget_ran_OOB.jpg">
 
-This error indicates that the attempted raycast for your target calcuation went Out Of Bounds (OOB) of the coverage of your loaded DEM. This most commonly means that your loaded DEM file does not cover the area the drone photo was taken in. This error can also occur however when the raycast misses terrain entirely, such as when a selected point is of the sky or the pitch angle value of the camera is inaccurate.
+This error indicates that the attempted raycast for your target calculation went Out Of Bounds (OOB) of the coverage of your loaded DEM. This most commonly means that your loaded DEM file does not cover the area the drone photo was taken in. This error can also occur however when the raycast misses terrain entirely, such as when a selected point is of the sky or the pitch angle value of the camera is inaccurate.
 
 ### ERROR: bad altitude or terrain data. This image is unusable. 🖼🚫🎯
 
 <img width="586" alt="OpenAthena Android an example of an unusable image error" src="./assets/troubleshooting/ERROR_bad_altitude_or_terrain_data_unusable_image.jpg">
 
-This error indicates that the attempted raycast's start heigh was already below that of the terrain model. This only occurs in situations where either the drone altitude, the terrain model, or both are inaccurate.
+This error indicates that the attempted raycast's start height was already below that of the terrain model. This only occurs in situations where either the drone altitude, the terrain model, or both are inaccurate.
 
 The following are common causes of this error:
 * Older DJI drone models incorrectly report their altitude as the difference from their launch point rather than relative to sea level. There is no mitigation, data from such drone models is unusable
-* Altitude data from the drone is inaccurate. To mitigate occurance of this error, let the drone sit at its launch position longer to acquire a better GPS lock before takeoff.
-* The elevation model height at the location the picture was taken is higher than actual terrain. This commonly occurs in areas with dense vegetation (especially in the southern hemisphere) or urban areas with tall buildings. In such scenarios, the first radar return from the sattelite for the SRTM mapping mission came from the tallest object rather than terrain. To mitigate this error, use an alternative Digital Terrain Model (DTM) rather than Digital Surface Model (DSM). [FABDEM](https://www.fathom.global/product/global-terrain-data-fabdem/) is one such existing commercial offering which attempts to remove the effect of forrests and buildings.
+* Altitude data from the drone is inaccurate. To mitigate occurrence of this error, let the drone sit at its launch position longer to acquire a better GPS lock before takeoff.
+* The elevation model height at the location the picture was taken is higher than actual terrain. This commonly occurs in areas with dense vegetation (especially in the southern hemisphere) or urban areas with tall buildings. In such scenarios, the first radar return from the satellite for the SRTM mapping mission came from the tallest object rather than terrain. To mitigate this error, use an alternative Digital Terrain Model (DTM) rather than Digital Surface Model (DSM). [FABDEM](https://www.fathom.global/product/global-terrain-data-fabdem/) is one such existing commercial offering which attempts to remove the effect of forrests and buildings.
 
 ### ERROR: EXIF metadata not found!
 
@@ -110,7 +110,7 @@ This error indicates that usable metadata could not be found within the image. T
 
 This error indicates that the camera/drone manufacturer which took the image is not yet supported.
 
-OpenAthena does not work with images taken by smarpthones. The software's terrain-raycast technique requires an elevated view and accurate metdata indicating position and orientation of the camera. Smartphone images do not provide such preconditions and are thus incompatible with OpenAthena.
+OpenAthena does not work with images taken by smartphones. The software's terrain-raycast technique requires an elevated view and accurate metdata indicating position and orientation of the camera. Smartphone images do not provide such preconditions and are thus incompatible with OpenAthena.
 
 If you would like to make OpenAthena compatible with your drone model, please send example images to support@theta.limited via email along with the make and model name of your drone. For enhanced accuracy, inquire via the support email and Theta may ship you a calibration pattern poster to use your drone camera with our [camera calibration script](https://github.com/Theta-Limited/camera-calibration) at no cost to you.
 
@@ -120,7 +120,7 @@ If you are technically inclined, for faster integration consider [forking the re
 
 <img width="586" alt="OpenAthena Android an example of an Autel drone inaccuracy warning" src="./assets/troubleshooting/ERROR_Autel_Known_Accuracy_Problems.jpg">
 
-Drones made by Autel Robotics typically have numerous firmware and hardware issues (this author's personal observation, not an disparagement). During development of OpenAthena, this author observed cases where metadata tags were misspelled, the reported vertical datum for altitude was incorrect, and other significant issues. Additionally, the drone hardware itself (excpeting sensor payloads) is generally of inferior quality to DJI and other contemporaries.
+Drones made by Autel Robotics typically have numerous firmware and hardware issues (this author's personal observation, not an disparagement). During development of OpenAthena, this author observed cases where metadata tags were misspelled, the reported vertical datum for altitude was incorrect, and other significant issues. Additionally, the drone hardware itself (excepting sensor payloads) is generally of inferior quality to DJI and other contemporaries.
 
 This error message will occur the first time an Autel drone image is loaded into a user's session of operating the app. It is intended to inform the user of possible accuracy problems which may occur, while still allowing them to proceed with calculation if they wish to do so.
 
@@ -138,7 +138,7 @@ This error occurs in rare cases with specific low end consumer-oriented DJI dron
 
 Accuracy issues occuring during the app's opperation are typically caused by three factors:
 * Slant angle from drone camera to target is nearly parallel to the ground. Cicrular Error via terrain-raycast is much higher than normal in such cases
-* Poor magnetometer (compass sensor) calibration of the drone. Unless a calibration procedure is performed for the drone's compass while within 100 miles of the operating AO, heading information from the drone's compass can be off by up to 10 degrees or so, causing significant cirular error which increases with distance.
+* Poor magnetometer (compass sensor) calibration of the drone. Unless a calibration procedure is performed for the drone's compass while within 100 miles of the operating AO, heading information from the drone's compass can be off by up to 10 degrees or so, causing significant circular error which increases with distance.
 * Camera intrinsic parameters are not present within the DroneModels database for the loaded drone image. In the target calculation output trace text, if the `Is camera model recognized?` value is `No`, this means internal properties of the camera were calculated using a less accurate fallback method. In this case, calculations will become more inaccurate the further the selected pixel is from the central point of the image.
 
 #### Compass sensor 🧭 calibration
@@ -193,7 +193,7 @@ Then press the back button or again tap the kebab menu icon (three dots) to retu
 
 <img width="270" alt="OpenAthena™ Android Target Calculation demo using cobb.tif and DJI_0419.JPG, output mode NATO MGRS 10m" src="./assets/DJI_0419_Target_Res_MGRS10m_Demo.png">
 
-The app also supports selection between `Meter` and `US Foot` as the Distance Unit for the apps's output.
+The app also supports selection between `Meter` and `US Foot` as the Distance Unit for the app's output.
 
 
 ### [ATAK](https://en.wikipedia.org/wiki/Android_Team_Awareness_Kit) Cursor on Target
