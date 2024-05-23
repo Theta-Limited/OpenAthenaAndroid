@@ -299,7 +299,7 @@ public class MetadataExtractor {
         }
 
         // safety check: if metadata azimuth and theta are zero, it's extremely likely the metadata is invalid
-        if (Math.abs(Double.compare(azimuth, 0.0d)) <= 0.001d && Math.abs(Double.compare(theta, 0.0d)) <= 0.001d) {
+        if (Math.abs(azimuth) <= 0.0001d && Math.abs(theta) <= 0.0001d) {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_altitude_and_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
         }
 
