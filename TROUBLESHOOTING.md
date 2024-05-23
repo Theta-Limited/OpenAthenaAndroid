@@ -51,6 +51,8 @@ This troubleshooting manual provides important context on common fail conditions
 
 ### ERROR: failed to load DEM, not a GeoTIFF ".tif" or DTED2 ".dt2" file
 
+<img width="586" alt="OpenAthena Android an example of DEM load failure error" src="./assets/troubleshooting/ERROR_failed_to_load_DEM.jpg">
+
 OpenAthena requires a Digital Elevation Model (DEM) representing terrain altitude of an area of the earth to be loaded before calculations may be performed.
 
 This error may occur when you use the "⛰" button to attempt to load a DEM.
@@ -81,9 +83,13 @@ To obtain a GeoTIFF file for a certain area, review the document "EIO_fetch_geot
 
 ### ERROR: resolveTarget ran OOB at: 00.000000, 00.000000, Please ensure your DEM file covers the drone's location!
 
+<img width="586" alt="OpenAthena Android an example of a raycast calculation out of bounds error" src="./assets/troubleshooting/ERROR_resolveTarget_ran_OOB.jpg">
+
 This error indicates that the attempted raycast for your target calcuation went Out Of Bounds (OOB) of the coverage of your loaded DEM. This most commonly means that your loaded DEM file does not cover the area the drone photo was taken in. This error can also occur however when the raycast misses terrain entirely, such as when a selected point is of the sky or the pitch angle value of the camera is inaccurate.
 
 ### ERROR: bad altitude or terrain data. This image is unusable. 🖼🚫🎯
+
+<img width="586" alt="OpenAthena Android an example of an unusable image error" src="./assets/troubleshooting/ERROR_drone_image_metadata_missing_or_unusable.jpg">
 
 This error indicates that the attempted raycast's start heigh was already below that of the terrain model. This only occurs in situations where either the drone altitude, the terrain model, or both are inaccurate.
 
@@ -100,13 +106,20 @@ This error can also occur for drone models which do not store EXIF metadata in t
 
 ### ERROR: XMP metadata not found!
 
+<img width="586" alt="OpenAthena Android an example of a xmp metadata not found error" src="./assets/troubleshooting/ERROR_xmp_metadata_not_found.jpg">
+
+
 Similar scenario as above.
 
 ### ERROR: Unable to open image file to calculate. Drone image 🖼 metadata is either missing or unusable. Is this a drone image?
 
+<img width="586" alt="OpenAthena Android an example of an invalid image error" src="./assets/troubleshooting/ERROR_drone_image_metadata_missing_or_unusable.jpg">
+
 This error indicates that usable metadata could not be found within the image. This most commonly occurs when the loaded image is from something like a screenshot rather than an actual drone image file.
 
 ### ERROR: make EXAMPLE not usable at this time
+
+<img width="586" alt="OpenAthena Android an example of an unreconginzed camera make error" src="./assets/troubleshooting/ERROR_invalid_camera_make_derp_dog.jpg">
 
 This error indicates that the camera/drone manufacturer which took the image is not yet supported.
 
@@ -118,6 +131,8 @@ If you are technically inclined, for faster integration consider [forking the re
 
 ### ⚠️DANGER: Autel drones have known accuracy problems ⚠️
 
+<img width="586" alt="OpenAthena Android an example of an Autel drone inaccuracy warning" src="./assets/troubleshooting/ERROR_Autel_Known_Accuracy_Problems.jpg">
+
 Drones made by Autel Robotics typically have numerous firmware and hardware issues (this author's personal observation, not an disparagement). During development of OpenAthena, this author observed cases where metadata tags were misspelled, the reported vertical datum for altitude was incorrect, and other significant issues. Additionally, the drone hardware itself (excpeting sensor payloads) is generally of inferior quality to DJI and other contemporaries.
 
 This error message will occur the first time an Autel drone image is loaded into a user's session of operating the app. It is intended to inform the user of possible accuracy problems which may occur, while still allowing them to proceed with calculation if they wish to do so.
@@ -127,6 +142,8 @@ This error message will occur the first time an Autel drone image is loaded into
 This error can occur in rare cases where a certain necessary parameter, such as camera pitch angle, is not present in the image metadata.
 
 ### ERROR: Camera Pitch metadata found, but was invalid! This drone is incompatible with OpenAthena! 😭
+
+<img width="586" alt="OpenAthena Android an example of an error with the DJI Mini 2 or 3" src="./assets/troubleshooting/ERROR_invalid_pitch_metadata_mini2.jpg">
 
 This error occurs in rare cases with specific low end consumer-oriented DJI drone models (such as the Mini 2 and Mini 3, not inc. Pro versions). For these models, the manufacturer has intentionally removed camera pitch and yaw metadata, likely for the purpose of [market segmentation](https://en.wikipedia.org/wiki/Market_segmentation) to prevent these models from being used with professional image post-processing software.
 
