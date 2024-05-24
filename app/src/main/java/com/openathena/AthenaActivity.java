@@ -250,21 +250,37 @@ public abstract class AthenaActivity extends AppCompatActivity {
         return offset;
     }
 
-    public static int get_selection_x() {
-        return athenaApp.get_selection_x();
-    }
-
-    public static void set_selection_x(int x) {
-        athenaApp.set_selection_x(x);
-    }
-
-    public static int get_selection_y() {
-        return athenaApp.get_selection_y();
-    }
-
-    public static void set_selection_y(int y) {
-        athenaApp.set_selection_y(y);
-    }
+//    public static int get_selection_x() {
+//        return athenaApp.get_selection_x();
+//    }
+//
+//    public static void set_selection_x(int x) {
+//        athenaApp.set_selection_x(x);
+//    }
+//
+//    public static int get_selection_y() {
+//        return athenaApp.get_selection_y();
+//    }
+//
+//    public static void set_selection_y(int y) {
+//        athenaApp.set_selection_y(y);
+//    }
+//
+//    public static double get_proportion_selection_x() {
+//        return athenaApp.get_proportion_selection_x();
+//    }
+//
+//    public static void set_proportion_selection_x(double prop_x) {
+//        athenaApp.set_proportion_selection_x(prop_x);
+//    }
+//
+//    public static double get_proportion_selection_y() {
+//        return athenaApp.get_proportion_selection_y();
+//    }
+//
+//    public static void set_proportion_selection_y(double prop_y) {
+//        athenaApp.set_proportion_selection_y(prop_y);
+//    }
 
     public int[] getImageDimensionsFromUri(Uri imageUri) {
         Context context = this;
@@ -452,8 +468,8 @@ public abstract class AthenaActivity extends AppCompatActivity {
         Log.d(TAG,"onResume started");
         super.onResume();
         if (isImageLoaded && iView != null) {
-            if (get_selection_x() != -1 && get_selection_y() != -1) {
-                iView.restoreMarker(get_selection_x(), get_selection_y());
+            if (AthenaApp.get_selection_x() != -1 && AthenaApp.get_selection_y() != -1) {
+                iView.restoreMarker(AthenaApp.get_selection_x(), AthenaApp.get_selection_y());
             } else{
                 iView.mark(0.5d, 0.5d); // put marker on center of iView if no current selection
             }

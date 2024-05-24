@@ -244,8 +244,8 @@ public class MainActivity extends AthenaActivity {
 //        set_selection_y(athenaApp.get_selection_y());
 
         if (isImageLoaded) {
-            if (get_selection_x() != -1 && get_selection_y() != -1) {
-                iView.restoreMarker(get_selection_x(), get_selection_y());
+            if (AthenaApp.get_selection_x() != -1 && AthenaApp.get_selection_y() != -1) {
+                iView.restoreMarker(AthenaApp.get_selection_x(), AthenaApp.get_selection_y());
             } else{
                 iView.reset();
             }
@@ -357,8 +357,8 @@ public class MainActivity extends AthenaActivity {
 
             isImageLoaded = false;
             iView.reset();// reset the marker to the center and reset pan and zoom values
-            set_selection_x(-1);
-            set_selection_y(-1);
+            AthenaApp.set_selection_x(-1);
+            AthenaApp.set_selection_y(-1);
         }
         imageUri = uri;
 
@@ -636,10 +636,10 @@ public class MainActivity extends AthenaActivity {
 
             double[] relativeRay;
             try {
-                if (get_selection_x() < 0 || get_selection_y() < 0) {
+                if (AthenaApp.get_selection_x() < 0 || AthenaApp.get_selection_y() < 0) {
                     throw new NoSuchFieldException("no point was selected");
                 } else {
-                    relativeRay = theMeta.getRayAnglesFromImgPixel(get_selection_x(), get_selection_y(), exif);
+                    relativeRay = MetadataExtractor.getRayAnglesFromImgPixel(AthenaApp.get_selection_x(), AthenaApp.get_selection_y(), exif);
                 }
             } catch (Exception e) {
                 relativeRay = new double[] {0.0d, 0.0d};
@@ -822,10 +822,10 @@ public class MainActivity extends AthenaActivity {
             is.close();
             //
             // send CoT message to udp://239.2.3.1:6969
-            //     e.g. for use with DoD's ATAK app
+            //     e.g. for use with ATAK app
             if (shouldISendCoT) {
                 // NOTE that the CoT spec requires WGS84 hae, not EGM96 above mean sea level
-                CursorOnTargetSender.sendCoT(this, latitude, longitude, altitudeDouble, theta, exif.getAttribute(ExifInterface.TAG_DATETIME));
+                CursorOnTargetSender.sendCoT(this, latitude, longitude, altitudeDouble, theta, exif.getAttribute(ExifInterface.TAG_DATETIME), null);
             }
         } catch (XMPException e) {
             Log.e(TAG, e.getMessage());

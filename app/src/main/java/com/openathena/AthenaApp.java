@@ -59,23 +59,41 @@ public class AthenaApp extends Application { // Android Singleton Class for hold
 
     // selected image pixel for use in ray offset calculation
     // represents (u, v) in pixels from the top left corner of the image
-    private int selection_x = -1;
-    private int selection_y = -1;
+    private static int selection_x = -1;
+    private static int selection_y = -1;
+    private static double proportion_selection_x = 0.5d;
+    private static double proportion_selection_y = 0.5d;
 
-    public int get_selection_x() {
+    public static int get_selection_x() {
         return selection_x;
     }
 
-    public void set_selection_x(int x) {
+    public static void set_selection_x(int x) {
         selection_x = x;
     }
 
-    public int get_selection_y() {
+    public static int get_selection_y() {
         return selection_y;
     }
 
-    public void set_selection_y(int y) {
+    public static void set_selection_y(int y) {
         selection_y = y;
+    }
+
+    public static double get_proportion_selection_x() {
+        return proportion_selection_x;
+    }
+
+    public static void set_proportion_selection_x(double prop_x) {
+        proportion_selection_x = prop_x;
+    }
+
+    public static double get_proportion_selection_y() {
+        return proportion_selection_y;
+    }
+
+    public static void set_proportion_selection_y(double prop_y) {
+        proportion_selection_y = prop_y;
     }
 
     private HashMap<String, CharSequence> charSeqMap = new HashMap<String, CharSequence>();

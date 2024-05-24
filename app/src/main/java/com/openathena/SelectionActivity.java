@@ -50,8 +50,8 @@ public class SelectionActivity extends AthenaActivity{
         }
 
         if (isImageLoaded) {
-            if (get_selection_x() != -1 && get_selection_y() != -1) {
-                iView.restoreMarker(get_selection_x(), get_selection_y());
+            if (AthenaApp.get_selection_x() != -1 && AthenaApp.get_selection_y() != -1) {
+                iView.restoreMarker(AthenaApp.get_selection_x(), AthenaApp.get_selection_y());
             } else{
                 iView.mark(0.5d, 0.5d); // put marker on center of iView if no current selection
             }

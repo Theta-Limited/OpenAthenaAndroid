@@ -214,8 +214,10 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                 float proportionX = transformedCoords[0] / getWidth();
                 float proportionY = transformedCoords[1] / getHeight();
 
-                parent.set_selection_x((int) Math.round(proportionX * original_width));
-                parent.set_selection_y((int) Math.round(proportionY * original_height));
+                AthenaApp.set_selection_x((int) Math.round(proportionX * original_width));
+                AthenaApp.set_selection_y((int) Math.round(proportionY * original_height));
+                AthenaApp.set_proportion_selection_x(proportionX);
+                AthenaApp.set_proportion_selection_y(proportionY);
 
                 if (parent.isImageLoaded && parent.isDEMLoaded) {
                     parent.calculateImage(yahweh, false);
