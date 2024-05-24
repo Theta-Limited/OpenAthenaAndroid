@@ -825,7 +825,7 @@ public class MainActivity extends AthenaActivity {
             //     e.g. for use with ATAK app
             if (shouldISendCoT) {
                 // NOTE that the CoT spec requires WGS84 hae, not EGM96 above mean sea level
-                CursorOnTargetSender.sendCoT(this, latitude, longitude, altitudeDouble, theta, exif.getAttribute(ExifInterface.TAG_DATETIME), null);
+                CursorOnTargetSender.sendCoT(this, latitude, longitude, altitudeDouble, theta, exif.getAttribute(ExifInterface.TAG_DATETIME));
             }
         } catch (XMPException e) {
             Log.e(TAG, e.getMessage());
