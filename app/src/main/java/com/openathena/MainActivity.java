@@ -63,6 +63,7 @@ import java.io.OutputStream;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -583,6 +584,7 @@ public class MainActivity extends AthenaActivity {
             return;
         }
 
+        LinkedHashMap<String, String> openAthenaCalculationInfo = new LinkedHashMap<String,String>();
         // load image into object
         try {
             ContentResolver cr = getContentResolver();
@@ -602,37 +604,60 @@ public class MainActivity extends AthenaActivity {
             Log.i(TAG, "parsed xmpMeta\n");
 
             appendText(getString(R.string.opened_exif_for_image_msg));
-            attribs += theMeta.getTagString(ExifInterface.TAG_DATETIME, exif);
-            attribs += theMeta.getTagString(ExifInterface.TAG_MAKE, exif);
-            String make = exif.getAttribute(ExifInterface.TAG_MAKE);
+            attribs += MetadataExtractor.getTagString(ExifInterface.TAG_DATETIME, exif);
+            attribs += MetadataExtractor.getTagString(ExifInterface.TAG_MAKE, exif);
             attribs += theMeta.getTagString(ExifInterface.TAG_MODEL, exif);
-            attribs += getString(R.string.isCameraModelRecognized) + " " + (theMeta.isDroneModelRecognized(exif) ? getString(R.string.yes) : getString(R.string.no)) + "\n";
-            attribs += getString(R.string.lens_type) + " " + (theMeta.getLensType(exif)) + "\n";
+            attribs += getString(R.string.isCameraModelRecognized) + " " + (MetadataExtractor.isDroneModelRecognized(exif) ? getString(R.string.yes) : getString(R.string.no)) + "\n";
+            attribs += getString(R.string.lens_type) + " " + (MetadataExtractor.getLensType(exif)) + "\n";
 
-            LinkedHashMap<String, Double> paramMap = theMeta.getDistortionParameters(exif);
+            String make = exif.getAttribute(ExifInterface.TAG_MAKE);
+            if (make == null) make = "";
+            openAthenaCalculationInfo.put("make", make.toLowerCase());
+            String model = exif.getAttribute(ExifInterface.TAG_MODEL);
+            if (model == null) model = "";
+            openAthenaCalculationInfo.put("model", model.toUpperCase());
+            openAthenaCalculationInfo.put("isCameraModelRecognized", Boolean.toString(MetadataExtractor.isDroneModelRecognized(exif)));
+            openAthenaCalculationInfo.put("lensType", MetadataExtractor.getLensType(exif));
+
+            LinkedHashMap<String, Double> paramMap = MetadataExtractor.getDistortionParameters(exif);
             if (paramMap != null && paramMap.size() > 0) {
                 attribs += getString(R.string.distortion_parameters) + "\n";
                 for (Map.Entry<String, Double> entry : paramMap.entrySet()) {
                     attribs += "    " + entry.getKey() + ": " + entry.getValue() + "\n";
+                    openAthenaCalculationInfo.put(entry.getKey(), roundDouble(entry.getValue()));
                 }
             }
-            attribs += theMeta.getTagString(ExifInterface.TAG_FOCAL_LENGTH, exif);
-            attribs += theMeta.getTagString(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM, exif);
-            attribs += theMeta.getTagString(ExifInterface.TAG_DIGITAL_ZOOM_RATIO, exif);
-            attribs += theMeta.getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif);
-            attribs += theMeta.getTagString(ExifInterface.TAG_IMAGE_LENGTH, exif);
-            double[] intrinsics = theMeta.getIntrinsicMatrixFromExif(exif);
+            attribs += MetadataExtractor.getTagString(ExifInterface.TAG_FOCAL_LENGTH, exif);
+            attribs += MetadataExtractor.getTagString(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM, exif);
+            attribs += MetadataExtractor.getTagString(ExifInterface.TAG_DIGITAL_ZOOM_RATIO, exif);
+            attribs += MetadataExtractor.getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif);
+            attribs += MetadataExtractor.getTagString(ExifInterface.TAG_IMAGE_LENGTH, exif);
+            // yikes
+            openAthenaCalculationInfo.put("focalLength", roundDouble(MetadataExtractor.rationalToFloat(exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH))));
+            openAthenaCalculationInfo.put("digitalZoomRatio", exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO));
+            openAthenaCalculationInfo.put("imageWidth", exif.getAttribute(ExifInterface.TAG_IMAGE_WIDTH));
+            openAthenaCalculationInfo.put("imageLength", exif.getAttribute(ExifInterface.TAG_IMAGE_LENGTH));
+
+            double[] intrinsics = MetadataExtractor.getIntrinsicMatrixFromExif(exif);
             attribs += getString(R.string.focal_length_label) + " " + Math.round(intrinsics[0]) + "\n";
 //            attribs += "fy: " + intrinsics[4] + "\n";
 //            attribs += "cx: " + intrinsics[2] + "\n";
 //            attribs += "cy: " + intrinsics[5] + "\n";
             attribs += getString(R.string.roll_label) + " " + roll + "°\n";
+            openAthenaCalculationInfo.put("f_x", roundDouble(intrinsics[0]));
+            openAthenaCalculationInfo.put("f_y", roundDouble(intrinsics[4]));
+//            openAthenaCalculationInfo.put("c_x", roundDouble(intrinsics[2]));
+//            openAthenaCalculationInfo.put("c_y", roundDouble(intrinsics[5]));
 
             double azimuthOffsetUserCorrection = athenaApp.getDouble("userOffset");
             if (azimuthOffsetUserCorrection != 0.0d) {
                 attribs += getString(R.string.manual_correction_label) + " " + roundDouble(azimuthOffsetUserCorrection) + "°" + "\n";
             }
+            openAthenaCalculationInfo.put("azimuthOffsetUserCorrection", roundDouble(azimuthOffsetUserCorrection));
             azimuth += azimuthOffsetUserCorrection;
+
+            openAthenaCalculationInfo.put("imageSelectedProportionX", roundDouble(AthenaApp.get_proportion_selection_x()));
+            openAthenaCalculationInfo.put("imageSelectedProportionY", roundDouble(AthenaApp.get_proportion_selection_y()));
 
             double[] relativeRay;
             try {
@@ -653,6 +678,9 @@ public class MainActivity extends AthenaActivity {
 
             attribs += getString(R.string.azimuth_offset_label) + " " + Math.round(azimuthOffsetSelectedPoint) + "°\n";
             attribs += getString(R.string.pitch_offset_label) + " " + -1 * Math.round(thetaOffsetSelectedPoint) + "°\n";
+
+            openAthenaCalculationInfo.put("yawOffsetDegSelectedPoint", roundDouble(azimuthOffsetSelectedPoint));
+            openAthenaCalculationInfo.put("pitchOffsetDegSelectedPoint", roundDouble(-1.0d * thetaOffsetSelectedPoint));
 
             azimuth += azimuthOffsetSelectedPoint;
             theta += thetaOffsetSelectedPoint;
@@ -699,6 +727,9 @@ public class MainActivity extends AthenaActivity {
                     latitude = result[1];
                     longitude = result[2];
                     altitudeDouble = result[3];
+
+                    openAthenaCalculationInfo.put("slantRange", roundDouble(distance));
+
                     latCK42 = CoordTranslator.toCK42Lat(latitude, longitude, altitudeDouble);
                     lonCK42 = CoordTranslator.toCK42Lon(latitude, longitude, altitudeDouble);
                     // Note: This altitude calculation assumes the SK42 and WGS84 ellipsoid have the exact same center
@@ -825,7 +856,7 @@ public class MainActivity extends AthenaActivity {
             //     e.g. for use with ATAK app
             if (shouldISendCoT) {
                 // NOTE that the CoT spec requires WGS84 hae, not EGM96 above mean sea level
-                CursorOnTargetSender.sendCoT(this, latitude, longitude, altitudeDouble, theta, exif.getAttribute(ExifInterface.TAG_DATETIME));
+                CursorOnTargetSender.sendCoT(this, latitude, longitude, altitudeDouble, theta, exif.getAttribute(ExifInterface.TAG_DATETIME), openAthenaCalculationInfo);
             }
         } catch (XMPException e) {
             Log.e(TAG, e.getMessage());
