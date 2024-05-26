@@ -51,7 +51,7 @@
 
     <string name="clear_button_text">초기화 로그</string>
     <string name="openathena_for_android">Android용 OpenAthena™</string>
-    <string name="GPL3Notice">GPL-3.0, 일부 권리 보유</string>
+    <string name="AGPLv3Notice">AGPL-3.0, 일부 권리 보유</string>
     <string name="AboutSnippet"><![CDATA[<br>Android용 OpenAthena™는 일반적인 드론이 정확한 측지 위치를 파악할 수 있도록 하는 프로젝트입니다.<br>]]></string>
     <string name="about_software_libraries_used">사용된 소프트웨어 라이브러리:</string>
     <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a> 이 관리하는 프로젝트<br> ]]></string>

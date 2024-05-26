@@ -51,7 +51,7 @@
 
     <string name="clear_button_text">Очистити журнал</string>
     <string name="openathena_for_android">OpenAthena™ для Android</string>
-    <string name="GPL3Notice">GPL-3.0, деякі права захищено</string>
+    <string name="AGPLv3Notice">AGPL-3.0, деякі права захищено</string>
     <string name="AboutSnippet"><![CDATA[<br>OpenAthena™ для Android — це проект, який дозволяє звичайним дронам визначати точні геодезичні місця<br>]]></string>
     <string name="about_software_libraries_used">Використані програмні бібліотеки:</string>
     <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> Проект підтримується <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br> ]]></string>

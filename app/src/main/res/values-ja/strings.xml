@@ -51,7 +51,7 @@
 
     <string name="clear_button_text">ログをクリア</string>
     <string name="openathena_for_android">Android 用「OpenAthena™」</string>
-    <string name="GPL3Notice">GPL-3.0、一部権作権所有</string>
+    <string name="AGPLv3Notice">AGPL-3.0、一部権作権所有</string>
     <string name="AboutSnippet"><![CDATA[<br>OpenAthena™ for Android は、一般的なドローンが正確な測地位置を特定できるようにするプロジェクトです<br>]]></string>
     <string name="about_software_libraries_used">使用したソフトウェア ライブラリ:</string>
     <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a>によって維持されているプロジェクト<br>]]></string>
