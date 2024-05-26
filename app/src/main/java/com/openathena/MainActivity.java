@@ -595,13 +595,20 @@ public class MainActivity extends AthenaActivity {
             double[] values = theMeta.getMetadataValues(exif);
             double y = values[0];
             double x  = values[1];
-            // MetadataExctractor.getMetadataValues auto converts vertical datum to EGM96 AMSL
+            // MetadataExctractor.getMetadataValues auto converts vertical datum to WGS84 ellipsoidal
             double z = values[2];
             double azimuth = values[3];
+            // pitch angle in OpenAthena convention, positive degrees downwards from horizon
             double theta = values[4];
             double roll = values[5];
 
             Log.i(TAG, "parsed xmpMeta\n");
+
+            openAthenaCalculationInfo.put("droneLatitude", roundDouble(y));
+            openAthenaCalculationInfo.put("droneLongitude", roundDouble(x));
+            openAthenaCalculationInfo.put("droneElevationHAE", roundDouble(z));
+            openAthenaCalculationInfo.put("cameraRollAngleDeg", roundDouble(roll));
+            openAthenaCalculationInfo.put("cameraSlantAngleDeg", roundDouble(theta));
 
             appendText(getString(R.string.opened_exif_for_image_msg));
             attribs += MetadataExtractor.getTagString(ExifInterface.TAG_DATETIME, exif);

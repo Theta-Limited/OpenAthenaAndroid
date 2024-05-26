@@ -180,7 +180,7 @@ public class CursorOnTargetSender {
 
             Element openAthenaCalculationInfo = doc.createElement("openAthenaCalculationInfo");
             double theta = Math.toDegrees(Math.atan2(Double.parseDouble(le),Double.parseDouble(ce)));
-            openAthenaCalculationInfo.setAttribute("slantAngleDegrees", String.valueOf(theta));
+            openAthenaCalculationInfo.setAttribute("raySlantAngleDeg", String.valueOf(theta));
             // add all the various calculation data from oaInfoMap to use for statistics/experimentation and debugging
             for (Map.Entry<String,String> entry : oaInfoMap.entrySet()) {
                 openAthenaCalculationInfo.setAttribute(entry.getKey(), entry.getValue());
