@@ -46,8 +46,15 @@ import java.net.InetAddress;
 
 public class CursorOnTargetSender {
 
+    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+
     private static long eventuid = 0;
     private static Context mContext;
+
+    // Estimate of max linear (vertical) error for any SRTM elevation value
+    // from https://doi.org/10.1016/j.asej.2017.01.007
+    private static final double LINEAR_ERROR = 5.9d;
+
 
     static TimeZone tz = TimeZone.getTimeZone("UTC");
     static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -69,10 +76,7 @@ public class CursorOnTargetSender {
         }
 
         mContext = invoker;
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        if (sharedPreferences != null) {
-            eventuid = sharedPreferences.getLong("eventuid", 0);
-        }
+        loadUid();
 
         df.setTimeZone(tz);
         Date now = new Date();
@@ -83,15 +87,14 @@ public class CursorOnTargetSender {
         Date fiveMinsFromNow = cal.getTime();
         String fiveMinutesFromNowISO = df.format(fiveMinsFromNow);
         String imageISO = df.format(convert(exif_datetime));
-        double linearError = 15.0d / 3.0d; // optimistic estimation of 1 sigma accuracy of altitude
-        double circularError = 1.0d / Math.tan(Math.toRadians(theta)) * linearError; // optimistic estimation of 1 sigma accuracy based on angle of camera depression theta
 
-        String le = Double.toString(linearError);
+        double circularError = calculateCircularError(theta); // optimistic estimation of 2 sigma accuracy based on angle of camera depression theta
+        String le = Double.toString(LINEAR_ERROR);
         String ce = Double.toString(circularError);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String uidString = "OpenAthena-" + getDeviceHostnameHash().substring(0,8) + "-" + Long.toString(eventuid);
+                String uidString = buildUIDString(invoker);
 //                String xmlString = buildCoT(uidString, imageISO, nowAsISO, fiveMinutesFromNowISO, Double.toString(lat), Double.toString(lon), ce, Double.toString(Math.round(hae)), le);
                 String xmlString = buildCoT(uidString, imageISO, nowAsISO, fiveMinutesFromNowISO, Double.toString(lat), Double.toString(lon), ce, Double.toString(hae), le, openAthenaCalculationInfo);
 //                String dumxml = "<event uid=\"41414141\" type=\"a-u-G\" how=\"h-c\" start=\"2023-01-24T22:16:53Z\" time=\"2023-01-24T22:16:53Z\" stale=\"2023-01-25T22:06:53Z\"><point le=\"0\" ce=\"0\" hae=\"0\" lon=\"0\" lat=\"0\"/></event>";
@@ -101,8 +104,47 @@ public class CursorOnTargetSender {
             }
         }).start();
 
+    }
 
+    public static double calculateCircularError(double theta) {
+        return 1.0d / Math.tan(Math.toRadians(theta)) * LINEAR_ERROR; // optimistic estimation of 2 sigma accuracy based on angle of camera depression theta
+    }
 
+    // Target Location Error categories
+    // from: https://www.bits.de/NRANEU/others/jp-doctrine/jp3_09_3%2809c%29.pdf
+    // pg. V-4
+    public enum TLE_Categories {
+        CAT_1, // 0 to < 7 meters
+        CAT_2, // 7 to < 16 meters
+        CAT_3, // 16 to < 30 meters
+        CAT_4, // 31 to < 91 meters
+        CAT_5, // 92 to < 305 meters
+        CAT_6, // > 305 meters
+    }
+
+    public static TLE_Categories errorCategoryFromCE(double circular_error) {
+        if (circular_error > 305.0) {
+            return TLE_Categories.CAT_6;
+        } else if (circular_error > 92.0) {
+            return TLE_Categories.CAT_5;
+        } else if (circular_error > 31.0) {
+            return TLE_Categories.CAT_4;
+        } else if (circular_error > 16.0) {
+            return TLE_Categories.CAT_3;
+        } else if (circular_error > 7.0) {
+            return TLE_Categories.CAT_2;
+        } else if (circular_error >= 0.0) {
+            return TLE_Categories.CAT_1;
+        } else {
+            // This should never happen
+            return TLE_Categories.CAT_6;
+        }
+    }
+
+    public static String buildUIDString(Context invoker) {
+        mContext = invoker;
+        loadUid();
+        return "OpenAthena-" + getDeviceHostnameHash().substring(0,8) + "-" + Long.toString(eventuid);
     }
 
     /**
@@ -123,26 +165,42 @@ public class CursorOnTargetSender {
         return outDate;
     }
 
+    public interface HashCallback {
+        void onHashComputed(String hash);
+    }
+
     public static String getDeviceHostnameHash() {
-        InetAddress addr;
-        String hash;
-        try {
-            addr = InetAddress.getLocalHost();
-            String hostname = addr.getHostName();
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(hostname.getBytes());
-            byte[] digest = md.digest();
-            StringBuilder sb = new StringBuilder();
-            for (byte b : digest) {
-                sb.append(String.format("%02x", b & 0xff));
+        final String[] hashContainer = new String[1]; // Array to hold the result
+
+        Thread networkThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                InetAddress addr;
+                String hostnameHash = "unknown"; // Default to "unknown" in case of an error
+                try {
+                    addr = InetAddress.getLocalHost();
+                    String hostname = addr.getHostName();
+                    MessageDigest md = MessageDigest.getInstance("SHA-256");
+                    md.update(hostname.getBytes());
+                    byte[] digest = md.digest();
+                    StringBuilder sb = new StringBuilder();
+                    for (byte b : digest) {
+                        sb.append(String.format("%02x", b & 0xff));
+                    }
+                    hostnameHash = sb.toString();
+                } catch (UnknownHostException | NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+                hashContainer[0] = hostnameHash; // Save the result in the shared array
             }
-            hash = sb.toString();
-        } catch (UnknownHostException e) {
-            hash = "unknown";
-        } catch (NoSuchAlgorithmException e) {
-            hash = "unknown";
+        });
+        networkThread.start();
+        try {
+            networkThread.join(); // Wait for the thread to finish
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Handle the interruption appropriately
         }
-        return hash;
+        return hashContainer[0]; // Return the result
     }
 
     public static String buildCoT(String uid, String imageISO, String nowAsISO, String fiveMinutesFromNowISO, String lat, String lon, String ce, String hae, String le, LinkedHashMap<String,String> oaInfoMap) {
@@ -241,5 +299,12 @@ public class CursorOnTargetSender {
         SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
         prefsEditor.putLong("eventuid", eventuid);
         prefsEditor.apply();
+    }
+
+    private static void loadUid() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        if (sharedPreferences != null) {
+            eventuid = sharedPreferences.getLong("eventuid", 0);
+        }
     }
 }

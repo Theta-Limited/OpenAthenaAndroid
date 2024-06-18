@@ -760,6 +760,13 @@ public class MainActivity extends AthenaActivity {
                         attribs += getString(R.string.target_found_at_msg) + " (CK-42): " + roundDouble(latCK42) + "," + roundDouble(lonCK42) + " Alt (hae): " + altCK42 + " " + "m" + "\n";
                     }
                     attribs += getString(R.string.drone_dist_to_target_msg) + " " + Math.round(distance * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
+                    double predictedCE = CursorOnTargetSender.calculateCircularError(theta);
+                    attribs += getString(R.string.target_predicted_ce) + " " + Math.round((predictedCE * (isUnitFoot() ? FEET_PER_METER : 1.0d))*10.0)/10.0 + " " + (isUnitFoot() ? "ft.":"m") + "\n";
+                    CursorOnTargetSender.TLE_Categories TLE_Cat = CursorOnTargetSender.errorCategoryFromCE(predictedCE);
+                    attribs += getString(R.string.target_location_error_category) + " " + TLE_Cat.name() + "\n";
+                    if (shouldISendCoT) {
+                        attribs += "Cursor on Target message sent with UID: " + CursorOnTargetSender.buildUIDString(this);
+                    }
                     if (!outputModeIsSlavic()) { // to avoid confusion with WGS84, no Google Maps link is provided when outputModeIsSlavic()
                         attribs += "<a href=\"https://maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "\">";
                         attribs += "maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "</a>\n\n";
