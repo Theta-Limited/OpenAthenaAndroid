@@ -37,6 +37,9 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
     // Cooldown period of 1 second
     private static final long INTENT_COOLDOWN_MS = 1000;
 
+    private static final float MIN_SCALE_FACTOR = 0.90f;
+    private static final float MAX_SCALE_FACTOR = 10.0f;
+
     private long lastScaleGestureTime = 0;
     private static final long SCALE_COOLDOWN_MS = 350;
     private static final long SCALE_EXIT_FULLSCREEN_COOLDOWN_MS = 550;
@@ -187,8 +190,6 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                 return true;
             }
 
-
-
             private void handleTap(float x, float y) {
                 if (!parent.isImageLoaded || parent.imageUri == null || parent.iView == null) {
                     return;
@@ -277,7 +278,7 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
                 }
             }
 
-            float clampedScaleFactor = clamp(targetScale, 0.90f, 5.0f) / currentScale;
+            float clampedScaleFactor = clamp(targetScale, MIN_SCALE_FACTOR, MAX_SCALE_FACTOR) / currentScale;
 
             matrix.postScale(clampedScaleFactor, clampedScaleFactor, detector.getFocusX(), detector.getFocusY());
             restrictTranslationToContent();
