@@ -77,6 +77,8 @@ public class MainActivity extends AthenaActivity {
 
     public static int dangerousAutelAwarenessCount;
 
+    public static int dangerousMissingCameraIntrinsicsCount;
+
     public static EGMOffsetProvider offsetAdapter = new EGM96OffsetAdapter(); // calculates diff between WGS84 reference ellipsoid and EGM96 geoid
 
     public static final double FEET_PER_METER = 3937.0d/1200.0d; // Exact constant for US Survey Foot per Meter
@@ -179,6 +181,7 @@ public class MainActivity extends AthenaActivity {
         clearText();
 
         dangerousAutelAwarenessCount = athenaApp.getInt("dangerousAutelAwarenessCount");
+        dangerousMissingCameraIntrinsicsCount = athenaApp.getInt("dangerousMissingCameraIntrinsicsCount");
 
         CharSequence textRestore = athenaApp.getCharSequence("textview");
         if (textRestore != null) {
@@ -276,6 +279,7 @@ public class MainActivity extends AthenaActivity {
     @Override
     protected void saveStateToSingleton() {
         athenaApp.putInt("dangerousAutelAwarenessCount", dangerousAutelAwarenessCount);
+        athenaApp.putInt("dangerousMissingCameraIntrinsicsCount", dangerousMissingCameraIntrinsicsCount);
         if (textView != null) {
             athenaApp.putCharSequence("textview", textView.getText());
         }
@@ -860,6 +864,9 @@ public class MainActivity extends AthenaActivity {
             }
             textViewTargetCoord.setText(Html.fromHtml(targetCoordString, 0, null, null));
             isTargetCoordDisplayed = true;
+            if (!MetadataExtractor.isDroneModelRecognized(exif)) {
+                displayMissingCameraIntrinsicsAlert();
+            }
             // close file
             is.close();
             //
@@ -922,11 +929,23 @@ public class MainActivity extends AthenaActivity {
     }
 
     public void displayAutelAlert() {
-        if (dangerousAutelAwarenessCount < 1) {
+        if (dangerousAutelAwarenessCount < 1) { // suppress warning if already encountered by user in this session
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setMessage(R.string.autel_accuracy_warning_msg);
             builder.setPositiveButton(R.string.i_understand_this_risk, (DialogInterface.OnClickListener) (dialog, which) -> {
                 dangerousAutelAwarenessCount += 1;
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
+    }
+
+    public void displayMissingCameraIntrinsicsAlert() {
+        if (dangerousMissingCameraIntrinsicsCount < 1) { // suppress warning if already encountered by user in this session
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setMessage("⚠\uFE0F DANGER: Camera internal properties were not found in database. Calculation accuracy will be degraded. Email support@theta.limited ⚠\uFE0F");
+            builder.setPositiveButton(R.string.i_understand_this_risk, (DialogInterface.OnClickListener) (dialog, which) -> {
+                dangerousMissingCameraIntrinsicsCount += 1;
             });
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
