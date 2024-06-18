@@ -257,10 +257,7 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
             long currentTime = System.currentTimeMillis();
             float adjustScaleFactor = detector.getScaleFactor();
 
-            // Get current scale
-            float[] matrixValues = new float[9];
-            matrix.getValues(matrixValues);
-            float currentScale = matrixValues[Matrix.MSCALE_X]; // Assumes uniform scaling
+            float currentScale = getCurrentScale();
 
             // Calculate the scale factor to apply considering the constraints
             float targetScale = currentScale * adjustScaleFactor;
@@ -294,12 +291,17 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
             isScaling = false; // Scaling ends
             isDragging = false;
 
-            float[] matrixValues = new float[9];
-            matrix.getValues(matrixValues);
-            lastScaleValue = matrixValues[Matrix.MSCALE_X]; // Assumes uniform scaling
+            lastScaleValue = getCurrentScale(); // Assumes uniform scaling
 
             super.onScaleEnd(detector);
         }
+    }
+
+    private float getCurrentScale() {
+        float[] matrixValues = new float[9];
+        matrix.getValues(matrixValues);
+        float currentScale = matrixValues[Matrix.MSCALE_X]; // Assumes uniform scaling
+        return currentScale;
     }
 
     private void restrictTranslationToContent() {
@@ -425,13 +427,25 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
             float actualX = (float) theMarker.x_prop * getWidth();
             float actualY = (float) theMarker.y_prop * getHeight();
 
+            // OUTER MARKER
             // Draw horizontal lines
             canvas.drawLine(actualX - length - gap, actualY, actualX - gap, actualY, paint);
             canvas.drawLine(actualX + gap, actualY, actualX + length + gap, actualY, paint);
-
             // Draw vertical lines
             canvas.drawLine(actualX, actualY - length - gap, actualX, actualY - gap, paint);
             canvas.drawLine(actualX, actualY + gap, actualX, actualY + length + gap, paint);
+
+            float currentScale = getCurrentScale();
+
+            // INNER FINE CROSSHAIR
+            paint.setStrokeWidth(gap / 16); // reduced width for fine crosshair center
+            paint.setAlpha((int) Math.min((255 * 2.0f * Math.max(0.0f, currentScale - 1.5f) / (MAX_SCALE_FACTOR - 1.5f)), 255)); // variable transparency for fine crosshair center
+            // Draw horizontal line
+            canvas.drawLine(actualX - gap, actualY, actualX + gap, actualY, paint);
+            // Draw vertical line
+            canvas.drawLine(actualX, actualY - gap, actualX, actualY + gap, paint);
+
+
         } else {
             // If no marker exists and the image is loaded, create a default marker at the center
             if (parent.isImageLoaded) {
