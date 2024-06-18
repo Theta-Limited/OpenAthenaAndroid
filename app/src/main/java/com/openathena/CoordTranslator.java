@@ -22,6 +22,14 @@ public class CoordTranslator {
 
     private static final String TAG = "CoordTranslator";
 
+    public static String toUTM(double latitude, double longitude) {
+        // mil.nga.mgrs library can also handle UTM out of the box
+        // https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system
+        MGRS mgrsObj = MGRS.from(new Point(longitude, latitude));
+        String utmText = mgrsObj.toUTM().toString();
+        return utmText;
+    }
+
     public static String toMGRS1m(double latitude, double longitude) {
         return toMGRS(latitude, longitude, GridType.METER);
     }

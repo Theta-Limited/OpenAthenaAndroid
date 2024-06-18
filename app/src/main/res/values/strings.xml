@@ -198,4 +198,6 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="utm" translatable="false">UTM</string>
+    <string name="utm_tooltip">Universal Transverse Mercator map projection system with 60 planar zones</string>
 </resources>

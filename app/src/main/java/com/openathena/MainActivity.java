@@ -787,6 +787,8 @@ public class MainActivity extends AthenaActivity {
             }
             attribs = attribs.replaceAll("(\r\n|\n)", "<br>"); // replace newline with HTML equivalent
             textView.append(Html.fromHtml(attribs, 0, null, null));
+            // Obtain UTM coordinates from mil.nga.mgrs library
+            String targetUTM = CoordTranslator.toUTM(latitude, longitude);
             // Obtain NATO MGRS from mil.nga.mgrs library
             String mgrs1m = CoordTranslator.toMGRS1m(latitude, longitude);
             Log.d(TAG, "mgrs1m: " + mgrs1m);
@@ -820,6 +822,8 @@ public class MainActivity extends AthenaActivity {
                         default:
                             throw new RuntimeException("Program entered an inoperable state due to outputMode"); // this shouldn't ever happen
                     }
+                } else if (outputMode == outputModes.UTM) {
+                    targetCoordString += targetUTM;
                 } else {
                     targetCoordString += roundDouble(latitude) + ", " + roundDouble(longitude);
                 }

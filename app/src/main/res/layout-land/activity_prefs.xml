@@ -83,6 +83,15 @@
                 android:tooltipText="@string/wgs84_tooltip" />
 
             <RadioButton
+                android:id="@+id/radioButtonUTM"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/utm"
+                android:textSize="20sp"
+                android:tooltipText="@string/utm_tooltip" />
+
+            <RadioButton
                 android:id="@+id/radioButtonMGRS1m"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

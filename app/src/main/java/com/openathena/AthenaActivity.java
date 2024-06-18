@@ -39,6 +39,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
 
     public enum outputModes {
         WGS84,
+        UTM,
         MGRS1m,
         MGRS10m,
         MGRS100m,
@@ -106,6 +107,20 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 break;
             case 1:
                 prefsEditor.putInt("outputMode", mode);
+                prefsEditor.apply();
+                outputMode = outputModes.UTM;
+                if (outputModeRadioGroup != null && outputModeRadioGroup.getVisibility() == View.VISIBLE) {
+                    outputModeRadioGroup.check(R.id.radioButtonUTM);
+                }
+                if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
+                    if(!isTargetCoordDisplayed) {
+                        textViewTargetCoord.setText("\uD83C\uDFAF " + getString(R.string.utm));
+                    }
+                }
+                Log.i(TAG, "Output mode set to UTM");
+                break;
+            case 2:
+                prefsEditor.putInt("outputMode", mode);
                 prefsEditor.apply(); // make the outputMode change persistent
                 outputMode = outputModes.MGRS1m; // NATO Military Grid Ref, 1m square area
                 if (outputModeRadioGroup != null && outputModeRadioGroup.getVisibility() == View.VISIBLE) {
@@ -119,7 +134,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 }
                 Log.i(TAG, "Output mode changed to MGRS1m");
                 break;
-            case 2:
+            case 3:
                 prefsEditor.putInt("outputMode", mode);
                 prefsEditor.apply(); // make the outputMode change persistent
                 outputMode = outputModes.MGRS10m; // NATO Military Grid Ref, 10m square area
@@ -134,7 +149,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 }
                 Log.i(TAG, "Output mode changed to MGRS10m");
                 break;
-            case 3:
+            case 4:
                 prefsEditor.putInt("outputMode", mode);
                 prefsEditor.apply(); // make the outputMode change persistent
                 outputMode= outputModes.MGRS100m; // NATO Military Grid Ref, 100m square area
@@ -149,13 +164,12 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 }
                 Log.i(TAG, "Output mode changed to MGRS100m");
                 break;
-            case 4:
+            case 5:
                 prefsEditor.putInt("outputMode", mode);
                 prefsEditor.apply(); // make the outputMode change persistent
                 outputMode = outputModes.CK42Geodetic; // An alternative geodetic system using the Krasovsky 1940 ellipsoid. Commonly used in former Warsaw pact countries
                 // There is no reason anyone would ever use anything but Meter as the unit for CK42
                 setMeasurementUnit(measurementUnits.METER);
-                // TODO make the disablement of imperial units more clear to user in the UI when this output mode is active
                 if (outputModeRadioGroup != null && outputModeRadioGroup.getVisibility() == View.VISIBLE) {
                     outputModeRadioGroup.check(R.id.radioButtonCK42Geodetic);
                 }
@@ -167,13 +181,12 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 }
                 Log.i(TAG, "Output mode changed to CK42Geodetic");
                 break;
-            case 5:
+            case 6:
                 prefsEditor.putInt("outputMode", mode);
                 prefsEditor.apply(); // make the outputMode change persistent
                 outputMode = outputModes.CK42GaussKrüger; // An alternative geodetic system using the Krasovsky 1940 ellipsoid. Northing defined by X value, and Easting defined by Y value describe an exact position on Earth
                 // There is no reason anyone would ever use anything but Meter as the unit for CK42
                 setMeasurementUnit(measurementUnits.METER);
-                // TODO make the disablement of imperial units more clear to user in the UI when this output mode is active
                 if (outputModeRadioGroup != null && outputModeRadioGroup.getVisibility() == View.VISIBLE) {
                     outputModeRadioGroup.check(R.id.radioButtonCK42GaussKrüger);
                 }
