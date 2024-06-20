@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
@@ -160,7 +161,7 @@ public class CursorOnTargetSender {
     public static String buildUIDString(Context invoker) {
         mContext = invoker;
         loadUid();
-        return "OpenAthena-" + getDeviceHostnameHash().substring(0,8) + "-" + Long.toString(eventuid);
+        return UIDGenerator.buildUIDString(invoker, eventuid);
     }
 
     /**
@@ -181,43 +182,7 @@ public class CursorOnTargetSender {
         return outDate;
     }
 
-    public interface HashCallback {
-        void onHashComputed(String hash);
-    }
 
-    public static String getDeviceHostnameHash() {
-        final String[] hashContainer = new String[1]; // Array to hold the result
-
-        Thread networkThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                InetAddress addr;
-                String hostnameHash = "unknown"; // Default to "unknown" in case of an error
-                try {
-                    addr = InetAddress.getLocalHost();
-                    String hostname = addr.getHostName();
-                    MessageDigest md = MessageDigest.getInstance("SHA-256");
-                    md.update(hostname.getBytes());
-                    byte[] digest = md.digest();
-                    StringBuilder sb = new StringBuilder();
-                    for (byte b : digest) {
-                        sb.append(String.format("%02x", b & 0xff));
-                    }
-                    hostnameHash = sb.toString();
-                } catch (UnknownHostException | NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                }
-                hashContainer[0] = hostnameHash; // Save the result in the shared array
-            }
-        });
-        networkThread.start();
-        try {
-            networkThread.join(); // Wait for the thread to finish
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // Handle the interruption appropriately
-        }
-        return hashContainer[0]; // Return the result
-    }
 
     public static String buildCoT(String uid, String imageISO, String nowAsISO, String fiveMinutesFromNowISO, String lat, String lon, String ce, String hae, String le, LinkedHashMap<String,String> oaInfoMap) {
         try {
