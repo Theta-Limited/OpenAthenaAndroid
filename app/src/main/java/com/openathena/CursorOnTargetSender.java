@@ -107,7 +107,7 @@ public class CursorOnTargetSender {
     }
 
     public static double calculateCircularError(double theta) {
-        return 1.0d / Math.tan(Math.toRadians(theta)) * LINEAR_ERROR; // optimistic estimation of 2 sigma accuracy based on angle of camera depression theta
+        return Math.abs(1.0d / Math.tan(Math.toRadians(theta)) * LINEAR_ERROR); // optimistic estimation of 2 sigma accuracy based on angle of camera depression theta
     }
 
     // Target Location Error categories
