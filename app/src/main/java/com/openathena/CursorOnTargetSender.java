@@ -141,6 +141,22 @@ public class CursorOnTargetSender {
         }
     }
 
+    public static String htmlColorFromTLE_Category(TLE_Categories tle_cat) {
+        if (tle_cat == TLE_Categories.CAT_1) {
+            // Green
+            return("#00FF00");
+        } else if (tle_cat == TLE_Categories.CAT_2) {
+            // Yellow
+            return("#FFFF00");
+        } else if (tle_cat == TLE_Categories.CAT_3) {
+            // Red
+            return("#FF0000");
+        } else {
+            // regular
+            return("");
+        }
+    }
+
     public static String buildUIDString(Context invoker) {
         mContext = invoker;
         loadUid();

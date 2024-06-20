@@ -731,6 +731,10 @@ public class MainActivity extends AthenaActivity {
             long GK_zone;
             long GK_northing;
             long GK_easting;
+
+            double predictedCE;
+            CursorOnTargetSender.TLE_Categories TLE_Cat;
+
             if (theTGetter != null) {
                 try {
                     result = theTGetter.resolveTarget(y, x, z, azimuth, theta);
@@ -760,12 +764,12 @@ public class MainActivity extends AthenaActivity {
                         attribs += getString(R.string.target_found_at_msg) + " (CK-42): " + roundDouble(latCK42) + "," + roundDouble(lonCK42) + " Alt (hae): " + altCK42 + " " + "m" + "\n";
                     }
                     attribs += getString(R.string.drone_dist_to_target_msg) + " " + Math.round(distance * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
-                    double predictedCE = CursorOnTargetSender.calculateCircularError(theta);
+                    predictedCE = CursorOnTargetSender.calculateCircularError(theta);
                     attribs += getString(R.string.target_predicted_ce) + " " + Math.round((predictedCE * (isUnitFoot() ? FEET_PER_METER : 1.0d))*10.0)/10.0 + " " + (isUnitFoot() ? "ft.":"m") + "\n";
-                    CursorOnTargetSender.TLE_Categories TLE_Cat = CursorOnTargetSender.errorCategoryFromCE(predictedCE);
+                    TLE_Cat = CursorOnTargetSender.errorCategoryFromCE(predictedCE);
                     attribs += getString(R.string.target_location_error_category) + " " + TLE_Cat.name() + "\n";
                     if (shouldISendCoT) {
-                        attribs += "Cursor on Target message sent with UID: " + CursorOnTargetSender.buildUIDString(this);
+                        attribs += "Cursor on Target message sent with UID: " + CursorOnTargetSender.buildUIDString(this) + "\n";
                     }
                     if (!outputModeIsSlavic()) { // to avoid confusion with WGS84, no Google Maps link is provided when outputModeIsSlavic()
                         attribs += "<a href=\"https://maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "\">";
@@ -841,6 +845,7 @@ public class MainActivity extends AthenaActivity {
                 targetCoordString += "</a> "; // end href tag
 
                 if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    // add a newline between coordinate and elevation if device is in landscape
                     targetCoordString += "<br>";
                 }
 
@@ -850,8 +855,19 @@ public class MainActivity extends AthenaActivity {
                 mslAlt *= (isUnitFoot() ? FEET_PER_METER : 1.0d);
                 // round to nearest whole number
                 long altEGM96 = Math.round(mslAlt);
-                targetCoordString += getString(R.string.altitude_label_short) + " " + altEGM96 + " " + (isUnitFoot() ? "ft.":"m");
-            } else { // to avoid confusion with WGS84, no Google Maps link is provided when outputModeIsSlavic()
+                targetCoordString += getString(R.string.altitude_label_short) + " " + altEGM96 + " " + (isUnitFoot() ? "ft.":"m") + " ";
+
+                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    // add a newline between elevation and TLE category if device is in Portrait
+                    targetCoordString += "<br>";
+                }
+
+                // Choose color Green, Yellow, Red for TLE 1, 2, 3
+                // For TLE 4+, htmlColorFromTLE_Category will be empty, leaving font at default color
+                targetCoordString += " " + "<font color=\"" + CursorOnTargetSender.htmlColorFromTLE_Category(TLE_Cat) + "\">";
+                targetCoordString += TLE_Cat.name();
+                targetCoordString += "</font>";
+            } else /* outputModeIsSlavic */ { // to avoid confusion with WGS84, no Google Maps link is provided when outputModeIsSlavic()
                 if (outputMode == outputModes.CK42Geodetic) {
                     targetCoordString = "(CK-42) " + roundDouble(latCK42) + ", " + roundDouble(lonCK42);
                     if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
