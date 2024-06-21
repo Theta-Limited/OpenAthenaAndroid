@@ -176,8 +176,6 @@ public class DemCacheActivity extends AthenaActivity implements DemListAdapter.I
     {
         Intent intent;
 
-        // for now, post a bubble; XXX
-        // eventually, we'll go to an activity that gives us more info about this DEM
         DemCache.DemCacheEntry i = adapter.getItem(position);
         String t = "You clicked "+i.filename+", "+i.bytes+" bytes, center=("+i.cLat+","+i.cLon+")";
         Log.d(TAG,"DemCacheActivity: clicked "+t);

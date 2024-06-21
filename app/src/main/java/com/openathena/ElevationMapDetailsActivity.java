@@ -6,47 +6,26 @@
 
 package com.openathena;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.util.Consumer;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.openathena.databinding.ActivityAboutBinding;
-
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
@@ -77,12 +56,12 @@ public class ElevationMapDetailsActivity extends AthenaActivity
         // Storage Access Framework(SAF) does not require us to request permission
         // to access
         copyDemLauncher = registerForActivityResult(new ActivityResultContracts.CreateDocument(), uri -> {
-            if (uri != null && !exportFilename.equals("")) {
+            if (uri != null && !exportFilename.isEmpty()) {
                 // copy the file to uri; since we have a File and
                 // dialog gives us a URI, we need to open/read/write exported file
                 // the try with resources statement automatically closes the streams
                 // when it finishes
-                try (InputStream inputStream = new FileInputStream(new java.io.File(getFilesDir(), exportFilename));
+                try (InputStream inputStream = Files.newInputStream(new File(getFilesDir(), exportFilename).toPath());
                      OutputStream outStream = getContentResolver().openOutputStream(uri)) {
 
                     byte[] buf = new byte[1024];
@@ -139,19 +118,44 @@ public class ElevationMapDetailsActivity extends AthenaActivity
 
         htmlString += "<br>";
 
-        htmlString += "DEM lat/lon bounds (WGS84):" + "<br>";
-        htmlString += "N: " + truncateDouble(maxLat,6)+"<br>";
-        htmlString += "E: " + truncateDouble(maxLon,6)+"<br>";
-        htmlString += "S: " + truncateDouble(minLat,6)+"<br>";
-        htmlString += "W: " + truncateDouble(minLon,6)+"<br>";
+        // text formatting tag for uniform character width
+        String teletypeTextFlag = "<tt>"; // this tag is deprecated in HTML5, too bad we use it anyways
+        // "<pre>" // proper tag for current rev HTML, does not seem to work with Android
+
+        if(outputModeIsMGRS() || outputMode == outputModes.UTM || outputMode == outputModes.CK42GaussKrüger) { // For Grid-based output modes
+            htmlString += "DEM lat/lon bounds (" + getCurrentOutputModeName() + "):" + "<br>";
+            htmlString += teletypeTextFlag;
+            htmlString += "NW: " + CoordTranslator.toSelectedOutputMode(maxLat,minLon,outputMode) + "<br>";
+            htmlString += "NE: " + CoordTranslator.toSelectedOutputMode(maxLat,maxLon,outputMode) + "<br>";
+            htmlString += "SW: " + CoordTranslator.toSelectedOutputMode(minLat,minLon,outputMode) + "<br>";
+            htmlString += "SE: " + CoordTranslator.toSelectedOutputMode(minLat,maxLon,outputMode) + "<br>";
+            // close pre tag
+        } else { // For Geodetic output modes (WGS84 or CK42)
+            htmlString += "DEM lat/lon bounds (" + getCurrentOutputModeName().split(" ")[0] + "):" + "<br>";
+            htmlString += teletypeTextFlag;
+            if (outputMode == outputModes.CK42Geodetic) {
+                // this conversion isn't entirely accurate w/o correct altitude value, but is good enough for this UI
+                minLat = CoordTranslator.toCK42Lat(minLat,minLon,0.0d);
+                minLon = CoordTranslator.toCK42Lon(minLat,minLon,0.0d);
+                maxLat = CoordTranslator.toCK42Lat(maxLat,maxLon,0.0d);
+                maxLon = CoordTranslator.toCK42Lon(maxLat,maxLon,0.0d);
+            }
+            htmlString += "N: " + truncateDouble(maxLat, 6) + "<br>";
+            htmlString += "E: " + truncateDouble(maxLon, 6) + "<br>";
+            htmlString += "S: " + truncateDouble(minLat, 6) + "<br>";
+            htmlString += "W: " + truncateDouble(minLon, 6) + "<br>";
+        }
+        htmlString += "</tt>";
+
 
         htmlString += "<br>";
 
-        htmlString += "length: " + ((isUnitFoot()) ? truncateDouble(dEntry.l * AthenaApp.FEET_PER_METER, 0) : truncateDouble(dEntry.l,0)) + " " + (isUnitFoot() ? "ft." : getString(R.string.meter_label)) + "²" + "<br>";
+        htmlString += "size: " + ((isUnitFoot()) ? Math.round(dEntry.l * AthenaApp.FEET_PER_METER) : Math.round(dEntry.l)) + " " + (isUnitFoot() ? "ft." : getString(R.string.meter_label)) + "²" + "<br>";
         String coordStr = truncateDouble(dEntry.cLat, 6)+","+truncateDouble(dEntry.cLon, 6);
-        // make sure layout xml has clickable=true in for the textview widget
-        // and make sure to add LinkMovementMethod too
-        String urlStr = "https://www.google.com/maps/search/?api=1&t=k&query="+coordStr;
+
+        // Google Maps requires a ?q= tag to actually display a pin for the indicated location
+        // https://en.wikipedia.org/wiki/Geo_URI_scheme#Unofficial_extensions
+        String urlStr = "geo:"+coordStr+"?q="+coordStr;
         String lineStr = "center: <a href=\""+urlStr+"\">"+coordStr+"</a><br>";
         Log.d(TAG,"DemDetail: center link line is "+lineStr);
         htmlString += lineStr;

@@ -63,7 +63,6 @@ import java.io.OutputStream;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -728,7 +727,6 @@ public class MainActivity extends AthenaActivity {
             double lonCK42;
             long altCK42;
 
-            long GK_zone;
             long GK_northing;
             long GK_easting;
 
@@ -810,59 +808,20 @@ public class MainActivity extends AthenaActivity {
             }
             attribs = attribs.replaceAll("(\r\n|\n)", "<br>"); // replace newline with HTML equivalent
             textView.append(Html.fromHtml(attribs, 0, null, null));
-            // Obtain UTM coordinates from mil.nga.mgrs library
-            String targetUTM = CoordTranslator.toUTM(latitude, longitude);
-            // Obtain NATO MGRS from mil.nga.mgrs library
-            String mgrs1m = CoordTranslator.toMGRS1m(latitude, longitude);
-            Log.d(TAG, "mgrs1m: " + mgrs1m);
-//            String mgrs10m = CoordTranslator.toMGRS10m(latitude, longitude);
-//            String mgrs100m = CoordTranslator.toMGRS100m(latitude, longitude);
-            String mgrs1m_space_separated = CoordTranslator.toMGRS1m_Space_Separated(latitude, longitude);
-            String mgrs10m_space_separated = CoordTranslator.toMGRS10m_Space_Separated(latitude, longitude);
-            String mgrs100m_space_separated = CoordTranslator.toMGRS100m_Space_Separated(latitude, longitude);
             String targetCoordString;
             if (!outputModeIsSlavic()) {
                 // open link portion of href tag
                 targetCoordString = "<a href=\"geo:";
-                if (outputModeIsMGRS()) {
-                    targetCoordString += mgrs1m; // use MGRS 1m for maps link, even if on 10m or 100m mode
-                    // https://en.wikipedia.org/wiki/Geo_URI_scheme#Uncertainty
-                    targetCoordString += ";u=" + roundDouble(predictedCE);
-                    // Google Maps requires a ?q= tag to actually display a pin for the indicated location
-                    // https://en.wikipedia.org/wiki/Geo_URI_scheme#Unofficial_extensions
-                    // Even though MGRS is supported by both Google Maps and OSMAnd, use WGS84 instead of MGRS here for broader compatibility
-                    targetCoordString += "?q=" + roundDouble(latitude) + "," + roundDouble(longitude);
-
-                } else {
-                    targetCoordString += roundDouble(latitude) + "," + roundDouble(longitude); // otherwise just use normal WGS84
-                    // https://en.wikipedia.org/wiki/Geo_URI_scheme#Uncertainty
-                    targetCoordString += ";u=" + roundDouble(predictedCE);
-                    // Google Maps requires a ?q= tag to actually display a pin for the indicated location
-                    // https://en.wikipedia.org/wiki/Geo_URI_scheme#Unofficial_extensions
-                    targetCoordString += "?q=" + roundDouble(latitude) + "," + roundDouble(longitude);
-
-                }
+                targetCoordString += roundDouble(latitude) + "," + roundDouble(longitude); // just use normal WGS84 for URI, regardless of current outputMode
+                // https://en.wikipedia.org/wiki/Geo_URI_scheme#Uncertainty
+                targetCoordString += ";u=" + roundDouble(predictedCE);
+                // Google Maps requires a ?q= tag to actually display a pin for the indicated location
+                // https://en.wikipedia.org/wiki/Geo_URI_scheme#Unofficial_extensions
+                targetCoordString += "?q=" + roundDouble(latitude) + "," + roundDouble(longitude);
                 targetCoordString += "\">"; // close link portion of href tag
+
                 // start building display text portion of href tag
-                if (outputModeIsMGRS()) {
-                    switch(outputMode) {
-                        case MGRS1m:
-                            targetCoordString += mgrs1m_space_separated;
-                            break;
-                        case MGRS10m:
-                            targetCoordString += mgrs10m_space_separated;
-                            break;
-                        case MGRS100m:
-                            targetCoordString += mgrs100m_space_separated;
-                            break;
-                        default:
-                            throw new RuntimeException("Program entered an inoperable state due to outputMode"); // this shouldn't ever happen
-                    }
-                } else if (outputMode == outputModes.UTM) {
-                    targetCoordString += targetUTM;
-                } else {
-                    targetCoordString += roundDouble(latitude) + ", " + roundDouble(longitude);
-                }
+                targetCoordString += CoordTranslator.toSelectedOutputMode(latitude,longitude,outputMode);
                 targetCoordString += "</a> "; // end href tag
 
                 if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -886,7 +845,9 @@ public class MainActivity extends AthenaActivity {
                 // Choose color Green, Yellow, Red for TLE 1, 2, 3
                 // For TLE 4+, htmlColorFromTLE_Category will be empty, leaving font at default color
                 targetCoordString += " " + "<font color=\"" + CursorOnTargetSender.htmlColorFromTLE_Category(TLE_Cat) + "\">";
+                // Add Target Location Error Category (e.g. TLE_1, TLE_2, TLE_3, etc.) to output
                 targetCoordString += TLE_Cat.name();
+                // end colored text
                 targetCoordString += "</font>";
             } else /* outputModeIsSlavic */ { // to avoid confusion with WGS84, no Maps link is provided when outputModeIsSlavic()
                 if (outputMode == outputModes.CK42Geodetic) {
@@ -898,8 +859,8 @@ public class MainActivity extends AthenaActivity {
                     }
                     targetCoordString += "Alt: " + altCK42 + "m";
                 } else if (outputMode == outputModes.CK42GaussKrüger) {
-                    String northing_string = makeGKHumanReadable(GK_northing);
-                    String easting_string = makeGKHumanReadable(GK_easting);
+                    String northing_string = CoordTranslator.makeGKHumanReadable(GK_northing);
+                    String easting_string = CoordTranslator.makeGKHumanReadable(GK_easting);
                     // Note that for CK-42, height above ellipsoid is used rather than above mean sea level
                     targetCoordString = "(CK-42) [Gauss-Krüger] " + "<br>" + getString(R.string.gk_northing_text) + " " + northing_string + "<br>" + getString(R.string.gk_easting_text) + " " + easting_string + "<br>" + getString(R.string.altitude_label_short) + " " + altCK42 + "m\n";
                 } else {
@@ -938,17 +899,7 @@ public class MainActivity extends AthenaActivity {
         }
     } // button click
 
-    private String makeGKHumanReadable(long GK) {
-        String human_readable;
-        if (GK >= 10000000) {
-            human_readable = Long.toString(GK);
-        } else { // If value is not at least 5 digits, pad with leading zeros
-            human_readable = Long.toString(GK + 10000000);
-            human_readable = human_readable.substring(1);
-        }
-        human_readable = human_readable.substring(0, human_readable.length() - 5) + "-" + human_readable.substring(human_readable.length() - 5);
-        return human_readable;
-    }
+
 
     private void printDEMBounds() {
         String attribs = "";
@@ -1072,7 +1023,7 @@ public class MainActivity extends AthenaActivity {
         }
     }
 
-    private String roundDouble(double d) {
+    private static String roundDouble(double d) {
         DecimalFormatSymbols decimalSymbols = DecimalFormatSymbols.getInstance();
         decimalSymbols.setDecimalSeparator('.');
         DecimalFormat df = new DecimalFormat("#.######", decimalSymbols);

@@ -47,9 +47,39 @@ public abstract class AthenaActivity extends AppCompatActivity {
         CK42GaussKrüger
     }
 
+    public String getCurrentOutputModeName() {
+        switch (outputMode) {
+            case WGS84:
+                return getString(R.string.wgs84_standard_lat_lon);
+            case UTM:
+                return getString(R.string.utm);
+            case MGRS1m:
+                return getString(R.string.nato_mgrs_1m);
+            case MGRS10m:
+                return getString(R.string.nato_mgrs_10m);
+            case MGRS100m:
+                return getString(R.string.nato_mgrs_100m);
+            case CK42Geodetic:
+                return getString(R.string.ck_42_lat_lon);
+            case CK42GaussKrüger:
+                return getString(R.string.ck_42_gauss_kruger_n_e);
+        }
+        return ""; // this should never happen
+    }
+
     public enum measurementUnits {
         METER,
         FOOT // US survey foot used in Aviation, 1200/3937 = 0.30480061 meters
+    }
+
+    public String getCurrentMeasurementUnitName() {
+        switch (measurementUnit) {
+            case METER:
+                return getString(R.string.meter_label);
+            case FOOT:
+                return "ft.";
+        }
+        return ""; // this should never happen
     }
 
     protected static PrefsActivity.outputModes outputMode;
@@ -204,6 +234,8 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 break;
         }
     }
+
+
 
     public void setMeasurementUnit(measurementUnits aUnit) {
         if (aUnit == null) {

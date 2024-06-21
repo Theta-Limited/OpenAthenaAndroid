@@ -1,5 +1,8 @@
 package com.openathena;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import android.util.Log;
 
@@ -55,6 +58,37 @@ public class CoordTranslator {
         MGRS mgrsObj = MGRS.parse(mgrs_in);
         Point p = mgrsObj.toPoint();
         return new double[] {p.getLatitude(), p.getLongitude()};
+    }
+
+    public static String toSelectedOutputMode(double latitude, double longitude, AthenaActivity.outputModes outputMode) {
+        switch (outputMode) {
+            case WGS84:
+                return roundDouble(latitude) + "," + " " + roundDouble(longitude);
+            case UTM:
+                return toUTM(latitude,longitude);
+            case MGRS1m:
+                return toMGRS1m_Space_Separated(latitude, longitude);
+            case MGRS10m:
+                return toMGRS10m_Space_Separated(latitude, longitude);
+            case MGRS100m:
+                return toMGRS100m_Space_Separated(latitude, longitude);
+            case CK42Geodetic:
+                // WARNING: The following output will be in CK-42 lat/lon, which is easy to confuse with regular WGS84 coordinates
+                // CK-42 coordinates must always be labeled as such in the consuming UI (to avoid confusion)
+                //
+                // This conversion introduces some inaccuracy due to lack of ellipsoidal height
+                // therefore, result should only be used for unimportant uses such as for dem bounds UI
+                return roundDouble(toCK42Lat(latitude,longitude,0.0d)) + "," + " " + roundDouble(toCK42Lon(latitude,longitude,0.0d));
+            case CK42GaussKrüger:
+                // This conversion introduces some inaccuracy due to lack of ellipsoidal height
+                // therefore, result should only be used for unimportant uses such as for dem bounds UI
+                return toCK42_GK_String(latitude, longitude, 0.0d);
+            default:
+                // This should never happen
+                String errString = "ERROR: Attempted to call toSelectedOutputMode on invalid outputMode: " + outputMode.name();
+                Log.e(TAG, errString);
+                throw new IllegalArgumentException(errString);
+        }
     }
 
     public static String toMGRS1m_Space_Separated(double latitude, double longitude) {
@@ -119,6 +153,30 @@ public class CoordTranslator {
 
     public static long[] fromCK42toCK42_GK(double CK42_latitude, double CK42_longitude) {
         return CK42_Gauss_Krüger_Translator.CK42_Geodetic_to_Gauss_Krüger(CK42_latitude, CK42_longitude);
+    }
+
+    public static String makeGKHumanReadable(long GK) {
+        String human_readable;
+        if (GK >= 10000000) {
+            human_readable = Long.toString(GK);
+        } else { // If value is not at least 5 digits, pad with leading zeros
+            human_readable = Long.toString(GK + 10000000);
+            human_readable = human_readable.substring(1);
+        }
+        human_readable = human_readable.substring(0, human_readable.length() - 5) + "-" + human_readable.substring(human_readable.length() - 5);
+        return human_readable;
+    }
+
+    public static String toCK42_GK_String(double latitude, double longitude, double WGS84_altitude_meters) {
+        double GK_lat = toCK42Lat(latitude,longitude,WGS84_altitude_meters);
+        double GK_lon = toCK42Lon(latitude,longitude,WGS84_altitude_meters);
+        long[] GK_northing_and_easting = fromCK42toCK42_GK(GK_lat,GK_lon);
+        long GK_northing = GK_northing_and_easting[0];
+        long GK_easting = GK_northing_and_easting[1];
+
+        String northing_string = CoordTranslator.makeGKHumanReadable(GK_northing);
+        String easting_string = CoordTranslator.makeGKHumanReadable(GK_easting);
+        return northing_string + " " + easting_string;
     }
 
     // Method to handle coordinate String parsing
@@ -240,4 +298,11 @@ public class CoordTranslator {
         return true;
     }
 
+    private static String roundDouble(double d) {
+        DecimalFormatSymbols decimalSymbols = DecimalFormatSymbols.getInstance();
+        decimalSymbols.setDecimalSeparator('.');
+        DecimalFormat df = new DecimalFormat("#.######", decimalSymbols);
+        df.setRoundingMode(RoundingMode.HALF_UP);
+        return df.format(d);
+    }
 }
