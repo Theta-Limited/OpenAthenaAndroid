@@ -771,9 +771,17 @@ public class MainActivity extends AthenaActivity {
                     if (shouldISendCoT) {
                         attribs += "Cursor on Target message sent with UID: " + CursorOnTargetSender.buildUIDString(this) + "\n";
                     }
-                    if (!outputModeIsSlavic()) { // to avoid confusion with WGS84, no Google Maps link is provided when outputModeIsSlavic()
-                        attribs += "<a href=\"https://maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "\">";
-                        attribs += "maps.google.com/?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "</a>\n\n";
+                    if (!outputModeIsSlavic()) { // to avoid confusion with WGS84, no Maps link is provided when outputModeIsSlavic()
+
+                        attribs += "<a href=\"geo:" + roundDouble(latitude) + "," + roundDouble(longitude);
+                        // https://en.wikipedia.org/wiki/Geo_URI_scheme#Uncertainty
+                        attribs += ";u=" + roundDouble(predictedCE);
+                        // Google Maps requires a ?q= tag to actually display a pin for the indicated location
+                        // https://en.wikipedia.org/wiki/Geo_URI_scheme#Unofficial_extensions
+                        attribs += "?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "\">";
+                        attribs += roundDouble(latitude) + "," + roundDouble(longitude);
+                        // https://en.wikipedia.org/wiki/Geo_URI_scheme#Uncertainty
+                        attribs += "</a>\n\n";
                     }
                 } catch (RequestedValueOOBException e) {
                     if (e.isAltitudeDataBad) {
@@ -815,11 +823,24 @@ public class MainActivity extends AthenaActivity {
             String targetCoordString;
             if (!outputModeIsSlavic()) {
                 // open link portion of href tag
-                targetCoordString = "<a href=\"https://maps.google.com/?q=";
+                targetCoordString = "<a href=\"geo:";
                 if (outputModeIsMGRS()) {
                     targetCoordString += mgrs1m; // use MGRS 1m for maps link, even if on 10m or 100m mode
+                    // https://en.wikipedia.org/wiki/Geo_URI_scheme#Uncertainty
+                    targetCoordString += ";u=" + roundDouble(predictedCE);
+                    // Google Maps requires a ?q= tag to actually display a pin for the indicated location
+                    // https://en.wikipedia.org/wiki/Geo_URI_scheme#Unofficial_extensions
+                    // Even though MGRS is supported by both Google Maps and OSMAnd, use WGS84 instead of MGRS here for broader compatibility
+                    targetCoordString += "?q=" + roundDouble(latitude) + "," + roundDouble(longitude);
+
                 } else {
                     targetCoordString += roundDouble(latitude) + "," + roundDouble(longitude); // otherwise just use normal WGS84
+                    // https://en.wikipedia.org/wiki/Geo_URI_scheme#Uncertainty
+                    targetCoordString += ";u=" + roundDouble(predictedCE);
+                    // Google Maps requires a ?q= tag to actually display a pin for the indicated location
+                    // https://en.wikipedia.org/wiki/Geo_URI_scheme#Unofficial_extensions
+                    targetCoordString += "?q=" + roundDouble(latitude) + "," + roundDouble(longitude);
+
                 }
                 targetCoordString += "\">"; // close link portion of href tag
                 // start building display text portion of href tag
@@ -867,7 +888,7 @@ public class MainActivity extends AthenaActivity {
                 targetCoordString += " " + "<font color=\"" + CursorOnTargetSender.htmlColorFromTLE_Category(TLE_Cat) + "\">";
                 targetCoordString += TLE_Cat.name();
                 targetCoordString += "</font>";
-            } else /* outputModeIsSlavic */ { // to avoid confusion with WGS84, no Google Maps link is provided when outputModeIsSlavic()
+            } else /* outputModeIsSlavic */ { // to avoid confusion with WGS84, no Maps link is provided when outputModeIsSlavic()
                 if (outputMode == outputModes.CK42Geodetic) {
                     targetCoordString = "(CK-42) " + roundDouble(latCK42) + ", " + roundDouble(lonCK42);
                     if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
