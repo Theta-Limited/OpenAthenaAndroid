@@ -13,6 +13,7 @@ import androidx.exifinterface.media.ExifInterface;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -98,6 +99,8 @@ public abstract class AthenaActivity extends AppCompatActivity {
     public boolean isImageLoaded;
     protected Uri demUri = null;
     protected boolean isDEMLoaded;
+
+    protected static String lastSelfLocation = "";
 
     public AthenaActivity() {
         super();
@@ -504,6 +507,13 @@ public abstract class AthenaActivity extends AppCompatActivity {
         String cachePath = cacheDir.getAbsolutePath();
         String uriPath = uri.getPath();
         return uriPath.startsWith(cachePath);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle saveInstanceState) {
+        Log.d(TAG,"onSaveInstanceState started");
+        super.onSaveInstanceState(saveInstanceState);
+        saveStateToSingleton();
     }
 
     protected abstract void saveStateToSingleton();

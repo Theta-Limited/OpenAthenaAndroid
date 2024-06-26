@@ -267,12 +267,6 @@ public class MainActivity extends AthenaActivity {
 
     } // onCreate
 
-    @Override
-    protected void onSaveInstanceState(Bundle saveInstanceState) {
-        Log.d(TAG,"onSaveInstanceState started");
-        super.onSaveInstanceState(saveInstanceState);
-        saveStateToSingleton();
-    }
 
     // save the current state of this activity to the athenaApp Singleton object
     @Override

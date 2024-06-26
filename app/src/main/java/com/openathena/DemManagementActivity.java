@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Locale;
+
 public abstract class DemManagementActivity extends AthenaActivity {
     protected LocationManager locationManager;
     protected LocationListener locationListener;
@@ -24,11 +26,26 @@ public abstract class DemManagementActivity extends AthenaActivity {
     // semaphore value will be > 0 if a long process is currently running
     protected int showProgressBarSemaphore = 0;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationListener = createLocationListener();
+
+        athenaApp = (AthenaApp) getApplication();
+        lastSelfLocation = athenaApp.getString("lastSelfLocation");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        lastSelfLocation = athenaApp.getString("lastSelfLocation");
+    }
+
+    @Override
+    protected void saveStateToSingleton() {
+        athenaApp.putString("lastSelfLocation", lastSelfLocation);
     }
 
     protected LocationListener createLocationListener() {
@@ -65,7 +82,16 @@ public abstract class DemManagementActivity extends AthenaActivity {
         };
     }
 
-    protected abstract void updateLatLonText(Location location);
+    protected void updateLatLonText(Location location) {
+        if (location != null) {
+            double lat = location.getLatitude();
+            double lon = location.getLongitude();
+            String mgrs = CoordTranslator.toMGRS1m(lat,lon);
+            String latLonPair = String.format(Locale.US, "%f,%f", lat, lon);
+            lastSelfLocation = outputModeIsMGRS() ? mgrs : latLonPair;
+            athenaApp.putString("lastSelfLocation", lastSelfLocation);
+        }
+    }
 
     protected boolean requestPermissionGPS() {
         if (!hasAccessCoarseLocation() && !hasAccessFineLocation()) {

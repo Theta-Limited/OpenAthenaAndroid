@@ -76,6 +76,12 @@ public class ManageDemsActivity extends DemManagementActivity
         progressBar = (ProgressBar)  findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
 
+        // If user has previously obtained self GPS location in another DemManagementActivity,
+        //     load the result into this activity to save them time
+        if (lastSelfLocation != null && !lastSelfLocation.isEmpty()) {
+            latLonText.setText(lastSelfLocation);
+        }
+
         manageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,15 +127,9 @@ public class ManageDemsActivity extends DemManagementActivity
 
     @Override
     protected void updateLatLonText(Location location) {
-        if (location != null) {
-            double lat = location.getLatitude();
-            double lon = location.getLongitude();
-            String mgrs = CoordTranslator.toMGRS1m(lat,lon);
-            if (outputModeIsMGRS() ) {
-                latLonText.setText(mgrs);
-            } else {
-                latLonText.setText(String.format(Locale.getDefault(), "%f,%f", lat, lon));
-            }
+        super.updateLatLonText(location);
+        if (lastSelfLocation != null && !lastSelfLocation.isEmpty()) {
+            latLonText.setText(lastSelfLocation);
         }
     }
 
