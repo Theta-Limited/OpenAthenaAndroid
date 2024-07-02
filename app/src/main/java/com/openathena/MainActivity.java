@@ -40,12 +40,14 @@ import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
 import android.text.Html;
 
+import androidx.core.util.Consumer;
 import androidx.exifinterface.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -86,8 +88,6 @@ public class MainActivity extends DemManagementActivity {
     public static final double FEET_PER_METER = 3937.0d/1200.0d; // Exact constant for US Survey Foot per Meter
 
     TextView textView;
-
-    ProgressBar progressBar;
 
     Button buttonSelectDEM;
     Button buttonSelectImage;
@@ -424,10 +424,17 @@ public class MainActivity extends DemManagementActivity {
             DemCache.DemCacheEntry dce = athenaApp.demCache.searchCacheEntry(lat, lon);
             if (dce != null) {
                 matchingDemURI = dce.fileUri;
-                if (matchingDemURI != null) {
+                if (dce.contains(lat,lon)) {
+                    appendText("Started DEM auto-load for your selected image" + "\n");
                     demSelected(matchingDemURI);
+                } else {
+                    downloadNewDEM(lat,lon, 15000);
                 }
+            } else {
+                downloadNewDEM(lat,lon, 15000);
             }
+
+            is.close();
         } catch (Exception e) {
             assert(true);
         }
@@ -933,9 +940,38 @@ public class MainActivity extends DemManagementActivity {
         }
     } // button click
 
+    protected void postResults(double lat, double lon, String resultStr) {
+        postResults(resultStr);
+        DemCache.DemCacheEntry dce = athenaApp.demCache.searchCacheEntry(lat, lon);
+        if (dce != null) {
+            demSelected(dce.fileUri);
+        }
+    }
     @Override
     protected void postResults(String resultStr) {
         appendText(resultStr + "\n");
+        athenaApp.demCache.refreshCache();
+    }
+
+    @Override
+    protected void downloadNewDEM(double lat, double lon, double meters_diameter) {
+        DemDownloader aDownloader = new DemDownloader(getApplicationContext(),lat,lon,meters_diameter);
+        aDownloader.asyncDownload(new Consumer<String>() {
+            @Override
+            public void accept(String s) {
+                Log.d(TAG,"NewDemActivity download returned "+s);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        decrementProgressBar();
+                        postResults(lat, lon, s);
+                        Toast t = Toast.makeText(MainActivity.this,s,Toast.LENGTH_SHORT);
+                        t.setGravity(Gravity.CENTER,0,0);
+                        t.show();
+                    }
+                });
+            }
+        });
     }
 
     private void printDEMBounds() {

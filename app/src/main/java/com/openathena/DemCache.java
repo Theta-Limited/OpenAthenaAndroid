@@ -57,6 +57,10 @@ public class DemCache {
 
         } // DemCacheEntry constructor
 
+        public boolean contains(double lat, double lon) {
+            return (lat <= n && lat >= s && lon >= w && lon <= e);
+        }
+
     } // class DemCacheEntry
 
     // DemCache instance variables
@@ -216,7 +220,7 @@ public class DemCache {
         DemCacheEntry bestEntry = null;
 
         for (DemCacheEntry entry : cache) {
-            if (lat < entry.n && lat > entry.s && lon > entry.w && lon < entry.e) {
+            if (entry.contains(lat,lon)) {
                 // Calculate coverage as the minimum distance to the boundary from the search position
                 double northCoverage = Math.abs(entry.n - lat);
                 double southCoverage = Math.abs(lat - entry.s);
