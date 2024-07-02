@@ -69,7 +69,7 @@ import java.util.Map;
 // Libraries from the U.S. National Geospatial Intelligence Agency https://www.nga.mil
 import mil.nga.tiff.util.TiffException;
 
-public class MainActivity extends AthenaActivity {
+public class MainActivity extends DemManagementActivity {
     public static String TAG = MainActivity.class.getSimpleName();
 
     public static int dangerousAutelAwarenessCount;
@@ -148,7 +148,7 @@ public class MainActivity extends AthenaActivity {
         buttonSelectImage = (Button) findViewById(R.id.selectImageButton); // ð
         buttonCalculate = (Button) findViewById(R.id.calculateButton); // ð
         setButtonReady(buttonSelectDEM, true);
-        setButtonReady(buttonSelectImage, false);
+        setButtonReady(buttonSelectImage, true);
         setButtonReady(buttonCalculate, false);
 
         isImageLoaded = false;
@@ -199,7 +199,7 @@ public class MainActivity extends AthenaActivity {
         isDEMLoaded = athenaApp.getBoolean("isDEMLoaded");
 
         String storedDEMUriString = athenaApp.getString("demUri");
-        if (storedDEMUriString != null && !storedDEMUriString.equals("")) {
+        if (storedDEMUriString != null && !storedDEMUriString.isEmpty()) {
             Log.d(TAG, "recovered demUri: " + storedDEMUriString);
         }
 
@@ -211,7 +211,7 @@ public class MainActivity extends AthenaActivity {
                 theParser = athenaApp.getDEMParser();
                 theTGetter = new TargetGetter(theParser);
                 setButtonReady(buttonSelectImage, true);
-            } else if (storedDEMUriString != null && !storedDEMUriString.equals("")) { // fallback, load DEM from disk (slower)
+            } else if (storedDEMUriString != null && !storedDEMUriString.isEmpty()) { // fallback, load DEM from disk (slower)
                 Log.d(TAG, "loading demUri: " + storedDEMUriString);
                 demUri = Uri.parse(storedDEMUriString);
                 prefsEditor.putString("lastDEM", null); // clear lastDEM just in case it is invalid to prevent crash loop
@@ -223,7 +223,7 @@ public class MainActivity extends AthenaActivity {
                 setButtonReady(buttonCalculate, false);
             }
           // Get DEM used last time the application was launched
-        } else if (sharedPreferences != null && sharedPreferences.getString("lastDEM", null) != null && !sharedPreferences.getString("lastDEM", "").equals("")) {
+        } else if (sharedPreferences != null && sharedPreferences.getString("lastDEM", null) != null && !sharedPreferences.getString("lastDEM", "").isEmpty()) {
             String lastDEM = sharedPreferences.getString("lastDEM", "");
             Log.d(TAG, "loading last used demUri: " + lastDEM);
             demUri = Uri.parse(lastDEM);
@@ -237,10 +237,13 @@ public class MainActivity extends AthenaActivity {
             AssetFileDescriptor fileDescriptor = null;
             try {
                 fileDescriptor = getApplicationContext().getContentResolver().openAssetFileDescriptor(imageUri , "r");
-            } catch(FileNotFoundException e) {
+                if (fileDescriptor != null) fileDescriptor.close();
+            } catch(IOException e) {
                 imageUri = null;
                 isImageLoaded = false;
+                Log.e(TAG, "ERROR while trying to reload image: " + e.getMessage());
             }
+
             if (imageUri != null && imageUri.getPath() != null) {
                 imageSelected(imageUri);
             }
@@ -249,6 +252,7 @@ public class MainActivity extends AthenaActivity {
 //        set_selection_x(athenaApp.get_selection_x());
 //        set_selection_y(athenaApp.get_selection_y());
 
+        // TODO revise after DEM/Image loading FSM rework
         if (isImageLoaded) {
             if (AthenaApp.get_selection_x() != -1 && AthenaApp.get_selection_y() != -1) {
                 iView.restoreMarker(AthenaApp.get_selection_x(), AthenaApp.get_selection_y());
@@ -263,7 +267,7 @@ public class MainActivity extends AthenaActivity {
             athenaApp.needsToCalculateForNewSelection = false;
         }
 
-        // load DEM cache for late reference
+        // load DEM cache for later reference
         athenaApp.demCache = new DemCache(getApplicationContext());
         Log.d(TAG,"DemCache: total storage "+athenaApp.demCache.totalStorage());
         Log.d(TAG,"DemCache: count "+athenaApp.demCache.count());
@@ -323,24 +327,33 @@ public class MainActivity extends AthenaActivity {
             appCacheDir.mkdirs();
         }
 
+        ContentResolver cr = getContentResolver();
+        InputStream is;
+
         // Android 10/11, we can't access this file directly
         // We will copy the file into app's own package cache
         String fileName = getFileName(uri);
         File fileInCache = new File(appCacheDir, fileName);
         if (!isCacheUri(uri)) {
             try {
-                try (InputStream inputStream = getContentResolver().openInputStream(uri);
-                     OutputStream outputStream = new FileOutputStream(fileInCache)) {
+                try {
+                    is = cr.openInputStream(uri);
+                    OutputStream outputStream = new FileOutputStream(fileInCache);
                     byte[] buffer = new byte[4096];
                     int bytesRead;
-                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    while ((bytesRead = is.read(buffer)) != -1) {
                         outputStream.write(buffer, 0, bytesRead);
                     }
+                    outputStream.close();
+                    is.close();
                 } catch (FileNotFoundException e) {
-                    Log.e(TAG, "FileNotFound imageSelected()");
+                    Log.e(TAG, "FileNotFound imageSelected(): " + e.getMessage());
                     throw e;
                 } catch (IOException e) {
-                    Log.e(TAG, "IOException imageSelected()");
+                    Log.e(TAG, "IOException imageSelected():" + e.getMessage());
+                    throw e;
+                } catch (NullPointerException e) {
+                    Log.e(TAG, "NullPointerException imageSelected():" + e.getMessage());
                     throw e;
                 }
             } catch (Exception e) {
@@ -354,7 +367,7 @@ public class MainActivity extends AthenaActivity {
         if (imageUri != null && !uri.equals(imageUri)) {
             clearText(); // clear attributes textView
             isTargetCoordDisplayed = false;
-            restorePrefs(); // reset textViewTargetCoord to mode descriptor
+            restorePrefs(); // reset textViewTargetCoord to output mode descriptor
 
             isImageLoaded = false;
             iView.reset();// reset the marker to the center and reset pan and zoom values
@@ -373,7 +386,8 @@ public class MainActivity extends AthenaActivity {
         AssetFileDescriptor fileDescriptor;
         try {
             fileDescriptor = getApplicationContext().getContentResolver().openAssetFileDescriptor(uri , "r");
-        } catch(FileNotFoundException e) {
+            if (fileDescriptor != null) fileDescriptor.close();
+        } catch(IOException e) {
             imageUri = null;
             return;
         }
@@ -398,6 +412,26 @@ public class MainActivity extends AthenaActivity {
         constrainViewAspectRatio();
 
         isImageLoaded = true;
+
+        ExifInterface exif;
+        Uri matchingDemURI;
+        try {
+            is = cr.openInputStream(imageUri);
+            exif = new ExifInterface(is);
+            double[] values = theMeta.getMetadataValues(exif);
+            double lat = values[0];
+            double lon = values[1];
+            DemCache.DemCacheEntry dce = athenaApp.demCache.searchCacheEntry(lat, lon);
+            if (dce != null) {
+                matchingDemURI = dce.fileUri;
+                if (matchingDemURI != null) {
+                    demSelected(matchingDemURI);
+                }
+            }
+        } catch (Exception e) {
+            assert(true);
+        }
+
         if (isDEMLoaded) {
             setButtonReady(buttonCalculate, true);
         }
@@ -454,13 +488,16 @@ public class MainActivity extends AthenaActivity {
         File fileInCache = new File(appCacheDir, fileName);
         if (!isCacheUri(uri)) {
             try {
-                try (InputStream inputStream = getContentResolver().openInputStream(uri);
-                     OutputStream outputStream = new FileOutputStream(fileInCache)) {
+                try {
+                    InputStream inputStream = getContentResolver().openInputStream(uri);
+                    OutputStream outputStream = new FileOutputStream(fileInCache);
                     byte[] buffer = new byte[4096];
                     int bytesRead;
                     while ((bytesRead = inputStream.read(buffer)) != -1) {
                         outputStream.write(buffer, 0, bytesRead);
                     }
+                    outputStream.close();
+                    inputStream.close();
                 } catch (FileNotFoundException e) {
                     // Handle the FileNotFoundException here
                     // For example, you can show an error message to the user
@@ -896,7 +933,10 @@ public class MainActivity extends AthenaActivity {
         }
     } // button click
 
-
+    @Override
+    protected void postResults(String resultStr) {
+        appendText(resultStr + "\n");
+    }
 
     private void printDEMBounds() {
         String attribs = "";

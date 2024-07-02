@@ -142,7 +142,7 @@ public class DemCache {
                             clon = v[1];
                             l = v[2];
 
-                            Uri fileUri = Uri.fromFile(new File(appDir,filename));
+                            Uri fileUri = Uri.fromFile(file);
                             DemCacheEntry aDem = new DemCacheEntry(filename,fileUri,n,s,e,w,l,clat,clon,createDate,modDate,fileSize);
                             cache.add(aDem);
                             totalBytes += aDem.bytes;
