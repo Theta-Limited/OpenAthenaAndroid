@@ -12,20 +12,13 @@
 
 package com.openathena;
 
-import java.lang.annotation.Target;
-import java.nio.file.attribute.FileTime;
 import java.util.Date;
 import java.io.File;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
-
-
-import androidx.core.util.Consumer;
 
 public class DemCache {
 
@@ -33,6 +26,7 @@ public class DemCache {
 
     public class DemCacheEntry {
         String filename;
+        Uri fileUri;
         double n; // north lat
         double e; // east lon
         double s; // south lat
@@ -44,11 +38,12 @@ public class DemCache {
         Date modDate;
         long bytes;
 
-        public DemCacheEntry(String filename, double n, double s, double e, double w,
+        public DemCacheEntry(String filename, Uri fileUri, double n, double s, double e, double w,
                              double l, double cLat, double cLon, Date createDate, Date modDate,
                              long bytes) {
 
             this.filename = filename;
+            this.fileUri = fileUri;
             this.n = n;
             this.s = s;
             this.e = e;
@@ -147,7 +142,8 @@ public class DemCache {
                             clon = v[1];
                             l = v[2];
 
-                            DemCacheEntry aDem = new DemCacheEntry(filename,n,s,e,w,l,clat,clon,createDate,modDate,fileSize);
+                            Uri fileUri = Uri.fromFile(new File(appDir,filename));
+                            DemCacheEntry aDem = new DemCacheEntry(filename,fileUri,n,s,e,w,l,clat,clon,createDate,modDate,fileSize);
                             cache.add(aDem);
                             totalBytes += aDem.bytes;
 
