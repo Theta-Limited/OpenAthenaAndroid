@@ -75,10 +75,6 @@
             android:exported="false"
             android:label="@string/title_activity_mapsdetail" />
         <activity
-            android:name=".ActivityLog"
-            android:exported="false"
-            android:label="@string/title_activity_log" />
-        <activity
             android:name=".PrefsActivity"
             android:exported="false"
             android:label="@string/title_activity_prefs" />

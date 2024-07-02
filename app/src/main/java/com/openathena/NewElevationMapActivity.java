@@ -6,34 +6,20 @@
 
 package com.openathena;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.Settings;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -44,26 +30,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.util.Consumer;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
-import com.openathena.databinding.ActivityAboutBinding;
-
-import org.apache.commons.lang3.concurrent.LazyInitializer;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.Locale;
-import java.text.ParseException;
 
 public class NewElevationMapActivity extends DemManagementActivity
 {
@@ -105,8 +76,8 @@ public class NewElevationMapActivity extends DemManagementActivity
 
         // If user has previously obtained self GPS location in another DemManagementActivity,
         //     load the result into this activity to save them time
-        if (lastSelfLocation != null && !lastSelfLocation.isEmpty()) {
-            latLonText.setText(lastSelfLocation);
+        if (lastPointOfInterest != null && !lastPointOfInterest.isEmpty()) {
+            latLonText.setText(lastPointOfInterest);
         }
 
         getPosGPSButton.setOnClickListener(new View.OnClickListener() {
@@ -145,8 +116,8 @@ public class NewElevationMapActivity extends DemManagementActivity
     @Override
     protected void updateLatLonText(Location location) {
         super.updateLatLonText(location);
-        if (lastSelfLocation != null && !lastSelfLocation.isEmpty()) {
-            latLonText.setText(lastSelfLocation);
+        if (lastPointOfInterest != null && !lastPointOfInterest.isEmpty()) {
+            latLonText.setText(lastPointOfInterest);
         }
     }
 
@@ -154,7 +125,7 @@ public class NewElevationMapActivity extends DemManagementActivity
     private void onClickDownload()
     {
         // Sanity check to prevent user from spamming the download button
-        if (isGPSFixInProgress == false && showProgressBarSemaphore > 0) {
+        if (!isGPSFixInProgress && showProgressBarSemaphore > 0) {
             return;
         }
         showProgressBarSemaphore++;
@@ -184,12 +155,10 @@ public class NewElevationMapActivity extends DemManagementActivity
         meters = meters.replaceAll("meters","");
         meters = meters.replaceAll("metres", "");
         meters = meters.replaceAll("m", "");
+        // TODO remove meters unit label from other languages as well
         meters = meters.trim();
 
-        if (meters.equals("")) {
-            h = 15000.00;
-        }
-        else {
+        if (!meters.isEmpty()) {
             h = Double.parseDouble(meters);
         }
 
@@ -198,7 +167,7 @@ public class NewElevationMapActivity extends DemManagementActivity
         latlon = latlon.toUpperCase().replaceAll("[()]", "");
         latlon = latlon.replaceAll("[Dd]egrees","°");
         latlon = latlon.replaceAll("[Dd]eg","°");
-
+        // TODO remove degrees unit label from other languages as well
 
         try {
             double[] latLonPair = CoordTranslator.parseCoordinates(latlon);
@@ -210,8 +179,6 @@ public class NewElevationMapActivity extends DemManagementActivity
             return;
         }
 
-        Log.d(TAG,"NewDemActivity going to fetch elevation map from the InterWebs");
-
         if (lat == 0 && lon == 0) {
             postResults("No elevation data for the middle of the ocean!");
             decrementProgressBar();
@@ -220,23 +187,7 @@ public class NewElevationMapActivity extends DemManagementActivity
 
         resultsLabel.setText("Going to fetch elevation map ("+lat+","+lon+") x"+h+" ...");
 
-        DemDownloader aDownloader = new DemDownloader(getApplicationContext(),lat,lon,h);
-        aDownloader.asyncDownload(new Consumer<String>() {
-            @Override
-            public void accept(String s) {
-                Log.d(TAG,"NewDemActivity download returned "+s);
-                postResults(s);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        decrementProgressBar();
-                        Toast t = Toast.makeText(NewElevationMapActivity.this,s,Toast.LENGTH_SHORT);
-                        t.setGravity(Gravity.CENTER,0,0);
-                        t.show();
-                    }
-                });
-            }
-        });
+        downloadNewDEM(lat, lon, h);
 
     } // onClickDownload
 
@@ -302,7 +253,8 @@ public class NewElevationMapActivity extends DemManagementActivity
     // post results to the label making sure we do so on the UI thread;
     // while we're at it, refresh the DEM cache since we may have
     // imported a new file
-    private void postResults(String resultStr)
+    @Override
+    protected void postResults(String resultStr)
     {
         runOnUiThread(new Runnable() {
             @Override
@@ -314,18 +266,7 @@ public class NewElevationMapActivity extends DemManagementActivity
         athenaApp.demCache.refreshCache();
     }
 
-    private void decrementProgressBar() {
-        Handler mainHandler = new Handler(Looper.getMainLooper());
-        mainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                showProgressBarSemaphore--;
-                if (showProgressBarSemaphore <= 0) {
-                    progressBar.setVisibility(View.GONE);
-                }
-            }
-        });
-    }
+
 
     // handle an import button click
     private void onClickImport()

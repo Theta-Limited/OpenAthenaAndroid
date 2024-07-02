@@ -272,7 +272,6 @@ public class DemCache {
 
     private double[] getCenterAndLength(double s, double w, double n, double e)
     {
-        // TODO improve this math use funcs in TargetGetter instead!
         double EARTH_RADIUS = TargetGetter.radius_at_lat_lon(n+s / 2.0d, 0.0d);
 //        double METERS_PER_DEGREE_LATITUDE = 111320; // Approximate meters per degree
 

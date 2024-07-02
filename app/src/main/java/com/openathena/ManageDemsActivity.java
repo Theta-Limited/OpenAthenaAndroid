@@ -8,25 +8,12 @@
 
 package com.openathena;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.os.Handler;
-import android.os.Looper;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,14 +22,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
-import android.widget.Toast;
-
-
-
-import java.util.Locale;
 
 //                                      Parent Abstract class with common functionality
 public class ManageDemsActivity extends DemManagementActivity
@@ -78,8 +57,8 @@ public class ManageDemsActivity extends DemManagementActivity
 
         // If user has previously obtained self GPS location in another DemManagementActivity,
         //     load the result into this activity to save them time
-        if (lastSelfLocation != null && !lastSelfLocation.isEmpty()) {
-            latLonText.setText(lastSelfLocation);
+        if (lastPointOfInterest != null && !lastPointOfInterest.isEmpty()) {
+            latLonText.setText(lastPointOfInterest);
         }
 
         manageButton.setOnClickListener(new View.OnClickListener() {
@@ -128,8 +107,8 @@ public class ManageDemsActivity extends DemManagementActivity
     @Override
     protected void updateLatLonText(Location location) {
         super.updateLatLonText(location);
-        if (lastSelfLocation != null && !lastSelfLocation.isEmpty()) {
-            latLonText.setText(lastSelfLocation);
+        if (lastPointOfInterest != null && !lastPointOfInterest.isEmpty()) {
+            latLonText.setText(lastPointOfInterest);
         }
     }
 
@@ -180,29 +159,39 @@ public class ManageDemsActivity extends DemManagementActivity
             lat = latLonPair[0];
             lon = latLonPair[1];
         } catch (java.text.ParseException pe) {
-            resultsButton.setText(R.string.button_lookup_please_enter);
+            postResults(getString(R.string.button_lookup_please_enter));
             return;
         }
 
         if (lat == 0.0 && lon == 0.0) {
-            resultsButton.setText(R.string.button_lookup_no_data);
+            postResults(getString(R.string.button_lookup_no_data));
             return;
         }
 
         // finally, do the lookup!
-        resultsButton.setText("Going to lookup "+lat+","+lon);
+        postResults("Going to lookup "+lat+","+lon);
 
         String aFilename = athenaApp.demCache.searchCacheFilename(lat,lon);
 
         if (aFilename == null || aFilename == "") {
-            resultsButton.setText(R.string.lookup_nothing_found);
+            postResults(getString(R.string.lookup_nothing_found));
         }
         else {
-            resultsButton.setText("Found "+aFilename);
+            postResults("Found "+aFilename);
             // set the cache entry selected
             athenaApp.demCache.setSelectedItem(aFilename);
             resultsButton.setEnabled(true);
         }
+    }
+
+    @Override
+    protected void postResults(String resultStr) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                resultsButton.setText(resultStr);
+            }
+        });
     }
 
     @Override

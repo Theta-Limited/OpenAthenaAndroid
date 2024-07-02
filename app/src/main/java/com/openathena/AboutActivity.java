@@ -169,24 +169,24 @@ public class AboutActivity extends AppCompatActivity {
 
     } // appendText to textView but do so on UI thread
 
-    private void appendLog(String str)
-    {
-        FileOutputStream fos;
-        PrintWriter pw;
-
-        Log.d(TAG,"appendLogLocal started");
-
-        try {
-            fos = openFileOutput(MainActivity.LOG_NAME, Context.MODE_PRIVATE|Context.MODE_APPEND);
-            pw = new PrintWriter(fos);
-            pw.print(str);
-            pw.close();
-            fos.close();
-            Log.d(TAG,"appendLogLocal: wrote to logfile");
-
-        } catch (Exception e) {
-            Log.d(TAG,"appendLogLocal: failed to write log:"+e.getMessage());
-        }
-
-    } // appendLog()
+//    private void appendLog(String str)
+//    {
+//        FileOutputStream fos;
+//        PrintWriter pw;
+//
+//        Log.d(TAG,"appendLogLocal started");
+//
+//        try {
+//            fos = openFileOutput(MainActivity.LOG_NAME, Context.MODE_PRIVATE|Context.MODE_APPEND);
+//            pw = new PrintWriter(fos);
+//            pw.print(str);
+//            pw.close();
+//            fos.close();
+//            Log.d(TAG,"appendLogLocal: wrote to logfile");
+//
+//        } catch (Exception e) {
+//            Log.d(TAG,"appendLogLocal: failed to write log:"+e.getMessage());
+//        }
+//
+//    } // appendLog()
 }

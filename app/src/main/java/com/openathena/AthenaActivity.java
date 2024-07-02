@@ -100,7 +100,8 @@ public abstract class AthenaActivity extends AppCompatActivity {
     protected Uri demUri = null;
     protected boolean isDEMLoaded;
 
-    protected static String lastSelfLocation = "";
+    // The most recent measured or extracted point of interest for finding a DEM with sufficient coverage
+    protected static String lastPointOfInterest = "";
 
     public AthenaActivity() {
         super();

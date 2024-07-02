@@ -71,14 +71,17 @@ import mil.nga.tiff.util.TiffException;
 
 public class MainActivity extends AthenaActivity {
     public static String TAG = MainActivity.class.getSimpleName();
-    public final static String PREFS_NAME = "openathena.preferences";
-    public final static String LOG_NAME = "openathena.log";
 
     public static int dangerousAutelAwarenessCount;
 
     public static int dangerousMissingCameraIntrinsicsCount;
 
-    public static EGMOffsetProvider offsetAdapter = new EGM96OffsetAdapter(); // calculates diff between WGS84 reference ellipsoid and EGM96 geoid
+    // calculates elevation diff between WGS84 reference ellipsoid and EGM96 geoid
+    //
+    // Vertical datum of input and output elevation is usally EGM96,
+    // but OpenAthena converts to WGS84 height above ellipsoid internally for calculation (as well as CoT output)
+    // For more information on vertical datums see: https://vdatum.noaa.gov/docs/datums.html
+    public static EGMOffsetProvider offsetAdapter = new EGM96OffsetAdapter();
 
     public static final double FEET_PER_METER = 3937.0d/1200.0d; // Exact constant for US Survey Foot per Meter
 
@@ -932,7 +935,8 @@ public class MainActivity extends AthenaActivity {
     public void displayMissingCameraIntrinsicsAlert() {
         if (dangerousMissingCameraIntrinsicsCount < 1) { // suppress warning if already encountered by user in this session
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setMessage("⚠\uFE0F DANGER: Camera internal properties were not found in database. Calculation accuracy will be degraded. Email support@theta.limited ⚠\uFE0F");
+                                             // TODO move this to values/strings.xml
+            builder.setMessage("⚠\uFE0F " + getString(R.string.missing_camera_intrinsics_warning_message) + " ⚠\uFE0F");
             builder.setPositiveButton(R.string.i_understand_this_risk, (DialogInterface.OnClickListener) (dialog, which) -> {
                 dangerousMissingCameraIntrinsicsCount += 1;
             });
