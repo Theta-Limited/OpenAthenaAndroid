@@ -163,19 +163,32 @@ Then press the back button or again tap the kebab menu icon (three dots) to retu
 
 The app also supports selection between `Meter` and `US Foot` as the Distance Unit for the apps's output.
 
-## Telemetry and localization from live video feed
+# Telemetry and localization from live video feed
 
 The end goal of this project is to enable UAS operators to perform terrain-raycast localization from any point within a live video feed. The target resolution engine of this application is highly modular and may be extended to operate on any such telemetry data source. This capability will be specific to each UAS manufacturer's SDK; therefore, it will take time to develop.
 
 # Contributing
 
+OpenAthena™ for Android is an open source project, and we thrive on contributions from the community. Whether you're a seasoned developer or just starting out, we welcome your involvement in making OpenAthena better for everyone.
+
+## Why Contribute?
+
+Contributing to OpenAthena means being part of a community that values innovation and collaboration. It’s an opportunity to enhance your skills, connect with other talented individuals, and make a tangible impact on a tool that benefits drone enthusiasts and professionals around the world.
+
+## How You Can Contribute
+
+- **Code Contributions:** If you're looking to write code, check out our issues on GitHub, especially those tagged with "Good First Issue". These are great for getting started!
+- **Bug Reports:** Encountering bugs? Report them on our GitHub issue tracker. Detailed reports can help us improve stability and user experience.
+- **Feature Suggestions:** Have ideas on how to make OpenAthena even better? We love hearing new ideas! Share them as feature requests on our issue tracker.
+- **Documentation:** Help us improve our documentation to ensure it's clear and accessible to everyone. All documentation will be in [Markdown format](https://duckduckgo.com/?t=ffab&q=markdown+cheat+sheet&ia=answer) 
+
+## Contributor license agreement
+
+Other than documentation changes, contributors to this project must agree to [Theta's Contributor License Agreement (CLA)](https://github.com/Theta-Limited/Contributor-License-Agreement). This CLA is the minimum necessary to protect the OpenAthena project; it is designed to be as short and simple as possible to preserve the interests of contributors.
+
 ## Code
 If you're interested in contributing to this project, feel free to make a fork. This project will
-follow the [fork and pull model](https://reflectoring.io/github-fork-and-pull/) for third-party contributors.
-
-
-
-
+follow the [fork and pull model](https://reflectoring.io/github-fork-and-pull/) for third-party contributions.
 
 ### Cloning this project with submodules
 This project requires content from other git repositories (such as Theta's [DroneModels database](https://github.com/Theta-Limited/DroneModels)) to build correctly.
