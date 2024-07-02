@@ -165,10 +165,7 @@ public class NewElevationMapActivity extends DemManagementActivity
         Log.d(TAG, "latlon is: " + latlon);
         if (latlon.equals("")) {
             postResults(getString(R.string.button_lookup_please_enter));
-            showProgressBarSemaphore--;
-            if (showProgressBarSemaphore<=0) {
-                progressBar.setVisibility(View.GONE);
-            }
+            decrementProgressBar();
             return;
         }
 
@@ -209,10 +206,7 @@ public class NewElevationMapActivity extends DemManagementActivity
             lon = latLonPair[1];
         } catch (java.text.ParseException pe) {
             postResults(getString(R.string.button_lookup_please_enter));
-            showProgressBarSemaphore--;
-            if (showProgressBarSemaphore<=0) {
-                progressBar.setVisibility(View.GONE);
-            }
+            decrementProgressBar();
             return;
         }
 
@@ -220,10 +214,7 @@ public class NewElevationMapActivity extends DemManagementActivity
 
         if (lat == 0 && lon == 0) {
             postResults("No elevation data for the middle of the ocean!");
-            showProgressBarSemaphore--;
-            if (showProgressBarSemaphore<=0) {
-                progressBar.setVisibility(View.GONE);
-            }
+            decrementProgressBar();
             return;
         }
 
@@ -238,10 +229,7 @@ public class NewElevationMapActivity extends DemManagementActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        showProgressBarSemaphore--;
-                        if (showProgressBarSemaphore<=0) {
-                            progressBar.setVisibility(View.GONE);
-                        }
+                        decrementProgressBar();
                         Toast t = Toast.makeText(NewElevationMapActivity.this,s,Toast.LENGTH_SHORT);
                         t.setGravity(Gravity.CENTER,0,0);
                         t.show();
@@ -254,75 +242,61 @@ public class NewElevationMapActivity extends DemManagementActivity
 
     // once selected, import the file and test it
     // to make sure its a valid DEM tiff file
-    private void copyFileToPrivateStorage(Uri fileUri)
-    {
-        String demFilename = "DEM_LatLon";
+    private void copyFileToPrivateStorage(Uri fileUri) {
+        String filePath = fileUri.getPath();
+        if (filePath == null) filePath = "";
+        resultsLabel.setText("Importing file, please wait...");
 
-        // first, read the file and parse it as a DEM and see if its valid;
-        // if not, return error
-        // implement/resolve getFileName()
-        // get the n,s,e,w values
-        // write DEM_LatLon_s_w_n_e.tiff
+        showProgressBarSemaphore++;
+        progressBar.setVisibility(View.VISIBLE);
 
-        // first, copy the file to a local, private directory and call it
-        // import.tiff; then we can evaluate it
-        try (InputStream inputStream = getContentResolver().openInputStream(fileUri)) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String demFilename = "DEM_LatLon";
 
-            try (OutputStream outputStream = this.openFileOutput("import.tiff",Context.MODE_PRIVATE)) {
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = inputStream.read(buffer)) > 0) {
-                    outputStream.write(buffer, 0, length);
+                try (InputStream inputStream = getContentResolver().openInputStream(fileUri);
+                     OutputStream outputStream = openFileOutput("import.tiff", Context.MODE_PRIVATE)) {
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = inputStream.read(buffer)) > 0) {
+                        outputStream.write(buffer, 0, length);
+                    }
+                } catch (IOException e) {
+                    postResults("Error accessing file");
+                    Log.e(TAG, "Error reading or writing the file to import", e);
+                    decrementProgressBar();
+                    return;
                 }
-            } catch (IOException e) {
-                postResults("Error writing to private storage");
-                Log.d(TAG,"NewDem: error writing to private storage "+e);
-                return;
+
+                File importFile = new File(getFilesDir(), "import.tiff");
+                DEMParser aParser = new DEMParser(importFile);
+                if (aParser == null) {
+                    postResults("Are you sure this was a GeoTIFF file?");
+                    decrementProgressBar();
+                    return;
+                }
+
+                double n = truncateDouble(aParser.getMaxLat(), 6);
+                double s = truncateDouble(aParser.getMinLat(), 6);
+                double e = truncateDouble(aParser.getMaxLon(), 6);
+                double w = truncateDouble(aParser.getMinLon(), 6);
+                String newFilename = "DEM_LatLon_" + s + "_" + w + "_" + n + "_" + e + ".tiff";
+
+                File newFile = new File(getFilesDir(), newFilename);
+                if (newFile.exists() && !newFile.delete()) {
+                    postResults("Failed to import file of same name");
+                    decrementProgressBar();
+                    return;
+                }
+                if (importFile.renameTo(newFile)) {
+                    postResults("Imported file as: " + newFilename);
+                } else {
+                    postResults("Failed to import " + newFilename);
+                }
+                decrementProgressBar();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.d(TAG,"NewDem: error reading the file to import "+e);
-            postResults("Error accessing file");
-            return;
-        }
-
-        // ok, we now have "import.tiff" to evaluate
-
-        Log.d(TAG,"NewDem: imported file into local storage, now going to evaluate it");
-        File importFile = new File(this.getFilesDir(),"import.tiff");
-        DEMParser aParser = new DEMParser(importFile);
-        if (aParser == null) {
-            Log.d(TAG,"NewDem: are you sure this was a GeoTIFF file?");
-            postResults("Are you sure this was a GeoTIFF file?");
-            return;
-        }
-
-        // the DEM parser parsed it correctly; get the coordinates
-        double n,s,e,w;
-        n = truncateDouble(aParser.getMaxLat(),6);
-        s = truncateDouble(aParser.getMinLat(),6);
-        e = truncateDouble(aParser.getMaxLon(),6);
-        w = truncateDouble(aParser.getMinLon(),6);
-
-        // rename it; rename won't overwrite an existing
-        // file of same name; thus, we delete the new file first
-
-        String newFilename = "DEM_LatLon_"+s+"_"+w+"_"+n+"_"+e+".tiff";
-
-        Log.d(TAG,"NewDem: "+s+","+w+","+n+","+e);
-        File newFile = new File(this.getFilesDir(),newFilename);
-        if (newFile.exists() && !newFile.delete()) {
-            postResults("Failed to import file of same name");
-            return;
-        }
-        boolean b = importFile.renameTo(newFile);
-        if (b == true) {
-            postResults("Imported "+newFilename);
-        }
-        else {
-            postResults("Failed to import "+newFilename);
-        }
-
+        }).start();
     } // copyFileToPrivateStorage
 
     // post results to the label making sure we do so on the UI thread;
@@ -338,6 +312,19 @@ public class NewElevationMapActivity extends DemManagementActivity
         });
         // no need for this op to block the UI thread
         athenaApp.demCache.refreshCache();
+    }
+
+    private void decrementProgressBar() {
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        mainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                showProgressBarSemaphore--;
+                if (showProgressBarSemaphore <= 0) {
+                    progressBar.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     // handle an import button click
