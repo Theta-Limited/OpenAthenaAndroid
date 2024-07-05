@@ -12,6 +12,7 @@ package com.openathena;
 import android.content.Context;
 import android.util.Log;
 
+import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.io.BufferedReader;
@@ -36,8 +37,15 @@ public class DemDownloader
     private String outputFormatStr = "GTiff";
     private Context context;
 
+    protected File demDir;
+
     public DemDownloader(Context appContext, double lat, double lon, double length) {
         context = appContext;
+        if (context == null) {
+            throw new IllegalArgumentException("ERROR: tried to initialize DemCache object with a null Context!");
+        }
+        demDir = new File(context.getCacheDir(), "DEMs");
+
         double[] boundingBox = getBoundingBox(lat, lon, length);
         n = boundingBox[0];
         s = boundingBox[1];
@@ -74,7 +82,7 @@ public class DemDownloader
 
         try {
             InputStream inputStream = connection.getInputStream();
-            FileOutputStream outputStream = context.openFileOutput(filename,Context.MODE_PRIVATE);
+            FileOutputStream outputStream = new FileOutputStream(new File(demDir,filename));
 
             byte[] buffer = new byte[4096];
             int bytesRead = 0;

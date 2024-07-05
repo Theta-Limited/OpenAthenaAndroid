@@ -92,11 +92,11 @@ public abstract class DemManagementActivity extends AthenaActivity {
             @Override
             public void accept(String s) {
                 Log.d(TAG,"NewDemActivity download returned "+s);
-                postResults(s);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         decrementProgressBar();
+                        postResults(s);
                         Toast t = Toast.makeText(DemManagementActivity.this,s,Toast.LENGTH_SHORT);
                         t.setGravity(Gravity.CENTER,0,0);
                         t.show();

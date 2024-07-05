@@ -67,6 +67,7 @@ public class DemCache {
     public long totalBytes = 0;
     public List<DemCacheEntry> cache;
     public Context context;
+    protected File demDir;
     public int selectedItem = -1;
 
     public DemCache(Context context)
@@ -74,8 +75,12 @@ public class DemCache {
         // read/scan app document/storage directory for .tiff files
         // DEM_LatLon_s_w_n_e.tiff
         this.context = context;
+        if (context == null) {
+            throw new IllegalArgumentException("ERROR: tried to initialize DemCache object with a null Context!");
+        }
 
         Log.d(TAG,"DemCache: starting");
+        demDir = new File(context.getCacheDir(), "DEMs");
 
         refreshCache();
 
@@ -99,14 +104,12 @@ public class DemCache {
     public void refreshCache()
     {
 
-        File appDir = context.getFilesDir();
-
         // reset the array list
         cache = new ArrayList<DemCacheEntry>();
         selectedItem = -1;
 
-        // list all .tiff files in the main app dir
-        File[] files = appDir.listFiles((dir,name) -> name.toLowerCase().endsWith(".tiff"));
+        // list all .tiff files in the demDir in app cache folder
+        File[] files = demDir.listFiles((dir,name) -> name.toLowerCase().endsWith(".tiff"));
         if (files != null) {
 
             Log.d(TAG,"DemCache: found "+files.length+" files to look at");
@@ -181,7 +184,7 @@ public class DemCache {
             Log.d(TAG,"DemCache: deleting "+removed.filename);
             String aFilename = removed.filename+".tiff";
 
-            File file = new File(context.getFilesDir(),aFilename);
+            File file = new File(demDir,aFilename);
             boolean ret = file.delete();
 
             if (!ret) {

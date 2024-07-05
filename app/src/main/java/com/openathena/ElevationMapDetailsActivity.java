@@ -38,9 +38,10 @@ public class ElevationMapDetailsActivity extends AthenaActivity
     String exportFilename = "";
     DemCache.DemCacheEntry dEntry;
 
-    static TimeZone local_tz = TimeZone.getDefault();
-    static DateFormat df_ISO8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+    static TimeZone local_tz;
+    static DateFormat df_ISO8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
+    protected File demDir;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -50,6 +51,9 @@ public class ElevationMapDetailsActivity extends AthenaActivity
         demInfo = (TextView)findViewById(R.id.elevationMapDetailText);
         demInfo.setMovementMethod(LinkMovementMethod.getInstance());
 
+        demDir = new File(getCacheDir(), "DEMs");
+
+        local_tz = TimeZone.getDefault();
         df_ISO8601.setTimeZone(local_tz);
 
         // create the activity launcher here;
@@ -61,7 +65,7 @@ public class ElevationMapDetailsActivity extends AthenaActivity
                 // dialog gives us a URI, we need to open/read/write exported file
                 // the try with resources statement automatically closes the streams
                 // when it finishes
-                try (InputStream inputStream = Files.newInputStream(new File(getFilesDir(), exportFilename).toPath());
+                try (InputStream inputStream = Files.newInputStream(new File(demDir, exportFilename).toPath());
                      OutputStream outStream = getContentResolver().openOutputStream(uri)) {
 
                     byte[] buf = new byte[1024];

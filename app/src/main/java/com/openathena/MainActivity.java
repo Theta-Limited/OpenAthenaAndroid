@@ -428,9 +428,13 @@ public class MainActivity extends DemManagementActivity {
                     appendText("Started DEM auto-load for your selected image" + "\n");
                     demSelected(matchingDemURI);
                 } else {
+                    showProgressBarSemaphore++;
+                    progressBar.setVisibility(View.VISIBLE);
                     downloadNewDEM(lat,lon, 15000);
                 }
             } else {
+                showProgressBarSemaphore++;
+                progressBar.setVisibility(View.VISIBLE);
                 downloadNewDEM(lat,lon, 15000);
             }
 
@@ -452,6 +456,7 @@ public class MainActivity extends DemManagementActivity {
         setButtonReady(buttonSelectDEM, false);
         setButtonReady(buttonCalculate, false);
 
+        showProgressBarSemaphore++;
         progressBar.setVisibility(View.VISIBLE);
 
         Handler myHandler = new Handler();
@@ -473,10 +478,10 @@ public class MainActivity extends DemManagementActivity {
                         if (isImageLoaded) {
                             setButtonReady(buttonCalculate, true);
                         }
-                        progressBar.setVisibility(View.GONE);
+                        decrementProgressBar();
                     } else {
                         appendText(e.getMessage());
-                        progressBar.setVisibility(View.GONE);
+                        decrementProgressBar();
                     }
                 }
             });
@@ -544,7 +549,7 @@ public class MainActivity extends DemManagementActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    progressBar.setVisibility(View.GONE);
+                    decrementProgressBar();
                     Toast.makeText(MainActivity.this, R.string.wrong_filetype_toast_error_msg, Toast.LENGTH_LONG).show();
                 }
             });
