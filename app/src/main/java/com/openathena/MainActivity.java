@@ -89,7 +89,7 @@ public class MainActivity extends DemManagementActivity {
 
     TextView textView;
 
-    Button buttonSelectDEM;
+//    Button buttonSelectDEM;
     Button buttonSelectImage;
     Button buttonCalculate;
 
@@ -144,10 +144,10 @@ public class MainActivity extends DemManagementActivity {
         progressBar = (ProgressBar)  findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
 
-        buttonSelectDEM = (Button) findViewById(R.id.selectDEMButton); // ⛰
+//        buttonSelectDEM = (Button) findViewById(R.id.selectDEMButton); // ⛰
         buttonSelectImage = (Button) findViewById(R.id.selectImageButton); // ð
         buttonCalculate = (Button) findViewById(R.id.calculateButton); // ð
-        setButtonReady(buttonSelectDEM, true);
+//        setButtonReady(buttonSelectDEM, true);
         setButtonReady(buttonSelectImage, true);
         setButtonReady(buttonCalculate, false);
 
@@ -425,14 +425,16 @@ public class MainActivity extends DemManagementActivity {
             if (dce != null) {
                 matchingDemURI = dce.fileUri;
                 if (dce.contains(lat,lon)) {
-                    appendText("Started DEM auto-load for your selected image" + "\n");
+                    appendText("Found a DEM in cache for your selected image. Starting DEM auto-load..." + "\n");
                     demSelected(matchingDemURI);
                 } else {
+                    appendText("No DEM found for your selected image.\nDownloading new DEM from internet..." + "\n");
                     showProgressBarSemaphore++;
                     progressBar.setVisibility(View.VISIBLE);
                     downloadNewDEM(lat,lon, 15000);
                 }
             } else {
+                appendText("No DEM found for your selected image.\nDownloading new DEM from internet..." + "\n");
                 showProgressBarSemaphore++;
                 progressBar.setVisibility(View.VISIBLE);
                 downloadNewDEM(lat,lon, 15000);
@@ -453,7 +455,7 @@ public class MainActivity extends DemManagementActivity {
 //        appendLog("Selected DEM " + uri + "\n");
 
         //    isDEMLoaded = false;
-        setButtonReady(buttonSelectDEM, false);
+//        setButtonReady(buttonSelectDEM, false);
         setButtonReady(buttonCalculate, false);
 
         showProgressBarSemaphore++;
@@ -511,18 +513,13 @@ public class MainActivity extends DemManagementActivity {
                     outputStream.close();
                     inputStream.close();
                 } catch (FileNotFoundException e) {
-                    // Handle the FileNotFoundException here
-                    // For example, you can show an error message to the user
-                    // or log the error to Crashlytics
                     Log.e(TAG, "FileNotFound demSelected()");
                     throw e;
                 } catch (IOException e) {
-                    // Handle other IOException here
-                    // For example, you can log the error to Crashlytics
                     e.printStackTrace();
                     throw e;
                 } finally {
-                    setButtonReady(buttonSelectDEM, true);
+//                    setButtonReady(buttonSelectDEM, true);
                 }
             } catch (Exception e) {
                 return e;
@@ -557,7 +554,7 @@ public class MainActivity extends DemManagementActivity {
             e.printStackTrace();
             return new Exception(failureOutput + "\n");
         } finally {
-            setButtonReady(buttonSelectDEM, true);
+//            setButtonReady(buttonSelectDEM, true);
             if (isDEMLoaded && isImageLoaded) {
                 setButtonReady(buttonCalculate, true);
             }
@@ -949,6 +946,7 @@ public class MainActivity extends DemManagementActivity {
         postResults(resultStr);
         DemCache.DemCacheEntry dce = athenaApp.demCache.searchCacheEntry(lat, lon);
         if (dce != null) {
+            appendText("Starting auto-load for downloaded DEM file..." + "\n");
             demSelected(dce.fileUri);
         }
     }
