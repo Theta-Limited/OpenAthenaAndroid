@@ -54,8 +54,6 @@ public class AboutActivity extends AppCompatActivity {
                         + "<br> <a href=\"https://openathena.com/\">OpenAthena.com</a> <br>"
                         + getString(R.string.AboutSnippet) + "<br>"
                         + getString(R.string.CalibrationReminderSnippet) + "<br>"
-                        + "<br><a href=\"https://github.com/Theta-Limited/OpenAthena/blob/main/EIO_fetch_geotiff_example.md\">"
-                        + getString(R.string.obtain_a_digital_elevation_model_here) + "</a>"
                         + "<br><br><a href=\"https://github.com/mkrupczak3/OpenAthenaAndroid\">"
                         + getString(R.string.CallToActionSnippet)
                         + "<br>" + getString(R.string.nato_vertical_datum_notice) + "<br>"
@@ -70,7 +68,7 @@ public class AboutActivity extends AppCompatActivity {
                         + "<a href=\"https://github.com/ThreeTen/threetenbp\">ThreeTen/threetenbp</a> BSD 3-Clause<br>"
                         + "<a href=\"https://github.com/apache/commons-lang\">Apache Commons Lang</a> Apache License<br>"
                         + "<a href=\"https://github.com/apache/commons-io\">Apache Commons IO</a> Apache License<br><br>"
-                        + "This project uses services of the website OpenTopography.org for DEM downloading within the app. The privacy policy of this website is available here: <a href=\"https://opentopography.org/privacypolicy\">https://opentopography.org/privacypolicy</a><br>"
+                        + "This project uses the OpenTopography.org website API for DEM downloading within the app. OpenTopography.org's privacy policy is available here: <a href=\"https://opentopography.org/privacypolicy\">https://opentopography.org/privacypolicy</a><br>"
                         + "OpenTopography is operated by the University of California San Diego with support from the National Science Foundation. It is not affiliated with Theta Informatics LLC or the OpenAthena project."
                 ,0,null, null)
         );

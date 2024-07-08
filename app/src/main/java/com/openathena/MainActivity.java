@@ -1170,10 +1170,9 @@ public class MainActivity extends DemManagementActivity {
            @Override
            public void run() {
                String placeholderText = getString(R.string.openathena_for_android) +  " " + getString(R.string.version_word) + " " + versionName + "\n\n";
-               placeholderText += getString(R.string.step_1_load_a_DEM) + " \u26F0\n";
-               placeholderText += getString(R.string.step_2_load_drone_image) + " \uD83D\uDDBC\n";
-               placeholderText += getString(R.string.step_3_press_calculate) + " \n";
-               placeholderText += getString(R.string.step_4_obtain_target) + " \uD83C\uDFAF\n\n";
+               placeholderText += getString(R.string.step_1_load_drone_image) + " \n";
+               placeholderText += getString(R.string.step_2_press_calculate) + " \n";
+               placeholderText += getString(R.string.step_3_obtain_target) + " \uD83C\uDFAF\n\n";
                textView.setText(placeholderText);
            }
         });
