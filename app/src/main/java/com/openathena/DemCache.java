@@ -99,6 +99,14 @@ public class DemCache {
 
     } // DemCache() constructor
 
+    public String getAreaSizeString(DemCacheEntry dce, boolean isDistanceUnitImperial) {
+        AthenaApp athenaApp = (AthenaApp) context.getApplicationContext();
+        if (dce == null) {
+            return athenaApp.getString(R.string.error_nondescript);
+        }
+        return ((isDistanceUnitImperial) ? Math.round(dce.l * Math.pow(AthenaApp.FEET_PER_METER,2.0d) / Math.pow(AthenaApp.FEET_PER_MILE,2.0d)) : Math.round(dce.l / Math.pow(1000.0d,2.0d))) + " " + (isDistanceUnitImperial ? "mi" : "km") + "²";
+    }
+
     // refresh the cache after say new downloads or imports XXX
 
     public void refreshCache()

@@ -28,7 +28,7 @@ public abstract class DemManagementActivity extends AthenaActivity {
 
     protected ProgressBar progressBar;
     // semaphore value will be > 0 if a long process is currently running
-    protected int showProgressBarSemaphore = 0;
+    protected static int showProgressBarSemaphore;
 
 
     @Override
@@ -45,6 +45,11 @@ public abstract class DemManagementActivity extends AthenaActivity {
     protected void onResume() {
         super.onResume();
         lastPointOfInterest = athenaApp.getString("lastPointOfInterest");
+        if (showProgressBarSemaphore < 1) {
+            progressBar.setVisibility(View.GONE);
+        } else {
+            progressBar.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -58,10 +63,7 @@ public abstract class DemManagementActivity extends AthenaActivity {
             public void onLocationChanged(Location location) {
                 updateLatLonText(location);
                 locationManager.removeUpdates(this);
-                showProgressBarSemaphore--;
-                if (showProgressBarSemaphore<=0) {
-                    progressBar.setVisibility(View.GONE);
-                }
+                decrementProgressBar();
                 isGPSFixInProgress = false;
             }
 
@@ -137,13 +139,26 @@ public abstract class DemManagementActivity extends AthenaActivity {
     }
 
     protected void decrementProgressBar() {
-        Handler mainHandler = new Handler(Looper.getMainLooper());
-        mainHandler.post(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 showProgressBarSemaphore--;
                 if (showProgressBarSemaphore <= 0) {
                     progressBar.setVisibility(View.GONE);
+                }
+            }
+        });
+    }
+
+    protected void incrementAndShowProgressBar() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showProgressBarSemaphore++;
+                if (showProgressBarSemaphore > 0) {
+                    progressBar.setVisibility(View.VISIBLE);
+                } else {
+                    Log.e(TAG, "ERROR: showProgressBarSemaphore had an invalid value!");
                 }
             }
         });

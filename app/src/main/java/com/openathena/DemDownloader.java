@@ -74,6 +74,7 @@ public class DemDownloader
         int responseCode = connection.getResponseCode();
         if (responseCode != HttpURLConnection.HTTP_OK) {
             Log.d(TAG,"DemDownloader: request failed, error code "+responseCode);
+            Log.d(TAG, "requestURLStr was: " + requestURLStr);
             return false;
         }
 
@@ -135,7 +136,7 @@ public class DemDownloader
                 }
                 catch (java.net.UnknownHostException uhe) {
                     if (consumer != null) {
-                        consumer.accept("Could not connect to" + " portal.opentopography.org.\n " + "Is your device connected to the Internet?");
+                        consumer.accept("Could not connect to" + " portal.opentopography.org for DEM download.\n " + "Is your device connected to the Internet?" + "\n\n" + "(" + context.getString(R.string.prompt_use_blah) + context.getString(R.string.action_demcache) + context.getString(R.string.to_import_an_offline_dem_file_manually) + "\n");
                     }
                 }
                 catch (java.net.SocketException se) {

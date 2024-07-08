@@ -23,7 +23,6 @@ import mil.nga.tiff.*;
 import mil.nga.tiff.util.TiffException;
 
 public class DEMParser implements Serializable {
-    private static final long serialVersionUID = 1L;
 
     public static String TAG = DEMParser.class.getSimpleName();
 

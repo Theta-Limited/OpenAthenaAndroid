@@ -73,8 +73,11 @@ public class NewElevationMapActivity extends DemManagementActivity
         importButton = (Button)findViewById(R.id.new_dem_importbutton);
 
         progressBar = (ProgressBar)  findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
-        showProgressBarSemaphore = 0;
+        if (showProgressBarSemaphore < 1) {
+            progressBar.setVisibility(View.GONE);
+        } else {
+            progressBar.setVisibility(View.VISIBLE);
+        }
 
         resultsLabel = (TextView)findViewById(R.id.new_dem_results);
 
@@ -132,8 +135,7 @@ public class NewElevationMapActivity extends DemManagementActivity
         if (!isGPSFixInProgress && showProgressBarSemaphore > 0) {
             return;
         }
-        showProgressBarSemaphore++;
-        progressBar.setVisibility(View.VISIBLE);
+        incrementAndShowProgressBar();
 
         String latlon = latLonText.getText().toString();
         latlon = latlon.trim();
@@ -202,8 +204,7 @@ public class NewElevationMapActivity extends DemManagementActivity
         if (filePath == null) filePath = "";
         resultsLabel.setText("Importing file, please wait...");
 
-        showProgressBarSemaphore++;
-        progressBar.setVisibility(View.VISIBLE);
+        incrementAndShowProgressBar();
 
         new Thread(new Runnable() {
             @Override

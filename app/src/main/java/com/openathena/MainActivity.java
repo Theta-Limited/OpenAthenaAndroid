@@ -12,6 +12,7 @@
 
 package com.openathena;
 import static com.openathena.TargetGetter.degNormalize;
+import static com.openathena.TargetGetter.haversine;
 
 // import veraPDF fork of Adobe XMP core Java v5.1.0
 import com.adobe.xmp.XMPException;
@@ -52,6 +53,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -85,8 +87,9 @@ public class MainActivity extends DemManagementActivity {
     // For more information on vertical datums see: https://vdatum.noaa.gov/docs/datums.html
     public static EGMOffsetProvider offsetAdapter = new EGM96OffsetAdapter();
 
-    public static final double FEET_PER_METER = 3937.0d/1200.0d; // Exact constant for US Survey Foot per Meter
 
+
+    ScrollView scrollView;
     TextView textView;
 
 //    Button buttonSelectDEM;
@@ -142,7 +145,11 @@ public class MainActivity extends DemManagementActivity {
         outputModeRadioGroup = null;
 
         progressBar = (ProgressBar)  findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
+        if (showProgressBarSemaphore < 1) {
+            progressBar.setVisibility(View.GONE);
+        } else {
+            progressBar.setVisibility(View.VISIBLE);
+        }
 
 //        buttonSelectDEM = (Button) findViewById(R.id.selectDEMButton); // ⛰
         buttonSelectImage = (Button) findViewById(R.id.selectImageButton); // ð
@@ -156,7 +163,7 @@ public class MainActivity extends DemManagementActivity {
 
         theMeta = new MetadataExtractor(this);
 
-        // get our prefs that we have saved
+        scrollView = (ScrollView) findViewById(R.id.scrollView2);
 
         textView = (TextView)findViewById(R.id.textView);
         textView.setMovementMethod(LinkMovementMethod.getInstance());
@@ -174,11 +181,6 @@ public class MainActivity extends DemManagementActivity {
         catch (Exception e) {
             versionName = "unknown";
         }
-
-        // check for saved state
-
-        // open logfile for logging?  No, only open when someone calls
-        // append
 
         clearText();
 
@@ -203,6 +205,7 @@ public class MainActivity extends DemManagementActivity {
             Log.d(TAG, "recovered demUri: " + storedDEMUriString);
         }
 
+        // get our prefs that we have saved
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
 
@@ -397,17 +400,6 @@ public class MainActivity extends DemManagementActivity {
 //        appendLog("Selected image "+imageUri+"\n");
         appendText(getString(R.string.image_selected_msg) + "\n");
 
-//        // Force the aspect ratio to be same as original image
-//        int[] width_and_height = getImageDimensionsFromUri(imageUri); // also updates cx and cy to that of new image
-//        int width = width_and_height[0];
-//        int height = width_and_height[1];
-//        String aspectRatio = width + ":" + height;
-//        Drawable drawable = iView.getDrawable();
-//        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) iView.getLayoutParams();
-//        layoutParams.dimensionRatio = aspectRatio;
-//        iView.setLayoutParams(layoutParams);
-//        iView.invalidate();
-
         // Force the aspect ratio to be same as original image
         constrainViewAspectRatio();
 
@@ -418,26 +410,26 @@ public class MainActivity extends DemManagementActivity {
         try {
             is = cr.openInputStream(imageUri);
             exif = new ExifInterface(is);
-            double[] values = theMeta.getMetadataValues(exif);
+            double[] values = MetadataExtractor.getMetadataValues(exif);
             double lat = values[0];
             double lon = values[1];
             DemCache.DemCacheEntry dce = athenaApp.demCache.searchCacheEntry(lat, lon);
             if (dce != null) {
                 matchingDemURI = dce.fileUri;
-                if (dce.contains(lat,lon)) {
-                    appendText("Found a DEM in cache for your selected image. Starting DEM auto-load..." + "\n");
-                    demSelected(matchingDemURI);
-                } else {
-                    appendText("No DEM found for your selected image.\nDownloading new DEM from internet..." + "\n");
-                    showProgressBarSemaphore++;
-                    progressBar.setVisibility(View.VISIBLE);
-                    downloadNewDEM(lat,lon, 15000);
+                Log.d(TAG, "matchingDemURI is: " + matchingDemURI.getPath());
+                Log.d(TAG, "demUri is: " + ((demUri == null) ? "null" : demUri.getPath()));
+                if (!matchingDemURI.equals(demUri) && demUri != null) {
+                    if (dce.contains(lat, lon)) {
+                        appendText("Found a DEM in cache for your selected image. Starting DEM auto-load..." + "\n");
+                        demSelected(matchingDemURI);
+                    } else {
+                        appendText("No DEM found for your selected image.\nDownloading new DEM from internet..." + "\n");
+                        displayNewDemDownloadChoice(lat, lon);
+                    }
                 }
             } else {
                 appendText("No DEM found for your selected image.\nDownloading new DEM from internet..." + "\n");
-                showProgressBarSemaphore++;
-                progressBar.setVisibility(View.VISIBLE);
-                downloadNewDEM(lat,lon, 15000);
+                displayNewDemDownloadChoice(lat,lon);
             }
 
             is.close();
@@ -458,8 +450,7 @@ public class MainActivity extends DemManagementActivity {
 //        setButtonReady(buttonSelectDEM, false);
         setButtonReady(buttonCalculate, false);
 
-        showProgressBarSemaphore++;
-        progressBar.setVisibility(View.VISIBLE);
+        incrementAndShowProgressBar();
 
         Handler myHandler = new Handler();
 
@@ -472,9 +463,12 @@ public class MainActivity extends DemManagementActivity {
                     if (e == null) {
                         String prefix = theParser.isDTED ? "DTED DEM " : "GeoTIFF DEM ";
                         String successOutput = prefix;
-                        successOutput += getString(R.string.dem_loaded_size_is_msg) + " " + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
+                        successOutput += getString(R.string.dem_loaded_size_is_msg) + " " + theParser.getNumCols() + "x" + theParser.getNumRows() + " squares" + "\n";
                         appendText(successOutput);
                         printDEMBounds();
+                        if (isImageLoaded) {
+                            appendText(getString(R.string.dem_loading_finished_user_interaction_prompt) + "\n");
+                        }
                         isDEMLoaded = true;
                         setButtonReady(buttonSelectImage, true);
                         if (isImageLoaded) {
@@ -741,16 +735,16 @@ public class MainActivity extends DemManagementActivity {
             if (!outputModeIsSlavic()) {
                 attribs += getString(R.string.latitude_label_long) + " "+ roundDouble(y) + "°\n";
                 attribs += getString(R.string.longitude_label_long) + " " + roundDouble(x) + "°\n";
-                attribs += getString(R.string.altitude_label_long) + " " + Math.round(z * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
+                attribs += getString(R.string.altitude_label_long) + " " + Math.round(z * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
             } else {
                 attribs += getString(R.string.latitude_wgs84_label_long) + " " + roundDouble(y) + "°\n";
                 attribs += getString(R.string.longitude_wgs84_label_long) + " " + roundDouble(x) + "°\n";
-                attribs += getString(R.string.altiude_wgs84_label_long) + " " + Math.round(z * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
+                attribs += getString(R.string.altiude_wgs84_label_long) + " " + Math.round(z * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
             }
 
             try {
                 double terrainAltitude = theParser.getAltFromLatLon(y, x);
-                attribs += getString(R.string.terrain_altitude) + " " + Math.round(terrainAltitude * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
+                attribs += getString(R.string.terrain_altitude) + " " + Math.round(terrainAltitude * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
             } catch (RequestedValueOOBException | CorruptTerrainException e){
                 attribs += getString(R.string.dem_load_error_generic_msg);
             }
@@ -799,14 +793,14 @@ public class MainActivity extends DemManagementActivity {
 
                     altitude = Math.round(result[3]);
                     if (!outputModeIsSlavic()) {
-                        attribs += getString(R.string.target_found_at_msg) + ": " + roundDouble(latitude) + "," + roundDouble(longitude) + "\nAlt (hae): " + Math.round(altitude * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
+                        attribs += getString(R.string.target_found_at_msg) + ": " + roundDouble(latitude) + "," + roundDouble(longitude) + "\nAlt (hae): " + Math.round(altitude * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
                     } else {
                         attribs += getString(R.string.target_found_at_msg) + " (WGS84): " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt (hae): " + altitude + " " + "m" + "\n";
                         attribs += getString(R.string.target_found_at_msg) + " (CK-42): " + roundDouble(latCK42) + "," + roundDouble(lonCK42) + " Alt (hae): " + altCK42 + " " + "m" + "\n";
                     }
-                    attribs += getString(R.string.drone_dist_to_target_msg) + " " + Math.round(distance * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
+                    attribs += getString(R.string.drone_dist_to_target_msg) + " " + Math.round(distance * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
                     predictedCE = CursorOnTargetSender.calculateCircularError(theta);
-                    attribs += getString(R.string.target_predicted_ce) + " " + Math.round((predictedCE * (isUnitFoot() ? FEET_PER_METER : 1.0d))*10.0)/10.0 + " " + (isUnitFoot() ? "ft.":"m") + "\n";
+                    attribs += getString(R.string.target_predicted_ce) + " " + Math.round((predictedCE * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d))*10.0)/10.0 + " " + (isUnitFoot() ? "ft.":"m") + "\n";
                     TLE_Cat = CursorOnTargetSender.errorCategoryFromCE(predictedCE);
                     attribs += getString(R.string.target_location_error_category) + " " + TLE_Cat.name() + "\n";
                     if (shouldISendCoT) {
@@ -831,16 +825,35 @@ public class MainActivity extends DemManagementActivity {
                         appendText(attribs);
                         return;
                     } else {
+                        double droneToOobDistance = Math.round(haversine(x,y,e.OOBLon,e.OOBLat,z) * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d));
                         Log.e(TAG, "ERROR: resolveTarget ran OOB at (WGS84): " + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon));
                         if (!outputModeIsSlavic()) {
                             attribs += getString(R.string.resolveTarget_oob_error_msg) + ": " + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon) + "\n";
+                            attribs += "distance: " + droneToOobDistance + (isUnitFoot() ? "ft.":"m")  + "\n";
                         } else {
-                            attribs += getString(R.string.resolveTarget_oob_error_msg) + " (CK-42):" + roundDouble(CoordTranslator.toCK42Lat(e.OOBLat, e.OOBLon, z)) + ", " + roundDouble(CoordTranslator.toCK42Lon(e.OOBLat, e.OOBLon, z)) + "\n";
+                            attribs += getString(R.string.resolveTarget_oob_error_msg) + " (CK-42):" +roundDouble(CoordTranslator.toCK42Lat(e.OOBLat, e.OOBLon, z)) + ", " + roundDouble(CoordTranslator.toCK42Lon(e.OOBLat, e.OOBLon, z)) + "\n";
+                            // NOTE: OpenAthena forces meters distance unit when in CK42 output mode
+                            attribs += "distance: " + droneToOobDistance + (isUnitFoot() ? "ft.":"m") + "\n";
                         }
                         attribs += getString(R.string.geotiff_coverage_reminder) + "\n";
                         attribs += getString(R.string.geotiff_coverage_precedent_message) + "\n";
                         appendText(attribs);
                         printDEMBounds();
+
+                        // new DEM diameter is meters distance from drone location to out of bounds location
+                        //     diameter is multiplied by 1.5 for margin of safety
+                        double newDEMDiameter = haversine(x,y,e.OOBLon,e.OOBLat,z) * 1.5d;
+                        if (newDEMDiameter > AthenaApp.DEM_DOWNLOAD_RETRY_MAX_METERS_DIAMETER) {
+                            appendText("ERROR: calculation went out of bounds beyond the maximum DEM size. Please either select a closer target or" + getString(R.string.prompt_use_blah) + getString(R.string.action_demcache) + getString(R.string.to_import_an_offline_dem_file_manually) +  "\n");
+                        } else {
+                            if (newDEMDiameter < AthenaApp.DEM_DOWNLOAD_DEFAULT_METERS_DIAMETER) {
+                                newDEMDiameter = AthenaApp.DEM_DOWNLOAD_DEFAULT_METERS_DIAMETER;
+                            }
+                            appendText( "Downloading a new DEM with increased coverage area..." + "\n" + "Warning: target calculation may still fail for outgoing rays which do not intersect with terrain!" + "\n");
+                            appendText("new DEM center coordinates (WGS84): " + roundDouble(e.OOBLat) + "," + roundDouble(e.OOBLon) + " diameter: " + Math.round(newDEMDiameter * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d)) + (isUnitFoot() ? "ft.":"m") + "\n");
+                            displayNewDemDownloadChoice((e.OOBLat + y) / 2.0d, (e.OOBLon + x) / 2.0d, newDEMDiameter);
+                        }
+
                         return;
                     }
                 }
@@ -875,7 +888,7 @@ public class MainActivity extends DemManagementActivity {
                 // convert from WGS84 height above ellipsoid to EGM96 above mean sea level (much more commonly used)
                 double mslAlt = altitudeDouble + offsetAdapter.getEGM96OffsetAtLatLon(latitude, longitude);
                 // convert from meters to feet if user setting indicates to do so
-                mslAlt *= (isUnitFoot() ? FEET_PER_METER : 1.0d);
+                mslAlt *= (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d);
                 // round to nearest whole number
                 long altEGM96 = Math.round(mslAlt);
                 targetCoordString += getString(R.string.altitude_label_short) + " " + altEGM96 + " " + (isUnitFoot() ? "ft.":"m") + " ";
@@ -1011,6 +1024,29 @@ public class MainActivity extends DemManagementActivity {
         }
     }
 
+    // Overloaded function call
+    public void displayNewDemDownloadChoice(double lat, double lon) {
+        displayNewDemDownloadChoice(lat,lon,AthenaApp.DEM_DOWNLOAD_DEFAULT_METERS_DIAMETER);
+    }
+
+    public void displayNewDemDownloadChoice(double lat, double lon, double diameter) {
+        if (showProgressBarSemaphore > 0) {
+            // Do not display a new download prompt if a DEM download or load operation is still in progress
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setMessage("Could not find a local DEM. Would you like to download a new DEM centered at "+ roundDouble(lat) + "," + roundDouble(lon) + " ?");
+        builder.setPositiveButton(getString(R.string.yes), (DialogInterface.OnClickListener) (dialog, which) -> {
+            incrementAndShowProgressBar();
+            downloadNewDEM(lat, lon, diameter);
+        });
+        builder.setNegativeButton(getString(R.string.no), (DialogInterface.OnClickListener) (dialog, which) -> {
+            appendText("You declined to download a new DEM. Please load a new DEM manually or select another image to continue." + "\n");
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
     public void displayMissingCameraIntrinsicsAlert() {
         if (dangerousMissingCameraIntrinsicsCount < 1) { // suppress warning if already encountered by user in this session
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -1108,17 +1144,24 @@ public class MainActivity extends DemManagementActivity {
         return df.format(d);
     }
 
-    private void appendText(final String aStr)
-    {
+    private void appendText(final String aStr) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 textView.append(aStr);
 
+                // Additional code to scroll to the bottom
+                scrollView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Scroll to the bottom of the ScrollView
+                        scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+                    }
+                });
             }
         });
-
     } // appendText to textView but do so on UI thread
+
 
     // reset the text field
     private void clearText()

@@ -158,7 +158,7 @@ public class ElevationMapDetailsActivity extends AthenaActivity
 
         htmlString += "<br>";
 
-        htmlString += "size: " + ((isUnitFoot()) ? Math.round(dEntry.l * AthenaApp.FEET_PER_METER) : Math.round(dEntry.l)) + " " + (isUnitFoot() ? "ft." : getString(R.string.meter_label)) + "²" + "<br>";
+        htmlString += "size: " + athenaApp.demCache.getAreaSizeString(dEntry,isUnitFoot()) + "<br>";
         String coordStr = truncateDouble(dEntry.cLat, 6)+","+truncateDouble(dEntry.cLon, 6);
 
         // Google Maps requires a ?q= tag to actually display a pin for the indicated location
