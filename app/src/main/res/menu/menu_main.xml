@@ -23,4 +23,10 @@
         android:orderInCategory="100"
         android:title="@string/action_demcache" />
 
+    <item
+        android:id="@+id/action_manage_drone_models_and_api_key"
+        android:orderInCategory="100"
+        android:title="@string/action_manage_drone_models_and_api_key" />
+        />
+
 </menu>

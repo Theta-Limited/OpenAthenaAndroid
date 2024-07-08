@@ -83,6 +83,10 @@
             android:exported="false"
             android:label="@string/title_activity_managedems" />
         <activity
+            android:name=".ManageDroneModelsAndAPIKeyActivity"
+            android:exported="false"
+            android:label="@string/action_manage_drone_models_and_api_key" />
+        <activity
             android:name=".ElevationMapDetailsActivity"
             android:exported="false"
             android:label="@string/title_activity_mapsdetail" />

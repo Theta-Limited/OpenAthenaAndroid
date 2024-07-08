@@ -206,4 +206,5 @@
     <string name="prompt_use_blah">(use \"</string>
     <string name="to_import_an_offline_dem_file_manually">\" to import an offline DEM file manually)</string>
     <string name="error_nondescript">ERROR</string>
+    <string name="action_manage_drone_models_and_api_key">Manage Drone Models and API Key</string>
 </resources>
