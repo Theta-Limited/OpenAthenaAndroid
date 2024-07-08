@@ -53,7 +53,11 @@ public class ManageDemsActivity extends DemManagementActivity
         resultsButton = (Button)findViewById(R.id.lookupResultsButton);
 
         progressBar = (ProgressBar)  findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
+        if (showProgressBarSemaphore < 1) {
+            progressBar.setVisibility(View.GONE);
+        } else {
+            progressBar.setVisibility(View.VISIBLE);
+        }
 
         // If user has previously obtained self GPS location in another DemManagementActivity,
         //     load the result into this activity to save them time

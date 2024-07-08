@@ -12,6 +12,7 @@
 
 package com.openathena;
 import static com.openathena.TargetGetter.degNormalize;
+import static com.openathena.TargetGetter.haversine;
 
 // import veraPDF fork of Adobe XMP core Java v5.1.0
 import com.adobe.xmp.XMPException;
@@ -40,16 +41,19 @@ import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
 import android.text.Html;
 
+import androidx.core.util.Consumer;
 import androidx.exifinterface.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,7 +73,7 @@ import java.util.Map;
 // Libraries from the U.S. National Geospatial Intelligence Agency https://www.nga.mil
 import mil.nga.tiff.util.TiffException;
 
-public class MainActivity extends AthenaActivity {
+public class MainActivity extends DemManagementActivity {
     public static String TAG = MainActivity.class.getSimpleName();
 
     public static int dangerousAutelAwarenessCount;
@@ -83,13 +87,12 @@ public class MainActivity extends AthenaActivity {
     // For more information on vertical datums see: https://vdatum.noaa.gov/docs/datums.html
     public static EGMOffsetProvider offsetAdapter = new EGM96OffsetAdapter();
 
-    public static final double FEET_PER_METER = 3937.0d/1200.0d; // Exact constant for US Survey Foot per Meter
 
+
+    ScrollView scrollView;
     TextView textView;
 
-    ProgressBar progressBar;
-
-    Button buttonSelectDEM;
+//    Button buttonSelectDEM;
     Button buttonSelectImage;
     Button buttonCalculate;
 
@@ -142,13 +145,17 @@ public class MainActivity extends AthenaActivity {
         outputModeRadioGroup = null;
 
         progressBar = (ProgressBar)  findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
+        if (showProgressBarSemaphore < 1) {
+            progressBar.setVisibility(View.GONE);
+        } else {
+            progressBar.setVisibility(View.VISIBLE);
+        }
 
-        buttonSelectDEM = (Button) findViewById(R.id.selectDEMButton); // ⛰
+//        buttonSelectDEM = (Button) findViewById(R.id.selectDEMButton); // ⛰
         buttonSelectImage = (Button) findViewById(R.id.selectImageButton); // ð
         buttonCalculate = (Button) findViewById(R.id.calculateButton); // ð
-        setButtonReady(buttonSelectDEM, true);
-        setButtonReady(buttonSelectImage, false);
+//        setButtonReady(buttonSelectDEM, true);
+        setButtonReady(buttonSelectImage, true);
         setButtonReady(buttonCalculate, false);
 
         isImageLoaded = false;
@@ -156,7 +163,7 @@ public class MainActivity extends AthenaActivity {
 
         theMeta = new MetadataExtractor(this);
 
-        // get our prefs that we have saved
+        scrollView = (ScrollView) findViewById(R.id.scrollView2);
 
         textView = (TextView)findViewById(R.id.textView);
         textView.setMovementMethod(LinkMovementMethod.getInstance());
@@ -174,11 +181,6 @@ public class MainActivity extends AthenaActivity {
         catch (Exception e) {
             versionName = "unknown";
         }
-
-        // check for saved state
-
-        // open logfile for logging?  No, only open when someone calls
-        // append
 
         clearText();
 
@@ -199,10 +201,11 @@ public class MainActivity extends AthenaActivity {
         isDEMLoaded = athenaApp.getBoolean("isDEMLoaded");
 
         String storedDEMUriString = athenaApp.getString("demUri");
-        if (storedDEMUriString != null && !storedDEMUriString.equals("")) {
+        if (storedDEMUriString != null && !storedDEMUriString.isEmpty()) {
             Log.d(TAG, "recovered demUri: " + storedDEMUriString);
         }
 
+        // get our prefs that we have saved
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
 
@@ -211,7 +214,7 @@ public class MainActivity extends AthenaActivity {
                 theParser = athenaApp.getDEMParser();
                 theTGetter = new TargetGetter(theParser);
                 setButtonReady(buttonSelectImage, true);
-            } else if (storedDEMUriString != null && !storedDEMUriString.equals("")) { // fallback, load DEM from disk (slower)
+            } else if (storedDEMUriString != null && !storedDEMUriString.isEmpty()) { // fallback, load DEM from disk (slower)
                 Log.d(TAG, "loading demUri: " + storedDEMUriString);
                 demUri = Uri.parse(storedDEMUriString);
                 prefsEditor.putString("lastDEM", null); // clear lastDEM just in case it is invalid to prevent crash loop
@@ -223,7 +226,7 @@ public class MainActivity extends AthenaActivity {
                 setButtonReady(buttonCalculate, false);
             }
           // Get DEM used last time the application was launched
-        } else if (sharedPreferences != null && sharedPreferences.getString("lastDEM", null) != null && !sharedPreferences.getString("lastDEM", "").equals("")) {
+        } else if (sharedPreferences != null && sharedPreferences.getString("lastDEM", null) != null && !sharedPreferences.getString("lastDEM", "").isEmpty()) {
             String lastDEM = sharedPreferences.getString("lastDEM", "");
             Log.d(TAG, "loading last used demUri: " + lastDEM);
             demUri = Uri.parse(lastDEM);
@@ -237,10 +240,13 @@ public class MainActivity extends AthenaActivity {
             AssetFileDescriptor fileDescriptor = null;
             try {
                 fileDescriptor = getApplicationContext().getContentResolver().openAssetFileDescriptor(imageUri , "r");
-            } catch(FileNotFoundException e) {
+                if (fileDescriptor != null) fileDescriptor.close();
+            } catch(IOException e) {
                 imageUri = null;
                 isImageLoaded = false;
+                Log.e(TAG, "ERROR while trying to reload image: " + e.getMessage());
             }
+
             if (imageUri != null && imageUri.getPath() != null) {
                 imageSelected(imageUri);
             }
@@ -249,6 +255,7 @@ public class MainActivity extends AthenaActivity {
 //        set_selection_x(athenaApp.get_selection_x());
 //        set_selection_y(athenaApp.get_selection_y());
 
+        // TODO revise after DEM/Image loading FSM rework
         if (isImageLoaded) {
             if (AthenaApp.get_selection_x() != -1 && AthenaApp.get_selection_y() != -1) {
                 iView.restoreMarker(AthenaApp.get_selection_x(), AthenaApp.get_selection_y());
@@ -263,7 +270,7 @@ public class MainActivity extends AthenaActivity {
             athenaApp.needsToCalculateForNewSelection = false;
         }
 
-        // load DEM cache for late reference
+        // load DEM cache for later reference
         athenaApp.demCache = new DemCache(getApplicationContext());
         Log.d(TAG,"DemCache: total storage "+athenaApp.demCache.totalStorage());
         Log.d(TAG,"DemCache: count "+athenaApp.demCache.count());
@@ -323,24 +330,33 @@ public class MainActivity extends AthenaActivity {
             appCacheDir.mkdirs();
         }
 
+        ContentResolver cr = getContentResolver();
+        InputStream is;
+
         // Android 10/11, we can't access this file directly
         // We will copy the file into app's own package cache
         String fileName = getFileName(uri);
         File fileInCache = new File(appCacheDir, fileName);
         if (!isCacheUri(uri)) {
             try {
-                try (InputStream inputStream = getContentResolver().openInputStream(uri);
-                     OutputStream outputStream = new FileOutputStream(fileInCache)) {
+                try {
+                    is = cr.openInputStream(uri);
+                    OutputStream outputStream = new FileOutputStream(fileInCache);
                     byte[] buffer = new byte[4096];
                     int bytesRead;
-                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    while ((bytesRead = is.read(buffer)) != -1) {
                         outputStream.write(buffer, 0, bytesRead);
                     }
+                    outputStream.close();
+                    is.close();
                 } catch (FileNotFoundException e) {
-                    Log.e(TAG, "FileNotFound imageSelected()");
+                    Log.e(TAG, "FileNotFound imageSelected(): " + e.getMessage());
                     throw e;
                 } catch (IOException e) {
-                    Log.e(TAG, "IOException imageSelected()");
+                    Log.e(TAG, "IOException imageSelected():" + e.getMessage());
+                    throw e;
+                } catch (NullPointerException e) {
+                    Log.e(TAG, "NullPointerException imageSelected():" + e.getMessage());
                     throw e;
                 }
             } catch (Exception e) {
@@ -354,7 +370,7 @@ public class MainActivity extends AthenaActivity {
         if (imageUri != null && !uri.equals(imageUri)) {
             clearText(); // clear attributes textView
             isTargetCoordDisplayed = false;
-            restorePrefs(); // reset textViewTargetCoord to mode descriptor
+            restorePrefs(); // reset textViewTargetCoord to output mode descriptor
 
             isImageLoaded = false;
             iView.reset();// reset the marker to the center and reset pan and zoom values
@@ -373,7 +389,8 @@ public class MainActivity extends AthenaActivity {
         AssetFileDescriptor fileDescriptor;
         try {
             fileDescriptor = getApplicationContext().getContentResolver().openAssetFileDescriptor(uri , "r");
-        } catch(FileNotFoundException e) {
+            if (fileDescriptor != null) fileDescriptor.close();
+        } catch(IOException e) {
             imageUri = null;
             return;
         }
@@ -383,21 +400,43 @@ public class MainActivity extends AthenaActivity {
 //        appendLog("Selected image "+imageUri+"\n");
         appendText(getString(R.string.image_selected_msg) + "\n");
 
-//        // Force the aspect ratio to be same as original image
-//        int[] width_and_height = getImageDimensionsFromUri(imageUri); // also updates cx and cy to that of new image
-//        int width = width_and_height[0];
-//        int height = width_and_height[1];
-//        String aspectRatio = width + ":" + height;
-//        Drawable drawable = iView.getDrawable();
-//        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) iView.getLayoutParams();
-//        layoutParams.dimensionRatio = aspectRatio;
-//        iView.setLayoutParams(layoutParams);
-//        iView.invalidate();
-
         // Force the aspect ratio to be same as original image
         constrainViewAspectRatio();
 
         isImageLoaded = true;
+
+        ExifInterface exif;
+        Uri matchingDemURI;
+        try {
+            is = cr.openInputStream(imageUri);
+            exif = new ExifInterface(is);
+            double[] values = MetadataExtractor.getMetadataValues(exif);
+            double lat = values[0];
+            double lon = values[1];
+            DemCache.DemCacheEntry dce = athenaApp.demCache.searchCacheEntry(lat, lon);
+            if (dce != null) {
+                matchingDemURI = dce.fileUri;
+                Log.d(TAG, "matchingDemURI is: " + matchingDemURI.getPath());
+                Log.d(TAG, "demUri is: " + ((demUri == null) ? "null" : demUri.getPath()));
+                if (!matchingDemURI.equals(demUri) && demUri != null) {
+                    if (dce.contains(lat, lon)) {
+                        appendText("Found a DEM in cache for your selected image. Starting DEM auto-load..." + "\n");
+                        demSelected(matchingDemURI);
+                    } else {
+                        appendText("No DEM found for your selected image.\nDownloading new DEM from internet..." + "\n");
+                        displayNewDemDownloadChoice(lat, lon);
+                    }
+                }
+            } else {
+                appendText("No DEM found for your selected image.\nDownloading new DEM from internet..." + "\n");
+                displayNewDemDownloadChoice(lat,lon);
+            }
+
+            is.close();
+        } catch (Exception e) {
+            assert(true);
+        }
+
         if (isDEMLoaded) {
             setButtonReady(buttonCalculate, true);
         }
@@ -408,10 +447,10 @@ public class MainActivity extends AthenaActivity {
 //        appendLog("Selected DEM " + uri + "\n");
 
         //    isDEMLoaded = false;
-        setButtonReady(buttonSelectDEM, false);
+//        setButtonReady(buttonSelectDEM, false);
         setButtonReady(buttonCalculate, false);
 
-        progressBar.setVisibility(View.VISIBLE);
+        incrementAndShowProgressBar();
 
         Handler myHandler = new Handler();
 
@@ -424,18 +463,21 @@ public class MainActivity extends AthenaActivity {
                     if (e == null) {
                         String prefix = theParser.isDTED ? "DTED DEM " : "GeoTIFF DEM ";
                         String successOutput = prefix;
-                        successOutput += getString(R.string.dem_loaded_size_is_msg) + " " + theParser.getNumCols() + "x" + theParser.getNumRows() + "\n";
+                        successOutput += getString(R.string.dem_loaded_size_is_msg) + " " + theParser.getNumCols() + "x" + theParser.getNumRows() + " squares" + "\n";
                         appendText(successOutput);
                         printDEMBounds();
+                        if (isImageLoaded) {
+                            appendText(getString(R.string.dem_loading_finished_user_interaction_prompt) + "\n");
+                        }
                         isDEMLoaded = true;
                         setButtonReady(buttonSelectImage, true);
                         if (isImageLoaded) {
                             setButtonReady(buttonCalculate, true);
                         }
-                        progressBar.setVisibility(View.GONE);
+                        decrementProgressBar();
                     } else {
                         appendText(e.getMessage());
-                        progressBar.setVisibility(View.GONE);
+                        decrementProgressBar();
                     }
                 }
             });
@@ -454,26 +496,24 @@ public class MainActivity extends AthenaActivity {
         File fileInCache = new File(appCacheDir, fileName);
         if (!isCacheUri(uri)) {
             try {
-                try (InputStream inputStream = getContentResolver().openInputStream(uri);
-                     OutputStream outputStream = new FileOutputStream(fileInCache)) {
+                try {
+                    InputStream inputStream = getContentResolver().openInputStream(uri);
+                    OutputStream outputStream = new FileOutputStream(fileInCache);
                     byte[] buffer = new byte[4096];
                     int bytesRead;
                     while ((bytesRead = inputStream.read(buffer)) != -1) {
                         outputStream.write(buffer, 0, bytesRead);
                     }
+                    outputStream.close();
+                    inputStream.close();
                 } catch (FileNotFoundException e) {
-                    // Handle the FileNotFoundException here
-                    // For example, you can show an error message to the user
-                    // or log the error to Crashlytics
                     Log.e(TAG, "FileNotFound demSelected()");
                     throw e;
                 } catch (IOException e) {
-                    // Handle other IOException here
-                    // For example, you can log the error to Crashlytics
                     e.printStackTrace();
                     throw e;
                 } finally {
-                    setButtonReady(buttonSelectDEM, true);
+//                    setButtonReady(buttonSelectDEM, true);
                 }
             } catch (Exception e) {
                 return e;
@@ -500,7 +540,7 @@ public class MainActivity extends AthenaActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    progressBar.setVisibility(View.GONE);
+                    decrementProgressBar();
                     Toast.makeText(MainActivity.this, R.string.wrong_filetype_toast_error_msg, Toast.LENGTH_LONG).show();
                 }
             });
@@ -508,7 +548,7 @@ public class MainActivity extends AthenaActivity {
             e.printStackTrace();
             return new Exception(failureOutput + "\n");
         } finally {
-            setButtonReady(buttonSelectDEM, true);
+//            setButtonReady(buttonSelectDEM, true);
             if (isDEMLoaded && isImageLoaded) {
                 setButtonReady(buttonCalculate, true);
             }
@@ -695,16 +735,16 @@ public class MainActivity extends AthenaActivity {
             if (!outputModeIsSlavic()) {
                 attribs += getString(R.string.latitude_label_long) + " "+ roundDouble(y) + "°\n";
                 attribs += getString(R.string.longitude_label_long) + " " + roundDouble(x) + "°\n";
-                attribs += getString(R.string.altitude_label_long) + " " + Math.round(z * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
+                attribs += getString(R.string.altitude_label_long) + " " + Math.round(z * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
             } else {
                 attribs += getString(R.string.latitude_wgs84_label_long) + " " + roundDouble(y) + "°\n";
                 attribs += getString(R.string.longitude_wgs84_label_long) + " " + roundDouble(x) + "°\n";
-                attribs += getString(R.string.altiude_wgs84_label_long) + " " + Math.round(z * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
+                attribs += getString(R.string.altiude_wgs84_label_long) + " " + Math.round(z * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
             }
 
             try {
                 double terrainAltitude = theParser.getAltFromLatLon(y, x);
-                attribs += getString(R.string.terrain_altitude) + " " + Math.round(terrainAltitude * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
+                attribs += getString(R.string.terrain_altitude) + " " + Math.round(terrainAltitude * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
             } catch (RequestedValueOOBException | CorruptTerrainException e){
                 attribs += getString(R.string.dem_load_error_generic_msg);
             }
@@ -753,14 +793,14 @@ public class MainActivity extends AthenaActivity {
 
                     altitude = Math.round(result[3]);
                     if (!outputModeIsSlavic()) {
-                        attribs += getString(R.string.target_found_at_msg) + ": " + roundDouble(latitude) + "," + roundDouble(longitude) + "\nAlt (hae): " + Math.round(altitude * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
+                        attribs += getString(R.string.target_found_at_msg) + ": " + roundDouble(latitude) + "," + roundDouble(longitude) + "\nAlt (hae): " + Math.round(altitude * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
                     } else {
                         attribs += getString(R.string.target_found_at_msg) + " (WGS84): " + roundDouble(latitude) + "," + roundDouble(longitude) + " Alt (hae): " + altitude + " " + "m" + "\n";
                         attribs += getString(R.string.target_found_at_msg) + " (CK-42): " + roundDouble(latCK42) + "," + roundDouble(lonCK42) + " Alt (hae): " + altCK42 + " " + "m" + "\n";
                     }
-                    attribs += getString(R.string.drone_dist_to_target_msg) + " " + Math.round(distance * (isUnitFoot() ? FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
+                    attribs += getString(R.string.drone_dist_to_target_msg) + " " + Math.round(distance * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
                     predictedCE = CursorOnTargetSender.calculateCircularError(theta);
-                    attribs += getString(R.string.target_predicted_ce) + " " + Math.round((predictedCE * (isUnitFoot() ? FEET_PER_METER : 1.0d))*10.0)/10.0 + " " + (isUnitFoot() ? "ft.":"m") + "\n";
+                    attribs += getString(R.string.target_predicted_ce) + " " + Math.round((predictedCE * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d))*10.0)/10.0 + " " + (isUnitFoot() ? "ft.":"m") + "\n";
                     TLE_Cat = CursorOnTargetSender.errorCategoryFromCE(predictedCE);
                     attribs += getString(R.string.target_location_error_category) + " " + TLE_Cat.name() + "\n";
                     if (shouldISendCoT) {
@@ -785,16 +825,35 @@ public class MainActivity extends AthenaActivity {
                         appendText(attribs);
                         return;
                     } else {
+                        double droneToOobDistance = Math.round(haversine(x,y,e.OOBLon,e.OOBLat,z) * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d));
                         Log.e(TAG, "ERROR: resolveTarget ran OOB at (WGS84): " + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon));
                         if (!outputModeIsSlavic()) {
                             attribs += getString(R.string.resolveTarget_oob_error_msg) + ": " + roundDouble(e.OOBLat) + ", " + roundDouble(e.OOBLon) + "\n";
+                            attribs += "distance: " + droneToOobDistance + (isUnitFoot() ? "ft.":"m")  + "\n";
                         } else {
-                            attribs += getString(R.string.resolveTarget_oob_error_msg) + " (CK-42):" + roundDouble(CoordTranslator.toCK42Lat(e.OOBLat, e.OOBLon, z)) + ", " + roundDouble(CoordTranslator.toCK42Lon(e.OOBLat, e.OOBLon, z)) + "\n";
+                            attribs += getString(R.string.resolveTarget_oob_error_msg) + " (CK-42):" +roundDouble(CoordTranslator.toCK42Lat(e.OOBLat, e.OOBLon, z)) + ", " + roundDouble(CoordTranslator.toCK42Lon(e.OOBLat, e.OOBLon, z)) + "\n";
+                            // NOTE: OpenAthena forces meters distance unit when in CK42 output mode
+                            attribs += "distance: " + droneToOobDistance + (isUnitFoot() ? "ft.":"m") + "\n";
                         }
                         attribs += getString(R.string.geotiff_coverage_reminder) + "\n";
                         attribs += getString(R.string.geotiff_coverage_precedent_message) + "\n";
                         appendText(attribs);
                         printDEMBounds();
+
+                        // new DEM diameter is meters distance from drone location to out of bounds location
+                        //     diameter is multiplied by 1.5 for margin of safety
+                        double newDEMDiameter = haversine(x,y,e.OOBLon,e.OOBLat,z) * 1.5d;
+                        if (newDEMDiameter > AthenaApp.DEM_DOWNLOAD_RETRY_MAX_METERS_DIAMETER) {
+                            appendText("ERROR: calculation went out of bounds beyond the maximum DEM size. Please either select a closer target or" + getString(R.string.prompt_use_blah) + getString(R.string.action_demcache) + getString(R.string.to_import_an_offline_dem_file_manually) +  "\n");
+                        } else {
+                            if (newDEMDiameter < AthenaApp.DEM_DOWNLOAD_DEFAULT_METERS_DIAMETER) {
+                                newDEMDiameter = AthenaApp.DEM_DOWNLOAD_DEFAULT_METERS_DIAMETER;
+                            }
+                            appendText( "Downloading a new DEM with increased coverage area..." + "\n" + "Warning: target calculation may still fail for outgoing rays which do not intersect with terrain!" + "\n");
+                            appendText("new DEM center coordinates (WGS84): " + roundDouble(e.OOBLat) + "," + roundDouble(e.OOBLon) + " diameter: " + Math.round(newDEMDiameter * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d)) + (isUnitFoot() ? "ft.":"m") + "\n");
+                            displayNewDemDownloadChoice((e.OOBLat + y) / 2.0d, (e.OOBLon + x) / 2.0d, newDEMDiameter);
+                        }
+
                         return;
                     }
                 }
@@ -829,7 +888,7 @@ public class MainActivity extends AthenaActivity {
                 // convert from WGS84 height above ellipsoid to EGM96 above mean sea level (much more commonly used)
                 double mslAlt = altitudeDouble + offsetAdapter.getEGM96OffsetAtLatLon(latitude, longitude);
                 // convert from meters to feet if user setting indicates to do so
-                mslAlt *= (isUnitFoot() ? FEET_PER_METER : 1.0d);
+                mslAlt *= (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d);
                 // round to nearest whole number
                 long altEGM96 = Math.round(mslAlt);
                 targetCoordString += getString(R.string.altitude_label_short) + " " + altEGM96 + " " + (isUnitFoot() ? "ft.":"m") + " ";
@@ -896,7 +955,40 @@ public class MainActivity extends AthenaActivity {
         }
     } // button click
 
+    protected void postResults(double lat, double lon, String resultStr) {
+        postResults(resultStr);
+        DemCache.DemCacheEntry dce = athenaApp.demCache.searchCacheEntry(lat, lon);
+        if (dce != null) {
+            appendText("Starting auto-load for downloaded DEM file..." + "\n");
+            demSelected(dce.fileUri);
+        }
+    }
+    @Override
+    protected void postResults(String resultStr) {
+        appendText(resultStr + "\n");
+        athenaApp.demCache.refreshCache();
+    }
 
+    @Override
+    protected void downloadNewDEM(double lat, double lon, double meters_diameter) {
+        DemDownloader aDownloader = new DemDownloader(getApplicationContext(),lat,lon,meters_diameter);
+        aDownloader.asyncDownload(new Consumer<String>() {
+            @Override
+            public void accept(String s) {
+                Log.d(TAG,"NewDemActivity download returned "+s);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        decrementProgressBar();
+                        postResults(lat, lon, s);
+                        Toast t = Toast.makeText(MainActivity.this,s,Toast.LENGTH_SHORT);
+                        t.setGravity(Gravity.CENTER,0,0);
+                        t.show();
+                    }
+                });
+            }
+        });
+    }
 
     private void printDEMBounds() {
         String attribs = "";
@@ -930,6 +1022,29 @@ public class MainActivity extends AthenaActivity {
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
         }
+    }
+
+    // Overloaded function call
+    public void displayNewDemDownloadChoice(double lat, double lon) {
+        displayNewDemDownloadChoice(lat,lon,AthenaApp.DEM_DOWNLOAD_DEFAULT_METERS_DIAMETER);
+    }
+
+    public void displayNewDemDownloadChoice(double lat, double lon, double diameter) {
+        if (showProgressBarSemaphore > 0) {
+            // Do not display a new download prompt if a DEM download or load operation is still in progress
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setMessage("Could not find a local DEM. Would you like to download a new DEM centered at "+ roundDouble(lat) + "," + roundDouble(lon) + " ?");
+        builder.setPositiveButton(getString(R.string.yes), (DialogInterface.OnClickListener) (dialog, which) -> {
+            incrementAndShowProgressBar();
+            downloadNewDEM(lat, lon, diameter);
+        });
+        builder.setNegativeButton(getString(R.string.no), (DialogInterface.OnClickListener) (dialog, which) -> {
+            appendText("You declined to download a new DEM. Please load a new DEM manually or select another image to continue." + "\n");
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     public void displayMissingCameraIntrinsicsAlert() {
@@ -1029,17 +1144,24 @@ public class MainActivity extends AthenaActivity {
         return df.format(d);
     }
 
-    private void appendText(final String aStr)
-    {
+    private void appendText(final String aStr) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 textView.append(aStr);
 
+                // Additional code to scroll to the bottom
+                scrollView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Scroll to the bottom of the ScrollView
+                        scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+                    }
+                });
             }
         });
-
     } // appendText to textView but do so on UI thread
+
 
     // reset the text field
     private void clearText()

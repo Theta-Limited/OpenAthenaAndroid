@@ -5,7 +5,7 @@
     <string name="previous">Previous</string>
 
     <!-- TODO add proper translations once AUTODEM feature is complete!!! -->
-    <string name="action_demcache" translatable="false">Manage Elevation Maps</string>
+    <string name="action_demcache" translatable="false">Manage Digital Elevation Models</string>
 
     <string name="action_prefs">Settings</string>
     <string name="action_calculate">Calculate</string>
@@ -33,10 +33,10 @@
     <string name="title_activity_prefs">OpenAthena™ for Android Settings</string>
     <string name="title_activity_about">About OpenAthena™ for Android</string>
     <!-- TODO add proper translations once AUTODEM feature is complete!!! -->
-    <string name="title_activity_demcache" translatable="false">Manage Elevation Map Cache</string>
-    <string name="title_activity_newelevationmap" translatable="false">New Elevation Map</string>
-    <string name="title_activity_managedems" translatable="false">Manage Elevation Maps</string>
-    <string name="title_activity_mapsdetail" translatable="false">Elevation Map Details</string>
+    <string name="title_activity_demcache" translatable="false">Manage Elevation Models Cache</string>
+    <string name="title_activity_newelevationmap" translatable="false">New Elevation Models</string>
+    <string name="title_activity_managedems" translatable="false">Manage Elevation Models</string>
+    <string name="title_activity_mapsdetail" translatable="false">Elevation Model Details</string>
 
     <!-- TODO add proper translations once AUTODEM feature is complete!!! -->
     <string name="button_download_elevation_map" translatable="false">Download</string>
@@ -86,6 +86,7 @@
     <string name="i_understand_this_risk">I understand this risk</string>
     <string name="image_is_too_large_error_msg">Image is too large to show!</string>
     <string name="loading_geotiff_toast_msg">Loading DEM. Please wait...</string>
+    <string name="dem_loading_finished_user_interaction_prompt">DEM loaded successfully! Tap anywhere within the image to calculate coordinates</string>
     <string name="wgs84_standard_lat_lon">WGS84 (Default)\nLat, Lon</string>
     <string name="wgs84_tooltip">The widely-used standard for describing a latitude longitude location on Earth</string>
     <string name="nato_mgrs_1m">NATO MGRS 1m</string>
@@ -200,7 +201,10 @@
     </string>
     <string name="utm" translatable="false">UTM</string>
     <string name="utm_tooltip">Universal Transverse Mercator map projection system with 60 planar zones</string>
-    <string name="target_predicted_ce">"Predicted circular error:"</string>
+    <string name="target_predicted_ce">"Predicted max circular error:"</string>
     <string name="target_location_error_category">Target Location Error Category:</string>
     <string name="missing_camera_intrinsics_warning_message">DANGER: Camera internal properties were not found in database. Calculation accuracy will be degraded. Email support@theta.limited</string>
+    <string name="prompt_use_blah">(use \"</string>
+    <string name="to_import_an_offline_dem_file_manually">\" to import an offline DEM file manually)</string>
+    <string name="error_nondescript">ERROR</string>
 </resources>

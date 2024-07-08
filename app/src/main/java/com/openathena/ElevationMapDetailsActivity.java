@@ -6,11 +6,14 @@
 
 package com.openathena;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.content.FileProvider;
 
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -38,9 +41,11 @@ public class ElevationMapDetailsActivity extends AthenaActivity
     String exportFilename = "";
     DemCache.DemCacheEntry dEntry;
 
-    static TimeZone local_tz = TimeZone.getDefault();
-    static DateFormat df_ISO8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+    static TimeZone local_tz;
+    @SuppressLint("SimpleDateFormat")
+    static DateFormat df_ISO8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
+    protected File demDir;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -50,6 +55,9 @@ public class ElevationMapDetailsActivity extends AthenaActivity
         demInfo = (TextView)findViewById(R.id.elevationMapDetailText);
         demInfo.setMovementMethod(LinkMovementMethod.getInstance());
 
+        demDir = new File(getCacheDir(), "DEMs");
+
+        local_tz = TimeZone.getDefault();
         df_ISO8601.setTimeZone(local_tz);
 
         // create the activity launcher here;
@@ -61,7 +69,7 @@ public class ElevationMapDetailsActivity extends AthenaActivity
                 // dialog gives us a URI, we need to open/read/write exported file
                 // the try with resources statement automatically closes the streams
                 // when it finishes
-                try (InputStream inputStream = Files.newInputStream(new File(getFilesDir(), exportFilename).toPath());
+                try (InputStream inputStream = Files.newInputStream(new File(demDir, exportFilename).toPath());
                      OutputStream outStream = getContentResolver().openOutputStream(uri)) {
 
                     byte[] buf = new byte[1024];
@@ -150,7 +158,7 @@ public class ElevationMapDetailsActivity extends AthenaActivity
 
         htmlString += "<br>";
 
-        htmlString += "size: " + ((isUnitFoot()) ? Math.round(dEntry.l * AthenaApp.FEET_PER_METER) : Math.round(dEntry.l)) + " " + (isUnitFoot() ? "ft." : getString(R.string.meter_label)) + "²" + "<br>";
+        htmlString += "size: " + athenaApp.demCache.getAreaSizeString(dEntry,isUnitFoot()) + "<br>";
         String coordStr = truncateDouble(dEntry.cLat, 6)+","+truncateDouble(dEntry.cLon, 6);
 
         // Google Maps requires a ?q= tag to actually display a pin for the indicated location
@@ -188,14 +196,34 @@ public class ElevationMapDetailsActivity extends AthenaActivity
     public boolean onOptionsItemSelected(MenuItem item)
     {
         Intent intent;
-
+        int itemID = item.getItemId();
         // Handle item selection
-        if (item.getItemId() == R.id.action_export_dem) {
+        if (itemID == R.id.action_export_dem) {
             Log.d(TAG, "DemDetail: going to export a DEM " + exportFilename);
             copyDemLauncher.launch(exportFilename);
             return true;
+        } else if (itemID == R.id.action_share_dem) {
+            Log.d(TAG, "DemDetail: going to share a DEM " + exportFilename);
+            shareDemFile(new File(demDir, exportFilename));
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void shareDemFile(File file) {
+        try {
+            Uri fileUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", file);
+
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // Grant temporary read permission to the recipient
+            shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
+            shareIntent.setType("application/octet-stream");
+            startActivity(Intent.createChooser(shareIntent, "Share DEM"));
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "The selected file can't be shared: " + file.toString());
+            Toast.makeText(this, "ERROR: failed to share your selected DEM file!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void calculateImage(View view) { return; } // not used in this activity

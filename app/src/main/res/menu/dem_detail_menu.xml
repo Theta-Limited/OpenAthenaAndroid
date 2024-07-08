@@ -4,8 +4,14 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
         <item
-            android:id="@+id/action_export_dem"
+            android:id="@+id/action_share_dem"
             android:icon="@android:drawable/ic_menu_share"
-            android:title="Export DEM"
+            android:title="Share DEM"
             app:showAsAction="ifRoom" />
+
+        <item
+            android:id="@+id/action_export_dem"
+            android:icon="@android:drawable/ic_menu_upload"
+            android:title="Export DEM"
+            app:showAsAction="always" />
 </menu>

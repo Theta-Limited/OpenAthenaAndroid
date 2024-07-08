@@ -53,13 +53,17 @@ public class NewElevationMapActivity extends DemManagementActivity
     private LocationManager locationManager;
     private LocationListener locationListener;
 
+    protected File demDir;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        Log.d(TAG,"NewDemActivity onCreate started");
+        Log.d(TAG,"NewElevationMapActivity onCreate started");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_dem);
+
+        demDir = new File(getCacheDir(), "DEMs");
 
         instructionsLabel = (TextView)findViewById(R.id.new_dem_label);
         getPosGPSButton = (ImageButton) findViewById(R.id.get_pos_gps_button);
@@ -69,8 +73,11 @@ public class NewElevationMapActivity extends DemManagementActivity
         importButton = (Button)findViewById(R.id.new_dem_importbutton);
 
         progressBar = (ProgressBar)  findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
-        showProgressBarSemaphore = 0;
+        if (showProgressBarSemaphore < 1) {
+            progressBar.setVisibility(View.GONE);
+        } else {
+            progressBar.setVisibility(View.VISIBLE);
+        }
 
         resultsLabel = (TextView)findViewById(R.id.new_dem_results);
 
@@ -102,7 +109,7 @@ public class NewElevationMapActivity extends DemManagementActivity
         // create the activityresultlauncher here because of various threading
         // constraints
         importLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
-            Log.d(TAG,"NewDemActivity: picked a file!");
+            Log.d(TAG,"NewElevationMapActivity: picked a file!");
             if (uri != null) {
                 copyFileToPrivateStorage(uri);
             }
@@ -128,8 +135,7 @@ public class NewElevationMapActivity extends DemManagementActivity
         if (!isGPSFixInProgress && showProgressBarSemaphore > 0) {
             return;
         }
-        showProgressBarSemaphore++;
-        progressBar.setVisibility(View.VISIBLE);
+        incrementAndShowProgressBar();
 
         String latlon = latLonText.getText().toString();
         latlon = latlon.trim();
@@ -143,7 +149,7 @@ public class NewElevationMapActivity extends DemManagementActivity
         String meters = metersText.getText().toString();
         double lat = 0, lon = 0, h = 15000;
 
-        Log.d(TAG,"NewDemActivity going to download from InterWebs");
+        Log.d(TAG,"NewElevationMapActivity going to download from InterWebs");
 
         // hide the keyboard
         InputMethodManager im = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -198,8 +204,7 @@ public class NewElevationMapActivity extends DemManagementActivity
         if (filePath == null) filePath = "";
         resultsLabel.setText("Importing file, please wait...");
 
-        showProgressBarSemaphore++;
-        progressBar.setVisibility(View.VISIBLE);
+        incrementAndShowProgressBar();
 
         new Thread(new Runnable() {
             @Override
@@ -220,7 +225,7 @@ public class NewElevationMapActivity extends DemManagementActivity
                     return;
                 }
 
-                File importFile = new File(getFilesDir(), "import.tiff");
+                File importFile = new File(demDir, "import.tiff");
                 DEMParser aParser = new DEMParser(importFile);
                 if (aParser == null) {
                     postResults("Are you sure this was a GeoTIFF file?");
@@ -234,7 +239,7 @@ public class NewElevationMapActivity extends DemManagementActivity
                 double w = truncateDouble(aParser.getMinLon(), 6);
                 String newFilename = "DEM_LatLon_" + s + "_" + w + "_" + n + "_" + e + ".tiff";
 
-                File newFile = new File(getFilesDir(), newFilename);
+                File newFile = new File(demDir, newFilename);
                 if (newFile.exists() && !newFile.delete()) {
                     postResults("Failed to import file of same name");
                     decrementProgressBar();
@@ -271,7 +276,7 @@ public class NewElevationMapActivity extends DemManagementActivity
     // handle an import button click
     private void onClickImport()
     {
-        Log.d(TAG,"NewDemActivity: going to pick a file to import");
+        Log.d(TAG,"NewElevationMapActivity: going to pick a file to import");
         // launch and give it .tiff as a restriction?
         // launcher takes mime-types; here are a few options
         // image/tiff -- just tiff files

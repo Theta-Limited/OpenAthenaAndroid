@@ -12,20 +12,13 @@
 
 package com.openathena;
 
-import java.lang.annotation.Target;
-import java.nio.file.attribute.FileTime;
 import java.util.Date;
 import java.io.File;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
-
-
-import androidx.core.util.Consumer;
 
 public class DemCache {
 
@@ -33,6 +26,7 @@ public class DemCache {
 
     public class DemCacheEntry {
         String filename;
+        Uri fileUri;
         double n; // north lat
         double e; // east lon
         double s; // south lat
@@ -44,11 +38,12 @@ public class DemCache {
         Date modDate;
         long bytes;
 
-        public DemCacheEntry(String filename, double n, double s, double e, double w,
+        public DemCacheEntry(String filename, Uri fileUri, double n, double s, double e, double w,
                              double l, double cLat, double cLon, Date createDate, Date modDate,
                              long bytes) {
 
             this.filename = filename;
+            this.fileUri = fileUri;
             this.n = n;
             this.s = s;
             this.e = e;
@@ -62,12 +57,17 @@ public class DemCache {
 
         } // DemCacheEntry constructor
 
+        public boolean contains(double lat, double lon) {
+            return (lat <= n && lat >= s && lon >= w && lon <= e);
+        }
+
     } // class DemCacheEntry
 
     // DemCache instance variables
     public long totalBytes = 0;
     public List<DemCacheEntry> cache;
     public Context context;
+    protected File demDir;
     public int selectedItem = -1;
 
     public DemCache(Context context)
@@ -75,8 +75,12 @@ public class DemCache {
         // read/scan app document/storage directory for .tiff files
         // DEM_LatLon_s_w_n_e.tiff
         this.context = context;
+        if (context == null) {
+            throw new IllegalArgumentException("ERROR: tried to initialize DemCache object with a null Context!");
+        }
 
         Log.d(TAG,"DemCache: starting");
+        demDir = new File(context.getCacheDir(), "DEMs");
 
         refreshCache();
 
@@ -95,19 +99,25 @@ public class DemCache {
 
     } // DemCache() constructor
 
+    public String getAreaSizeString(DemCacheEntry dce, boolean isDistanceUnitImperial) {
+        AthenaApp athenaApp = (AthenaApp) context.getApplicationContext();
+        if (dce == null) {
+            return athenaApp.getString(R.string.error_nondescript);
+        }
+        return ((isDistanceUnitImperial) ? Math.round(dce.l * Math.pow(AthenaApp.FEET_PER_METER,2.0d) / Math.pow(AthenaApp.FEET_PER_MILE,2.0d)) : Math.round(dce.l / Math.pow(1000.0d,2.0d))) + " " + (isDistanceUnitImperial ? "mi" : "km") + "²";
+    }
+
     // refresh the cache after say new downloads or imports XXX
 
     public void refreshCache()
     {
 
-        File appDir = context.getFilesDir();
-
         // reset the array list
         cache = new ArrayList<DemCacheEntry>();
         selectedItem = -1;
 
-        // list all .tiff files in the main app dir
-        File[] files = appDir.listFiles((dir,name) -> name.toLowerCase().endsWith(".tiff"));
+        // list all .tiff files in the demDir in app cache folder
+        File[] files = demDir.listFiles((dir,name) -> name.toLowerCase().endsWith(".tiff"));
         if (files != null) {
 
             Log.d(TAG,"DemCache: found "+files.length+" files to look at");
@@ -147,7 +157,8 @@ public class DemCache {
                             clon = v[1];
                             l = v[2];
 
-                            DemCacheEntry aDem = new DemCacheEntry(filename,n,s,e,w,l,clat,clon,createDate,modDate,fileSize);
+                            Uri fileUri = Uri.fromFile(file);
+                            DemCacheEntry aDem = new DemCacheEntry(filename,fileUri,n,s,e,w,l,clat,clon,createDate,modDate,fileSize);
                             cache.add(aDem);
                             totalBytes += aDem.bytes;
 
@@ -181,7 +192,7 @@ public class DemCache {
             Log.d(TAG,"DemCache: deleting "+removed.filename);
             String aFilename = removed.filename+".tiff";
 
-            File file = new File(context.getFilesDir(),aFilename);
+            File file = new File(demDir,aFilename);
             boolean ret = file.delete();
 
             if (!ret) {
@@ -220,7 +231,7 @@ public class DemCache {
         DemCacheEntry bestEntry = null;
 
         for (DemCacheEntry entry : cache) {
-            if (lat < entry.n && lat > entry.s && lon > entry.w && lon < entry.e) {
+            if (entry.contains(lat,lon)) {
                 // Calculate coverage as the minimum distance to the boundary from the search position
                 double northCoverage = Math.abs(entry.n - lat);
                 double southCoverage = Math.abs(lat - entry.s);

@@ -17,6 +17,11 @@ public class AthenaApp extends Application { // Android Singleton Class for hold
     public static String TAG = AthenaApp.class.getSimpleName();
 
     public static final double FEET_PER_METER = 3937.0d/1200.0d; // Exact constant for US Survey Foot per Meter
+    public static final double FEET_PER_MILE = 5280.0d;
+
+    public static final double DEM_DOWNLOAD_DEFAULT_METERS_DIAMETER = 15000.0d;
+    // https://earthscience.stackexchange.com/questions/7283/how-high-must-one-be-for-the-curvature-of-the-earth-to-be-visible-to-the-eye
+    public static final double DEM_DOWNLOAD_RETRY_MAX_METERS_DIAMETER = 25000.0d;
 
     @Override
     public void onCreate() {
