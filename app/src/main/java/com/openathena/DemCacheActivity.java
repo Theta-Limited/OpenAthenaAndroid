@@ -108,7 +108,9 @@ public class DemCacheActivity extends AthenaActivity implements DemListAdapter.I
 
     private void refreshView()
     {
-        Log.d(TAG,"DemCacheActivity: refreshView "+athenaApp.demCache.cache.size()+" entries");
+        if (athenaApp.demCache != null) {
+            Log.d(TAG, "DemCacheActivity: refreshView " + athenaApp.demCache.cache.size() + " entries");
+        }
 
         adapter = new DemListAdapter(this,athenaApp.demCache);
         adapter.setClickListener(this);
