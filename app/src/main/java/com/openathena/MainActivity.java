@@ -255,7 +255,6 @@ public class MainActivity extends DemManagementActivity {
 //        set_selection_x(athenaApp.get_selection_x());
 //        set_selection_y(athenaApp.get_selection_y());
 
-        // TODO revise after DEM/Image loading FSM rework
         if (isImageLoaded) {
             if (AthenaApp.get_selection_x() != -1 && AthenaApp.get_selection_y() != -1) {
                 iView.restoreMarker(AthenaApp.get_selection_x(), AthenaApp.get_selection_y());

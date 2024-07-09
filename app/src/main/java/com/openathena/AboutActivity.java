@@ -15,12 +15,13 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 
-public class AboutActivity extends AppCompatActivity {
+public class AboutActivity extends AthenaActivity {
 
     public static String TAG = AboutActivity.class.getSimpleName();
     TextView aboutText;
@@ -76,59 +77,23 @@ public class AboutActivity extends AppCompatActivity {
     } // onCreate()
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    public void calculateImage(View view) {
+        assert(true);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        Intent intent;
-
-        int id = item.getItemId();
-
-        if (id == R.id.action_managedems) {
-            // jump to manage dem cache activity
-            intent = new Intent(getApplicationContext(),ManageDemsActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
-            return true;
-        }
-        
-        if (id == R.id.action_calculate) {
-            // jump to main activity
-            // its already created
-            intent = new Intent(getApplicationContext(),MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
-            return true;
-        }
-
-        if (id == R.id.action_prefs) {
-            intent = new Intent(getApplicationContext(), PrefsActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
-            return true;
-        }
-
-//        if (id == R.id.action_log) {
-//            intent = new Intent(getApplicationContext(),ActivityLog.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//            startActivity(intent);
-//            return true;
-//        }
-
-        // don't do anything if about is selected as we are already there
-
-        return super.onOptionsItemSelected(item);
+    public void calculateImage(View view, boolean shouldISendCoT) {
+        assert(true);
     }
 
-        @Override
+
+    @Override
+    protected void saveStateToSingleton() {
+        assert(true);
+    }
+
+
+    @Override
     protected void onResume() {
         Log.d(TAG,"onResume");
         super.onResume();

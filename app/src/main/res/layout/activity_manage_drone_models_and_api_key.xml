@@ -1,6 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:gravity="start">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <View
+        android:id="@+id/view_sep_1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#D3D3D3"/>
+
+    <TextView
+        android:id="@+id/titleTextView1"
+        android:layout_below="@id/view_sep_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="OpenTopography API Key"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/actionMenuTextColor"
+        android:textSize="30sp"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/textView_dem_api_key_status"
+        android:layout_below="@id/titleTextView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="API Key Status: "
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal"
+        android:textColor="?attr/actionMenuTextColor" />
+
+    <TextView
+        android:id="@+id/textView_user_information_what_is_api_key_for"
+        android:layout_below="@id/textView_dem_api_key_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="An OpenTopography API Key is needed for this app to download Digital Elevation Model data for target calculations."
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/actionMenuTextColor"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/textView_link_obtain_api_key"
+        android:linksClickable="true"
+        android:focusable="true"
+        android:layout_below="@id/textView_user_information_what_is_api_key_for"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/href_obtain_an_api_key_here"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/actionMenuTextColor"
+        android:layout_marginTop="8dp" />
+
+    <EditText
+        android:id="@+id/lookup_latlon_text"
+        android:layout_below="@id/textView_link_obtain_api_key"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/api_key_gibberish"
+        android:inputType="text"
+        android:gravity="center"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/apply_new_dem_API_key_button"
+        android:onClick="handleApplyNewDemApiKey"
+        android:layout_below="@id/lookup_latlon_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="@string/apply_changes_button_text"
+        android:textAllCaps="false"
+        android:layout_marginTop="16dp" />
+
+    <View
+        android:id="@+id/view_sep_2"
+        android:layout_below="@id/apply_new_dem_API_key_button"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#D3D3D3"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/titleTextView2"
+        android:layout_below="@id/view_sep_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Drone Camera Models Database:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/actionMenuTextColor"
+        android:textSize="30sp"
+        android:textAlignment="center"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/textView_dronemodels_json_status"
+        android:layout_below="@id/titleTextView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="droneModels.json database status: "
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/actionMenuTextColor"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/textView_dronemodels_last_updated"
+        android:layout_below="@id/textView_dronemodels_json_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="File last updated: "
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/actionMenuTextColor"
+        android:layout_marginTop="0dp" />
+
+    <TextView
+        android:id="@+id/textView_dronemodels_num_entries"
+        android:layout_below="@id/textView_dronemodels_last_updated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Number of Entries: "
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/actionMenuTextColor"
+        android:layout_marginTop="0dp" />
+
+    <Button
+        android:id="@+id/load_new_dronemodels_json_button"
+        android:onClick="handleLoadNewDroneModelsJson"
+        android:layout_below="@id/textView_dronemodels_num_entries"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="Load New droneModels.json file"
+        android:textAllCaps="false"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/reset_prefs_button"
+        android:onClick="handleResetPrefs"
+        android:layout_below="@id/load_new_dronemodels_json_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="@string/reset_prefs_text"
+        android:textAllCaps="false"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/new_dem_results"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Results"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textAllCaps="false"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"/>
+</RelativeLayout>
