@@ -29,7 +29,6 @@ public class DemDownloader
     private String OPENTOPOGRAPHY_API_KEY = BuildConfig.OPENTOPOGRAPHY_API_KEY;
     public static String TAG = DemDownloader.class.getSimpleName();
     private static final String URL_STR = "https://portal.opentopography.org/API/globaldem?";
-    private static final String DEM_TYPE_STR = "SRTMGL1";
     private int responseCode;
     private int responseBytes;
     private double s, w, n, e; // Bounding box coordinates
@@ -57,8 +56,21 @@ public class DemDownloader
 
     // Blocking download of a DEM from OpenTopography
     public boolean syncDownload() throws IOException {
+        String demTypeStr;
+        if (n <= 60.0d && s > -56.0d) {
+            // SRTM GL1 v3, to be used for locations on Earth within coverage area of 60.0° N to 56.0° S
+            // https://portal.opentopography.org/datasetMetadata?otCollectionID=OT.042013.4326.1
+            demTypeStr = "SRTMGL1";
+        } else {
+            // Copernicus GLO-30 generated with X-band SAR data from the TanDEM-X
+            // to be used for extreme latitudes (above 60.0° N or below 56.0° S) only
+            // https://ilrs.gsfc.nasa.gov/missions/satellite_missions/current_missions/tand_general.html
+            // https://portal.opentopography.org/datasetMetadata?otCollectionID=OT.032021.4326.1
+            demTypeStr = "COP30";
+        }
+
         String requestURLStr = URL_STR +
-                "demtype=" + DEM_TYPE_STR +
+                "demtype=" + demTypeStr +
                 "&south=" + s +
                 "&north=" + n +
                 "&west=" + w +
