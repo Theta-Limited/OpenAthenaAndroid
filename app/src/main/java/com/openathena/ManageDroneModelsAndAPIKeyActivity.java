@@ -4,12 +4,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.IOException;
 
 public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
+
+//    private Handler mainHandler = new Handler(Looper.getMainLooper());
 
     // Member variables for TextViews
     private TextView titleTextView1;
@@ -27,12 +33,21 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
 
     // Member variables for Buttons
     private Button applyNewDemApiKeyButton;
+    private Button resetApiKeyButton;
     private Button loadNewDroneModelsJsonButton;
-    private Button resetPrefsButton;
+    private Button resetDroneModelsButton;
+
+    protected ApiKeyStatus apiKeyStatus;
 
 //    // Member variable for Views (separator lines)
 //    private View viewSep1;
 //    private View viewSep2;
+
+    protected enum ApiKeyStatus {
+        VALID,
+        UNKNOWN,
+        INVALID
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +70,9 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
 
         // Initialize Buttons
         applyNewDemApiKeyButton = findViewById(R.id.apply_new_dem_API_key_button);
+        resetApiKeyButton = findViewById(R.id.reset_API_key_button);
         loadNewDroneModelsJsonButton = findViewById(R.id.load_new_dronemodels_json_button);
-        resetPrefsButton = findViewById(R.id.reset_prefs_button);
+        resetDroneModelsButton = findViewById(R.id.reset_dronemodels_button);
 
 //        // Initialize Views
 //        viewSep1 = findViewById(R.id.view_sep_1);
@@ -65,7 +81,71 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
         textViewLinkObtainApiKey.setText(Html.fromHtml(getString(R.string.href_obtain_an_api_key_here), Html.FROM_HTML_MODE_COMPACT));
         textViewLinkObtainApiKey.setMovementMethod(LinkMovementMethod.getInstance());
 
+        tesAPIKeyAndSetApiKeyStatus();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        tesAPIKeyAndSetApiKeyStatus();
+    }
+
+    protected void tesAPIKeyAndSetApiKeyStatus() {
+        // demDownloader to be used for API Key validity check
+        // lat lon parmaters in input are ignored
+        DemDownloader demDownloader = new DemDownloader(this, 0.0, 0.0, 10);
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (demDownloader.isApiKeyValid()) {
+                        apiKeyStatus = ApiKeyStatus.VALID;
+                    } else {
+                        apiKeyStatus = ApiKeyStatus.INVALID;
+                    }
+                } catch (IOException e) {
+                    // IOException indicates no internet connection available
+                    apiKeyStatus = ApiKeyStatus.UNKNOWN;
+                }
+                updateTextViewDemApiKeyStatus();
+
+            }
+        }).start();
+
+//        try {
+//            if (demDownloader.isApiKeyValid()) {
+//                apiKeyStatus = ApiKeyStatus.VALID;
+//            } else {
+//                apiKeyStatus = ApiKeyStatus.INVALID;
+//            }
+//        } catch (IOException ioe) {
+//            // IOException indicates no internet connection available
+//            apiKeyStatus = ApiKeyStatus.UNKNOWN;
+//        }
+//        updateTextViewDemApiKeyStatus();
+    }
+
+    protected void updateTextViewDemApiKeyStatus() {
+        String newText = getString(R.string.dem_api_key_status) + " ";
+        if (apiKeyStatus == ApiKeyStatus.VALID) {
+            newText += "✅" + " (" + getString(R.string.status_valid) + ")";
+        } else if (apiKeyStatus == ApiKeyStatus.UNKNOWN) {
+            newText += "❓" + " (" + getString(R.string.status_unknown) + ")";
+        } else {
+            newText += "❌" + " (" + getString(R.string.status_invalid) + ")";
+        }
+        final String outText = newText;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                textViewDemApiKeyStatus.setText(outText);
+            }
+        });
+    }
+
+
 
     public void handleApplyNewDemApiKey(View view) {
         // Logic for handling Apply New DEM API Key button click
@@ -75,7 +155,7 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
         // Logic for handling Load New droneModels.json button click
     }
 
-    public void handleResetPrefs(View view) {
+    public void handleResetDroneModels(View view) {
         // Logic for handling Reset Preferences button click
     }
 

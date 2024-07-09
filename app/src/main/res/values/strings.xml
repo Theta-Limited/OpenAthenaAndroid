@@ -208,6 +208,10 @@
     <string name="error_nondescript">ERROR</string>
     <string name="action_manage_drone_models_and_api_key">Manage Drone Models and API Key</string>
     <string name="href_obtain_an_api_key_here"><![CDATA[<a href=https://opentopography.org/blog/introducing-api-keys-access-opentopography-global-datasets">Obtain An API Key Here</a>]]></string>
-    <string name="api_key_gibberish" translatable="false">nlhhp3yd9ud54tr3eem4akqv49wcb23i</string>
+    <string name="api_key_gibberish">e.g.: nlhhp3yd9ud54tr3eem4akqv49wcb23i</string>
     <string name="apply_changes_button_text">Apply</string>
+    <string name="dem_api_key_status">API Key Status:</string>
+    <string name="status_valid">Valid</string>
+    <string name="status_invalid">Invalid</string>
+    <string name="status_unknown">Unknown</string>
 </resources>

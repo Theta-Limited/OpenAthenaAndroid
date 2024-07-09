@@ -10,12 +10,13 @@
 
 package com.openathena;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.FileOutputStream;
@@ -26,14 +27,13 @@ public class DemDownloader
     // add your API key to local.properties in root of the android project
     // for example:
     // OPENTOPOGRAPHY_API_KEY=hexnumbers
-    private String OPENTOPOGRAPHY_API_KEY = BuildConfig.OPENTOPOGRAPHY_API_KEY;
     public static String TAG = DemDownloader.class.getSimpleName();
     private static final String URL_STR = "https://portal.opentopography.org/API/globaldem?";
     private int responseCode;
     private int responseBytes;
     private double s, w, n, e; // Bounding box coordinates
     private String filenameSuffix = ".tiff";
-    private String outputFormatStr = "GTiff";
+    private static final String OUTPUT_FORMAT_STRING = "GTiff";
     private Context context;
 
     protected File demDir;
@@ -52,6 +52,40 @@ public class DemDownloader
         w = boundingBox[3];
 
         Log.d(TAG,"DemDownloader: "+n+","+s+","+e+","+w);
+    }
+
+    protected String getDemApiKey() {
+        if (context == null) return "";
+        String apiKey = "";
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        apiKey = sharedPreferences.getString("OPENTOPOGRAPHY_API_KEY", "");
+        if (apiKey.isEmpty()) {
+            apiKey = BuildConfig.OPENTOPOGRAPHY_API_KEY;
+        }
+        return apiKey;
+    }
+
+    // Method to check the validity of the API Key
+    public boolean isApiKeyValid() throws IOException {
+        // Minimal bounding box at a location with likely no data
+        String testUrl = URL_STR +
+                "demtype=SRTMGL1" +
+                "&south=0" +
+                "&north=0.01" +
+                "&west=0" +
+                "&east=0.01" +
+                "&outputFormat=" + OUTPUT_FORMAT_STRING +
+                "&API_Key=" + getDemApiKey();
+
+        URL url = new URL(testUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+
+        responseCode = connection.getResponseCode();
+        connection.disconnect();
+
+        // Check for valid responses indicating a valid API key
+        return (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_NO_CONTENT || responseCode == HttpURLConnection.HTTP_BAD_REQUEST);
     }
 
     // Blocking download of a DEM from OpenTopography
@@ -75,9 +109,9 @@ public class DemDownloader
                 "&north=" + n +
                 "&west=" + w +
                 "&east=" + e +
-                "&outputFormat=" + outputFormatStr +
-                "&API_Key=" + OPENTOPOGRAPHY_API_KEY;
-        boolean b = false;
+                "&outputFormat=" + OUTPUT_FORMAT_STRING +
+                "&API_Key=" + getDemApiKey();
+        boolean isDownloadSuccessful = false;
 
         URL url = new URL(requestURLStr);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -107,18 +141,20 @@ public class DemDownloader
             }
             outputStream.close();
             Log.d(TAG,"DemDownloader: wrote "+totalBytes+" bytes to "+filename);
-            b = true;
+            isDownloadSuccessful = true;
         }
         catch (Exception e) {
             Log.d(TAG,"DemDownloader: failed to write "+filename+" : "+e);
-            b = false;
+            isDownloadSuccessful = false;
         }
 
         connection.disconnect();
 
-        return true;
+        return isDownloadSuccessful;
 
     } // syncDownload
+
+
 
     // down a DEM async or in background
     // callback will indicate success or error

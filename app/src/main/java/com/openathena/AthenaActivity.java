@@ -24,6 +24,8 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -391,7 +393,29 @@ public abstract class AthenaActivity extends AppCompatActivity {
 //        return cy;
 //    }
 
+    protected String getDemApiKey() {
+        String apiKey = "";
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        apiKey = sharedPreferences.getString("OPENTOPOGRAPHY_API_KEY", "");
+        if (apiKey.isEmpty()) {
+            apiKey = BuildConfig.OPENTOPOGRAPHY_API_KEY;
+        }
+        return apiKey;
+    }
 
+    protected boolean putDemApiKey(String newApiKey) {
+        // input validity checks
+        if (newApiKey == null || newApiKey.trim().isEmpty()) return false;
+        newApiKey = newApiKey.trim();
+        if (newApiKey.length() != 32) return false;
+        if (!StringUtils.isAlphanumeric(newApiKey)) return false;
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+        prefsEditor.putString("OPENTOPOGRAPHY_API_KEY", newApiKey);
+        prefsEditor.apply();
+        return true;
+    }
 
     public void restorePrefs() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);

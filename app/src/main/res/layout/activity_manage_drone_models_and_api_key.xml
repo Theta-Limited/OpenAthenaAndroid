@@ -27,7 +27,7 @@
         android:layout_below="@id/titleTextView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="API Key Status: "
+        android:text="@string/dem_api_key_status"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:layout_marginTop="8dp"
         android:gravity="center_horizontal"
@@ -78,9 +78,21 @@
         android:textAllCaps="false"
         android:layout_marginTop="16dp" />
 
+    <Button
+        android:id="@+id/reset_API_key_button"
+        android:onClick="handleResetDroneModels"
+        android:layout_below="@id/apply_new_dem_API_key_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="@string/reset_prefs_text"
+        android:textAllCaps="false"
+        android:layout_marginTop="16dp" />
+
     <View
         android:id="@+id/view_sep_2"
-        android:layout_below="@id/apply_new_dem_API_key_button"
+        android:layout_below="@id/reset_API_key_button"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#D3D3D3"
@@ -141,8 +153,8 @@
         android:layout_marginTop="16dp" />
 
     <Button
-        android:id="@+id/reset_prefs_button"
-        android:onClick="handleResetPrefs"
+        android:id="@+id/reset_dronemodels_button"
+        android:onClick="handleResetDroneModels"
         android:layout_below="@id/load_new_dronemodels_json_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
