@@ -172,6 +172,11 @@ public class ManageDemsActivity extends DemManagementActivity
             return;
         }
 
+        // Save the user's location typed in the latLonText EditText field
+        //     so they don't have to re-type it when navigating to other activities
+        lastPointOfInterest = lat + "," + lon;
+        saveStateToSingleton();
+
         // finally, do the lookup!
         postResults("Going to lookup "+lat+","+lon);
 
@@ -238,7 +243,6 @@ public class ManageDemsActivity extends DemManagementActivity
 
     public void calculateImage(View view) { return; } // not used in this activity
     public void calculateImage(View view, boolean shouldISendCoT) { return; } // not used in this activity
-    protected void saveStateToSingleton() { return; } // do nothing
 
 } // ManageDemsActivity
 

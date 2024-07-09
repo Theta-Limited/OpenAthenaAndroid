@@ -115,7 +115,7 @@ public abstract class DemManagementActivity extends AthenaActivity {
             String mgrs = CoordTranslator.toMGRS1m(lat,lon);
             String latLonPair = String.format(Locale.US, "%f,%f", lat, lon);
             lastPointOfInterest = outputModeIsMGRS() ? mgrs : latLonPair;
-            athenaApp.putString("lastPointOfInterest", lastPointOfInterest);
+            saveStateToSingleton();
         }
     }
 
@@ -170,8 +170,7 @@ public abstract class DemManagementActivity extends AthenaActivity {
             return;
         }
 
-        showProgressBarSemaphore++;
-        progressBar.setVisibility(View.VISIBLE);
+        incrementAndShowProgressBar();
         isGPSFixInProgress = true;
 
         boolean hasGPSAccess = requestPermissionGPS();

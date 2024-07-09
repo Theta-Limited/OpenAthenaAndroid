@@ -305,7 +305,6 @@ public class NewElevationMapActivity extends DemManagementActivity
 
     public void calculateImage(View view) { return; } // not used in this activity
     public void calculateImage(View view, boolean shouldISendCoT) { return; } // not used in this activity
-    protected void saveStateToSingleton() { return; } // do nothing
 
     private double truncateDouble(double val, int precision) {
         double scale = Math.pow(10, precision);
