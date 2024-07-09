@@ -214,4 +214,6 @@
     <string name="status_valid">Valid</string>
     <string name="status_invalid">Invalid</string>
     <string name="status_unknown">Unknown</string>
+    <string name="error_dem_api_key_text_not_valid">ERROR: API Key was invalid.\nPlease input a valid 32 character API Key from OpenTopography.org</string>
+    <string name="new_api_key_applied">New API Key Applied</string>
 </resources>

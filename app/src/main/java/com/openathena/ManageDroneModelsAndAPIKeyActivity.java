@@ -26,7 +26,7 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
     private TextView textViewDroneModelsJsonStatus;
     private TextView textViewDroneModelsLastUpdated;
     private TextView textViewDroneModelsNumEntries;
-    private TextView newDemResults;
+    private TextView droneModelsAndApiKeyResults;
 
     // Member variable for EditText
     private EditText lookupLatLonText;
@@ -63,7 +63,7 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
         textViewDroneModelsJsonStatus = findViewById(R.id.textView_dronemodels_json_status);
         textViewDroneModelsLastUpdated = findViewById(R.id.textView_dronemodels_last_updated);
         textViewDroneModelsNumEntries = findViewById(R.id.textView_dronemodels_num_entries);
-        newDemResults = findViewById(R.id.new_dem_results);
+        droneModelsAndApiKeyResults = findViewById(R.id.drone_models_and_api_key_results);
 
         // Initialize EditText
         lookupLatLonText = findViewById(R.id.lookup_latlon_text);
@@ -145,10 +145,30 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
         });
     }
 
-
-
+    // Logic for handling Apply New DEM API Key button click
     public void handleApplyNewDemApiKey(View view) {
-        // Logic for handling Apply New DEM API Key button click
+        boolean wasNewApiKeyAppliedSuccesfully = putDemApiKey(lookupLatLonText.getText().toString());
+        if (!wasNewApiKeyAppliedSuccesfully) {
+            String errStr = getString(R.string.error_dem_api_key_text_not_valid);
+            Toast.makeText(this,errStr,Toast.LENGTH_LONG).show();
+            droneModelsAndApiKeyResults.setText(errStr);
+            return;
+        }
+
+        String successStr = getString(R.string.new_api_key_applied);
+        droneModelsAndApiKeyResults.setText(successStr);
+        Toast.makeText(this,successStr,Toast.LENGTH_SHORT).show();
+
+        // test the user's new API key and update thew status indicator
+        tesAPIKeyAndSetApiKeyStatus();
+    }
+
+    // Logic for handling Rest API Key button click
+    public void handleResetDemApiKey(View view) {
+        // NOTE: if OPENTOPOGRAPHY_API_KEY is missing from build local.properties, this will default to an empty String!
+        resetDemApiKey();
+
+        tesAPIKeyAndSetApiKeyStatus();
     }
 
     public void handleLoadNewDroneModelsJson(View view) {

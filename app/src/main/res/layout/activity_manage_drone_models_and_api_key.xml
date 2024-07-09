@@ -80,7 +80,7 @@
 
     <Button
         android:id="@+id/reset_API_key_button"
-        android:onClick="handleResetDroneModels"
+        android:onClick="handleResetDemApiKey"
         android:layout_below="@id/apply_new_dem_API_key_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -165,7 +165,7 @@
         android:layout_marginTop="16dp" />
 
     <TextView
-        android:id="@+id/new_dem_results"
+        android:id="@+id/drone_models_and_api_key_results"
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

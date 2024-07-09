@@ -398,9 +398,23 @@ public abstract class AthenaActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         apiKey = sharedPreferences.getString("OPENTOPOGRAPHY_API_KEY", "");
         if (apiKey.isEmpty()) {
+            // Revert to the default bundled API key if user has not set one
+            // NOTE: An empty (invalid) API key will be bundled with releases of this software on GitHub and F-Droid!
+            // You will need to set your own in the local.properties file in the root of this project
+            // or input your key into the app manually.
+            // See README.md of this project for further instructions
             apiKey = BuildConfig.OPENTOPOGRAPHY_API_KEY;
         }
         return apiKey;
+    }
+
+    protected void resetDemApiKey() {
+        String apiKey = BuildConfig.OPENTOPOGRAPHY_API_KEY;
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+        prefsEditor.putString("OPENTOPOGRAPHY_API_KEY", BuildConfig.OPENTOPOGRAPHY_API_KEY);
+        prefsEditor.apply();
     }
 
     protected boolean putDemApiKey(String newApiKey) {
