@@ -30,6 +30,7 @@ import android.content.ClipboardManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
@@ -273,7 +274,24 @@ public class MainActivity extends DemManagementActivity {
         athenaApp.demCache = new DemCache(getApplicationContext());
         Log.d(TAG,"DemCache: total storage "+athenaApp.demCache.totalStorage());
         Log.d(TAG,"DemCache: count "+athenaApp.demCache.count());
-
+        
+        if (getDemApiKey().trim().isEmpty()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setMessage("Greetings! Thanks for installing OpenAthena™ for Android. Online features of this app (for downloading terrain elevation data) require you to obtain an OpenTopography.org API Key (passcode) and set it within this app");
+            builder.setPositiveButton("Take me there now!", (DialogInterface.OnClickListener) (dialog,which) -> {
+                Log.d(TAG, "MainActivity: user navigating to ManageDroneModelsAndAPIKeyActivity to input an API Key");
+                Intent intent = new Intent(getApplicationContext(), ManageDroneModelsAndAPIKeyActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+            });
+            builder.setNegativeButton("No (load offline data only)", (DialogInterface.OnClickListener) (dialog,which) -> {
+                String userChoseOfflineStr = "Online features are disabled. All terrain data must be loaded manually. Navigate to \"Manage Drone Models and API Key\" at any time if you change your mind!";
+                Toast.makeText(this,userChoseOfflineStr,Toast.LENGTH_LONG).show();
+                appendText(userChoseOfflineStr + "\n");
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
     } // onCreate
 
 

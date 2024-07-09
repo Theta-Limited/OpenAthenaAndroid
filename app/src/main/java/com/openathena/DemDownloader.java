@@ -178,7 +178,7 @@ public class DemDownloader
                             consumer.accept("Download succeeded");
                         }
                         else {
-                            consumer.accept("Download failed");
+                            consumer.accept("Download failed. Please ensure OpenTopography API Key is valid!");
                         }
                     }
                 }
