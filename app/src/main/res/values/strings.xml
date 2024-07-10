@@ -218,4 +218,5 @@
     <string name="new_api_key_applied">New API Key Applied</string>
     <string name="operation_manual">Operation Manual</string>
     <string name="troubleshooting_manual">Troubleshooting Manual</string>
+    <string name="delete_elevation_map_dialog_title">Delete Elevation Map?</string>
 </resources>
