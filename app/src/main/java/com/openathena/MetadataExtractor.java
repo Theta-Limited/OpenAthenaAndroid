@@ -25,7 +25,7 @@ public class MetadataExtractor {
     private static HashMap<String, HashMap> mfnMaps = new HashMap<String, HashMap>();
 
     protected static EGMOffsetProvider offsetProvider = new EGM96OffsetAdapter();
-    protected static DroneParametersFromJSON parameterProvider;
+    public static DroneParametersFromJSON parameterProvider;
 
     protected MetadataExtractor(MainActivity caller) {
         super();
@@ -732,7 +732,7 @@ public class MetadataExtractor {
         return intrinsicMatrix;
     }
 
-    public static double[] getRayAnglesFromImgPixel(int x, int y, ExifInterface exifInterface) throws Exception {
+    public static double[] getRayAnglesFromImgPixel(int x, int y, double rollAngleDeg, ExifInterface exifInterface) throws Exception {
         JSONObject drone = getMatchingDrone(exifInterface);
         String lensType = "";
         if (drone != null) {
@@ -828,14 +828,7 @@ public class MetadataExtractor {
         elDistorted = Math.toDegrees(elDistorted);
 
         // physical roll angle of the camera
-        double roll;
-        try {
-            roll = getMetadataValues(exifInterface)[5];
-        } catch (MissingDataException | XMPException | NullPointerException e) {
-            Log.e(TAG, "ERROR: could not obtain camera roll angle. Defaulting to 0.0°");
-            Log.e(TAG, e.getMessage());
-            roll = 0.0d;
-        }
+        double roll = rollAngleDeg;
 
         double[] TBAngle = correctRayAnglesForRoll(azimuth, elevation, roll);
         azimuth = TBAngle[0];
@@ -857,10 +850,10 @@ public class MetadataExtractor {
      * <p>
      *     While the camera gimbal of most drones attempt to keep the camera lateral axis parallel with the ground, this cannot be assumed for all cases. Therefore, this function rotates the 3D angle (calculated by camera intrinsics) by the same amount and direction as the roll of the camera.
      * </p>
-     * @param psi the yaw of the ray relative to the camera. Rightwards is positive.
-     * @param theta the pitch angle of the ray relative to the camera. Downwards is positive.
-     * @param cameraRoll the roll angle of the camera relative to the earth's gravity. From the perspective of the camera, clockwise is positive
-     * @return a corrected Tait-Bryan angle double[phi, theta] representing the same ray but in a new frame of reference where the x axis is parallel to the ground (i.e. perpendicular to Earth's gravity)
+     * @param psi the yaw (in degrees) of the ray relative to the camera. Rightwards is positive.
+     * @param theta the pitch angle (in degrees) of the ray relative to the camera. Downwards is positive.
+     * @param cameraRoll the roll angle (in degrees) of the camera relative to the earth's gravity. From the perspective of the camera, clockwise is positive
+     * @return a corrected Tait-Bryan angle double[phi, theta] (in degrees) representing the same ray but in a new frame of reference where the x axis is parallel to the ground (i.e. perpendicular to Earth's gravity)
      */
     public static double[] correctRayAnglesForRoll(double psi, double theta, double cameraRoll) {
         theta = -1.0d * theta; // convert from OpenAthena notation to standard Tait-Bryan aircraft notation (downward is negative)

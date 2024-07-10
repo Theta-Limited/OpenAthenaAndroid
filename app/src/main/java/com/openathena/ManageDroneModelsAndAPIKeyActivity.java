@@ -18,6 +18,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 
 import android.net.Uri;
 
+import org.json.JSONException;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -297,7 +299,7 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
         DroneParametersFromJSON droneModelsParser = new DroneParametersFromJSON(getApplicationContext());
         try {
             droneModelsParser.loadJSONFromUri(uri);
-        } catch (IOException | DetailedJSONException e) {
+        } catch (IOException | JSONException e) {
             String offendingObjectMakeModel = null;
             if (e instanceof  DetailedJSONException) {
                 Log.e(TAG, "Encountered a DetailedJSONException");
@@ -318,6 +320,7 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
             return;
         }
 
+        droneModelsJsonUri = uri;
         testDroneModelsAndSetDroneModelsStatus();
 
         droneModelsAndApiKeyResults.setText("DroneModels updated successfully");

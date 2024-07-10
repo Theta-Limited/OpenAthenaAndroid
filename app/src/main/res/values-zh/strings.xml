@@ -108,10 +108,6 @@
     <string name="altitude_label_short">高度</string>
     <string name="cot_remarks">由 OpenAthena for Android 根据小型无人机数据生成</string>
     <string name="version_word">版本</string>
-    <string name="step_1_load_a_DEM">第 1 步：加载数字高程模型 (DEM)</string>
-    <string name="step_2_load_drone_image">第 2 步：加载无人机图像</string>
-    <string name="step_3_press_calculate">第 3 步：按此按钮计算：</string>
-    <string name="step_4_obtain_target">第 4 步：在下方获取您的目标位置</string>
     <string name="wrong_filetype_toast_error_msg">错误：文件类型错误。 请选择以“.tif”结尾的 GeoTIFF 文件或以“.dt2”结尾的 DTED2 文件</string>
     <string name="permissions_toast_success_msg">已授予权限</string>
     <string name="permissions_toast_error_msg">未能获得必要的权限</string>

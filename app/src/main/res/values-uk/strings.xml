@@ -107,10 +107,6 @@
     <string name="altitude_label_short">вис:</string>
     <string name="cot_remarks">Згенеровано OpenAthena для Android із даних sUAS</string>
     <string name="version_word">версія</string>
-    <string name="step_1_load_a_DEM">Крок 1: завантажте цифрову модель рельєфу (DEM)</string>
-    <string name="step_2_load_drone_image">Крок 2: завантажте зображення дрона</string>
-    <string name="step_3_press_calculate">Крок 3: натисніть цю кнопку, щоб обчислити:</string>
-    <string name="step_4_obtain_target">Крок 4: отримайте цільове розташування нижче</string>
     <string name="wrong_filetype_toast_error_msg">ПОМИЛКА: неправильний тип файлу. Виберіть файл GeoTIFF із розширенням \".tif\"</string>
     <string name="permissions_toast_success_msg">Дозволи надано</string>
     <string name="permissions_toast_error_msg">Не вдалося отримати необхідні дозволи</string>

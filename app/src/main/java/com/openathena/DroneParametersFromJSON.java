@@ -168,8 +168,8 @@ public class DroneParametersFromJSON {
      * </p>
      */
     public JSONArray getMatchingDrones(String make, String model) {
-        if (!isDroneArrayValid()) {
-            Log.e(TAG,"ERROR: attempted to getMatchingDrones while droneArray was invalid, null, or empty");
+        if (droneArray == null || droneArray.length() < 1) {
+            Log.e(TAG,"ERROR: attempted to getMatchingDrones while droneArray was null, or empty");
             // return an empty array if droneArray is not valid
             return new JSONArray();
         }

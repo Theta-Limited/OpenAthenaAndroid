@@ -164,7 +164,7 @@ public class MainActivity extends DemManagementActivity {
         isImageLoaded = false;
         isDEMLoaded = false;
 
-        theMeta = new MetadataExtractor(this);
+
 
         scrollView = (ScrollView) findViewById(R.id.scrollView2);
 
@@ -213,9 +213,11 @@ public class MainActivity extends DemManagementActivity {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
 
+        // initialize MetadataExtractor and load droneModels.json
+        new MetadataExtractor(this);
         // Restore the user's custom droneModels.json drone camera intrinsics database (if so configured)
         String storedDroneModelsJsonUriString = sharedPreferences.getString("droneModelsJsonUri", null);
-        DroneParametersFromJSON droneModelsParser = new DroneParametersFromJSON(getApplicationContext());
+        DroneParametersFromJSON droneModelsParser = MetadataExtractor.parameterProvider;
         if (storedDroneModelsJsonUriString != null && !storedDroneModelsJsonUriString.isBlank()) {
             try {
                 droneModelsParser.loadJSONFromUri(Uri.parse(storedDroneModelsJsonUriString));
@@ -653,7 +655,7 @@ public class MainActivity extends DemManagementActivity {
             aDrawable = iView.getDrawable();
             exif = new ExifInterface(is);
 
-            double[] values = theMeta.getMetadataValues(exif);
+            double[] values = MetadataExtractor.getMetadataValues(exif);
             double y = values[0];
             double x  = values[1];
             // MetadataExctractor.getMetadataValues auto converts vertical datum to WGS84 ellipsoidal
@@ -674,7 +676,7 @@ public class MainActivity extends DemManagementActivity {
             appendText(getString(R.string.opened_exif_for_image_msg));
             attribs += MetadataExtractor.getTagString(ExifInterface.TAG_DATETIME, exif);
             attribs += MetadataExtractor.getTagString(ExifInterface.TAG_MAKE, exif);
-            attribs += theMeta.getTagString(ExifInterface.TAG_MODEL, exif);
+            attribs += MetadataExtractor.getTagString(ExifInterface.TAG_MODEL, exif);
             attribs += getString(R.string.isCameraModelRecognized) + " " + (MetadataExtractor.isDroneModelRecognized(exif) ? getString(R.string.yes) : getString(R.string.no)) + "\n";
             attribs += getString(R.string.lens_type) + " " + (MetadataExtractor.getLensType(exif)) + "\n";
 
@@ -732,7 +734,7 @@ public class MainActivity extends DemManagementActivity {
                 if (AthenaApp.get_selection_x() < 0 || AthenaApp.get_selection_y() < 0) {
                     throw new NoSuchFieldException("no point was selected");
                 } else {
-                    relativeRay = MetadataExtractor.getRayAnglesFromImgPixel(AthenaApp.get_selection_x(), AthenaApp.get_selection_y(), exif);
+                    relativeRay = MetadataExtractor.getRayAnglesFromImgPixel(AthenaApp.get_selection_x(), AthenaApp.get_selection_y(), roll, exif);
                 }
             } catch (Exception e) {
                 relativeRay = new double[] {0.0d, 0.0d};
@@ -1069,7 +1071,7 @@ public class MainActivity extends DemManagementActivity {
     }
 
     public void displayMissingCameraIntrinsicsAlert() {
-        if (dangerousMissingCameraIntrinsicsCount < 1) { // suppress warning if already encountered by user in this session
+        if (dangerousMissingCameraIntrinsicsCount < 1 || !MetadataExtractor.parameterProvider.isDroneArrayValid()) { // suppress warning if already encountered by user in this session
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                                              // TODO move this to values/strings.xml
             builder.setMessage("⚠\uFE0F " + getString(R.string.missing_camera_intrinsics_warning_message) + " ⚠\uFE0F");
