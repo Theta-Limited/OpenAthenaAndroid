@@ -25,12 +25,17 @@ public class MetadataExtractor {
     private static HashMap<String, HashMap> mfnMaps = new HashMap<String, HashMap>();
 
     protected static EGMOffsetProvider offsetProvider = new EGM96OffsetAdapter();
-    protected static DroneParameterProvider parameterProvider;
+    protected static DroneParametersFromJSON parameterProvider;
 
     protected MetadataExtractor(MainActivity caller) {
         super();
         parent = caller;
         parameterProvider = new DroneParametersFromJSON(parent.getApplicationContext());
+        // If the user-configured droneModels.json is invalid,
+        //     load the version bundled with the application instead
+        if(!parameterProvider.isDroneArrayValid()) {
+            parameterProvider.loadJSONFromAsset();
+        }
     }
 
     /**

@@ -58,6 +58,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
@@ -120,21 +122,21 @@ public class MainActivity extends DemManagementActivity {
                     }
                 });
 
-    ActivityResultLauncher<String> mGetDEM = registerForActivityResult(new ActivityResultContracts.GetContent(),
-            new ActivityResultCallback<Uri>() {
-                @Override
-                public void onActivityResult(Uri uri) {
-                    // Handle the returned Uri
-                    //appendText("Back from chooser\n");
-
-                    if (uri == null)
-                        return;
-
-                    //appendText("Back from chooser\n");
-                    Log.d(TAG,"back from chooser for DEM");
-                    demSelected(uri);
-                }
-            });
+//    ActivityResultLauncher<String> mGetDEM = registerForActivityResult(new ActivityResultContracts.GetContent(),
+//            new ActivityResultCallback<Uri>() {
+//                @Override
+//                public void onActivityResult(Uri uri) {
+//                    // Handle the returned Uri
+//                    //appendText("Back from chooser\n");
+//
+//                    if (uri == null)
+//                        return;
+//
+//                    //appendText("Back from chooser\n");
+//                    Log.d(TAG,"back from chooser for DEM");
+//                    demSelected(uri);
+//                }
+//            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,6 +212,20 @@ public class MainActivity extends DemManagementActivity {
         // get our prefs that we have saved
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+
+        // Restore the user's custom droneModels.json drone camera intrinsics database (if so configured)
+        String storedDroneModelsJsonUriString = sharedPreferences.getString("droneModelsJsonUri", null);
+        DroneParametersFromJSON droneModelsParser = new DroneParametersFromJSON(getApplicationContext());
+        if (storedDroneModelsJsonUriString != null && !storedDroneModelsJsonUriString.isBlank()) {
+            try {
+                droneModelsParser.loadJSONFromUri(Uri.parse(storedDroneModelsJsonUriString));
+            } catch (IOException | JSONException e) {
+                Log.e(TAG,"ERROR: attempted to restore an invalid DroneModels.json from persistent settings!");
+                e.printStackTrace();
+                // Use the droneModels.json file bundled with the app instead if user's file is invalid
+                droneModelsParser.loadJSONFromAsset();
+            }
+        }
 
         if (isDEMLoaded) {
             if (athenaApp != null && athenaApp.getDEMParser() != null) { // load DEM from App singleton instance in mem
@@ -577,25 +593,6 @@ public class MainActivity extends DemManagementActivity {
                 setButtonReady(buttonCalculateAndSendCoT, true);
             }
         }
-    }
-
-    private String getFileName(Uri uri) {
-        String result = null;
-        if (uri.getScheme().equals("content")) {
-            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
-                if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME));
-                }
-            }
-        }
-        if (result == null) {
-            result = uri.getPath();
-            int cut = result.lastIndexOf('/');
-            if (cut != -1) {
-                result = result.substring(cut + 1);
-            }
-        }
-        return result;
     }
 
 

@@ -10,12 +10,14 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.exifinterface.media.ExifInterface;
 
 
+import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -101,6 +103,9 @@ public abstract class AthenaActivity extends AppCompatActivity {
     public boolean isImageLoaded;
     protected Uri demUri = null;
     protected boolean isDEMLoaded;
+
+    public Uri droneModelsJsonUri = null;
+
 
     // The most recent measured or extracted point of interest for finding a DEM with sufficient coverage
     protected static String lastPointOfInterest = "";
@@ -557,6 +562,25 @@ public abstract class AthenaActivity extends AppCompatActivity {
         String cachePath = cacheDir.getAbsolutePath();
         String uriPath = uri.getPath();
         return uriPath.startsWith(cachePath);
+    }
+
+    protected String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME));
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
     }
 
     @Override

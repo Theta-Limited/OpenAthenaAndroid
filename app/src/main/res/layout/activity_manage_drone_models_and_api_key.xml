@@ -115,7 +115,7 @@
         android:layout_below="@id/titleTextView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="droneModels.json local database status: "
+        android:text="@string/local_database_status"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="?attr/actionMenuTextColor"
         android:layout_marginTop="8dp" />
@@ -125,7 +125,7 @@
         android:layout_below="@id/textView_dronemodels_json_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="File last updated: "
+        android:text="@string/dronemodels_last_updated"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="?attr/actionMenuTextColor"
         android:layout_marginTop="0dp" />
@@ -135,7 +135,7 @@
         android:layout_below="@id/textView_dronemodels_last_updated"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Number of Entries: "
+        android:text="@string/dronemodels_number_of_entries"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="?attr/actionMenuTextColor"
         android:layout_marginTop="0dp" />

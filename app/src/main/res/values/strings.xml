@@ -202,7 +202,7 @@
     <string name="utm_tooltip">Universal Transverse Mercator map projection system with 60 planar zones</string>
     <string name="target_predicted_ce">"Predicted max circular error:"</string>
     <string name="target_location_error_category">Target Location Error Category:</string>
-    <string name="missing_camera_intrinsics_warning_message">DANGER: Camera internal properties were not found in database. Calculation accuracy will be degraded. Email support@theta.limited</string>
+    <string name="missing_camera_intrinsics_warning_message">DANGER: Camera internal properties were not found in database. Target Calculations will be significantly less accurate than normal. Email support@theta.limited</string>
     <string name="prompt_use_blah">(use \"</string>
     <string name="to_import_an_offline_dem_file_manually">\" to import an offline DEM file manually)</string>
     <string name="error_nondescript">ERROR</string>
@@ -219,4 +219,8 @@
     <string name="operation_manual">Operation Manual</string>
     <string name="troubleshooting_manual">Troubleshooting Manual</string>
     <string name="delete_elevation_map_dialog_title">Delete Elevation Map?</string>
+    <string name="local_database_status">Local Database Status:</string>
+    <string name="dronemodels_last_updated">Last Updated:</string>
+    <string name="dronemodels_number_of_entries">Number of Entries:</string>
+    <string name="in_drone_model">in drone model</string>
 </resources>

@@ -32,6 +32,7 @@ import android.widget.Toast;
 import androidx.core.util.Consumer;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -212,7 +213,7 @@ public class NewElevationMapActivity extends DemManagementActivity
                 String demFilename = "DEM_LatLon";
 
                 try (InputStream inputStream = getContentResolver().openInputStream(fileUri);
-                     OutputStream outputStream = openFileOutput("import.tiff", Context.MODE_PRIVATE)) {
+                     FileOutputStream outputStream = new FileOutputStream(new File(demDir,"import.tiff"))) {
                     byte[] buffer = new byte[1024];
                     int length;
                     while ((length = inputStream.read(buffer)) > 0) {
