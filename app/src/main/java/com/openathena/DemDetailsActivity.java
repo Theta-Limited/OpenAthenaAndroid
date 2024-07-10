@@ -25,7 +25,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -33,9 +32,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
-public class ElevationMapDetailsActivity extends AthenaActivity
+public class DemDetailsActivity extends AthenaActivity
 {
-    public static String TAG = ElevationMapDetailsActivity.class.getSimpleName();
+    public static String TAG = DemDetailsActivity.class.getSimpleName();
     private TextView demInfo;
     private ActivityResultLauncher<String> copyDemLauncher;
     String exportFilename = "";
@@ -235,4 +234,4 @@ public class ElevationMapDetailsActivity extends AthenaActivity
         return Math.round(val * scale) / scale;
     }
 
-} // ElevationMapDetailsActivity
+} // DemDetailsActivity

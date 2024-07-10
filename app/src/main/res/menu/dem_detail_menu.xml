@@ -4,6 +4,13 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
         <item
+            android:id="@+id/action_delete_dem"
+            android:icon="@android:drawable/ic_menu_delete"
+            android:title="Delete DEM"
+            app:showAsAction="ifRoom"
+                />
+
+        <item
             android:id="@+id/action_share_dem"
             android:icon="@android:drawable/ic_menu_share"
             android:title="Share DEM"

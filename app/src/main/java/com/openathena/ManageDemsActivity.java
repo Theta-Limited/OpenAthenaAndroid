@@ -128,7 +128,7 @@ public class ManageDemsActivity extends DemManagementActivity
         // and rolled into the callback
 
         // create, launch intent
-        i = new Intent(getApplicationContext(),ElevationMapDetailsActivity.class);
+        i = new Intent(getApplicationContext(), DemDetailsActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(i);
         return;

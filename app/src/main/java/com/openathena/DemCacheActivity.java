@@ -7,45 +7,21 @@
 
 package com.openathena;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.openathena.databinding.ActivityAboutBinding;
-
-import org.apache.commons.lang3.concurrent.LazyInitializer;
-
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
 
 public class DemCacheActivity extends AthenaActivity implements DemListAdapter.ItemClickListener
 {
@@ -187,7 +163,7 @@ public class DemCacheActivity extends AthenaActivity implements DemListAdapter.I
         // entry to detail
         athenaApp.demCache.selectedItem = position;
 
-        intent = new Intent(getApplicationContext(),ElevationMapDetailsActivity.class);
+        intent = new Intent(getApplicationContext(), DemDetailsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
     }

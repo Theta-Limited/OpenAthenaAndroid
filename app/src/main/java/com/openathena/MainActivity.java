@@ -1130,18 +1130,18 @@ public class MainActivity extends DemManagementActivity {
 //        appendLog("Chooser started\n");
     }
 
-    public void selectDEM(View view)
-    {
-        Log.d(TAG,"selectDEM started");
-//        appendLog("Going to start selecting GeoTIFF\n");
-
-        Log.d(TAG,"READ_EXTERNAL_STORAGE: " + Integer.toString(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)));
-
-        requestExternStorage();
-
-        mGetDEM.launch("*/*");
-
-    }
+//    public void selectDEM(View view)
+//    {
+//        Log.d(TAG,"selectDEM started");
+////        appendLog("Going to start selecting GeoTIFF\n");
+//
+//        Log.d(TAG,"READ_EXTERNAL_STORAGE: " + Integer.toString(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)));
+//
+//        requestExternStorage();
+//
+//        mGetDEM.launch("*/*");
+//
+//    }
 
     private void requestExternStorage() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <!--  File path of DEM Cache directory, used when user presses share button in ElevationMapDetailsActivity  -->
+    <!--  File path of DEM Cache directory, used when user presses share button in DemDetailsActivity  -->
     <cache-path name="shared_files" path="DEMs/" />
 </paths>
