@@ -1,4 +1,4 @@
-// DemCacheActivity.java
+// DemCacheListActivity.java
 // Bobby Krupczak, Matthew Krupczak et al
 // rdk@theta.limited
 //
@@ -23,9 +23,9 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class DemCacheActivity extends AthenaActivity implements DemListAdapter.ItemClickListener
+public class DemCacheListActivity extends AthenaActivity implements DemListAdapter.ItemClickListener
 {
-    public static String TAG = DemCacheActivity.class.getSimpleName();
+    public static String TAG = DemCacheListActivity.class.getSimpleName();
     public long totalStorage = 0;
     public RecyclerView recyclerView = null;
     public DemListAdapter adapter = null;
@@ -33,7 +33,7 @@ public class DemCacheActivity extends AthenaActivity implements DemListAdapter.I
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        Log.d(TAG,"DemCacheActivity onCreate started");
+        Log.d(TAG,"DemCacheListActivity onCreate started");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dem_cache);
@@ -42,7 +42,7 @@ public class DemCacheActivity extends AthenaActivity implements DemListAdapter.I
         DividerItemDecoration di = new DividerItemDecoration(recyclerView.getContext(),DividerItemDecoration.VERTICAL);
         recyclerView.addItemDecoration(di);
 
-        Log.d(TAG,"DemCacheActivity set content view");
+        Log.d(TAG,"DemCacheListActivity set content view");
 
         // populate table with DemCache entries
         refreshView();
@@ -66,7 +66,7 @@ public class DemCacheActivity extends AthenaActivity implements DemListAdapter.I
 
         // Handle item selection
         if (item.getItemId() == R.id.action_add_dem) {// Handle settings action
-            Log.d(TAG, "DemCacheActivity: going to add/create a new DEM");
+            Log.d(TAG, "DemCacheListActivity: going to add/create a new DEM");
             intent = new Intent(getApplicationContext(), NewElevationMapActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
@@ -77,7 +77,7 @@ public class DemCacheActivity extends AthenaActivity implements DemListAdapter.I
 
     @Override
     protected void onResume() {
-        Log.d(TAG,"DemCacheActivity onResume");
+        Log.d(TAG,"DemCacheListActivity onResume");
         super.onResume();
         refreshView();
     }
@@ -85,7 +85,7 @@ public class DemCacheActivity extends AthenaActivity implements DemListAdapter.I
     private void refreshView()
     {
         if (athenaApp.demCache != null) {
-            Log.d(TAG, "DemCacheActivity: refreshView " + athenaApp.demCache.cache.size() + " entries");
+            Log.d(TAG, "DemCacheListActivity: refreshView " + athenaApp.demCache.cache.size() + " entries");
         }
 
         adapter = new DemListAdapter(this,athenaApp.demCache);
@@ -104,18 +104,18 @@ public class DemCacheActivity extends AthenaActivity implements DemListAdapter.I
                 int position = viewHolder.getAdapterPosition();
 
                  // Create an AlertDialog for confirmation
-                new AlertDialog.Builder(DemCacheActivity.this)
+                new AlertDialog.Builder(DemCacheListActivity.this)
                         .setTitle("Delete Elevation Map?")
                         .setIcon(R.drawable.athena48)
                         .setMessage(R.string.are_you_sure_delete_map)
                         .setPositiveButton(R.string.yes, (dialog, which) -> {
                             // Delete the item from your data set
-                            Log.d(TAG,"DemCacheActivity: deleting item");
+                            Log.d(TAG,"DemCacheListActivity: deleting item");
                             adapter.removeItem(position);
                         })
                         .setNegativeButton(R.string.no, (dialog, which) -> {
                             // User cancelled the deletion, refresh the item to show it again
-                            Log.d(TAG,"DemCacheActivity: not deleting item");
+                            Log.d(TAG,"DemCacheListActivity: not deleting item");
                             adapter.notifyItemChanged(position);
                             //new Handler(Looper.getMainLooper()).postDelayed(() -> adapter.notifyItemChanged(position), 300);
                         })
@@ -130,7 +130,7 @@ public class DemCacheActivity extends AthenaActivity implements DemListAdapter.I
     @Override
     protected void onPause()
     {
-        Log.d(TAG,"DemCacheActivity onPause");
+        Log.d(TAG,"DemCacheListActivity onPause");
 
         //appendText("onPause\n");
         super.onPause();
@@ -140,7 +140,7 @@ public class DemCacheActivity extends AthenaActivity implements DemListAdapter.I
     @Override
     protected void onDestroy()
     {
-        Log.d(TAG,"DemCacheActivity onDestroy started");
+        Log.d(TAG,"DemCacheListActivity onDestroy started");
 
         // close logfile
         //appendText("onDestroy\n");
@@ -156,7 +156,7 @@ public class DemCacheActivity extends AthenaActivity implements DemListAdapter.I
 
         DemCache.DemCacheEntry i = adapter.getItem(position);
         String t = "You clicked "+i.filename+", "+i.bytes+" bytes, center=("+i.cLat+","+i.cLon+")";
-        Log.d(TAG,"DemCacheActivity: clicked "+t);
+        Log.d(TAG,"DemCacheListActivity: clicked "+t);
         //Toast.makeText(this, t, Toast.LENGTH_LONG).show();
 
         // set a value in the cache to let next activity know which
@@ -172,4 +172,4 @@ public class DemCacheActivity extends AthenaActivity implements DemListAdapter.I
     public void calculateImage(View view, boolean shouldISendCoT) { return; } // not used in this activity
     protected void saveStateToSingleton() { return; } // do nothing
 
-} // DemCacheActivity
+} // DemCacheListActivity

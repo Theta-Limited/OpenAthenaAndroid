@@ -71,7 +71,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
         <activity
-            android:name=".DemCacheActivity"
+            android:name=".DemCacheListActivity"
             android:exported="false"
             android:label="@string/title_activity_demcache" />
         <activity

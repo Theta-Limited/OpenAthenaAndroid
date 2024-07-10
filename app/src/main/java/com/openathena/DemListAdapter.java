@@ -2,7 +2,7 @@
 // Bobby Krupczak with ChatGPT
 // rdk@theta.limited
 // implement an adapter for our list/table of DEMs
-// that we will manage with DemCacheActivity
+// that we will manage with DemCacheListActivity
 
 package com.openathena;
 

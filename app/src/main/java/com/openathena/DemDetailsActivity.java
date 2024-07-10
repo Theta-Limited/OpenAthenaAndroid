@@ -13,6 +13,7 @@ import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 
 import android.text.Html;
@@ -196,8 +197,36 @@ public class DemDetailsActivity extends AthenaActivity
     {
         Intent intent;
         int itemID = item.getItemId();
+
+        DemListAdapter adapter = new DemListAdapter(this,athenaApp.demCache);
         // Handle item selection
-        if (itemID == R.id.action_export_dem) {
+        if (itemID == R.id.action_delete_dem) {
+            Log.d(TAG, "DemDetail: going to delete a DEM " + exportFilename);
+            // Create an AlertDialog for confirmation
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.delete_elevation_map_dialog_title)
+                    .setIcon(R.drawable.athena48)
+                    .setMessage(R.string.are_you_sure_delete_map)
+                    .setPositiveButton(R.string.yes, (dialog, which) -> {
+
+                        // Delete the item from your data set
+                        Log.d(TAG,"DemDetailsActivity: deleting item");
+                        adapter.removeItem(athenaApp.demCache.selectedItem);
+                        athenaApp.demCache.selectedItem = -1;
+                        Intent i;
+                        i = new Intent(getApplicationContext(), DemCacheListActivity.class);
+                        i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        startActivity(i);
+                        // Destroy this activity after DEM is deleted so we don't accidentally return to this activity and get a NullPointerException
+                        this.finish();
+                    })
+                    .setNegativeButton(R.string.no, (dialog, which) -> {
+                        // User cancelled the deletion, refresh the item to show it again
+                        Log.d(TAG,"DemDetailsActivity: not deleting item");
+                        //new Handler(Looper.getMainLooper()).postDelayed(() -> adapter.notifyItemChanged(position), 300);
+                    })
+                    .show();
+        } else if (itemID == R.id.action_export_dem) {
             Log.d(TAG, "DemDetail: going to export a DEM " + exportFilename);
             copyDemLauncher.launch(exportFilename);
             return true;

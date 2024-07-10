@@ -69,7 +69,7 @@ public class ManageDemsActivity extends DemManagementActivity
             @Override
             public void onClick(View v) {
                 Intent i;
-                i = new Intent(getApplicationContext(),DemCacheActivity.class);
+                i = new Intent(getApplicationContext(), DemCacheListActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(i);
             }
