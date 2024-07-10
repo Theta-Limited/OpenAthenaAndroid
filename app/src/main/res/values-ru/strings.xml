@@ -107,10 +107,6 @@
     <string name="altitude_label_short">Вы:</string>
     <string name="cot_remarks">Сгенерировано OpenAthena для Android на основе телеметрии sUAS</string>
     <string name="version_word">версия</string>
-    <string name="step_1_load_a_DEM">Шаг 1: загрузите цифровую модель рельефа (DEM)</string>
-    <string name="step_2_load_drone_image">Шаг 2: загрузите образ дрона.</string>
-    <string name="step_3_press_calculate">Шаг 3: нажмите эту кнопку, чтобы рассчитать:</string>
-    <string name="step_4_obtain_target">Шаг 4: получите ваше целевое местоположение ниже</string>
     <string name="wrong_filetype_toast_error_msg">ОШИБКА: неверный тип файла. Пожалуйста, выберите файл GeoTIFF с расширением \".tif\" или файл DTED2 с расширением \".dt2\"</string>
     <string name="permissions_toast_success_msg">Разрешения предоставлены</string>
     <string name="permissions_toast_error_msg">Не удалось получить необходимые разрешения</string>

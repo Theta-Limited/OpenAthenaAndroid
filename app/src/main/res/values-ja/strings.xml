@@ -107,10 +107,6 @@
     <string name="altitude_label_short">高度:</string>
     <string name="cot_remarks">sUAS データから Android 用の 「OpenAthena」 によって生成されます</string>
     <string name="version_word">バージョン</string>
-    <string name="step_1_load_a_DEM">ステップ 1: デジタル標高モデル (DEM) をロードする</string>
-    <string name="step_2_load_drone_image">ステップ 2: ドローン イメージをロードする</string>
-    <string name="step_3_press_calculate">ステップ 3: このボタンを押して計算します。</string>
-    <string name="step_4_obtain_target">ステップ 4: 以下の目的地を取得する</string>
     <string name="wrong_filetype_toast_error_msg">エラー: ファイルタイプが間違っています。 「.tif」で終わる GeoTIFF ファイルまたは「.dt2」で終わる DTED2 ファイルを選択してください</string>
     <string name="permissions_toast_success_msg">付与される権限</string>
     <string name="permissions_toast_error_msg">必要な権限を取得できませんでした</string>

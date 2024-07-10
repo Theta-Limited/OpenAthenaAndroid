@@ -107,10 +107,6 @@
     <string name="altitude_label_short">고도:</string>
     <string name="cot_remarks">sUAS 데이터에서 Android용 OpenAthena에 의해 생성됨</string>
     <string name="version_word">버전</string>
-    <string name="step_1_load_a_DEM">1단계: 디지털 표고 모델(DEM) 로드</string>
-    <string name="step_2_load_drone_image">2단계: 드론 이미지 로드</string>
-    <string name="step_3_press_calculate">3단계: 이 버튼을 눌러 다음을 계산합니다:</string>
-    <string name="step_4_obtain_target">4단계: 아래에서 목표 위치를 얻습니다.</string>
     <string name="wrong_filetype_toast_error_msg">오류: 잘못된 파일 형식입니다. \".tif\"로 끝나는 GeoTIFF 파일 또는 \".dt2\"로 끝나는 DTED2 파일을 선택하세요.</string>
     <string name="permissions_toast_success_msg">부여된 권한</string>
     <string name="permissions_toast_error_msg">필요한 권한을 얻지 못했습니다.</string>

@@ -106,10 +106,6 @@
     <string name="altitude_label_short">Wys:</string>
     <string name="cot_remarks">Wygenerowane przez OpenAthena dla Androida z danych sUAS</string>
     <string name="version_word">wersja</string>
-    <string name="step_1_load_a_DEM">Krok 1: Wczytaj Cyfrowy Model Terenu (DEM)</string>
-    <string name="step_2_load_drone_image">Krok 2: załaduj obraz drona</string>
-    <string name="step_3_press_calculate">Krok 3: naciśnij ten przycisk, aby obliczyć:</string>
-    <string name="step_4_obtain_target">Krok 4: uzyskaj lokalizację docelową poniżej</string>
     <string name="wrong_filetype_toast_error_msg">BŁĄD: niewłaściwy typ pliku. Wybierz plik GeoTIFF z rozszerzeniem „.tif” lub plik DTED2 z rozszerzeniem „.dt2”</string>
     <string name="permissions_toast_success_msg">Uprawnienia Przyznane</string>
     <string name="permissions_toast_error_msg">Nie udało się uzyskać niezbędnych uprawnień</string>
