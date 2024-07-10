@@ -1059,7 +1059,7 @@ public class MainActivity extends DemManagementActivity {
             return;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setMessage("Could not find a local DEM. Would you like to download a new DEM centered at "+ roundDouble(lat) + "," + roundDouble(lon) + " ?");
+        builder.setMessage("Could not find a local DEM. Would you like to download a new DEM centered at "+ CoordTranslator.toSelectedOutputMode(lat,lon,outputMode) + " ?");
         builder.setPositiveButton(getString(R.string.yes), (DialogInterface.OnClickListener) (dialog, which) -> {
             incrementAndShowProgressBar();
             downloadNewDEM(lat, lon, diameter);
