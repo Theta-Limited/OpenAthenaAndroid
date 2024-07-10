@@ -81,6 +81,8 @@ public class MainActivity extends DemManagementActivity {
 
     public static int dangerousMissingCameraIntrinsicsCount;
 
+    public static int noDemApiKeyPresentDialogCount;
+
     // calculates elevation diff between WGS84 reference ellipsoid and EGM96 geoid
     //
     // Vertical datum of input and output elevation is usally EGM96,
@@ -89,13 +91,12 @@ public class MainActivity extends DemManagementActivity {
     public static EGMOffsetProvider offsetAdapter = new EGM96OffsetAdapter();
 
 
-
     ScrollView scrollView;
     TextView textView;
 
 //    Button buttonSelectDEM;
     Button buttonSelectImage;
-    Button buttonCalculate;
+    Button buttonCalculateAndSendCoT;
 
     protected String versionName;
 
@@ -152,12 +153,11 @@ public class MainActivity extends DemManagementActivity {
             progressBar.setVisibility(View.VISIBLE);
         }
 
-//        buttonSelectDEM = (Button) findViewById(R.id.selectDEMButton); // ⛰
         buttonSelectImage = (Button) findViewById(R.id.selectImageButton); // ð
-        buttonCalculate = (Button) findViewById(R.id.calculateButton); // ð
-//        setButtonReady(buttonSelectDEM, true);
+        buttonCalculateAndSendCoT = (Button) findViewById(R.id.calculateButton); // ð
+
         setButtonReady(buttonSelectImage, true);
-        setButtonReady(buttonCalculate, false);
+        setButtonReady(buttonCalculateAndSendCoT, false);
 
         isImageLoaded = false;
         isDEMLoaded = false;
@@ -187,6 +187,7 @@ public class MainActivity extends DemManagementActivity {
 
         dangerousAutelAwarenessCount = athenaApp.getInt("dangerousAutelAwarenessCount");
         dangerousMissingCameraIntrinsicsCount = athenaApp.getInt("dangerousMissingCameraIntrinsicsCount");
+        noDemApiKeyPresentDialogCount = athenaApp.getInt("noDemApiKeyPresentDialogCount");
 
         CharSequence textRestore = athenaApp.getCharSequence("textview");
         if (textRestore != null) {
@@ -224,10 +225,10 @@ public class MainActivity extends DemManagementActivity {
             } else { // this shouldn't ever happen, but just to be safe...
                 isDEMLoaded = false;
                 setButtonReady(buttonSelectImage, false);
-                setButtonReady(buttonCalculate, false);
+                setButtonReady(buttonCalculateAndSendCoT, false);
             }
           // Get DEM used last time the application was launched
-        } else if (sharedPreferences != null && sharedPreferences.getString("lastDEM", null) != null && !sharedPreferences.getString("lastDEM", "").isEmpty()) {
+        } else if (sharedPreferences.getString("lastDEM", null) != null && !sharedPreferences.getString("lastDEM", "").isEmpty()) {
             String lastDEM = sharedPreferences.getString("lastDEM", "");
             Log.d(TAG, "loading last used demUri: " + lastDEM);
             demUri = Uri.parse(lastDEM);
@@ -274,18 +275,21 @@ public class MainActivity extends DemManagementActivity {
         athenaApp.demCache = new DemCache(getApplicationContext());
         Log.d(TAG,"DemCache: total storage "+athenaApp.demCache.totalStorage());
         Log.d(TAG,"DemCache: count "+athenaApp.demCache.count());
-        
-        if (getDemApiKey().trim().isEmpty()) {
+
+        String userChoseOfflineStr = "Online features are disabled. All terrain data must be loaded manually. Navigate to \"Manage Drone Models and API Key\" at any time if you change your mind!";
+
+        if (noDemApiKeyPresentDialogCount < 1 && getDemApiKey().trim().isEmpty()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setMessage("Greetings! Thanks for installing OpenAthena™ for Android. Online features of this app (for downloading terrain elevation data) require you to obtain an OpenTopography.org API Key (passcode) and set it within this app");
             builder.setPositiveButton("Take me there now!", (DialogInterface.OnClickListener) (dialog,which) -> {
                 Log.d(TAG, "MainActivity: user navigating to ManageDroneModelsAndAPIKeyActivity to input an API Key");
+                noDemApiKeyPresentDialogCount++;
                 Intent intent = new Intent(getApplicationContext(), ManageDroneModelsAndAPIKeyActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
             });
             builder.setNegativeButton("No (load offline data only)", (DialogInterface.OnClickListener) (dialog,which) -> {
-                String userChoseOfflineStr = "Online features are disabled. All terrain data must be loaded manually. Navigate to \"Manage Drone Models and API Key\" at any time if you change your mind!";
+                noDemApiKeyPresentDialogCount++;
                 Toast.makeText(this,userChoseOfflineStr,Toast.LENGTH_LONG).show();
                 appendText(userChoseOfflineStr + "\n");
             });
@@ -300,6 +304,7 @@ public class MainActivity extends DemManagementActivity {
     protected void saveStateToSingleton() {
         athenaApp.putInt("dangerousAutelAwarenessCount", dangerousAutelAwarenessCount);
         athenaApp.putInt("dangerousMissingCameraIntrinsicsCount", dangerousMissingCameraIntrinsicsCount);
+        athenaApp.putInt("noDemApiKeyPresentDialogCount", noDemApiKeyPresentDialogCount);
         if (textView != null) {
             athenaApp.putCharSequence("textview", textView.getText());
         }
@@ -446,16 +451,18 @@ public class MainActivity extends DemManagementActivity {
                 }
             } else {
                 appendText("No DEM found for your selected image.\nDownloading new DEM from internet..." + "\n");
-                displayNewDemDownloadChoice(lat,lon);
+                displayNewDemDownloadChoice(lat, lon);
             }
 
             is.close();
         } catch (Exception e) {
-            assert(true);
+            Log.e(TAG, e.getMessage());
+            appendText(getString(R.string.metadata_parse_error_msg) + "\n");
+            e.printStackTrace();
         }
 
         if (isDEMLoaded) {
-            setButtonReady(buttonCalculate, true);
+            setButtonReady(buttonCalculateAndSendCoT, true);
         }
 
     }
@@ -465,7 +472,7 @@ public class MainActivity extends DemManagementActivity {
 
         //    isDEMLoaded = false;
 //        setButtonReady(buttonSelectDEM, false);
-        setButtonReady(buttonCalculate, false);
+        setButtonReady(buttonCalculateAndSendCoT, false);
 
         incrementAndShowProgressBar();
 
@@ -489,7 +496,7 @@ public class MainActivity extends DemManagementActivity {
                         isDEMLoaded = true;
                         setButtonReady(buttonSelectImage, true);
                         if (isImageLoaded) {
-                            setButtonReady(buttonCalculate, true);
+                            setButtonReady(buttonCalculateAndSendCoT, true);
                         }
                         decrementProgressBar();
                     } else {
@@ -567,7 +574,7 @@ public class MainActivity extends DemManagementActivity {
         } finally {
 //            setButtonReady(buttonSelectDEM, true);
             if (isDEMLoaded && isImageLoaded) {
-                setButtonReady(buttonCalculate, true);
+                setButtonReady(buttonCalculateAndSendCoT, true);
             }
         }
     }
@@ -956,7 +963,7 @@ public class MainActivity extends DemManagementActivity {
             }
         } catch (XMPException e) {
             Log.e(TAG, e.getMessage());
-            appendText(getString(R.string.metadata_parse_error_msg) + e + "\n");
+            appendText(getString(R.string.metadata_parse_error_msg) + "\n");
             e.printStackTrace();
         } catch (MissingDataException e) {
             Log.e(TAG, e.getMessage());
@@ -967,7 +974,7 @@ public class MainActivity extends DemManagementActivity {
             printDEMBounds();
         } catch (Exception e) {
 //            Log.e(TAG, e.getMessage());
-            appendText(getString(R.string.metadata_parse_error_msg)+e+"\n\n");
+            appendText(getString(R.string.metadata_parse_error_msg)+"\n\n");
             e.printStackTrace();
         }
     } // button click

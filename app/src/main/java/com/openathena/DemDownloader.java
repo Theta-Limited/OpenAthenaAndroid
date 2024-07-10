@@ -44,6 +44,9 @@ public class DemDownloader
             throw new IllegalArgumentException("ERROR: tried to initialize DemCache object with a null Context!");
         }
         demDir = new File(context.getCacheDir(), "DEMs");
+        if (!demDir.exists()) {
+            demDir.mkdirs();
+        }
 
         double[] boundingBox = getBoundingBox(lat, lon, length);
         n = boundingBox[0];
@@ -178,13 +181,13 @@ public class DemDownloader
                             consumer.accept("Download succeeded");
                         }
                         else {
-                            consumer.accept("Download failed. Please ensure OpenTopography API Key is valid!");
+                            consumer.accept("Download failed. OpenTopography API Key may be invalid!");
                         }
                     }
                 }
                 catch (java.net.UnknownHostException uhe) {
                     if (consumer != null) {
-                        consumer.accept("Could not connect to" + " portal.opentopography.org for DEM download.\n " + "Is your device connected to the Internet?" + "\n\n" + "(" + context.getString(R.string.prompt_use_blah) + context.getString(R.string.action_demcache) + context.getString(R.string.to_import_an_offline_dem_file_manually) + "\n");
+                        consumer.accept("Could not connect to portal.opentopography.org for DEM download.\n " + "Is your device connected to the Internet?" + "\n\n" + "(" + context.getString(R.string.prompt_use_blah) + context.getString(R.string.action_demcache) + context.getString(R.string.to_import_an_offline_dem_file_manually) + "\n");
                     }
                 }
                 catch (java.net.SocketException se) {

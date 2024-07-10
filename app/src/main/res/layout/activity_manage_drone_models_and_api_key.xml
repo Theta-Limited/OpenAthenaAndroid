@@ -58,7 +58,7 @@
         android:layout_marginTop="8dp" />
 
     <EditText
-        android:id="@+id/lookup_latlon_text"
+        android:id="@+id/api_key_edittext"
         android:layout_below="@id/textView_link_obtain_api_key"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
     <Button
         android:id="@+id/apply_new_dem_API_key_button"
         android:onClick="handleApplyNewDemApiKey"
-        android:layout_below="@id/lookup_latlon_text"
+        android:layout_below="@id/api_key_edittext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -115,7 +115,7 @@
         android:layout_below="@id/titleTextView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="droneModels.json database status: "
+        android:text="droneModels.json local database status: "
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="?attr/actionMenuTextColor"
         android:layout_marginTop="8dp" />

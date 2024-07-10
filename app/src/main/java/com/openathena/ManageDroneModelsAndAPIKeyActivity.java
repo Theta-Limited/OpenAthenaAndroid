@@ -1,10 +1,8 @@
 package com.openathena;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,7 +27,7 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
     private TextView droneModelsAndApiKeyResults;
 
     // Member variable for EditText
-    private EditText lookupLatLonText;
+    private EditText apiKeyEditText;
 
     // Member variables for Buttons
     private Button applyNewDemApiKeyButton;
@@ -49,6 +47,8 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
         INVALID
     }
 
+    protected boolean isDroneModelsDatabaseValid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +66,7 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
         droneModelsAndApiKeyResults = findViewById(R.id.drone_models_and_api_key_results);
 
         // Initialize EditText
-        lookupLatLonText = findViewById(R.id.lookup_latlon_text);
+        apiKeyEditText = findViewById(R.id.api_key_edittext);
 
         // Initialize Buttons
         applyNewDemApiKeyButton = findViewById(R.id.apply_new_dem_API_key_button);
@@ -147,7 +147,7 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
 
     // Logic for handling Apply New DEM API Key button click
     public void handleApplyNewDemApiKey(View view) {
-        boolean wasNewApiKeyAppliedSuccesfully = putDemApiKey(lookupLatLonText.getText().toString());
+        boolean wasNewApiKeyAppliedSuccesfully = putDemApiKey(apiKeyEditText.getText().toString());
         if (!wasNewApiKeyAppliedSuccesfully) {
             String errStr = getString(R.string.error_dem_api_key_text_not_valid);
             Toast.makeText(this,errStr,Toast.LENGTH_LONG).show();
@@ -167,6 +167,13 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
     public void handleResetDemApiKey(View view) {
         // NOTE: if OPENTOPOGRAPHY_API_KEY is missing from build local.properties, this will default to an empty String!
         resetDemApiKey();
+
+        apiKeyEditText.setText("");
+        //apiKeyEditText.setHint(getString(R.string.api_key_gibberish));
+
+        String successStr = "API Key Reset to Default";
+        droneModelsAndApiKeyResults.setText(successStr);
+        Toast.makeText(this,successStr,Toast.LENGTH_SHORT).show();
 
         tesAPIKeyAndSetApiKeyStatus();
     }

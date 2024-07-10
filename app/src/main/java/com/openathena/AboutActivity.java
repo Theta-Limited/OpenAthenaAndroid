@@ -55,11 +55,17 @@ public class AboutActivity extends AthenaActivity {
                         + "<br> <a href=\"https://openathena.com/\">OpenAthena.com</a> <br>"
                         + getString(R.string.AboutSnippet) + "<br>"
                         + getString(R.string.CalibrationReminderSnippet) + "<br>"
-                        + "<br><br><a href=\"https://github.com/mkrupczak3/OpenAthenaAndroid\">"
+                        + "<br><a href=\"https://github.com/mkrupczak3/OpenAthenaAndroid\">"
+                        + getString(R.string.operation_manual) + "</a><br>"
+                        + "<br><a href=\"https://github.com/Theta-Limited/OpenAthenaAndroid/blob/master/TROUBLESHOOTING.md\">"
+                        + getString(R.string.troubleshooting_manual) + "</a><br>"
+                        + "<br><a href=\"https://github.com/mkrupczak3/OpenAthenaAndroid\">"
                         + getString(R.string.CallToActionSnippet)
                         + "<br>" + getString(R.string.nato_vertical_datum_notice) + "<br>"
                         + getString(R.string.warsaw_vertical_datum_notice) + "<br>"
                         + getString(R.string.AuthorGitHubSnippet)
+                        + "Privacy policy:"
+                        + " <a href=\"https://theta.limited/privacy-policy\">theta.limited/privacy-policy</a><br>"
                         + getString(R.string.about_software_libraries_used) + "<br>"
                         + "<a href=\"https://github.com/ngageoint/tiff-java\">ngageoint/tiff-java</a> MIT license<br>"
                         + "<a href=\"https://github.com/ngageoint/mgrs-android/\">ngageoint/mgrs-android</a> MIT license<br>"
@@ -69,7 +75,7 @@ public class AboutActivity extends AthenaActivity {
                         + "<a href=\"https://github.com/ThreeTen/threetenbp\">ThreeTen/threetenbp</a> BSD 3-Clause<br>"
                         + "<a href=\"https://github.com/apache/commons-lang\">Apache Commons Lang</a> Apache License<br>"
                         + "<a href=\"https://github.com/apache/commons-io\">Apache Commons IO</a> Apache License<br><br>"
-                        + "This project uses the OpenTopography.org website API for DEM downloading within the app. OpenTopography.org's privacy policy is available here: <a href=\"https://opentopography.org/privacypolicy\">https://opentopography.org/privacypolicy</a><br>"
+                        + "This project uses the OpenTopography.org website API for DEM downloading within the app. OpenTopography.org's privacy policy is available here:<br><a href=\"https://opentopography.org/privacypolicy\">https://opentopography.org/privacypolicy</a><br>"
                         + "OpenTopography is operated by the University of California San Diego with support from the National Science Foundation. It is not affiliated with Theta Informatics LLC or the OpenAthena project."
                 ,0,null, null)
         );
