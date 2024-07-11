@@ -52,7 +52,7 @@
 
     <string name="clear_button_text">清除日志</string>
     <string name="openathena_for_android">Android 版 OpenAthena™</string>
-    <string name="AGPLv3Notice">AGPL-3.0，保留部分权利</string>
+    <string name="software_license">AGPL-3.0，保留部分权利</string>
     <string name="AboutSnippet"><![CDATA[<br>OpenAthena™ for Android 是一个允许普通无人机精确定位大地测量位置的项目<br>]]></string>
     <string name="about_software_libraries_used">使用的软件库：</string>
     <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p>由<a href=\"https://github.com/mkrupczak3\">mkrupczak3</a>维护的项目<br>]]></string>
