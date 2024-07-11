@@ -136,7 +136,7 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
         // lat lon parmaters in input are ignored
         DemDownloader demDownloader = new DemDownloader(this, 0.0, 0.0, 10);
 
-
+        // Networking call needs to occur on a different thread to prevent a NetworkingOnMainThread exception
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -160,6 +160,7 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
         String newText = getString(R.string.dem_api_key_status) + " ";
         if (apiKeyStatus == ApiKeyStatus.VALID) {
             newText += " ✅" + " (" + getString(R.string.status_valid) + ")";
+            hideAPIKeyPurposeDescription();
         } else if (apiKeyStatus == ApiKeyStatus.UNKNOWN) {
             newText += " ❓" + " (" + getString(R.string.status_unknown) + ")";
             showAPIKeyPurposeDescription();
@@ -176,14 +177,27 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
         });
     }
 
+    // runOnUiThread to prevent a CalledFromWrongThreadException
     protected void showAPIKeyPurposeDescription() {
-        textViewUserInformationWhatIsApiKeyFor.setVisibility(View.VISIBLE);
-        textViewLinkObtainApiKey.setVisibility(View.VISIBLE);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                textViewUserInformationWhatIsApiKeyFor.setVisibility(View.VISIBLE);
+                textViewLinkObtainApiKey.setVisibility(View.VISIBLE);
+            }
+        });
+
     }
 
+    // runOnUiThread to prevent a CalledFromWrongThreadException
     protected void hideAPIKeyPurposeDescription() {
-        textViewUserInformationWhatIsApiKeyFor.setVisibility(View.GONE);
-        textViewLinkObtainApiKey.setVisibility(View.GONE);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                textViewUserInformationWhatIsApiKeyFor.setVisibility(View.GONE);
+                textViewLinkObtainApiKey.setVisibility(View.GONE);
+            }
+        });
     }
 
     protected void testDroneModelsAndSetDroneModelsStatus() {
