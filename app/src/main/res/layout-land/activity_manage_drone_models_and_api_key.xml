@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+    <!-- Left Panel: OpenTopography API Key -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/titleTextView1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title_opentopography_api_key"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="?attr/actionMenuTextColor"
+                android:textSize="24sp"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/textView_dem_api_key_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dem_api_key_status"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:textColor="?attr/actionMenuTextColor" />
+
+            <TextView
+                android:id="@+id/textView_user_information_what_is_api_key_for"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/desc_why_is_a_dem_api_key_needed"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="?attr/actionMenuTextColor"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/textView_link_obtain_api_key"
+                android:linksClickable="true"
+                android:focusable="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/href_obtain_an_api_key_here"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="?attr/actionMenuTextColor"
+                android:layout_marginTop="8dp" />
+
+            <EditText
+                android:id="@+id/api_key_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="@string/api_key_gibberish"
+                android:autofillHints=""
+                android:inputType="text"
+                android:gravity="center"
+                android:layout_marginTop="16dp" />
+
+            <Button
+                android:id="@+id/apply_new_dem_API_key_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="handleApplyNewDemApiKey"
+                android:text="@string/apply_changes_button_text"
+                android:layout_gravity="center"
+                android:textAllCaps="false"
+                android:layout_marginTop="8dp" />
+
+            <Button
+                android:id="@+id/reset_API_key_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="handleResetDemApiKey"
+                android:text="@string/reset_prefs_text"
+                android:layout_gravity="center"
+                android:textAllCaps="false"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Vertical Separator -->
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="#D3D3D3"/>
+
+    <!-- Right Panel: Drone Camera Models -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/titleTextView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title_drone_camera_models_database"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="?attr/actionMenuTextColor"
+                android:textSize="24sp"
+                android:textAlignment="center"
+                android:layout_marginTop="8dp"/>
+
+            <TextView
+                android:id="@+id/textView_dronemodels_json_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/local_database_status"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="?attr/actionMenuTextColor"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/textView_dronemodels_last_updated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dronemodels_last_updated"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="?attr/actionMenuTextColor"
+                android:layout_marginTop="0dp" />
+
+            <TextView
+                android:id="@+id/textView_dronemodels_num_entries"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dronemodels_number_of_entries"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="?attr/actionMenuTextColor"
+                android:layout_marginTop="0dp" />
+
+            <Button
+                android:id="@+id/load_new_dronemodels_json_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="handleLoadNewDroneModelsJson"
+                android:text="@string/button_load_new_dronemodels_json_file"
+                android:layout_gravity="center"
+                android:textAllCaps="false"
+                android:layout_marginTop="16dp" />
+
+            <Button
+                android:id="@+id/reset_dronemodels_button"
+                android:onClick="handleResetDroneModels"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reset_prefs_text"
+                android:layout_gravity="center"
+                android:textAllCaps="false"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/drone_models_and_api_key_results"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/placeholder_results_textview"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textAllCaps="false"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

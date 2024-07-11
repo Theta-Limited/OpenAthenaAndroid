@@ -52,7 +52,7 @@
     
     <string name="clear_button_text">Réinitialiser le journal</string>
     <string name="openathena_for_android">OpenAthena™ pour Android</string>
-    <string name="AGPLv3Notice">AGPL-3.0, certains droits réservés</string>
+    <string name="software_license">AGPL-3.0, certains droits réservés</string>
     <string name="AboutSnippet"><![CDATA[<br>OpenAthena™ pour Android est un projet qui permet aux drones courants de repérer des emplacements géodésiques précis<br>]]></string>
     <string name="about_software_libraries_used">Librairies logicielles utilisées:</string>
     <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> Projet maintenu par <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br> ]]>;</string>

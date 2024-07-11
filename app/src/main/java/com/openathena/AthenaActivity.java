@@ -464,7 +464,9 @@ public abstract class AthenaActivity extends AppCompatActivity {
         if (compassCorrectionSeekBar != null) {
             compassCorrectionValue.setText(getString(R.string.prefs_compass_offset_label) + " " + String.format(Locale.US, "%.2f°", compassCorrectionOffset));
         }
-        athenaApp.putDouble("userOffset", compassCorrectionOffset); // update the Singleton
+        if(athenaApp != null) {
+            athenaApp.putDouble("userOffset", compassCorrectionOffset); // update the Singleton
+        }
     }
 
     @Override

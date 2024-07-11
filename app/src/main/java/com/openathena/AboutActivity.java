@@ -4,22 +4,13 @@
 
 package com.openathena;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
 
 public class AboutActivity extends AthenaActivity {
 
@@ -51,7 +42,8 @@ public class AboutActivity extends AthenaActivity {
         // set About text
         aboutText.setText(Html.fromHtml( getString(R.string.app_name) + " " + getString(R.string.version_word) + " " + versionName+"<br>"
                         + "© 2024 Theta Informatics LLC<br>"
-                        + getString(R.string.AGPLv3Notice)
+                        + "<a href=\"https://www.gnu.org/licenses/agpl-3.0.en.html\">AGPL-3.0</a> " + getString(R.string.software_license) + ",<br>"
+                        + getString(R.string.some_rights_reserved) + "<br>"
                         + "<br> <a href=\"https://openathena.com/\">OpenAthena.com</a> <br>"
                         + getString(R.string.AboutSnippet) + "<br>"
                         + getString(R.string.CalibrationReminderSnippet) + "<br>"
@@ -75,8 +67,9 @@ public class AboutActivity extends AthenaActivity {
                         + "<a href=\"https://github.com/ThreeTen/threetenbp\">ThreeTen/threetenbp</a> BSD 3-Clause<br>"
                         + "<a href=\"https://github.com/apache/commons-lang\">Apache Commons Lang</a> Apache License<br>"
                         + "<a href=\"https://github.com/apache/commons-io\">Apache Commons IO</a> Apache License<br><br>"
-                        + "This project uses the OpenTopography.org website API for DEM downloading within the app. OpenTopography.org's privacy policy is available here:<br><a href=\"https://opentopography.org/privacypolicy\">https://opentopography.org/privacypolicy</a><br>"
-                        + "OpenTopography is operated by the University of California San Diego with support from the National Science Foundation. It is not affiliated with Theta Informatics LLC or the OpenAthena project."
+                        + getString(R.string.about_opentopography_api_description)
+                        + "<br><a href=\"https://opentopography.org/privacypolicy\">https://opentopography.org/privacypolicy</a><br><br>"
+                        + getString(R.string.about_about_opentopography)
                 ,0,null, null)
         );
 

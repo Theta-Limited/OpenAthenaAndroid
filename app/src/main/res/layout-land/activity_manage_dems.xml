@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="16dp">
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <!-- Left Panel: Manage Cache -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/coverage_lookup_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title_map_coverage_lookup"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="?attr/actionMenuTextColor"
+                android:textSize="34sp"
+                android:layout_marginTop="16dp" />
+
+            <ImageButton
+                android:id="@+id/get_pos_gps_button"
+                android:layout_width="64dp"
+                android:layout_height="48dp"
+                android:src="@android:drawable/ic_menu_mylocation"
+                android:background="@drawable/rounded_corner_square"
+                android:layout_marginTop="16dp" />
+
+            <EditText
+                android:id="@+id/lookup_latlon_text"
+                android:layout_width="256dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_lat_lon_in_degrees"
+                android:inputType="text"
+                android:textAllCaps="false"
+                android:gravity="center"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/lookupButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAllCaps="false"
+                android:text="@string/button_lookup_coordinates"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/lookupResultsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_lookup_results"
+                android:textAllCaps="false"
+                android:gravity="center"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Vertical Separator -->
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="#D3D3D3"/>
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <!-- Right Panel: Map Coverage Lookup -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/cache_management_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/manage_cache"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="?attr/actionMenuTextColor"
+                android:textSize="34sp"
+                android:layout_marginTop="16dp" />
+
+            <Button
+                android:id="@+id/manageCacheButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_manage_cache"
+                android:textAllCaps="false"
+                android:layout_marginTop="16dp" />
+
+            <Button
+                android:id="@+id/loadNewMapButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/load_new_dem"
+                android:textAllCaps="false"
+                android:layout_marginTop="16dp" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:indeterminate="true"
+                android:indeterminateBehavior="cycle"
+                android:indeterminateOnly="true"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

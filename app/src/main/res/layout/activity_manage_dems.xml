@@ -20,7 +20,7 @@
         android:id="@+id/cache_management_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Manage Cache:"
+        android:text="@string/manage_cache"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="?attr/actionMenuTextColor"
@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Load New DEM"
+        android:text="@string/load_new_dem"
         android:textAllCaps="false"
         android:layout_marginTop="16dp" />
 
@@ -57,7 +57,7 @@
         android:id="@+id/coverage_lookup_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Map Coverage Lookup:"
+        android:text="@string/title_map_coverage_lookup"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="?attr/actionMenuTextColor"
@@ -76,7 +76,7 @@
     <EditText
         android:id="@+id/lookup_latlon_text"
         android:layout_width="256dp"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="@string/hint_lat_lon_in_degrees"
         android:inputType="text"
         android:textAllCaps="false"

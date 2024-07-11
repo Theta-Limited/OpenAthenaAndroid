@@ -227,9 +227,11 @@ public class NewElevationMapActivity extends DemManagementActivity
                 }
 
                 File importFile = new File(demDir, "import.tiff");
-                DEMParser aParser = new DEMParser(importFile);
-                if (aParser == null) {
-                    postResults("Are you sure this was a GeoTIFF file?");
+                DEMParser aParser = null;
+                try {
+                    aParser = new DEMParser(importFile);
+                } catch (IllegalArgumentException e) {
+                    postResults("Failed to import file. Are you sure this is a DEM file?");
                     decrementProgressBar();
                     return;
                 }

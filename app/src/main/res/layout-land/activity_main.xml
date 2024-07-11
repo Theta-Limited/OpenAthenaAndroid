@@ -92,20 +92,6 @@
             android:textSize="18sp" />
     </ScrollView>
 
-<!--    <Button-->
-<!--        android:id="@+id/selectDEMButton"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="13dp"-->
-<!--        android:layout_marginTop="24dp"-->
-<!--        android:layout_marginEnd="24dp"-->
-<!--        android:onClick="selectDEM"-->
-<!--        android:text="@string/button_loadDEM"-->
-<!--        android:textSize="24dp"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toEndOf="@+id/scrollView2"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
     <TextView
         android:id="@+id/textViewTargetCoord"
         android:layout_width="0dp"

@@ -343,6 +343,7 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
         prefsEditor.putString("droneModelsJsonUri", droneModelsJsonUri.toString());
+        prefsEditor.apply();
     } // jsonFileSelected
 
     @Override

@@ -134,7 +134,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Distance Unit:"
+        android:text="@string/distance_unit_label"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="?attr/actionMenuTextColor"
         android:textSize="18sp"
@@ -156,13 +156,13 @@
             android:id="@+id/radioButtonMETER"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Meter" />
+            android:text="@string/meter_label" />
 
         <RadioButton
             android:id="@+id/radioButtonFOOT"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="US Foot" />
+            android:text="@string/us_foot_label" />
     </RadioGroup>
 
     <TextView

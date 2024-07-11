@@ -51,7 +51,7 @@
 
     <string name="clear_button_text">Wyczyść Dziennik</string>
     <string name="openathena_for_android">OpenAthena™ dla Androida</string>
-    <string name="AGPLv3Notice">AGPL-3.0, niektóre prawa zastrzeżone</string>
+    <string name="software_license">AGPL-3.0, niektóre prawa zastrzeżone</string>
     <string name="AboutSnippet"><![CDATA[<br> OpenAthena™ na Androida to projekt, który umożliwia popularnym dronom wykrywanie precyzyjnych lokalizacji geodezyjnych<br> ]]></string>
     <string name="about_software_libraries_used">Użyte biblioteki oprogramowania:</string>
     <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> Projekt prowadzony przez <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br> ]]></string>

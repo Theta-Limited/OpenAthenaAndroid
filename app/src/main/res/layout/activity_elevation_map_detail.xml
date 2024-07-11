@@ -13,7 +13,7 @@
             android:id="@+id/elevationMapDetailText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Info about an elevation map"
+            android:text=""
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="?attr/actionMenuTextColor"
             android:textSize="20sp"

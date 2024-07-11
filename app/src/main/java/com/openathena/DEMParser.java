@@ -81,7 +81,7 @@ public class DEMParser implements Serializable {
                 this.yParams.numOfSteps = (long) Math.ceil((yParams.start - yParams.end) / Math.abs(yParams.stepwiseIncrement));
                 this.isDTED = true;
             } catch (Exception ex) {
-                throw new TiffException(ex.getMessage());
+                throw new IllegalArgumentException(ex.getMessage());
             }
         }
     }
