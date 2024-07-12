@@ -36,11 +36,12 @@ public class SelectionActivity extends AthenaActivity{
         String storedUriString = athenaApp.getString("imageUri");
         if (storedUriString != null) {
             imageUri = Uri.parse(storedUriString);
-            Log.d(TAG, imageUri.getPath());
+            if (imageUri != null && imageUri.getPath() != null) Log.d(TAG, imageUri.getPath());
             AssetFileDescriptor fileDescriptor = null;
             try {
                 fileDescriptor = getApplicationContext().getContentResolver().openAssetFileDescriptor(imageUri , "r");
-            } catch(FileNotFoundException e) {
+                if (fileDescriptor != null) fileDescriptor.close();
+            } catch(IOException e) {
                 imageUri = null;
                 isImageLoaded = false;
             }
@@ -59,7 +60,7 @@ public class SelectionActivity extends AthenaActivity{
 
         // Display UI prompt only when activity is first opened, not upon return to activity (e.g. multitasking switch or screen rotation)
         if (savedInstanceState == null) {
-            Toast.makeText(this, "Zoom out or press \"Back\" to return", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.zoom_out_or_press_back_to_return, Toast.LENGTH_SHORT).show();
         }
     }
 

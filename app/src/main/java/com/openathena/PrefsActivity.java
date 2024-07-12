@@ -85,9 +85,8 @@ public class PrefsActivity extends AthenaActivity {
               } else if (checkedId == R.id.radioButtonFOOT) {
                   if (measurementUnit != measurementUnits.FOOT) {
                       if (outputModeIsSlavic() ) {
-                          Toast.makeText(parent, "CK42 Output Modes must use Meters", Toast.LENGTH_SHORT).show();
+                          Toast.makeText(parent, R.string.toast_prefsactivity_ck42_output_modes_must_use_meters, Toast.LENGTH_SHORT).show();
                           measurementUnitRadioGroup.check(R.id.radioButtonMETER);
-                          // TODO do this visually instead by disabling radioButtonFoot when a CK42 mode is active
                       } else {
                           setMeasurementUnit(measurementUnits.FOOT);
                       }

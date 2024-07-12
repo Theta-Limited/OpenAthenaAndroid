@@ -146,13 +146,13 @@ public class DemCache {
                     if (filename.startsWith("DEM_LatLon_")) {
                         String[] pieces = filename.split("_");
                         if (pieces.length == 6) {
-                            Double s,w,n,e,clat,clon,l;
+                            double s,w,n,e,clat,clon,l;
                             s = Double.parseDouble(pieces[2]);
                             w = Double.parseDouble(pieces[3]);
                             n = Double.parseDouble(pieces[4]);
                             e = Double.parseDouble(pieces[5]);
 
-                            double v[] = getCenterAndLength(s,w,n,e);
+                            double[] v = getCenterAndLength(s,w,n,e);
                             clat = v[0];
                             clon = v[1];
                             l = v[2];
@@ -283,20 +283,14 @@ public class DemCache {
 
     private double[] getCenterAndLength(double s, double w, double n, double e)
     {
-        double EARTH_RADIUS = TargetGetter.radius_at_lat_lon(n+s / 2.0d, 0.0d);
-//        double METERS_PER_DEGREE_LATITUDE = 111320; // Approximate meters per degree
-
         // Center coordinates
         double centerLat = (n + s) / 2;
         double centerLon = (e + w) / 2;
 
         // Height in meters (difference in latitude)
-//        double height = Math.abs(n - s) * METERS_PER_DEGREE_LATITUDE;
         double height = TargetGetter.haversine(0.0d,n,0.0d,s,0.0d);
 
-        // Width in meters (difference in longitude), considering the average latitude for more accuracy
-        double averageLatitude = Math.abs(n + s) / 2;
-//        double width = Math.abs(e - w) * METERS_PER_DEGREE_LATITUDE * Math.cos(Math.toRadians(averageLatitude));
+        // Width in meters (difference in longitude)
         double width = TargetGetter.haversine(w,s,e,s,0.0d);
 
         double l = width*height;

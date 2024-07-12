@@ -689,7 +689,7 @@ public class MetadataExtractor {
         double focalLength35mmEquiv = exif.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM, -1.0d);
 
         if (focalLength35mmEquiv == -1.0d || focalLength35mmEquiv == 0.0d) {
-            throw new Exception("focal length could not be determined");
+            throw new Exception(parent.getString(R.string.error_metadata_extractor_focal_length_could_not_be_determined));
         }
 
         String digitalZoomRational = exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO);
@@ -704,7 +704,7 @@ public class MetadataExtractor {
         double imageWidth = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, 0);
         double imageHeight = exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, 0); // Image Height
         if (imageWidth <= 0.0d || imageHeight <= 0.0d) {
-            throw new Exception("could not determine width and height of image!");
+            throw new Exception(parent.getString(R.string.error_metadataextractor_could_not_determine_width_and_height_of_image));
         }
 
         // calculate aspect ratio
@@ -903,7 +903,7 @@ public class MetadataExtractor {
 
     public static float rationalToFloat(String str)
     {
-        if (str == null || str.equals("")) {
+        if (str == null || str.isBlank()) {
             return 0.0f;
         }
         String[] split = str.split("/", 2);

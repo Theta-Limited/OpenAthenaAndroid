@@ -187,12 +187,12 @@ public class NewElevationMapActivity extends DemManagementActivity
         }
 
         if (lat == 0 && lon == 0) {
-            postResults("No elevation data for the middle of the ocean!");
+            postResults(getString(R.string.results_zero_lat_zero_lon_msg));
             decrementProgressBar();
             return;
         }
 
-        resultsLabel.setText("Going to fetch elevation map ("+lat+","+lon+") x"+h+" ...");
+        resultsLabel.setText(getString(R.string.results_going_to_fetch_elevation_map) + " ("+lat+","+lon+") x "+h+" ...");
 
         downloadNewDEM(lat, lon, h);
 
@@ -203,7 +203,7 @@ public class NewElevationMapActivity extends DemManagementActivity
     private void copyFileToPrivateStorage(Uri fileUri) {
         String filePath = fileUri.getPath();
         if (filePath == null) filePath = "";
-        resultsLabel.setText("Importing file, please wait...");
+        resultsLabel.setText(getString(R.string.results_importing_local_file_msg) + "...");
 
         incrementAndShowProgressBar();
 
@@ -220,7 +220,7 @@ public class NewElevationMapActivity extends DemManagementActivity
                         outputStream.write(buffer, 0, length);
                     }
                 } catch (IOException e) {
-                    postResults("Error accessing file");
+                    postResults(getString(R.string.results_error_accessing_file));
                     Log.e(TAG, "Error reading or writing the file to import", e);
                     decrementProgressBar();
                     return;
@@ -231,7 +231,7 @@ public class NewElevationMapActivity extends DemManagementActivity
                 try {
                     aParser = new DEMParser(importFile);
                 } catch (IllegalArgumentException e) {
-                    postResults("Failed to import file. Are you sure this is a DEM file?");
+                    postResults(getString(R.string.reults_failed_to_import_file));
                     decrementProgressBar();
                     return;
                 }
@@ -244,14 +244,14 @@ public class NewElevationMapActivity extends DemManagementActivity
 
                 File newFile = new File(demDir, newFilename);
                 if (newFile.exists() && !newFile.delete()) {
-                    postResults("Failed to import file of same name");
+                    postResults(getString(R.string.reults_failed_to_import_file_of_same_name));
                     decrementProgressBar();
                     return;
                 }
                 if (importFile.renameTo(newFile)) {
-                    postResults("Imported file as: " + newFilename);
+                    postResults(getString(R.string.results_imported_file_as)+ ": " + newFilename);
                 } else {
-                    postResults("Failed to import " + newFilename);
+                    postResults(getString(R.string.results_failed_to_import_file) + ": " + newFilename);
                 }
                 decrementProgressBar();
             }

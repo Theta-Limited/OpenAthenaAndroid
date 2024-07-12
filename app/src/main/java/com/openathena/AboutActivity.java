@@ -56,7 +56,7 @@ public class AboutActivity extends AthenaActivity {
                         + "<br>" + getString(R.string.nato_vertical_datum_notice) + "<br>"
                         + getString(R.string.warsaw_vertical_datum_notice) + "<br>"
                         + getString(R.string.AuthorGitHubSnippet)
-                        + "Privacy policy:"
+                        + getString(R.string.about_privacy_policy_label)
                         + " <a href=\"https://theta.limited/privacy-policy\">theta.limited/privacy-policy</a><br>"
                         + getString(R.string.about_software_libraries_used) + "<br>"
                         + "<a href=\"https://github.com/ngageoint/tiff-java\">ngageoint/tiff-java</a> MIT license<br>"

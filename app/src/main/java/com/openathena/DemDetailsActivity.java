@@ -78,10 +78,10 @@ public class DemDetailsActivity extends AthenaActivity
                         outStream.write(buf, 0, len);
                     }
                     Log.d(TAG,"DemDetail: finished copying file to uri");
-                    Toast.makeText(this, "Elevation map successfully exported", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.toast_demdetailsactivity_elevation_map_successfully_exported, Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     Log.d(TAG,"DemDetail: exception while exporting file "+e);
-                    Toast.makeText(this, "Error exporting elevation map", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.toast_demdetailsactivity_error_exporting_elevation_map, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -104,8 +104,8 @@ public class DemDetailsActivity extends AthenaActivity
         String[] filename_pieces = dEntry.filename.split("_");
         for (String aString : filename_pieces) {
             if (filename_pieces.length != 6 || aString.isEmpty()) {
-                htmlString += "ERROR: invalid filename: " + dEntry.filename + "<br>";
-                htmlString += "This entry could not be analyzed!";
+                htmlString += getString(R.string.error_demdetailsactivity_invalid_filename) +" " + dEntry.filename + "<br>";
+                htmlString += getString(R.string.error2_dem_details_activity_invalid_filename);
                 demInfo.setText(Html.fromHtml(htmlString,0,null,null));
                 return;
             }
@@ -118,8 +118,8 @@ public class DemDetailsActivity extends AthenaActivity
             maxLat = Double.parseDouble(filename_pieces[4]);
             maxLon = Double.parseDouble(filename_pieces[5]);
         } catch (NumberFormatException nfe) {
-            htmlString += "ERROR: invalid filename: " + dEntry.filename + "<br>";
-            htmlString += "This entry could not be analyzed!";
+            htmlString += getString(R.string.error_demdetailsactivity_invalid_filename) + " " + dEntry.filename + "<br>";
+            htmlString += getString(R.string.error2_dem_details_activity_invalid_filename);
             demInfo.setText(Html.fromHtml(htmlString,0,null,null));
             return;
         }
@@ -250,7 +250,7 @@ public class DemDetailsActivity extends AthenaActivity
             startActivity(Intent.createChooser(shareIntent, "Share DEM"));
         } catch (IllegalArgumentException e) {
             Log.e(TAG, "The selected file can't be shared: " + file.toString());
-            Toast.makeText(this, "ERROR: failed to share your selected DEM file!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error_demdetailsactivity_failed_to_share_your_selected_dem_file, Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -1,5 +1,6 @@
 package com.openathena;
 
+import android.content.res.Resources;
 import android.util.Log;
 
 import java.io.File;
@@ -67,7 +68,7 @@ public class DEMParser implements Serializable {
                 String dtedLevel = this.dted.getDTEDLevel().name().toUpperCase();
                 Log.d(TAG, "DTED LEVEL IS: " + dtedLevel);
                 if (dtedLevel.equals("DTED0") || dtedLevel.equals("DTED1")) {
-                    throw new CorruptTerrainException("DTED2 or DTED3 is required");
+                    throw new CorruptTerrainException(Resources.getSystem().getString(R.string.demparser_error_dted2_or_dted3_is_required));
                 }
                 this.xParams = new geodataAxisParams();
                 this.xParams.start = this.dted.getNorthWestCorner().getLongitude();
@@ -143,10 +144,10 @@ public class DEMParser implements Serializable {
 
         List<Double> pixelAxisScales = directory.getModelPixelScale();
         if (pixelAxisScales == null || pixelAxisScales.isEmpty()) {
-            throw new IllegalArgumentException("ERROR: GeoTIFF file is corrupted, this DEM is unusable!");
+            throw new IllegalArgumentException(Resources.getSystem().getString(R.string.demparser_error_geotiff_file_is_corrupted));
         }
         if (pixelAxisScales.get(2) != 0.0d) {
-            throw new IllegalArgumentException("ERROR: failed to load a rotated or skewed GeoTIFF!");
+            throw new IllegalArgumentException(Resources.getSystem().getString(R.string.dem_parser_error_failed_to_load_a_rotated_or_skewed_geotiff));
         }
 
         FileDirectoryEntry fde = directory.get(FieldTagType.GeoKeyDirectory);
@@ -161,7 +162,7 @@ public class DEMParser implements Serializable {
             if (values != null) {
                 boolean isWGS84 = isHorizontalDatumWGS84(directory, values);
                 if (!isWGS84) {
-                    throw new IllegalArgumentException(" horizontal datum not of an accepted type");
+                    throw new IllegalArgumentException(Resources.getSystem().getString(R.string.demparser_error_horizontal_datum_not_of_an_accepted_type));
                 }
             } else {
                 Log.e(TAG, "metadata values obtained were of an unknown type");

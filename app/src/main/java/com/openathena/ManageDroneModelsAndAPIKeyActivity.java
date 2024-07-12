@@ -95,7 +95,7 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
 //        viewSep1 = findViewById(R.id.view_sep_1);
 //        viewSep2 = findViewById(R.id.view_sep_2);
 
-        textViewLinkObtainApiKey.setText(Html.fromHtml(getString(R.string.href_obtain_an_api_key_here), Html.FROM_HTML_MODE_COMPACT));
+        textViewLinkObtainApiKey.setText(Html.fromHtml("<a href=\"https://opentopography.org/blog/introducing-api-keys-access-opentopography-global-datasets\">" + getString(R.string.href_obtain_an_api_key_here) + "</a>", Html.FROM_HTML_MODE_COMPACT));
         textViewLinkObtainApiKey.setMovementMethod(LinkMovementMethod.getInstance());
 
         // Initialize the ActivityResultLauncher
@@ -112,15 +112,14 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
         SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
 
         String storedJsonUriString = sharedPreferences.getString("droneModelsJsonUri",null);
-        if (storedJsonUriString != null) {
+        if (storedJsonUriString != null && !storedJsonUriString.isBlank()) {
             droneModelsJsonUri = Uri.parse(storedJsonUriString);
-        } else {
-            //TODO stuff here
         }
 
         // Hide the Description of why a DEM API Key is needed by default (will be un-hidden if Key is later found to be invalid)
         hideAPIKeyPurposeDescription();
 
+        // Test condition and apply status indicators to the UI
         testAPIKeyAndSetApiKeyStatus();
         testDroneModelsAndSetDroneModelsStatus();
     }
@@ -242,7 +241,7 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
         apiKeyEditText.setText("");
         //apiKeyEditText.setHint(getString(R.string.api_key_gibberish));
 
-        String successStr = "API Key Reset to Default";
+        String successStr = getString(R.string.result_manage_dm_andapi_api_key_reset_to_default);
         droneModelsAndApiKeyResults.setText(successStr);
         Toast.makeText(this,successStr,Toast.LENGTH_SHORT).show();
 
@@ -257,7 +256,7 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
     public void handleResetDroneModels(View view) {
         DroneParametersFromJSON droneModelsParser = new DroneParametersFromJSON(getApplicationContext());
         droneModelsParser.loadJSONFromAsset();
-        String successStr = "droneModels JSON reset to default";
+        String successStr = getString(R.string.result_manage_dm_andapi_dronemodels_json_reset);
         droneModelsAndApiKeyResults.setText(successStr);
         Toast.makeText(this,successStr,Toast.LENGTH_SHORT).show();
 
@@ -329,7 +328,7 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
             }
 
             droneModelsAndApiKeyResults.setText(getString(R.string.error_nondescript)+": " + e.getMessage() + offendingObjectMakeModel);
-            Toast.makeText(this,getString(R.string.error_nondescript) + ": " + "droneModels JSON was invalid!",Toast.LENGTH_LONG).show();
+            Toast.makeText(this,getString(R.string.error_nondescript) + ": " + getString(R.string.toast_error_dronemodels_json_was_invalid),Toast.LENGTH_LONG).show();
             testDroneModelsAndSetDroneModelsStatus();
             return;
         }
@@ -337,7 +336,7 @@ public class ManageDroneModelsAndAPIKeyActivity extends AthenaActivity{
         droneModelsJsonUri = uri;
         testDroneModelsAndSetDroneModelsStatus();
 
-        droneModelsAndApiKeyResults.setText("DroneModels updated successfully");
+        droneModelsAndApiKeyResults.setText(R.string.result_manage_dm_andapi_dronemodels_updated_successfully);
 
         // save path of new droneModels.json to persistent settings
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);

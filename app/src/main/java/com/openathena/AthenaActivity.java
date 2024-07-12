@@ -485,8 +485,6 @@ public abstract class AthenaActivity extends AppCompatActivity {
 
         int id = item.getItemId();
 
-
-
         if (id == R.id.action_calculate) {
             // jump to main activity
             // its already created
@@ -568,7 +566,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
 
     protected String getFileName(Uri uri) {
         String result = null;
-        if (uri.getScheme().equals("content")) {
+        if (uri.getScheme() != null && uri.getScheme().equals("content")) {
             try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {
                     result = cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME));
@@ -614,7 +612,6 @@ public abstract class AthenaActivity extends AppCompatActivity {
     protected void onPause()
     {
         Log.d(TAG,"onPause started");
-        //appendText("onPause\n");
         super.onPause();
         saveStateToSingleton();
     } // onPause()
@@ -623,9 +620,6 @@ public abstract class AthenaActivity extends AppCompatActivity {
     protected void onDestroy()
     {
         Log.d(TAG,"onDestroy started");
-        // close logfile
-        //appendText("onDestroy\n");
-        // do whatever here
         super.onDestroy();
 
     } // onDestroy()

@@ -18,7 +18,6 @@ import java.io.InputStreamReader;
 public class DroneParametersFromJSON {
     private static final String TAG = "DroneParametersFromJSON";
 
-    // TODO fix lastUpdatedField
     protected static String lastUpdatedField;
     protected static JSONArray droneArray;
     protected Context myContext;
@@ -52,12 +51,14 @@ public class DroneParametersFromJSON {
             lastUpdatedField = obj.getString("lastUpdate");
             droneArray = obj.getJSONArray("droneCCDParams");
         } catch (JSONException jse) {
-
+            Log.e(TAG, "ERROR: App Default droneModels.json was invalid! Loading operation failed!");
+            jse.printStackTrace();
         }
     }
 
     // Load a user's custom selected droneModels.json file
     public void loadJSONFromUri(Uri uri) throws IOException, DetailedJSONException{
+        if (uri == null) throw new IOException("tried to load JSON from a null Uri!");
         droneArray = null;
         InputStream inputStream = myContext.getContentResolver().openInputStream(uri);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
@@ -106,7 +107,7 @@ public class DroneParametersFromJSON {
 
     public void droneArrayIntegrityCheck(JSONArray arr) throws DetailedJSONException {
         if (arr == null) {
-            throw new DetailedJSONException("DroneModels was null!", null);
+            throw new DetailedJSONException(myContext.getString(R.string.error_dronemodels_was_null), null);
         }
         JSONObject droneObject = null;
         try {

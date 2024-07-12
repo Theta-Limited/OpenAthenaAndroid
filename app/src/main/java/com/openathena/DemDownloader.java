@@ -70,7 +70,7 @@ public class DemDownloader
 
     // Method to check the validity of the API Key
     public boolean isApiKeyValid() throws IOException {
-        // Minimal bounding box at a location with likely no data
+        // Minimal bounding box at a location with no data
         String testUrl = URL_STR +
                 "demtype=SRTMGL1" +
                 "&south=0" +
@@ -178,21 +178,21 @@ public class DemDownloader
                     b = syncDownload();
                     if (consumer != null) {
                         if (b == true) {
-                            consumer.accept("Download succeeded");
+                            consumer.accept(context.getString(R.string.demdownloader_download_succeeded));
                         }
                         else {
-                            consumer.accept("Download failed. OpenTopography API Key may be invalid!");
+                            consumer.accept(context.getString(R.string.dem_downloader_download_failed_invalid_key));
                         }
                     }
                 }
                 catch (java.net.UnknownHostException uhe) {
                     if (consumer != null) {
-                        consumer.accept("Could not connect to portal.opentopography.org for DEM download.\n " + "Is your device connected to the Internet?" + "\n\n" + "(" + context.getString(R.string.prompt_use_blah) + context.getString(R.string.action_demcache) + context.getString(R.string.to_import_an_offline_dem_file_manually) + "\n");
+                        consumer.accept(context.getString(R.string.error_demdownloader_could_not_connect)+"\n " + context.getString(R.string.error_demdownloader_internet_reminder) + "\n\n" + "(" + context.getString(R.string.prompt_use_blah) + context.getString(R.string.action_demcache) + context.getString(R.string.to_import_an_offline_dem_file_manually) + "\n");
                     }
                 }
                 catch (java.net.SocketException se) {
                     if (consumer != null) {
-                        consumer.accept("Internet connection was interrupted during download operation. Please try again.");
+                        consumer.accept(context.getString(R.string.error_demdownloader_connectus_interruptus));
                     }
                 }
                 catch (Exception e) {
@@ -238,13 +238,10 @@ public class DemDownloader
     // calculate bounding box; return [n,s,e,w]
     private double[] getBoundingBox(double centerLat, double centerLon, double length)
     {
-        // yuck
-        final double metersInDegreeLatitude = 111320; // Approximate meters in one degree of latitude
-
-        // Calculate deltas
-        // TODO Improve this calculation
-        double deltaLat = (length / 2) / metersInDegreeLatitude;
-        double deltaLon = (length / 2) / (metersInDegreeLatitude * Math.cos(Math.toRadians(centerLat)));
+        double deltaLat = TargetGetter.inverse_haversine(centerLat, centerLon, length / 2.0d, 0.0d,0.0d)[0] - centerLat;
+//        Log.d(TAG, "getBoundingBox deltaLat: " + deltaLat);
+        double deltaLon = TargetGetter.inverse_haversine(centerLat, centerLon, length / 2.0d, Math.PI/2.0d, 0.0d)[1] - centerLon;
+//        Log.d(TAG, "getBoundingBox deltaLon" + deltaLon);
 
         // Calculate bounding box
         double north = centerLat + deltaLat;

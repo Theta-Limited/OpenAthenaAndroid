@@ -178,7 +178,7 @@ public class ManageDemsActivity extends DemManagementActivity
         saveStateToSingleton();
 
         // finally, do the lookup!
-        postResults("Going to lookup "+lat+","+lon);
+        postResults(getString(R.string.results_managedemsactivity_going_to_lookup)+lat+","+lon);
 
         String aFilename = athenaApp.demCache.searchCacheFilename(lat,lon);
 
@@ -186,7 +186,7 @@ public class ManageDemsActivity extends DemManagementActivity
             postResults(getString(R.string.lookup_nothing_found));
         }
         else {
-            postResults("Found "+aFilename);
+            postResults(getString(R.string.results_managedemsactivity_found_dem) + " " + aFilename);
             // set the cache entry selected
             athenaApp.demCache.setSelectedItem(aFilename);
             resultsButton.setEnabled(true);
