@@ -4,7 +4,7 @@
     <string name="next">次</string>
     <string name="previous">前</string>
 
-    <string name="action_demcache">Manage Elevation Maps</string>
+    <string name="action_demcache">標高モデル管理</string>
     <string name="action_prefs">設定</string>
     <string name="action_calculate">計算する</string>
     <string name="action_about_openathena">「OpenAthena」について</string>
@@ -23,31 +23,30 @@
     <string name="title_activity_log">Android 用「OpenAthena™」 ログ</string>
     <string name="title_activity_prefs">Android 用「OpenAthena™」設定</string>
     <string name="title_activity_about">Android 用「OpenAthena™」 について</string>
-    <string name="title_activity_demcache">Manage Elevation Maps Cache</string>
-    <string name="title_activity_newelevationmap">New Elevation Map</string>
-    <string name="title_activity_managedems">Manage Elevation Maps</string>
-    <string name="title_activity_mapsdetail">Elevation Map Details</string>
+    <string name="title_activity_demcache">標高モデルキャッシュリスト</string>
+    <string name="title_activity_newelevationmap">新しい標高モデルを追加</string>
+    <string name="title_activity_managedems">デジタル標高モデルを管理</string>
     <string name="are_you_sure_delete_map">Delete this elevation map?</string>
 
-    <string name="button_manage_cache">Manage Cache</string>
-    <string name="button_lookup_coordinates">Lookup Coordinates</string>
-    <string name="button_lookup_results">Lookup results</string>
-    <string name="button_lookup_please_enter">Please enter lat,lon in degrees separated by comma</string>
-    <string name="button_lookup_no_data">No elevation data for the middle of the ocean!</string>
-    <string name="button_lookup_nothing_found">Nothing found</string>
+    <string name="label_enter_coordinates">"中心座標と高さ/幅をメートルで入力 "</string>
+    <string name="button_manage_cache">キャッシュされた標高モデルリスト</string>
+    <string name="button_lookup_coordinates">キャッシュ内のカバー範囲を確認</string>
+    <string name="button_lookup_results">検索結果</string>
+    <string name="button_lookup_please_enter">"緯度、経度またはNATO MGRS形式で座標を入力してください "</string>
+    <string name="button_lookup_no_data">海の真ん中には標高データがありません！</string>
+    <string name="button_lookup_nothing_found">見つかりませんでした</string>
 
-    <string name="button_download_elevation_map">Download Elevation Map (Internet)</string>
-    <string name="button_import_elevation_map">Import Elevation Map (File)</string>
-    <string name="label_enter_coordinates">Enter center coordinates and h/w in meters</string>
+    <string name="title_activity_mapsdetail">標高モデルの詳細</string>
+    <string name="button_download_elevation_map">ダウンロード</string>
+    <string name="button_import_elevation_map">DEMファイルをインポート</string>
 
-    <string name="download_succeeded">Download succeeded</string>
-    <string name="download_failed">Download failed</string>
+    <string name="download_succeeded">ダウンロード成功</string>
+    <string name="download_failed">ダウンロード失敗</string>
 
-    <string name="lookup_nothing_found">No DEM found for coordinates</string>
+    <string name="lookup_nothing_found">指定された座標のデジタル標高モデル (DEM) が見つかりません</string>
 
-    <string name="hint_lat_lon_in_degrees">lat,lon in degrees</string>
-    <string name="hint_lat_lon">lat,lon</string>
-    <string name="hint_fifteen_thousand_meters">15000 meters</string>
+    <string name="hint_lat_lon_in_degrees">緯度、経度またはNATO MGRS</string>
+    <string name="hint_fifteen_thousand_meters">15000メートル</string>
 
     <string name="clear_button_text">ログをクリア</string>
     <string name="openathena_for_android">Android 用「OpenAthena™」</string>

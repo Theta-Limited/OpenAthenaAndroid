@@ -4,7 +4,7 @@
     <string name="next">下一个</string>
     <string name="previous">上一个</string>
 
-    <string name="action_demcache">Manage Elevation Maps</string>
+    <string name="action_demcache">管理高程模型</string>
     <string name="action_prefs">设置</string>
     <string name="action_calculate">计算</string>
     <string name="action_about_openathena">关于 OpenAthena</string>
@@ -23,31 +23,30 @@
     <string name="title_activity_log">Android 版 OpenAthena™ 日志</string>
     <string name="title_activity_prefs">Android 版 OpenAthena™ 设置</string>
     <string name="title_activity_about">关于安卓版 OpenAthena™</string>
-    <string name="title_activity_demcache">Manage Elevation Maps Cache</string>
-    <string name="title_activity_newelevationmap">New Elevation Map</string>
-    <string name="title_activity_managedems">Manage Elevation Maps</string>
-    <string name="title_activity_mapsdetail">Elevation Map Details</string>
+    <string name="title_activity_demcache">高程模型缓存列表</string>
+    <string name="title_activity_newelevationmap">添加新高程模型</string>
+    <string name="title_activity_managedems">管理数字高程模型</string>
     <string name="are_you_sure_delete_map">Delete this elevation map?</string>
 
-    <string name="button_download_elevation_map">Download Elevation Map (Internet)</string>
-    <string name="button_import_elevation_map">Import Elevation Map (File)</string>
-    <string name="label_enter_coordinates">Enter center coordinates and h/w in meters</string>
+    <string name="title_activity_mapsdetail">高程模型详情</string>
+    <string name="button_download_elevation_map">下载</string>
+    <string name="button_import_elevation_map">导入DEM文件</string>
 
-    <string name="button_manage_cache">Manage Cache</string>
-    <string name="button_lookup_coordinates">Lookup Coordinates</string>
-    <string name="button_lookup_results">Lookup results</string>
-    <string name="button_lookup_please_enter">Please enter lat,lon in degrees separated by comma</string>
-    <string name="button_lookup_no_data">No elevation data for the middle of the ocean!</string>
-    <string name="button_lookup_nothing_found">Nothing found</string>
+    <string name="label_enter_coordinates">输入中心坐标和高度/宽度（米）</string>
+    <string name="button_manage_cache">缓存的高程模型列表</string>
+    <string name="button_lookup_coordinates">检查缓存覆盖</string>
+    <string name="button_lookup_results">查询结果</string>
+    <string name="button_lookup_please_enter">请输入以纬度、经度或NATO MGRS格式的坐标</string>
+    <string name="button_lookup_no_data">海洋中间没有高程数据！</string>
+    <string name="button_lookup_nothing_found">未找到</string>
 
-    <string name="download_succeeded">Download succeeded</string>
-    <string name="download_failed">Download failed</string>
+    <string name="download_succeeded">下载成功</string>
+    <string name="download_failed">下载失败</string>
 
-    <string name="lookup_nothing_found">No DEM found for coordinates</string>
+    <string name="lookup_nothing_found">未找到对应坐标的数字高程模型 (DEM)</string>
 
-    <string name="hint_lat_lon_in_degrees">lat,lon in degrees</string>
-    <string name="hint_lat_lon">lat,lon</string>
-    <string name="hint_fifteen_thousand_meters">15000 meters</string>
+    <string name="hint_lat_lon_in_degrees">纬度，经度或NATO MGRS</string>
+    <string name="hint_fifteen_thousand_meters">15000米</string>
 
 
     <string name="clear_button_text">清除日志</string>

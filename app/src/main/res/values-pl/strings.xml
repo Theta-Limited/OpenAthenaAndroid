@@ -4,7 +4,7 @@
     <string name="next">Następny</string>
     <string name="previous">Poprzedni</string>
 
-    <string name="action_demcache">Manage Elevation Maps</string>
+    <string name="action_demcache">Zarządzaj modelami wysokości</string>
     <string name="action_prefs">Ustawienia</string>
     <string name="action_calculate">Oblicz</string>
     <string name="action_about_openathena">O OpenAthena</string>
@@ -23,31 +23,30 @@
     <string name="title_activity_log">Log OpenAthena™ dla Androida</string>
     <string name="title_activity_prefs">Ustawienia OpenAthena™ dla Androida</string>
     <string name="title_activity_about">O OpenAthena™ dla Androida</string>
-    <string name="title_activity_demcache">Manage Elevation Maps Cache</string>
-    <string name="title_activity_newelevationmap">New Elevation Map</string>
-    <string name="title_activity_managedems">Manage Elevation Maps</string>
-    <string name="title_activity_mapsdetail">Elevation Map Details</string>
+    <string name="title_activity_demcache">Lista pamięci podręcznej modeli wysokości</string>
+    <string name="title_activity_newelevationmap">"Dodaj nowy model wysokości "</string>
+    <string name="title_activity_managedems">Zarządzaj modelami wysokościowymi</string>
     <string name="are_you_sure_delete_map">Delete this elevation map?</string>
 
-    <string name="button_download_elevation_map">Download Elevation Map (Internet)</string>
-    <string name="button_import_elevation_map">Import Elevation Map (File)</string>
-    <string name="label_enter_coordinates">Enter center coordinates and h/w in meters</string>
+    <string name="title_activity_mapsdetail">Szczegóły modelu wysokości</string>
+    <string name="button_download_elevation_map">Pobierz</string>
+    <string name="button_import_elevation_map">Importuj plik DEM</string>
 
-    <string name="button_manage_cache">Manage Cache</string>
-    <string name="button_lookup_coordinates">Lookup Coordinates</string>
-    <string name="button_lookup_results">Lookup results</string>
-    <string name="button_lookup_please_enter">Please enter lat,lon in degrees separated by comma</string>
-    <string name="button_lookup_no_data">No elevation data for the middle of the ocean!</string>
-    <string name="button_lookup_nothing_found">Nothing found</string>
+    <string name="label_enter_coordinates">Wprowadź współrzędne środka oraz wysokość/szerokość w metrach</string>
+    <string name="button_manage_cache">Lista zapisanych modeli wysokości</string>
+    <string name="button_lookup_coordinates">Sprawdź zasięg w pamięci podręcznej</string>
+    <string name="button_lookup_results">Wyniki wyszukiwania</string>
+    <string name="button_lookup_please_enter">Proszę wprowadzić współrzędne w formacie lat,lon lub NATO MGRS</string>
+    <string name="button_lookup_no_data">Brak danych wysokościowych dla środka oceanu!</string>
+    <string name="button_lookup_nothing_found">Nic nie znaleziono</string>
 
-    <string name="download_succeeded">Download succeeded</string>
-    <string name="download_failed">Download failed</string>
+    <string name="download_succeeded">Pobieranie zakończone sukcesem</string>
+    <string name="download_failed">Pobieranie nie powiodło się</string>
 
-    <string name="lookup_nothing_found">No DEM found for coordinates</string>
+    <string name="lookup_nothing_found">Nie znaleziono cyfrowego modelu wysokościowego (DEM) dla współrzędnych</string>
 
-    <string name="hint_lat_lon_in_degrees">lat,lon in degrees</string>
-    <string name="hint_lat_lon">lat,lon</string>
-    <string name="hint_fifteen_thousand_meters">15000 meters</string>
+    <string name="hint_lat_lon_in_degrees">szer, dł lub NATO MGRS</string>
+    <string name="hint_fifteen_thousand_meters">15000 metrów</string>
 
     <string name="clear_button_text">Wyczyść Dziennik</string>
     <string name="openathena_for_android">OpenAthena™ dla Androida</string>
