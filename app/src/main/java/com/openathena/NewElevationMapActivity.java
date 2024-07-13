@@ -155,9 +155,21 @@ public class NewElevationMapActivity extends DemManagementActivity
 
         // process meters or length field
         meters = meters.replaceAll("meters","");
+        meters = meters.replaceAll("meter", "");
         meters = meters.replaceAll("metres", "");
+        meters = meters.replaceAll("metre", "");
         meters = meters.replaceAll("m", "");
-        // TODO remove meters unit label from other languages as well
+        meters = meters.replaceAll("米", "");
+        meters = meters.replaceAll("mètres", ""); // plural in French
+        meters = meters.replaceAll("mètre", ""); // singular in French
+        meters = meters.replaceAll("メートル", "");
+        meters = meters.replaceAll("미터", "");
+        meters = meters.replaceAll("미", "");
+        meters = meters.replaceAll("metrów", ""); // plural in Polish
+        meters = meters.replaceAll("metr", ""); // singular in Polish
+        meters = meters.replaceAll("метров", "");
+        meters = meters.replaceAll("метрів", "");
+        meters = meters.replaceAll("метр", ""); // singular in Russian and Ukrainian
         meters = meters.trim();
 
         if (!meters.isEmpty()) {

@@ -5,7 +5,7 @@
     <string name="previous">Previous</string>
 
     <!-- TODO add proper translations once AUTODEM feature is complete!!! -->
-    <string name="action_demcache" translatable="false">Manage Digital Elevation Models</string>
+    <string name="action_demcache">Manage Digital Elevation Models</string>
 
     <string name="action_prefs">Settings</string>
     <string name="action_calculate">Calculate</string>
@@ -27,35 +27,34 @@
     <string name="reset_prefs_text">Reset</string>
 
     <!-- TODO add proper translations once AUTODEM feature is complete!!! -->
-    <string name="are_you_sure_delete_map" translatable="false">Delete this elevation map?</string>
+    <string name="are_you_sure_delete_map">Delete this elevation map?</string>
 
     <string name="title_activity_log">OpenAthena™ for Android Log</string>
     <string name="title_activity_prefs">OpenAthena™ for Android Settings</string>
     <string name="title_activity_about">About OpenAthena™ for Android</string>
-    <!-- TODO add proper translations once AUTODEM feature is complete!!! -->
-    <string name="title_activity_demcache" translatable="false">Manage Elevation Models Cache</string>
-    <string name="title_activity_newelevationmap" translatable="false">New Elevation Models</string>
-    <string name="title_activity_managedems" translatable="false">Manage Elevation Models</string>
-    <string name="title_activity_mapsdetail" translatable="false">Elevation Model Details</string>
 
-    <!-- TODO add proper translations once AUTODEM feature is complete!!! -->
-    <string name="button_download_elevation_map" translatable="false">Download</string>
-    <string name="button_import_elevation_map" translatable="false">Import DEM File</string>
-    <string name="label_enter_coordinates" translatable="false">Enter center coordinates and h/w in meters:</string>
+    <string name="title_activity_demcache">Manage Elevation Models Cache</string>
+    <string name="title_activity_newelevationmap">Add New Elevation Model</string>
+    <string name="title_activity_managedems">Manage Elevation Models</string>
+    <string name="title_activity_mapsdetail">Elevation Model Details</string>
 
-    <!-- TODO add proper translations once AUTODEM feature is complete!!! -->
-    <string name="button_manage_cache" translatable="false">Cached DEMs List</string>
-    <string name="button_lookup_coordinates" translatable="false">Check Coverage in Cache</string>
-    <string name="button_lookup_results" translatable="false">Lookup results</string>
-    <string name="button_lookup_please_enter" translatable="false">Please enter coordinates in lat,lon or NATO MGRS format</string>
-    <string name="button_lookup_no_data" translatable="false">No elevation data for the middle of the ocean!</string>
-    <string name="button_lookup_nothing_found" translatable="false">Nothing found</string>
-    <string name="hint_lat_lon_in_degrees" translatable="false">lat,lon or NATO MGRS</string>
-    <string name="hint_lat_lon" translatable="false">lat,lon</string>
-    <string name="hint_fifteen_thousand_meters" translatable="false">15000 meters</string>
-    <string name="download_succeeded" translatable="false">Download succeeded</string>
-    <string name="download_failed" translatable="false">Download failed</string>
-    <string name="lookup_nothing_found" translatable="false">No DEM found for coordinates</string>
+
+    <string name="button_download_elevation_map">Download</string>
+    <string name="button_import_elevation_map">Import DEM File</string>
+    <string name="label_enter_coordinates">Enter center coordinates and h/w in meters:</string>
+
+
+    <string name="button_manage_cache">Cached DEMs List</string>
+    <string name="button_lookup_coordinates">Check Coverage in Cache</string>
+    <string name="button_lookup_results">Lookup results</string>
+    <string name="button_lookup_please_enter">Please enter coordinates in lat,lon or NATO MGRS format</string>
+    <string name="button_lookup_no_data">No elevation data for the middle of the ocean!</string>
+    <string name="button_lookup_nothing_found">Nothing found</string>
+    <string name="hint_lat_lon_in_degrees">lat,lon or NATO MGRS</string>
+    <string name="hint_fifteen_thousand_meters">15000 meters</string>
+    <string name="download_succeeded">Download succeeded</string>
+    <string name="download_failed">Download failed</string>
+    <string name="lookup_nothing_found">No DEM found for coordinates</string>
 
 
 

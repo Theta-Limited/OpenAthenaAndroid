@@ -4,7 +4,7 @@
     <string name="next">Prochain</string>
     <string name="previous">Précédent</string>
 
-    <string name="action_demcache">Manage Elecation Maps</string>
+    <string name="action_demcache">Gérer les modèles d\'élévation</string>
     <string name="action_prefs">Paramètres</string>
     <string name="action_calculate">Calculer</string>
     <string name="action_about_openathena">À propos</string>
@@ -23,31 +23,30 @@
     <string name="title_activity_log">Journal OpenAthena™ pour Android</string>
     <string name="title_activity_prefs">Paramètres OpenAthena™ pour Android</string>
     <string name="title_activity_about">Informations sur OpenAthena™ pour Android</string>
-    <string name="title_activity_demcache">Manage Elevation Maps Cache</string>
-    <string name="title_activity_newelevationmap">New Elevation Map</string>
-    <string name="title_activity_managedems">Manage Elevation Maps</string>
-    <string name="title_activity_mapsdetail">Elevation Map Details</string>
+    <string name="title_activity_demcache">" Liste du cache des modèles d'élévation"</string>
+    <string name="title_activity_newelevationmap">Ajouter un nouveau modèle d\'élévation</string>
+    <string name="title_activity_managedems">Gérer les modèles d\'élévation numérique</string>
     <string name="are_you_sure_delete_map">Delete this elevation map?</string>
 
-    <string name="button_manage_cache">Manage Cache</string>
-    <string name="button_lookup_coordinates">Lookup Coordinates</string>
-    <string name="button_lookup_results">Lookup results</string>
-    <string name="button_lookup_please_enter">Please enter lat,lon in degrees separated by comma</string>
-    <string name="button_lookup_no_data">No elevation data for the middle of the ocean!</string>
-    <string name="button_lookup_nothing_found">Nothing found</string>
+    <string name="label_enter_coordinates">Entrez les coordonnées du centre et la hauteur/largeur en mètres</string>
+    <string name="button_manage_cache">Liste des modèles d\'élévation en cache</string>
+    <string name="button_lookup_coordinates">Vérifier la couverture en cache</string>
+    <string name="button_lookup_results">Résultats de la recherche</string>
+    <string name="button_lookup_please_enter">Veuillez entrer les coordonnées au format lat,lon ou OTAN MGRS</string>
+    <string name="button_lookup_no_data">Pas de données d\'élévation pour le milieu de l\'océan !</string>
+    <string name="button_lookup_nothing_found">Rien trouvé</string>
 
-    <string name="button_download_elevation_map">Download Elevation Map (Internet)</string>
-    <string name="button_import_elevation_map">Import Elevation Map (File)</string>
-    <string name="label_enter_coordinates">Enter center coordinates and h/w in meters</string>
+    <string name="title_activity_mapsdetail">Détails du modèle d\'élévation</string>
+    <string name="button_download_elevation_map">Télécharger</string>
+    <string name="button_import_elevation_map">Importer fichier DEM</string>
 
-    <string name="hint_lat_lon_in_degrees">lat,lon in degrees</string>
-    <string name="hint_lat_lon">lat,lon</string>
-    <string name="hint_fifteen_thousand_meters">15000 meters</string>
+    <string name="hint_lat_lon_in_degrees">lat,lon ou OTAN MGRS</string>
+    <string name="hint_fifteen_thousand_meters">15000 mètres</string>
 
-    <string name="download_succeeded">Download succeeded</string>
-    <string name="download_failed">Download failed</string>
+    <string name="download_succeeded">Téléchargement réussi</string>
+    <string name="download_failed">Échec du téléchargement</string>
 
-    <string name="lookup_nothing_found">No DEM found for coordinates</string>
+    <string name="lookup_nothing_found">Aucun modèle d\'élévation numérique (DEM) trouvé pour les coordonnées</string>
 
     
     <string name="clear_button_text">Réinitialiser le journal</string>
