@@ -84,7 +84,7 @@
     <string name="autel_accuracy_warning_msg">⚠️ DANGER: Autel drones have known accuracy problems ⚠️</string>
     <string name="i_understand_this_risk">I understand this risk</string>
     <string name="image_is_too_large_error_msg">Image is too large to show!</string>
-    <string name="loading_geotiff_toast_msg">Loading DEM. Please wait...</string>
+    <string name="loading_geotiff_toast_msg">Loading DEM. Please wait…</string>
     <string name="dem_loading_finished_user_interaction_prompt">DEM loaded successfully! Tap anywhere within the image to calculate coordinates</string>
     <string name="wgs84_standard_lat_lon">WGS84 (Default)\nLat, Lon</string>
     <string name="wgs84_tooltip">The widely-used standard for describing a latitude longitude location on Earth</string>
@@ -253,8 +253,8 @@
     <string name="missing_dem_api_key_dialog_text">Greetings! Thanks for installing OpenAthena™ for Android. Online features of this app (for downloading terrain elevation data) require you to obtain an OpenTopography.org API Key (passcode) and set it within this app</string>
     <string name="missing_dem_api_key_positive_take_me_there_now">Take me there now!</string>
     <string name="missing_dem_api_key_negative">No (load offline data only)</string>
-    <string name="main_activity_found_dem_in_cache_starting_load">Found a DEM in cache for your selected image. Starting DEM auto-load...</string>
-    <string name="main_activity_no_dem_found_for_your_image">No DEM found for your selected image.\nDownloading new DEM from internet...</string>
+    <string name="main_activity_found_dem_in_cache_starting_load">Found a DEM in cache for your selected image. Starting DEM auto-load…</string>
+    <string name="main_activity_no_dem_found_for_your_image">No DEM found for your selected image.\nDownloading new DEM from internet…</string>
     <string name="distance_label">"distance:"</string>
     <string name="error_mainactivity_calculation_oob">ERROR: calculation went out of bounds beyond the maximum DEM size. Please select a closer target</string>
     <string name="mainactivity_status_downloading_a_new_dem_with_increased_coverage_area">Downloading a new DEM with increased coverage area</string>
@@ -265,7 +265,7 @@
     <string name="mainactivity_status_user_declined_dem_download">You declined to download a new DEM. Please load a new DEM manually or select another image to continue.</string>
     <string name="mainactivity_missing_dem_api_key_user_chose_offline">Online features are disabled. All terrain data must be loaded manually. Navigate to \"Manage Drone Models and API Key\" at any time if you change your mind!</string>
     <string name="mainactivity_label_cursor_on_target_message_sent_with_uid">Cursor on Target message sent with UID:</string>
-    <string name="main_activity_status_starting_auto_load_for_downloaded_dem_file">Starting auto-load for downloaded DEM file...</string>
+    <string name="main_activity_status_starting_auto_load_for_downloaded_dem_file">Starting auto-load for downloaded DEM file…</string>
     <string name="error_mainactivity_dted_elevation_model_file_is_corrupt_and_unusable">ERROR: DTED elevation model file is corrupt and unusable! ð⛰️</string>
     <string name="error_metadata_extractor_focal_length_could_not_be_determined">focal length could not be determined</string>
     <string name="error_metadataextractor_could_not_determine_width_and_height_of_image">could not determine width and height of image!</string>
@@ -286,4 +286,5 @@
     <string name="toast_prefsactivity_ck42_output_modes_must_use_meters">CK42 Output Modes must use Meters</string>
     <string name="error_the_file">The file</string>
     <string name="error_geofile_does_not_exist_2">does not exist.</string>
+    <string name="mainactivity_dem_pixelunit_squares">squares</string>
 </resources>
