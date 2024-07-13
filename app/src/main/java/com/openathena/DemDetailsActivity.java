@@ -95,13 +95,14 @@ public class DemDetailsActivity extends AthenaActivity
         // fill in details of the elevation map XXX
         String htmlString = "";
         dEntry = athenaApp.demCache.cache.get(athenaApp.demCache.selectedItem);
-        exportFilename = dEntry.filename + ".tiff";
+        exportFilename = dEntry.filename;
+        String basename = exportFilename.substring(0,exportFilename.lastIndexOf("."));
 
         htmlString += "<b>"+dEntry.filename + "</b><br>";
         htmlString += "Modified: " + df_ISO8601.format(dEntry.modDate) + "<br>";
 
         // example DEM filename: DEM_LatLon_29.502361_-95.960694_30.172639_-94.881528
-        String[] filename_pieces = dEntry.filename.split("_");
+        String[] filename_pieces = basename.split("_");
         for (String aString : filename_pieces) {
             if (filename_pieces.length != 6 || aString.isEmpty()) {
                 htmlString += getString(R.string.error_demdetailsactivity_invalid_filename) +" " + dEntry.filename + "<br>";
@@ -118,7 +119,7 @@ public class DemDetailsActivity extends AthenaActivity
             maxLat = Double.parseDouble(filename_pieces[4]);
             maxLon = Double.parseDouble(filename_pieces[5]);
         } catch (NumberFormatException nfe) {
-            htmlString += getString(R.string.error_demdetailsactivity_invalid_filename) + " " + dEntry.filename + "<br>";
+            htmlString += getString(R.string.error_demdetailsactivity_invalid_filename) + " " + exportFilename + "<br>";
             htmlString += getString(R.string.error2_dem_details_activity_invalid_filename);
             demInfo.setText(Html.fromHtml(htmlString,0,null,null));
             return;

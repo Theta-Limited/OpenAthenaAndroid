@@ -72,8 +72,8 @@ public class DemCache {
 
     public DemCache(Context context)
     {
-        // read/scan app document/storage directory for .tiff files
-        // DEM_LatLon_s_w_n_e.tiff
+        // read/scan app document/storage directory for .tiff or .dt# files
+        // e.g. DEM_LatLon_s_w_n_e.tiff
         this.context = context;
         if (context == null) {
             throw new IllegalArgumentException("ERROR: tried to initialize DemCache object with a null Context!");
@@ -116,8 +116,8 @@ public class DemCache {
         cache = new ArrayList<DemCacheEntry>();
         selectedItem = -1;
 
-        // list all .tiff files in the demDir in app cache folder
-        File[] files = demDir.listFiles((dir,name) -> name.toLowerCase().endsWith(".tiff"));
+        // list all DEM files in the demDir in app cache folder
+        File[] files = demDir.listFiles((dir,name) -> name.toLowerCase().endsWith(".tiff") || name.toLowerCase().endsWith(".dt2") || name.toLowerCase().endsWith(".dt3"));
         if (files != null) {
 
             Log.d(TAG,"DemCache: found "+files.length+" files to look at");
@@ -125,9 +125,9 @@ public class DemCache {
             for (File file: files) {
 
                 try {
-                    // strip off .tiff
-                    String filename = file.getName().substring(0,file.getName().lastIndexOf("."));
-                    Log.d(TAG,"DemCache: examining file "+filename);
+                    // strip off file extension
+                    String basename = file.getName().substring(0,file.getName().lastIndexOf("."));
+                    Log.d(TAG,"DemCache: examining file "+basename);
                     Log.d(TAG,"DemCache: file exists is "+file.exists());
 
                     // make sure file starts with DEM_LatLon; will be 6 pieces
@@ -143,8 +143,8 @@ public class DemCache {
 
                     Log.d(TAG,"DemCache: successfully got file attributes");
 
-                    if (filename.startsWith("DEM_LatLon_")) {
-                        String[] pieces = filename.split("_");
+                    if (basename.startsWith("DEM_LatLon_")) {
+                        String[] pieces = basename.split("_");
                         if (pieces.length == 6) {
                             double s,w,n,e,clat,clon,l;
                             s = Double.parseDouble(pieces[2]);
@@ -158,6 +158,7 @@ public class DemCache {
                             l = v[2];
 
                             Uri fileUri = Uri.fromFile(file);
+                            String filename = file.getName();
                             DemCacheEntry aDem = new DemCacheEntry(filename,fileUri,n,s,e,w,l,clat,clon,createDate,modDate,fileSize);
                             cache.add(aDem);
                             totalBytes += aDem.bytes;
@@ -190,7 +191,7 @@ public class DemCache {
             totalBytes -= removed.bytes;
             // delete the file
             Log.d(TAG,"DemCache: deleting "+removed.filename);
-            String aFilename = removed.filename+".tiff";
+            String aFilename = removed.filename;
 
             File file = new File(demDir,aFilename);
             boolean ret = file.delete();
@@ -204,7 +205,7 @@ public class DemCache {
         }
     }
 
-    // given a filename (w/o tiff), find it and set the selectedItem param
+    // given a filename, find it and set the selectedItem param
     // return the selected item number
     public int setSelectedItem(String filename)
     {

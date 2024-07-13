@@ -16,6 +16,7 @@ import java.lang.NullPointerException;
 import java.util.Locale;
 
 import com.agilesrc.dem4j.Point;
+import com.agilesrc.dem4j.dted.DTEDLevelEnum;
 import com.agilesrc.dem4j.dted.impl.FileBasedDTED;
 import com.agilesrc.dem4j.exceptions.CorruptTerrainException;
 import com.agilesrc.dem4j.exceptions.InvalidValueException;
@@ -43,6 +44,7 @@ public class DEMParser implements Serializable {
 
     private FileBasedDTED dted;
     public boolean isDTED = false;
+    public DTEDLevelEnum dtedLevel = null;
 
     DEMParser() {
         geofile = null;
@@ -57,7 +59,7 @@ public class DEMParser implements Serializable {
         this();
         this.geofile = geofile;
         if (!geofile.exists()) {
-            throw new IllegalArgumentException("The file " + geofile.getAbsolutePath() + " does not exist.");
+            throw new IllegalArgumentException(Resources.getSystem().getString(R.string.error_the_file) + geofile.getAbsolutePath() + " " + Resources.getSystem().getString(R.string.error_geofile_does_not_exist_2));
         }
         try {
             loadDEM(geofile);
@@ -65,9 +67,9 @@ public class DEMParser implements Serializable {
             // If GeoTIFF parsing fails, try to parse as DTED
             try {
                 this.dted = new FileBasedDTED(geofile);
-                String dtedLevel = this.dted.getDTEDLevel().name().toUpperCase();
+                dtedLevel = this.dted.getDTEDLevel();
                 Log.d(TAG, "DTED LEVEL IS: " + dtedLevel);
-                if (dtedLevel.equals("DTED0") || dtedLevel.equals("DTED1")) {
+                if (dtedLevel.equals(DTEDLevelEnum.DTED0) || dtedLevel.equals(DTEDLevelEnum.DTED1)) {
                     throw new CorruptTerrainException(Resources.getSystem().getString(R.string.demparser_error_dted2_or_dted3_is_required));
                 }
                 this.xParams = new geodataAxisParams();

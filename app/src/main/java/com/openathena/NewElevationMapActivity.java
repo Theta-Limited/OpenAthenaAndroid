@@ -16,10 +16,7 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -27,15 +24,13 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.core.util.Consumer;
+import com.agilesrc.dem4j.dted.DTEDLevelEnum;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 public class NewElevationMapActivity extends DemManagementActivity
 {
@@ -112,7 +107,7 @@ public class NewElevationMapActivity extends DemManagementActivity
         importLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
             Log.d(TAG,"NewElevationMapActivity: picked a file!");
             if (uri != null) {
-                copyFileToPrivateStorage(uri);
+                copyFileToCache(uri);
             }
         });
 
@@ -200,7 +195,7 @@ public class NewElevationMapActivity extends DemManagementActivity
 
     // once selected, import the file and test it
     // to make sure its a valid DEM tiff file
-    private void copyFileToPrivateStorage(Uri fileUri) {
+    private void copyFileToCache(Uri fileUri) {
         String filePath = fileUri.getPath();
         if (filePath == null) filePath = "";
         resultsLabel.setText(getString(R.string.results_importing_local_file_msg) + "...");
@@ -213,7 +208,7 @@ public class NewElevationMapActivity extends DemManagementActivity
                 String demFilename = "DEM_LatLon";
 
                 try (InputStream inputStream = getContentResolver().openInputStream(fileUri);
-                     FileOutputStream outputStream = new FileOutputStream(new File(demDir,"import.tiff"))) {
+                     FileOutputStream outputStream = new FileOutputStream(new File(demDir,"import"))) {
                     byte[] buffer = new byte[1024];
                     int length;
                     while ((length = inputStream.read(buffer)) > 0) {
@@ -226,12 +221,12 @@ public class NewElevationMapActivity extends DemManagementActivity
                     return;
                 }
 
-                File importFile = new File(demDir, "import.tiff");
+                File importFile = new File(demDir, "import");
                 DEMParser aParser = null;
                 try {
                     aParser = new DEMParser(importFile);
                 } catch (IllegalArgumentException e) {
-                    postResults(getString(R.string.reults_failed_to_import_file));
+                    postResults(getString(R.string.reults_failed_to_import_file) + "\n" + e.getMessage());
                     decrementProgressBar();
                     return;
                 }
@@ -240,7 +235,18 @@ public class NewElevationMapActivity extends DemManagementActivity
                 double s = truncateDouble(aParser.getMinLat(), 6);
                 double e = truncateDouble(aParser.getMaxLon(), 6);
                 double w = truncateDouble(aParser.getMinLon(), 6);
-                String newFilename = "DEM_LatLon_" + s + "_" + w + "_" + n + "_" + e + ".tiff";
+                String fileExt = ".tiff";
+                // Use alternatively file names for DTED format files
+                if (aParser.isDTED && aParser.dtedLevel != null) {
+                    // OpenAthena only supports DTED level 2 or higher
+                    // DTED4 not yet supported
+                    if (aParser.dtedLevel == DTEDLevelEnum.DTED2) {
+                        fileExt = ".dt2";
+                    } else {
+                        fileExt = ".dt3";
+                    }
+                }
+                String newFilename = "DEM_LatLon_" + s + "_" + w + "_" + n + "_" + e + fileExt;
 
                 File newFile = new File(demDir, newFilename);
                 if (newFile.exists() && !newFile.delete()) {
@@ -256,7 +262,7 @@ public class NewElevationMapActivity extends DemManagementActivity
                 decrementProgressBar();
             }
         }).start();
-    } // copyFileToPrivateStorage
+    } // copyFileToCache
 
     // post results to the label making sure we do so on the UI thread;
     // while we're at it, refresh the DEM cache since we may have
