@@ -142,4 +142,8 @@
     <string name="distance_unit_label">거리 단위:</string>
     <string name="meter_label">미터</string>
     <string name="us_foot_label">미국 피트</string>
+    <string name="dem_loading_finished_user_interaction_prompt">디지털 고도 모델 (DEM)이 성공적으로 로드되었습니다! 좌표를 계산하려면 이미지 내 아무 곳이나 탭하세요</string>
+    <string name="step_1_load_drone_image">1단계: 드론 이미지를 로드합니다. 🖼 \\주변 지형에 대한 디지털 고도 모델 (DEM)이 자동으로 다운로드됩니다</string>
+    <string name="step_2_press_calculate">2단계: 이미지 내 아무 곳이나 탭하여 지상 좌표를 계산합니다</string>
+    <string name="step_3_obtain_target">3단계: 아래에서 대상 위치를 확인하세요</string>
 </resources>

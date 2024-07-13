@@ -143,4 +143,8 @@
     <string name="distance_unit_label">距离单位:</string>
     <string name="meter_label">" 米"</string>
     <string name="us_foot_label">美国英尺</string>
+    <string name="dem_loading_finished_user_interaction_prompt">" 数字高程模型 (DEM) 加载成功！点击图像中的任意位置以计算坐标"</string>
+    <string name="step_1_load_drone_image">第一步：加载一张无人机图像。🖼 \\n数字高程模型 (DEM) 将自动下载周围的地形数据</string>
+    <string name="step_2_press_calculate">第二步：点击图像中的任意位置以计算地面坐标</string>
+    <string name="step_3_obtain_target">第三步：在下方获取您的目标位置</string>
 </resources>
