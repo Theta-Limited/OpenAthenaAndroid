@@ -59,7 +59,7 @@ public class DEMParser implements Serializable {
         this();
         this.geofile = geofile;
         if (!geofile.exists()) {
-            throw new IllegalArgumentException(Resources.getSystem().getString(R.string.error_the_file) + geofile.getAbsolutePath() + " " + Resources.getSystem().getString(R.string.error_geofile_does_not_exist_2));
+            throw new IllegalArgumentException(AthenaApp.resources.getString(R.string.error_the_file) + geofile.getAbsolutePath() + " " + AthenaApp.resources.getString(R.string.error_geofile_does_not_exist_2));
         }
         try {
             loadDEM(geofile);
@@ -70,7 +70,7 @@ public class DEMParser implements Serializable {
                 dtedLevel = this.dted.getDTEDLevel();
                 Log.d(TAG, "DTED LEVEL IS: " + dtedLevel);
                 if (dtedLevel.equals(DTEDLevelEnum.DTED0) || dtedLevel.equals(DTEDLevelEnum.DTED1)) {
-                    throw new CorruptTerrainException(Resources.getSystem().getString(R.string.demparser_error_dted2_or_dted3_is_required));
+                    throw new CorruptTerrainException(AthenaApp.resources.getString(R.string.demparser_error_dted2_or_dted3_is_required));
                 }
                 this.xParams = new geodataAxisParams();
                 this.xParams.start = this.dted.getNorthWestCorner().getLongitude();
@@ -146,10 +146,10 @@ public class DEMParser implements Serializable {
 
         List<Double> pixelAxisScales = directory.getModelPixelScale();
         if (pixelAxisScales == null || pixelAxisScales.isEmpty()) {
-            throw new IllegalArgumentException(Resources.getSystem().getString(R.string.demparser_error_geotiff_file_is_corrupted));
+            throw new IllegalArgumentException(AthenaApp.resources.getString(R.string.demparser_error_geotiff_file_is_corrupted));
         }
         if (pixelAxisScales.get(2) != 0.0d) {
-            throw new IllegalArgumentException(Resources.getSystem().getString(R.string.dem_parser_error_failed_to_load_a_rotated_or_skewed_geotiff));
+            throw new IllegalArgumentException(AthenaApp.resources.getString(R.string.dem_parser_error_failed_to_load_a_rotated_or_skewed_geotiff));
         }
 
         FileDirectoryEntry fde = directory.get(FieldTagType.GeoKeyDirectory);
@@ -164,7 +164,7 @@ public class DEMParser implements Serializable {
             if (values != null) {
                 boolean isWGS84 = isHorizontalDatumWGS84(directory, values);
                 if (!isWGS84) {
-                    throw new IllegalArgumentException(Resources.getSystem().getString(R.string.demparser_error_horizontal_datum_not_of_an_accepted_type));
+                    throw new IllegalArgumentException(AthenaApp.resources.getString(R.string.demparser_error_horizontal_datum_not_of_an_accepted_type));
                 }
             } else {
                 Log.e(TAG, "metadata values obtained were of an unknown type");

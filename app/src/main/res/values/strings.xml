@@ -284,6 +284,6 @@
     <string name="error_demdownloader_connectus_interruptus">Internet connection was interrupted during download operation. Please try again.</string>
     <string name="zoom_out_or_press_back_to_return">Zoom out or press \"Back\" to return</string>
     <string name="toast_prefsactivity_ck42_output_modes_must_use_meters">CK42 Output Modes must use Meters</string>
-    <string name="error_the_file">"The file "</string>
+    <string name="error_the_file">The file</string>
     <string name="error_geofile_does_not_exist_2">does not exist.</string>
 </resources>

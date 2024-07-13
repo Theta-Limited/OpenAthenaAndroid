@@ -573,7 +573,7 @@ public class MainActivity extends DemManagementActivity {
             prefsEditor.apply(); // make change persistent
             return null;
         } catch (IllegalArgumentException e) {
-            String failureOutput = getString(R.string.dem_load_error_generic_msg) + e.getMessage();
+            String failureOutput = getString(R.string.dem_load_error_generic_msg) + " " + e.getMessage();
             e.printStackTrace();
             return new Exception(failureOutput + "\n");
         } catch (TiffException e) {

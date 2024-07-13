@@ -2,6 +2,7 @@ package com.openathena;
 
 import android.app.Application;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
@@ -23,10 +24,13 @@ public class AthenaApp extends Application { // Android Singleton Class for hold
     // https://earthscience.stackexchange.com/questions/7283/how-high-must-one-be-for-the-curvature-of-the-earth-to-be-visible-to-the-eye
     public static final double DEM_DOWNLOAD_RETRY_MAX_METERS_DIAMETER = 25000.0d;
 
+    public static Resources resources;
+
     @Override
     public void onCreate() {
         Log.d(TAG, "AthenaApp onCreate() called");
         super.onCreate();
+        resources = getResources();
         try {
             // Android asset manager has a bug with any filename ending in 'gz':
             // https://stackoverflow.com/a/3447148

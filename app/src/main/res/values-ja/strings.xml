@@ -142,4 +142,8 @@
     <string name="distance_unit_label">距離の単位:</string>
     <string name="meter_label">メートル</string>
     <string name="us_foot_label">アメリカフィート</string>
+    <string name="dem_loading_finished_user_interaction_prompt">デジタル標高モデル (DEM) の読み込みに成功しました！画像の任意の場所をタップして座標を計算します</string>
+    <string name="step_1_load_drone_image">ステップ1：ドローン画像を読み込む。🖼\\n 周囲の地形に対してデジタル標高モデル (DEM) が自動的にダウンロードされます</string>
+    <string name="step_2_press_calculate">ステップ2：画像の任意の場所をタップして地上の座標を計算します</string>
+    <string name="step_3_obtain_target">ステップ3：以下にターゲットの位置を取得します</string>
 </resources>
