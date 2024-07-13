@@ -503,7 +503,7 @@ public class MainActivity extends DemManagementActivity {
                     if (e == null) {
                         String prefix = theParser.isDTED ? "DTED DEM " : "GeoTIFF DEM ";
                         String successOutput = prefix;
-                        successOutput += getString(R.string.dem_loaded_size_is_msg) + " " + theParser.getNumCols() + "x" + theParser.getNumRows() + " squares" + "\n";
+                        successOutput += getString(R.string.dem_loaded_size_is_msg) + " " + theParser.getNumCols() + "x" + theParser.getNumRows() + " " + getString(R.string.mainactivity_dem_pixelunit_squares) + "\n";
                         appendText(successOutput);
                         printDEMBounds();
                         if (isImageLoaded) {
