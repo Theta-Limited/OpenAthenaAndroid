@@ -26,7 +26,6 @@
     <string name="title_activity_demcache">" Liste du cache des modèles d\'élévation"</string>
     <string name="title_activity_newelevationmap">Ajouter un nouveau modèle d\'élévation</string>
     <string name="title_activity_managedems">Gérer les modèles d\'élévation numérique</string>
-    <string name="are_you_sure_delete_map">Delete this elevation map?</string>
 
     <string name="label_enter_coordinates">Entrez les coordonnées du centre et la hauteur/largeur en mètres</string>
     <string name="button_manage_cache">Liste des modèles d\'élévation en cache</string>
@@ -54,8 +53,8 @@
     <string name="software_license">licence de logiciel</string>
     <string name="AboutSnippet"><![CDATA[<br>OpenAthena™ pour Android est un projet qui permet aux drones courants de repérer des emplacements géodésiques précis<br>]]></string>
     <string name="about_software_libraries_used">Librairies logicielles utilisées:</string>
-    <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> Projet maintenu par <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br> ]]>;</string>
-    <string name="CallToActionSnippet"><![CDATA[Voir le projet sur GitHub ]]> </string>
+    <string name="AuthorGitHubSnippet"><![CDATA[<p><p><p><p> Projet maintenu par <a href=\"https://github.com/mkrupczak3\">mkrupczak3</a><br> ]]></string>
+    <string name="CallToActionSnippet">"<![CDATA[Voir le projet sur GitHub</a><br>]]> "</string>
     <string name="bad_altitude_data_error_msg">ERREUR : mauvaises données d\'altitude ou de terrain. Cette image est inutilisable. 🖼🚫🎯</string>
     <string name="target_found_at_msg">Cible trouvée à</string>
     <string name="drone_dist_to_target_msg">Distance du drone à la cible :</string>
@@ -238,4 +237,5 @@
     <string name="toast_prefsactivity_ck42_output_modes_must_use_meters">Les modes de sortie CK42 doivent utiliser des mètres</string>
     <string name="error_the_file">Le fichier</string>
     <string name="error_geofile_does_not_exist_2">n\'existe pas.</string>
+    <string name="are_you_sure_delete_map">Supprimer ce modèle d\'élévation (DEM) ?</string>
 </resources>

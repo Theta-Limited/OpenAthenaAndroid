@@ -26,7 +26,6 @@
     <string name="title_activity_demcache">Список кэша моделей рельефа</string>
     <string name="title_activity_newelevationmap">Добавить новую модель рельефа</string>
     <string name="title_activity_managedems">Управление цифровыми моделями рельефа</string>
-    <string name="are_you_sure_delete_map">Delete this elevation map?</string>
 
     <string name="label_enter_coordinates">Введите центральные координаты и высоту/ширину в метрах</string>
     <string name="button_manage_cache">Список кэшированных моделей рельефа</string>
@@ -237,4 +236,5 @@
     <string name="toast_prefsactivity_ck42_output_modes_must_use_meters">Режимы вывода CK42 должны использовать метры</string>
     <string name="error_the_file">Файл</string>
     <string name="error_geofile_does_not_exist_2">не существует.</string>
+    <string name="are_you_sure_delete_map">Удалить эту модель рельефа (DEM)?</string>
 </resources>

@@ -26,8 +26,7 @@
     <string name="save_prefs_text">💾</string>
     <string name="reset_prefs_text">Reset</string>
 
-    <!-- TODO add proper translations once AUTODEM feature is complete!!! -->
-    <string name="are_you_sure_delete_map">Delete this elevation map?</string>
+    <string name="are_you_sure_delete_map">Delete this elevation model?</string>
 
     <string name="title_activity_log">OpenAthena™ for Android Log</string>
     <string name="title_activity_prefs">OpenAthena™ for Android Settings</string>
