@@ -53,23 +53,8 @@ Certain error conditions may occur during regular use of this software. For trou
 [https://github.com/Theta-Limited/OpenAthenaAndroid/blob/master/TROUBLESHOOTING.md](https://github.com/Theta-Limited/OpenAthenaAndroid/blob/master/TROUBLESHOOTING.md)
 
 
-## Obtain a GeoTIFF Digital Elevation Model:
-
-To use this app, you need a GeoTIFF or DTED (resolution level 2 or higher) Digital Elevation Model (DEM) file. DEM files store terrain elevation data for an area on Earth. OpenAthena performs a ray-cast from a drone camera's position and orientation towards the terrain, which can be used to precisely locate any point within a given drone image.
-
-GeoTIFF DEM files obtained from the [STRM GL1 30m](https://portal.opentopography.org/raster?opentopoID=OTSRTM.082015.4326.1) tend to produce more accurate target results than DTED
-
-To obtain a GeoTIFF file for a certain area, use [this link](https://github.com/mkrupczak3/OpenAthena/blob/main/EIO_fetch_geotiff_example.md).
-
-## Load a GeoTIFF Digital Elevation Model  ⛰:
-
-Load the DEM file (e.g. cobb.tif) using the "⛰" button. The app will display the size of the file and its latitude and longitude boundaries:
 
 
-(NOTE: during file selection, the thumbnail  image preview for any GeoTIFF ".tif" or DTED ".dt#" file will be blank. This is normal.)
-
-
-<img width="586" alt="OpenAthena™ Android GeoTIFF DEM loading demo using cobb.tif" src="./assets/cobb_tif_DEM_Loading_Demo_landscape.png">
 
 ## Setup for drone flight
 
@@ -103,21 +88,22 @@ Wait until at least 6 GPS satellites are visible (or you can confirm the GPS fix
 
 ## Select an Image 🖼:
 
-This app is compatible with images taken by select models of DJI, Skydio, Autel, and Parrot aircraft models. The drone's position and its camera's orientation are automatically extracted from the image metadata.
+To being, tap the '🖼' button to select and load a drone image.
 
-After loading a GeoTIFF DEM, use the "🖼" button to select a drone image containing the necessary metadata:
+This app is compatible with images taken by select models of DJI, Skydio, Autel, and Parrot aircraft models. The drone's position and its camera's orientation are automatically extracted from the image metadata. 
 
-<img width="586" alt="OpenAthena™ Android Image Selection demo using DJI_0419.JPG" src="./assets/DJI_0419_Image_Selection_Demo_landscape.png">
+OpenAthena for Android (v0.21.0 and later) will automatically select and/or download a Digital Elevation Model (DEM) for the area around your selected drone image.
+
+<img width="586" alt="OpenAthena™ Android User is prompted to allow automatic download of a Digital Elevation Model for use with their selected drone image" src="./assets/0699_download_DEM_prompt.png">
 
 ## Calculate a target 🎯:
 
-Tap anywhere on the displayed image to calculate the corresponding target location on the ground. You can tap the result display box to copy the result text to your clipboard or open the position in Google Maps by clicking the blue hyperlink:
+Tap anywhere on the displayed image to calculate the corresponding target location on the ground. You can tap the result display box to copy the result text to your clipboard or open the position in the maps app of your choice by clicking the blue hyperlink:
 
 <img width="586" alt="OpenAthena™ Android Target Calculation demo using cobb.tif and DJI_0419.JPG, output mode WGS84" src="./assets/DJI_0419_Target_Res_Demo_landscape.png">
 
 <img width="586" alt="OpenAthena Android DJI_0419.JPG target location text copied to clipboard" src="./assets/0419_text_copied_to_clipboard.png">
 
-<!-- <img width="340" alt="Gif showing text copied to clipboard toast after taping on results box" src="./assets/TextCopiedOptimized.gif"> -->
 
 <img width="586" alt="OpenAthena Android DJI_0419.JPG target shown in Google Maps satellite view" src="./assets/0419_maps_screenshot.png">
 

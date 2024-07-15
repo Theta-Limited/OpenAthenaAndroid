@@ -26,7 +26,6 @@
     <string name="title_activity_demcache">高程模型缓存列表</string>
     <string name="title_activity_newelevationmap">添加新高程模型</string>
     <string name="title_activity_managedems">管理数字高程模型</string>
-    <string name="are_you_sure_delete_map">Delete this elevation map?</string>
 
     <string name="title_activity_mapsdetail">高程模型详情</string>
     <string name="button_download_elevation_map">下载</string>
@@ -238,5 +237,6 @@
     <string name="error_the_file">文件 </string>
     <string name="error_geofile_does_not_exist_2">不存在。</string>
     <string name="mainactivity_dem_pixelunit_squares">正方形</string>
+    <string name="are_you_sure_delete_map">删除此高程模型（DEM）吗？</string>
 
 </resources>

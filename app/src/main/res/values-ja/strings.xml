@@ -26,7 +26,6 @@
     <string name="title_activity_demcache">標高モデルキャッシュリスト</string>
     <string name="title_activity_newelevationmap">新しい標高モデルを追加</string>
     <string name="title_activity_managedems">デジタル標高モデルを管理</string>
-    <string name="are_you_sure_delete_map">Delete this elevation map?</string>
 
     <string name="label_enter_coordinates">"中心座標と高さ/幅をメートルで入力 "</string>
     <string name="button_manage_cache">キャッシュされた標高モデルリスト</string>
@@ -237,5 +236,6 @@
     <string name="toast_prefsactivity_ck42_output_modes_must_use_meters">CK42出力モードはメートル単位を使用する必要があります</string>
     <string name="error_the_file">ファイル</string>
     <string name="error_geofile_does_not_exist_2">は存在しません。</string>
+    <string name="are_you_sure_delete_map">この標高モデル (DEM) を削除しますか?</string>
 
 </resources>

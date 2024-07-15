@@ -28,6 +28,7 @@ android/local.properties
 misc.xml
 deploymentTargetDropDown.xml
 render.experimental.xml
+local.properties
 
 # Keystore files
 *.jks

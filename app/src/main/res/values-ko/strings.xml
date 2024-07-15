@@ -26,7 +26,6 @@
     <string name="title_activity_demcache">표고 모델 캐시 목록</string>
     <string name="title_activity_newelevationmap">새 표고 모델 추가</string>
     <string name="title_activity_managedems">디지털 고도 모델 관리</string>
-    <string name="are_you_sure_delete_map">Delete this elevation map?</string>
 
     <string name="label_enter_coordinates">중심 좌표와 높이/너비(미터) 입력</string>
     <string name="button_manage_cache">캐시된 고도 모델 목록</string>
@@ -237,5 +236,6 @@
     <string name="toast_prefsactivity_ck42_output_modes_must_use_meters">CK42 출력 모드는 미터 단위를 사용해야 합니다</string>
     <string name="error_the_file">파일</string>
     <string name="error_geofile_does_not_exist_2">은(는) 존재하지 않습니다.</string>
+    <string name="are_you_sure_delete_map">이 고도 모델(DEM)을 삭제하시겠습니까?</string>
 
 </resources>

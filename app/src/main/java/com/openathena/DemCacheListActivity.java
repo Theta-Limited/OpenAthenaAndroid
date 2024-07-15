@@ -105,7 +105,7 @@ public class DemCacheListActivity extends AthenaActivity implements DemListAdapt
 
                  // Create an AlertDialog for confirmation
                 new AlertDialog.Builder(DemCacheListActivity.this)
-                        .setTitle("Delete Elevation Map?")
+                        .setTitle(R.string.are_you_sure_delete_map)
                         .setIcon(R.drawable.athena48)
                         .setMessage(R.string.are_you_sure_delete_map)
                         .setPositiveButton(R.string.yes, (dialog, which) -> {
