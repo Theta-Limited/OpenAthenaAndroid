@@ -7,5 +7,5 @@
   <li>optional GPS feature for downloading terrain of local area</li>
   <li>addition of a UTM output mode</li>
   <li>increased maximum zoom level</li>
-  <li>improved calculation speed</li
+  <li>improved calculation speed</li>
 </ul>
