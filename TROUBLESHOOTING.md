@@ -24,7 +24,7 @@ OpenAthena™ allows common drones to spot precise geodetic locations.
 
 ## Preface
 
-OpenAthena for Android is designed to be usable by operators without the need for explicit technical training. A downside of this however is that fail conditions of the software can occur without the user having technical insight into why.
+OpenAthena™ for Android is designed to be usable by operators without the need for explicit technical training. A downside of this however is that fail conditions of the software can occur without the user having technical insight into why.
 
 OpenAthena is designed to fail safe. If data is known to be inaccurate, unusable, or incomplete enough for a calculation, the software will abort the calculation rather than provide an inaccurate result.
 
@@ -33,18 +33,15 @@ This troubleshooting manual provides important context on common fail conditions
 ## Common failure conditions
 
 
-(NOTE: during file selection, the thumbnail  image preview for any GeoTIFF ".tif" or DTED ".dt#" file will be blank. This is normal.)
-
-
 ### ERROR: failed to load DEM, not a GeoTIFF ".tif" or DTED2 ".dt2" file
 
 <img width="586" alt="OpenAthena Android an example of DEM load failure error" src="./assets/troubleshooting/ERROR_failed_to_load_DEM.jpg">
 
 OpenAthena requires a Digital Elevation Model (DEM) representing terrain altitude of an area of the earth to be loaded before calculations may be performed.
 
-This error may occur when you use the "⛰" button to attempt to load a DEM.
+This error may occur when the user or the app attempts to load a DEM from the application directory.
 
-Despite the content of this message, OpenAthena does actually supports DTED3 (.dt3) files as well.
+(Despite the content of this message, OpenAthena does actually supports DTED3 (.dt3) files as well)
 
 The DEM loading process is automated in some versions of the software (v0.21.0 and higher) when internet connection is available. Otherwise, download and load an elevation model within the app (v0.21.0 and higher) while you have an internet connection. Alternatively, follow the instructions in the document "EIO_fetch_geotiff_example.md" for obtaining an elevation model using OpenTopography.org:
 
@@ -65,7 +62,9 @@ To use this app, you need a GeoTIFF or DTED (resolution level 2 or higher) Digit
 
 GeoTIFF DEM files obtained from the [STRM GL1 30m](https://portal.opentopography.org/raster?opentopoID=OTSRTM.082015.4326.1) tend to produce more accurate target results than DTED files.
 
-To obtain a GeoTIFF file for a certain area, review the document "EIO_fetch_geotiff_example.md"
+OpenAthena for Android v0.21.0 and higher can automatically download DEM files when an internet connection is present. It also allows the user to download a custom-specified area (Manage Elevation Models -> Load New DEM) for later use offline. Downloaded DEMs are saved in the application cache directory where they may be automatically loaded by the app whenever you load a drone image from the corresponding area.
+
+To obtain a GeoTIFF file for a certain area outside of the OpenAthena app, review the document "EIO_fetch_geotiff_example.md"
 [https://github.com/mkrupczak3/OpenAthena/blob/main/EIO_fetch_geotiff_example.md](https://github.com/mkrupczak3/OpenAthena/blob/main/EIO_fetch_geotiff_example.md)
 
 ### ERROR: resolveTarget ran OOB at: 00.000000, 00.000000, Please ensure your DEM file covers the drone's location!

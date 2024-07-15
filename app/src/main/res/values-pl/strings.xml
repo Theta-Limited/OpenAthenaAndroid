@@ -26,7 +26,6 @@
     <string name="title_activity_demcache">Lista pamięci podręcznej modeli wysokości</string>
     <string name="title_activity_newelevationmap">"Dodaj nowy model wysokości "</string>
     <string name="title_activity_managedems">Zarządzaj modelami wysokościowymi</string>
-    <string name="are_you_sure_delete_map">Delete this elevation map?</string>
 
     <string name="title_activity_mapsdetail">Szczegóły modelu wysokości</string>
     <string name="button_download_elevation_map">Pobierz</string>
@@ -237,4 +236,5 @@
     <string name="toast_prefsactivity_ck42_output_modes_must_use_meters">Tryby wyjściowe CK42 muszą używać metrów</string>
     <string name="error_the_file">Plik</string>
     <string name="error_geofile_does_not_exist_2">nie istnieje.</string>
+    <string name="are_you_sure_delete_map">Usunąć ten model elewacji (DEM)?</string>
 </resources>

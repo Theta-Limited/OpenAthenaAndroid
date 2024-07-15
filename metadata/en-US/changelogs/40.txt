@@ -1,0 +1,11 @@
+<h2>OpenAthena for Android now in Beta!</h2><br>
+<ul>
+  <li>Automatic download and management of elevation model files</li>
+  <li>Revised Cursor on Target naming convention</li>
+  <li>Add caclulation accuracy category to output</li>
+  <li>Support for the Skydio X2D and Autel Evo II Pro 6k v3</li>
+  <li>optional GPS feature for downloading terrain of local area</li>
+  <li>addition of a UTM output mode</li>
+  <li>increased maximum zoom level</li>
+  <li>improved calculation speed</li
+</ul>
