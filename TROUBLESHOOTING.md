@@ -179,7 +179,6 @@ OpenAthena for Android supports multiple output modes for target calculation, in
 
 To change the ouptut mode of OpenAthena for Android, tap the kebab menu icon (three dots) at the top-right corner of the screen and select "Settings":
 
-<img width="586" alt="OpenAthena™ Android Open Settings Activity demo" src="./assets/DJI_0419_Open_Settings_Demo_landscape.png">
 
 <img width="270" alt="OpenAthena™ Android 🎯 Output Modes Activity demo WGS84" src="./assets/Settings_WGS84_Demo.png">
 
@@ -211,7 +210,28 @@ The OpenAthena app's automatic DEM downloading feature requires an Application P
 If you have cloned and built this project but did not provide an OpenTopography API key, OpenAthena will be unable to download DEM data.
 
 #### Add your OpenTopography API key from within the OpenAthena app
-This capability is not yet present.
+
+#### Add your OpenTopography API key from within the OpenAthena app
+
+If you have downloaded OpenAthena™ from GitHub or F-Droid, you will be prompted the following upon your first time opening the app:
+
+<img width="270" alt="Greetings! Thanks for installing OpenAthena™ for Android. Online features of this app (for downloading terrain elevation data) require you to obtain an OpenTopography.org API Key (passcode) and set it within this app Accept/Reject " src="./assets/Startup_Prompt_No_API_Key_Present.png">
+
+Select the option "take me there now!" to go to the screen for obtaining and inputting your API key (it can also be accessed at any time from the 3 dot action menu on the top right).
+
+You will see "API Key Status: X (Invalid)", with a description and link below:
+
+<img width="270" alt="OpenAthena for Android Manage API Key activity. The app shows the current API key is missing or invalid" src="./assets/ManageDroneModelsAndAPIKey_bad_API_key.png">
+
+Click on the link to be taken to the OpenTopography.org website. There, create an account, sign in, go to the "MyOpenTopo Dashboard", and click on "Get An API Key":
+
+<img width="586" alt="OpenAthena™ Android Open Settings Activity demo" src="./assets/OTDashboard_RequestAPIKey.png">
+
+Finally, paste your API key into the OpenAthena™ for Android app and hit the "Apply button":
+
+<img width="270" alt="OpenAthena™ Android Open Settings Activity demo" src="./assets/Toast_New_API_Key_Applied.png">
+
+If you have an internet connection, the API Key Status should appear as ✅ (Valid). If you are offline the status will appear as ❓ (Unknown). If your API key is in fact valid, the software will work correctly with the OpenTopography API for DEM downloading once internet connection is restored.
 
 #### How to Acquire and use an OpenTopography API Key for building this project
 

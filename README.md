@@ -128,13 +128,14 @@ OpenAthena allows users to tap any point in the image to locate it. Tapping on a
 OpenAthena for Android supports multiple output modes for target calculation, including:
 
 * Latitude, Longitude (standard WGS84)
+* UTM ([Universal Transverse Mercator](https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system))
 * [Nato Military Grid Reference System](https://en.wikipedia.org/wiki/Military_Grid_Reference_System) (MGRS) 1m, 10m, and 100m
 * [CK-42 Система координат](https://en.wikipedia.org/wiki/SK-42_reference_system) Latitude Longitude (an alternative geodetic system commonly used in slavic countries)
 * [CK-42 Система координат](https://en.wikipedia.org/wiki/SK-42_reference_system) [Gauss-Krüger](https://desktop.arcgis.com/en/arcmap/latest/map/projections/gauss-kruger.htm) Grid: Northing, Easting (an alternative military grid reference system used by former Warsaw pact countries)
 
 To change the ouptut mode of OpenAthena for Android, tap the kebab menu icon (three dots) at the top-right corner of the screen and select "Settings":
 
-<img width="586" alt="OpenAthena™ Android Open Settings Activity demo" src="./assets/DJI_0419_Open_Settings_Demo_landscape.png">
+
 
 <img width="270" alt="OpenAthena™ Android 🎯 Output Modes Activity demo WGS84" src="./assets/Settings_WGS84_Demo.png">
 
@@ -200,7 +201,27 @@ git submodule update --remote
 The OpenAthena app's automatic DEM downloading feature requires an Application Programming Interface (API) key from OpenTopography.org ([obtainable here](https://opentopography.org/blog/introducing-api-keys-access-opentopography-global-datasets)) to function. Such an API key authenticates the app with OpenTopography's servers for DEM downloading. A default key will be automatically included in releases from the Google Play or Apple AppStore; however, you will need to obtain one for yourself if you clone this project's code from GitHub or download it from F-Droid.
 
 #### Add your OpenTopography API key from within the OpenAthena app
-This capability is not yet present.
+
+If you have downloaded OpenAthena™ from GitHub or F-Droid, you will be prompted the following upon your first time opening the app:
+
+<img width="270" alt="Greetings! Thanks for installing OpenAthena™ for Android. Online features of this app (for downloading terrain elevation data) require you to obtain an OpenTopography.org API Key (passcode) and set it within this app Accept/Reject " src="./assets/Startup_Prompt_No_API_Key_Present.png">
+
+Select the option "take me there now!" to go to the screen for obtaining and inputting your API key (it can also be accessed at any time from the 3 dot action menu on the top right).
+
+You will see "API Key Status: X (Invalid)", with a description and link below:
+
+<img width="270" alt="OpenAthena for Android Manage API Key activity. The app shows the current API key is missing or invalid" src="./assets/ManageDroneModelsAndAPIKey_bad_API_key.png">
+
+Click on the link to be taken to the OpenTopography.org website. There, create an account, sign in, go to the "MyOpenTopo Dashboard", and click on "Get An API Key":
+
+<img width="586" alt="OpenAthena™ Android Open Settings Activity demo" src="./assets/OTDashboard_RequestAPIKey.png">
+
+Finally, paste your API key into the OpenAthena™ for Android app and hit the "Apply button":
+
+<img width="270" alt="OpenAthena™ Android Open Settings Activity demo" src="./assets/Toast_New_API_Key_Applied.png">
+
+If you have an internet connection, the API Key Status should appear as ✅ (Valid). If you are offline the status will appear as ❓ (Unknown). If your API key is in fact valid, the software will work correctly with the OpenTopography API for DEM downloading once internet connection is restored.
+
 
 #### How to Acquire and use an OpenTopography API Key for building this project
 
@@ -220,7 +241,7 @@ After cloning this project, edit the file `local.properties` which is auto-gener
 sdk.dir=/home/YOURNAME/Android/Sdk/
 ```
 
-Add a new line to the end of the `local.properties` file:
+Add your OpenTopography API key to the end of the `local.properties` file:
 ```bash
 OPENTOPOGRAPHY_API_KEY=nlhhp3yd9ud54tr3eem4akqv49wcb23i
 ```
