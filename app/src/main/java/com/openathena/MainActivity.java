@@ -220,7 +220,7 @@ public class MainActivity extends DemManagementActivity {
         // Restore the user's custom droneModels.json drone camera intrinsics database (if so configured)
         String storedDroneModelsJsonUriString = sharedPreferences.getString("droneModelsJsonUri", null);
         DroneParametersFromJSON droneModelsParser = MetadataExtractor.parameterProvider;
-        if (storedDroneModelsJsonUriString != null && !storedDroneModelsJsonUriString.isBlank()) {
+        if (storedDroneModelsJsonUriString != null && !storedDroneModelsJsonUriString.isEmpty()) {
             try {
                 droneModelsParser.loadJSONFromUri(Uri.parse(storedDroneModelsJsonUriString));
             } catch (IOException | JSONException e) {
@@ -707,9 +707,9 @@ public class MainActivity extends DemManagementActivity {
             // yikes
             if (IS_EXTENDED_COT_MODE_ACTIVE) {
                 openAthenaCalculationInfo.put("focalLength", roundDouble(MetadataExtractor.rationalToFloat(exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH))));
-                openAthenaCalculationInfo.put("digitalZoomRatio", exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO));
-                openAthenaCalculationInfo.put("imageWidth", exif.getAttribute(ExifInterface.TAG_IMAGE_WIDTH));
-                openAthenaCalculationInfo.put("imageLength", exif.getAttribute(ExifInterface.TAG_IMAGE_LENGTH));
+                openAthenaCalculationInfo.put("digitalZoomRatio", zeroStringIfNull(exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO)));
+                openAthenaCalculationInfo.put("imageWidth", zeroStringIfNull(exif.getAttribute(ExifInterface.TAG_IMAGE_WIDTH)));
+                openAthenaCalculationInfo.put("imageLength", zeroStringIfNull(exif.getAttribute(ExifInterface.TAG_IMAGE_LENGTH)));
             }
 
             double[] intrinsics = MetadataExtractor.getIntrinsicMatrixFromExif(exif);
@@ -1163,6 +1163,14 @@ public class MainActivity extends DemManagementActivity {
         DecimalFormat df = new DecimalFormat("#.######", decimalSymbols);
         df.setRoundingMode(RoundingMode.HALF_UP);
         return df.format(d);
+    }
+
+    private static String zeroStringIfNull(String s) {
+        if (s == null || s.isEmpty()) {
+            return "0.0";
+        } else {
+            return s;
+        }
     }
 
     private void appendText(final String aStr) {

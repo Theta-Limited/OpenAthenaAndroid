@@ -218,6 +218,8 @@ public class CursorOnTargetSender {
             detail.appendChild(precisionlocation);
 
             if (!oaInfoMap.isEmpty()) {
+                // Log.d("CursorOnTargetSender", "oaInfoMap keySet: " + oaInfoMap.keySet().toString());
+                // Log.d("CursorOnTargetSender", "oaInfoMap values: " + oaInfoMap.values().toString());
                 Element openAthenaCalculationInfo = doc.createElement("openAthenaCalculationInfo");
                 double theta = Math.toDegrees(Math.atan2(Double.parseDouble(le),Double.parseDouble(ce)));
                 openAthenaCalculationInfo.setAttribute("raySlantAngleDeg", String.valueOf(theta));
