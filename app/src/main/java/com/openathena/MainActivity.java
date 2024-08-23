@@ -460,7 +460,7 @@ public class MainActivity extends DemManagementActivity {
                 matchingDemURI = dce.fileUri;
                 Log.d(TAG, "matchingDemURI is: " + matchingDemURI.getPath());
                 Log.d(TAG, "demUri is: " + ((demUri == null) ? "null" : demUri.getPath()));
-                if (!matchingDemURI.equals(demUri) && demUri != null) {
+                if (!matchingDemURI.equals(demUri) || demUri == null) {
                     if (dce.contains(lat, lon)) {
                         appendText(getString(R.string.main_activity_found_dem_in_cache_starting_load) + "\n");
                         demSelected(matchingDemURI);
