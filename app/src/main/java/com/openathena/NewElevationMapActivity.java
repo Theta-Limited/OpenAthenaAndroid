@@ -60,6 +60,9 @@ public class NewElevationMapActivity extends DemManagementActivity
         setContentView(R.layout.activity_new_dem);
 
         demDir = new File(getCacheDir(), "DEMs");
+        if (!demDir.exists()) {
+            demDir.mkdirs();
+        }
 
         instructionsLabel = (TextView)findViewById(R.id.new_dem_label);
         getPosGPSButton = (ImageButton) findViewById(R.id.get_pos_gps_button);
@@ -298,6 +301,9 @@ public class NewElevationMapActivity extends DemManagementActivity
     private void onClickImport()
     {
         Log.d(TAG,"NewElevationMapActivity: going to pick a file to import");
+
+        requestExternStorage();
+
         // launch and give it .tiff as a restriction?
         // launcher takes mime-types; here are a few options
         // image/tiff -- just tiff files

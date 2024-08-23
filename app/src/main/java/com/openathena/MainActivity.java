@@ -602,17 +602,7 @@ public class MainActivity extends DemManagementActivity {
         return true;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(MainActivity.this, getString(R.string.permissions_toast_success_msg), Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(MainActivity.this, getString(R.string.permissions_toast_error_msg), Toast.LENGTH_SHORT).show();
-        }
-    }
+
 
     @Override
     protected void onDestroy()
@@ -1140,22 +1130,7 @@ public class MainActivity extends DemManagementActivity {
 //
 //    }
 
-    private void requestExternStorage() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[] {Manifest.permission.READ_MEDIA_IMAGES}, requestNo);
-            }
-            requestNo++;
-        } else {
-            if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                // Permission is not granted
-                Log.d(TAG, "Attempting to Obtain unobtained permission READ_EXTERNAL_STORAGE");
-                requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, requestNo);
-                requestNo++;
-            }
-        }
-    }
+
 
     private static String roundDouble(double d) {
         DecimalFormatSymbols decimalSymbols = DecimalFormatSymbols.getInstance();

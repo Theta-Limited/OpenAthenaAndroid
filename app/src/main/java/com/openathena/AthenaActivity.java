@@ -1,19 +1,23 @@
 package com.openathena;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.exifinterface.media.ExifInterface;
 
 
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
@@ -25,6 +29,7 @@ import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -304,6 +309,35 @@ public abstract class AthenaActivity extends AppCompatActivity {
         // Scale the result to fit within the range of [-15, 15]
         double offset = logValue * (15.0 / Math.log(1 + LOG_SCALE));
         return offset;
+    }
+
+    protected void requestExternStorage() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[] {Manifest.permission.READ_MEDIA_IMAGES}, requestNo);
+            }
+            requestNo++;
+        } else {
+            if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Permission is not granted
+                Log.d(TAG, "Attempting to Obtain unobtained permission READ_EXTERNAL_STORAGE");
+                requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, requestNo);
+                requestNo++;
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(AthenaActivity.this, getString(R.string.permissions_toast_success_msg), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(AthenaActivity.this, getString(R.string.permissions_toast_error_msg), Toast.LENGTH_SHORT).show();
+        }
     }
 
 //    public static int get_selection_x() {
