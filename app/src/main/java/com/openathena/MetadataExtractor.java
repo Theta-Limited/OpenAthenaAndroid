@@ -225,6 +225,13 @@ public class MetadataExtractor {
                     throw new XMPException(parent.getString(R.string.parrot_model_prefix_error_msg) + model + parent.getString(R.string.not_usable_at_this_time_error_msg), XMPError.BADVALUE);
                 }
                 //break;
+            case "TELEDYNE FLIR":
+                if (model.contains("HADRON 640") || model.contains("BOSON 640")) {
+                    return handleTeal(exif);
+                } else {
+                    Log.e(TAG, "ERROR: Teal model " + model + " not usable at this time");
+                    throw new XMPException("ERROR: Teal model " + model + " not usable at this time", XMPError.BADVALUE);
+                }
             default:
                 Log.e(TAG, parent.getString(R.string.make_prefix_error_msg) + " " + make + " " + parent.getString(R.string.not_usable_at_this_time_error_msg));
                 throw new XMPException(parent.getString(R.string.make_prefix_error_msg) + " " + make + " " + parent.getString(R.string.not_usable_at_this_time_error_msg), XMPError.BADXMP);
@@ -487,6 +494,7 @@ public class MetadataExtractor {
         }
 
         try {
+            //      convert to OpenAthena notation, where a downwards angle is positive
             theta = -1.0d * Double.parseDouble(xmpMeta.getPropertyString(schemaNS, "CameraPitchDegree"));
         } catch (NumberFormatException nfe) {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
@@ -506,6 +514,65 @@ public class MetadataExtractor {
         if (!model.toLowerCase().contains("anafiai")) {
             // convert from EGM96 AMSL to WGS84 hae (if necessary)
             z = z - offsetProvider.getEGM96OffsetAtLatLon(y,x);
+        }
+
+        double[] outArr = new double[]{y, x, z, azimuth, theta, roll};
+        return outArr;
+    }
+
+    public static double[] handleTeal(ExifInterface exif) throws XMPException, MissingDataException{
+        double y;
+        double x;
+        double z;
+        double azimuth;
+        double theta;
+        double roll;
+
+        Float[] yxz = exifGetYXZ(exif);
+        y = yxz[0];
+        x = yxz[1];
+        z = yxz[2];
+
+        // Convert vertical datum from EGM96 (AMSL) to WGS84 (HAE)
+        z = z - offsetProvider.getEGM96OffsetAtLatLon(y,x);
+
+        String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
+        if (xmp_str == null) {
+            throw new MissingDataException(parent.getString(R.string.xmp_missing_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
+        } if (xmp_str.trim().equals("")) {
+            throw new MissingDataException(parent.getString(R.string.xmp_empty_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
+        }
+
+        Log.i(TAG, "xmp_str for Make TELEDYNE FLIR (Teal): " + xmp_str);
+        XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
+
+        String schemaNS = "http://ns.adobe.com/exif/1.0/";
+
+        // For Teal2, it seems that Camera yaw/pitch/roll is expressed relative to the Platform
+        // So to obtain absolute yaw/pitch/roll, sum the two together
+        try {
+            azimuth = rationalToFloat(xmpMeta.getPropertyString(schemaNS, "PlatformYaw")) +
+                      rationalToFloat(xmpMeta.getPropertyString(schemaNS, "CameraYaw"));
+            azimuth = degNormalize(azimuth);
+        } catch (NumberFormatException nfe) {
+            throw new MissingDataException(parent.getString(R.string.missing_data_exception_azimuth_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.AZIMUTH);
+        }
+
+        try {
+
+            theta = rationalToFloat(xmpMeta.getPropertyString(schemaNS, "PlatformPitch")) +
+                    rationalToFloat(xmpMeta.getPropertyString(schemaNS, "CameraPitch"));
+            theta *= -1.0d; // convert to OpenAthena notation, where a downwards angle is positive
+        } catch (NumberFormatException nfe) {
+            throw new MissingDataException(parent.getString(R.string.missing_data_exception_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
+        }
+
+        try {
+            // positive roll is clockwise TODO Verify this!
+            roll = rationalToFloat(xmpMeta.getPropertyString(schemaNS, "PlatformRoll")) +
+                   rationalToFloat(xmpMeta.getPropertyString(schemaNS, "CameraRoll"));
+        } catch (NumberFormatException nfe) {
+            throw new MissingDataException(parent.getString(R.string.missing_data_exception_roll), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ROLL);
         }
 
         double[] outArr = new double[]{y, x, z, azimuth, theta, roll};

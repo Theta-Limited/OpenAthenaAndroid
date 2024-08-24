@@ -707,7 +707,7 @@ public class MainActivity extends DemManagementActivity {
 //            attribs += "fy: " + intrinsics[4] + "\n";
 //            attribs += "cx: " + intrinsics[2] + "\n";
 //            attribs += "cy: " + intrinsics[5] + "\n";
-            attribs += getString(R.string.roll_label) + " " + roll + "°\n";
+            attribs += getString(R.string.roll_label) + " " + roundDouble(roll) + "°\n";
             if (IS_EXTENDED_COT_MODE_ACTIVE) {
                 openAthenaCalculationInfo.put("f_x", roundDouble(intrinsics[0]));
                 openAthenaCalculationInfo.put("f_y", roundDouble(intrinsics[4]));
