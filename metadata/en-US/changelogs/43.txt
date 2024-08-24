@@ -1,0 +1,4 @@
+Minor update to first OpenAthena Beta version:
+ * Add initial support for Teal 2 drone (not calibrated yet for accuracy)
+ * Fix issues related to DEM import from local file
+ * After a new DEM is imported, a link now appears to its details page
