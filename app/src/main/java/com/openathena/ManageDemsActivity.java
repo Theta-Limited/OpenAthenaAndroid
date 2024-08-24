@@ -36,6 +36,7 @@ public class ManageDemsActivity extends DemManagementActivity
     private Button resultsButton;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -131,7 +132,6 @@ public class ManageDemsActivity extends DemManagementActivity
         i = new Intent(getApplicationContext(), DemDetailsActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(i);
-        return;
     }
 
     // lookup a DEM based on the lat,lon coordinates; display results

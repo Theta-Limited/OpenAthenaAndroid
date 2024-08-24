@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class AthenaApp extends Application { // Android Singleton Class for holding persistent state information between activities
-    private DEMParser demParser;
+    private static DEMParser demParser;
 
     public static String TAG = AthenaApp.class.getSimpleName();
 

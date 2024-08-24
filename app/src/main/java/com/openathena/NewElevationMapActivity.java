@@ -7,6 +7,9 @@
 package com.openathena;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -15,8 +18,10 @@ import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.util.Consumer;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -24,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.agilesrc.dem4j.dted.DTEDLevelEnum;
 
@@ -136,6 +142,8 @@ public class NewElevationMapActivity extends DemManagementActivity
         }
         incrementAndShowProgressBar();
 
+        makeResultsLabelClickable(false);
+
         String latlon = latLonText.getText().toString();
         latlon = latlon.trim();
         Log.d(TAG, "latlon is: " + latlon);
@@ -214,14 +222,13 @@ public class NewElevationMapActivity extends DemManagementActivity
         String filePath = fileUri.getPath();
         if (filePath == null) filePath = "";
         resultsLabel.setText(getString(R.string.results_importing_local_file_msg) + "...");
+        makeResultsLabelClickable(false);
 
         incrementAndShowProgressBar();
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String demFilename = "DEM_LatLon";
-
                 try (InputStream inputStream = getContentResolver().openInputStream(fileUri);
                      FileOutputStream outputStream = new FileOutputStream(new File(demDir,"import"))) {
                     byte[] buffer = new byte[1024];
@@ -231,6 +238,7 @@ public class NewElevationMapActivity extends DemManagementActivity
                     }
                 } catch (IOException e) {
                     postResults(getString(R.string.results_error_accessing_file));
+                    makeResultsLabelClickable(false);
                     Log.e(TAG, "Error reading or writing the file to import", e);
                     decrementProgressBar();
                     return;
@@ -242,6 +250,7 @@ public class NewElevationMapActivity extends DemManagementActivity
                     aParser = new DEMParser(importFile);
                 } catch (IllegalArgumentException e) {
                     postResults(getString(R.string.reults_failed_to_import_file) + "\n" + e.getMessage());
+                    makeResultsLabelClickable(false);
                     decrementProgressBar();
                     return;
                 }
@@ -261,23 +270,52 @@ public class NewElevationMapActivity extends DemManagementActivity
                         fileExt = ".dt3";
                     }
                 }
-                String newFilename = "DEM_LatLon_" + s + "_" + w + "_" + n + "_" + e + fileExt;
 
-                File newFile = new File(demDir, newFilename);
+              String newDemFilename = "DEM_LatLon_" + s + "_" + w + "_" + n + "_" + e + fileExt;
+
+                File newFile = new File(demDir, newDemFilename);
                 if (newFile.exists() && !newFile.delete()) {
                     postResults(getString(R.string.reults_failed_to_import_file_of_same_name));
+                    makeResultsLabelClickable(false);
                     decrementProgressBar();
                     return;
                 }
                 if (importFile.renameTo(newFile)) {
-                    postResults(getString(R.string.results_imported_file_as)+ ": " + newFilename);
+                    postResults(getString(R.string.results_imported_file_as)+ ": " + newDemFilename);
+                    athenaApp.demCache.setSelectedItem(newDemFilename);
+                    makeResultsLabelClickable(true);
                 } else {
-                    postResults(getString(R.string.results_failed_to_import_file) + ": " + newFilename);
+                    postResults(getString(R.string.results_failed_to_import_file) + ": " + newDemFilename);
+                    makeResultsLabelClickable(false);
                 }
                 decrementProgressBar();
             }
         }).start();
     } // copyFileToCache
+    
+    @Override
+    protected void downloadNewDEM(double lat, double lon, double meters_diameter) {
+        DemDownloader aDownloader = new DemDownloader(getApplicationContext(),lat,lon,meters_diameter);
+        aDownloader.asyncDownload(new Consumer<String>() {
+            @Override
+            public void accept(String s) {
+                Log.d(TAG,"NewDemActivity download returned "+s);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        decrementProgressBar();
+                        postResults(s);
+                        athenaApp.demCache.setSelectedItem(aDownloader.filename);
+                        makeResultsLabelClickable(aDownloader.isHttpResponseCodeOk());
+                        Toast t = Toast.makeText(NewElevationMapActivity.this,s,Toast.LENGTH_SHORT);
+                        t.setGravity(Gravity.CENTER,0,0);
+                        t.show();
+                    }
+                });
+            }
+        });
+    }
 
     // post results to the label making sure we do so on the UI thread;
     // while we're at it, refresh the DEM cache since we may have
@@ -295,13 +333,35 @@ public class NewElevationMapActivity extends DemManagementActivity
         athenaApp.demCache.refreshCache();
     }
 
-
+    protected void makeResultsLabelClickable(boolean clickability) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (clickability) {
+                    resultsLabel.setTextColor(Color.parseColor("#0000EE"));
+                    resultsLabel.setPaintFlags(resultsLabel.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                    resultsLabel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent i;
+                            i = new Intent(getApplicationContext(), DemDetailsActivity.class);
+                            i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                            startActivity(i);
+                        }
+                    });
+                } else {
+                    resultsLabel.setTextAppearance(androidx.appcompat.R.style.TextAppearance_AppCompat_Medium);
+                    resultsLabel.setPaintFlags(resultsLabel.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
+                    resultsLabel.setOnClickListener(null);
+                }
+            }
+        });
+    }
 
     // handle an import button click
     private void onClickImport()
     {
         Log.d(TAG,"NewElevationMapActivity: going to pick a file to import");
-
         requestExternStorage();
 
         // launch and give it .tiff as a restriction?

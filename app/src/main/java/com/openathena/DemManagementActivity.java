@@ -93,7 +93,8 @@ public abstract class DemManagementActivity extends AthenaActivity {
         aDownloader.asyncDownload(new Consumer<String>() {
             @Override
             public void accept(String s) {
-                Log.d(TAG,"NewDemActivity download returned "+s);
+                Log.d(TAG,"Download completed: "+s);
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

@@ -33,6 +33,7 @@ public class DemDownloader
     private int responseBytes;
     private double s, w, n, e; // Bounding box coordinates
     private String filenameSuffix = ".tiff";
+    public String filename;
     private static final String OUTPUT_FORMAT_STRING = "GTiff";
     private Context context;
 
@@ -53,6 +54,8 @@ public class DemDownloader
         s = boundingBox[1];
         e = boundingBox[2];
         w = boundingBox[3];
+
+        filename = "DEM_LatLon_"+s+"_"+w+"_"+n+"_"+e+filenameSuffix;
 
         Log.d(TAG,"DemDownloader: "+n+","+s+","+e+","+w);
     }
@@ -91,6 +94,10 @@ public class DemDownloader
         return (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_NO_CONTENT || responseCode == HttpURLConnection.HTTP_BAD_REQUEST);
     }
 
+    public boolean isHttpResponseCodeOk() {
+        return responseCode == HttpURLConnection.HTTP_OK;
+    }
+
     // Blocking download of a DEM from OpenTopography
     public boolean syncDownload() throws IOException {
         String demTypeStr;
@@ -120,7 +127,7 @@ public class DemDownloader
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
 
-        int responseCode = connection.getResponseCode();
+        responseCode = connection.getResponseCode();
         if (responseCode != HttpURLConnection.HTTP_OK) {
             Log.d(TAG,"DemDownloader: request failed, error code "+responseCode);
             Log.d(TAG, "requestURLStr was: " + requestURLStr);
@@ -128,7 +135,6 @@ public class DemDownloader
         }
 
         // read and write out the data to file
-        String filename = "DEM_LatLon_"+s+"_"+w+"_"+n+"_"+e+filenameSuffix;
 
         try {
             InputStream inputStream = connection.getInputStream();
