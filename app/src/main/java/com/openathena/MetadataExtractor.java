@@ -99,7 +99,7 @@ public class MetadataExtractor {
             if ("perspective".equalsIgnoreCase(lensType)) {
                 distortionParamMap.put("k1", drone.getDouble("radialR1"));
                 distortionParamMap.put("k2", drone.getDouble("radialR2"));
-                distortionParamMap.put("k3", drone.getDouble("radialR3"));
+                distortionParamMap.put("k3", drone.getDouble("radialR3")); // value is ignored in the Brown-Conrady model
                 distortionParamMap.put("p1", drone.getDouble("tangentialT1"));
                 distortionParamMap.put("p2", drone.getDouble("tangentialT2"));
             } else if ("fisheye".equalsIgnoreCase(lensType)) {
@@ -127,7 +127,7 @@ public class MetadataExtractor {
      * @param exif exif of an image where the camera intrinsic parameters are desired
      * @return a JSONObject containing the intrinsic parameters of the particular matching camera
      * <p>
-     *     Many drone models have an EXIF make/model name collision between their main color camera and their secondary thermal camera, even though each has its entirely own intrinsics.
+     *     Many drone models have an EXIF make/model name collision between their main color camera and their secondary thermal camera, even though each has entirely different intrinsics.
      * </p>
      */
     public static JSONObject getMatchingDrone(ExifInterface exif) {
@@ -166,6 +166,11 @@ public class MetadataExtractor {
         return closestDrone;
     }
 
+    /**
+     * Returns the sensor physical height of a single pixel of a given drone make/model from droneModels.json database
+     * @param exif ExifInterface from metadata of an image to analyze for make and model
+     * @return double height (in mm) per pixel of the camera sensor of the given make/model camera
+     */
     public static double getSensorPhysicalHeight(ExifInterface exif) {
         JSONObject drone = getMatchingDrone(exif);
         if (drone == null) {
@@ -181,6 +186,11 @@ public class MetadataExtractor {
         }
     }
 
+    /**
+     * Returns the sensor physical width of a single pixel of a given drone make/model from droneModels.json database
+     * @param exif ExifInterface from metadata of an image to analyze for make and model
+     * @return double width (in mm) per pixel of the camera sensor of the given make/model camera
+     */
     public static double getSensorPhysicalWidth(ExifInterface exif) {
         JSONObject drone = getMatchingDrone(exif);
         if (drone == null) {
@@ -196,6 +206,13 @@ public class MetadataExtractor {
         }
     }
 
+    /**
+     * Obtain position and orientation values from EXIF and XMP metadata of a given image
+     * @param exif ExifInterface from the image metadata to be analyzed. Usually includes XMP metadata as well
+     * @return double[6] containing latitude, longitude, elevation (in WGS84 hae), azimuth, pitch angle (theta, where downwards is positive), roll
+     * @throws XMPException If expected XMP metadata values are missing
+     * @throws MissingDataException If XMP or EXIF metadata are missing
+     */
     public static double[] getMetadataValues(ExifInterface exif) throws XMPException, MissingDataException {
         if (exif == null) {
             Log.e(TAG, "ERROR: getMetadataValues failed, ExifInterface was null");
@@ -238,6 +255,13 @@ public class MetadataExtractor {
         }
     }
 
+    /**
+     * Obtain position and orientation values from EXIF and XMP metadata of a DJI drone image
+     * @param exif ExifInterface from the DJI drone image metadata to be analyzed. Usually includes XMP metadata as well
+     * @return double[6] containing latitude, longitude, elevation (in WGS84 hae), azimuth, pitch angle (theta, where downwards is positive), roll
+     * @throws XMPException If expected XMP metadata values are missing
+     * @throws MissingDataException If XMP or EXIF metadata are missing
+     */
     public static double[] handleDJI(ExifInterface exif) throws XMPException, MissingDataException{
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
         if (xmp_str == null) {
@@ -327,6 +351,13 @@ public class MetadataExtractor {
         return outArr;
     }
 
+    /**
+     * Obtain position and orientation values from EXIF and XMP metadata of a given Skydio drone image
+     * @param exif ExifInterface from the Skydio drone image metadata to be analyzed. Usually includes XMP metadata as well
+     * @return double[6] containing latitude, longitude, elevation (in WGS84 hae), azimuth, pitch angle (theta, where downwards is positive), roll
+     * @throws XMPException If expected XMP metadata values are missing
+     * @throws MissingDataException If XMP or EXIF metadata are missing
+     */
     public static double[] handleSKYDIO(ExifInterface exif) throws XMPException, MissingDataException {
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
         if (xmp_str == null) {
@@ -386,6 +417,13 @@ public class MetadataExtractor {
         return outArr;
     }
 
+    /**
+     * Obtain position and orientation values from EXIF and XMP metadata of a given Autel Robotics image
+     * @param exif ExifInterface from the Autel Robotics image metadata to be analyzed. Usually includes XMP metadata as well
+     * @return double[6] containing latitude, longitude, elevation (in WGS84 hae), azimuth, pitch angle (theta, where downwards is positive), roll
+     * @throws XMPException If expected XMP metadata values are missing
+     * @throws MissingDataException If XMP or EXIF metadata are missing
+     */
     public static double[] handleAUTEL(ExifInterface exif) throws XMPException, MissingDataException{
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
         if (xmp_str == null) {
@@ -462,6 +500,13 @@ public class MetadataExtractor {
         }
     }
 
+    /**
+     * Obtain position and orientation values from EXIF and XMP metadata of a given Parrot drone image
+     * @param exif ExifInterface from the Parrot drone image metadata to be analyzed. Usually includes XMP metadata as well
+     * @return double[6] containing latitude, longitude, elevation (in WGS84 hae), azimuth, pitch angle (theta, where downwards is positive), roll
+     * @throws XMPException If expected XMP metadata values are missing
+     * @throws MissingDataException If XMP or EXIF metadata are missing
+     */
     public static double[] handlePARROT(ExifInterface exif) throws XMPException, MissingDataException{
         double y;
         double x;
@@ -731,7 +776,7 @@ public class MetadataExtractor {
         double alpha_x = focalLength / mmWidthPerPixel; // focal length in pixel units
         alpha_x = alpha_x * scaleRatio; // scale down if image is scaled down
         double alpha_y = alpha_x / pixelAspectRatio; // focal length equivalent in pixel units, for the homogenous y axis in the image frame
-        
+
         double[] intrinsicMatrix = new double[9];
         intrinsicMatrix[0] = alpha_x;
         intrinsicMatrix[1] = 0.0d; // gamma, the skew coefficient between the x and the y axis, and is often 0.
@@ -970,7 +1015,7 @@ public class MetadataExtractor {
 
     public static float rationalToFloat(String str)
     {
-        if (str == null || str.isBlank()) {
+        if (str == null || str.isEmpty()) {
             return 0.0f;
         }
         String[] split = str.split("/", 2);
