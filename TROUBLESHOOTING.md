@@ -136,7 +136,7 @@ This error occurs in rare cases with specific low end consumer-oriented DJI dron
 ### Resolving accuracy issues which occur during operation
 
 Accuracy issues occuring during the app's opperation are typically caused by three factors:
-* Slant angle from drone camera to target is nearly parallel to the ground. Cicrular Error via terrain-raycast is much higher than normal in such cases
+* Slant angle from drone camera to target is nearly parallel to the ground. Circular Error via terrain-raycast is much higher than normal in such cases
 * Poor magnetometer (compass sensor) calibration of the drone. Unless a calibration procedure is performed for the drone's compass while within 100 miles of the operating AO, heading information from the drone's compass can be off by up to 10 degrees or so, causing significant circular error which increases with distance.
 * Camera intrinsic parameters are not present within the DroneModels database for the loaded drone image. In the target calculation output trace text, if the `Is camera model recognized?` value is `No`, this means internal properties of the camera were calculated using a less accurate fallback method. In this case, calculations will become more inaccurate the further the selected pixel is from the central point of the image.
 
