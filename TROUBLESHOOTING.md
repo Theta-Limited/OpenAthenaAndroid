@@ -211,8 +211,6 @@ If you have cloned and built this project but did not provide an OpenTopography 
 
 #### Add your OpenTopography API key from within the OpenAthena app
 
-#### Add your OpenTopography API key from within the OpenAthena app
-
 If you have downloaded OpenAthena™ from GitHub or F-Droid, you will be prompted the following upon your first time opening the app:
 
 <img width="270" alt="Greetings! Thanks for installing OpenAthena™ for Android. Online features of this app (for downloading terrain elevation data) require you to obtain an OpenTopography.org API Key (passcode) and set it within this app Accept/Reject " src="./assets/Startup_Prompt_No_API_Key_Present.png">
