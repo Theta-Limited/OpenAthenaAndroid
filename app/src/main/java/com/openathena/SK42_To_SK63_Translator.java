@@ -61,9 +61,6 @@ class SK42_To_SK63_Translator {
         double N = I + II * deltaLon * deltaLon + III * Math.pow(deltaLon, 4) + IIIA * Math.pow(deltaLon, 6);
         double E = E0 + IV * deltaLon + V * Math.pow(deltaLon, 3) + VI * Math.pow(deltaLon, 5);
 
-        // Adjust easting with false easting and zone number
-        double adjustedEasting = zone.zoneNumber * 1_000_000 + E0 + E;
-
         return new double[]{E, N}; // Return easting and northing
     }
 }

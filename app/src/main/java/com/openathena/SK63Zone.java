@@ -9,8 +9,9 @@ class SK63Zone {
     double x0;       // False easting (meters)
     double y0;       // False northing (meters)
     double zoneWidth; // Zone width (degrees)
+    int zoneNumber; // Zone number for easting offset
 
-    public SK63Zone(String id, String name, double lat0, double lon0, double k0, double x0, double y0, double zoneWidth) {
+    public SK63Zone(String id, String name, double lat0, double lon0, double k0, double x0, double y0, double zoneWidth, int zoneNumber) {
         this.id = id;
         this.name = name;
         this.lat0 = lat0;
@@ -19,5 +20,6 @@ class SK63Zone {
         this.x0 = x0;
         this.y0 = y0;
         this.zoneWidth = zoneWidth;
+        this.zoneNumber = zoneNumber;
     }
 }

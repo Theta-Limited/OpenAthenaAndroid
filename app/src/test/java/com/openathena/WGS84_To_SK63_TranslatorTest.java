@@ -15,7 +15,8 @@ public class WGS84_To_SK63_TranslatorTest {
         double northing = (double) result[1];
         String zoneId = (String) result[2];
 
-        assertEquals(northing, 4657362.11, 20.0);
-        assertEquals(easting, 9303965.60, 20.0);
+        System.out.println(zoneId);
+        assertEquals(4657362.11, northing, 20.0);
+        assertEquals(9303965.60, easting, 20.0);
     }
 }
