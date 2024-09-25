@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 
 public class NewElevationMapActivity extends DemManagementActivity
 {
@@ -188,8 +189,8 @@ public class NewElevationMapActivity extends DemManagementActivity
         }
 
         // remove any () or degrees
-        latlon = latlon.toUpperCase();
-        latlon = latlon.toUpperCase().replaceAll("[()]", "");
+        latlon = latlon.toUpperCase(Locale.ENGLISH);
+        latlon = latlon.toUpperCase(Locale.ENGLISH).replaceAll("[()]", "");
         latlon = latlon.replaceAll("[Dd]egrees","°");
         latlon = latlon.replaceAll("[Dd]eg","°");
         // TODO remove degrees unit label from other languages as well
@@ -292,7 +293,7 @@ public class NewElevationMapActivity extends DemManagementActivity
             }
         }).start();
     } // copyFileToCache
-    
+
     @Override
     protected void downloadNewDEM(double lat, double lon, double meters_diameter) {
         DemDownloader aDownloader = new DemDownloader(getApplicationContext(),lat,lon,meters_diameter);

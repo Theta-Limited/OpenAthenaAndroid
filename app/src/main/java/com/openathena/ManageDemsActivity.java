@@ -23,6 +23,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
+import java.util.Locale;
+
 //                                      Parent Abstract class with common functionality
 public class ManageDemsActivity extends DemManagementActivity
 {
@@ -153,8 +155,8 @@ public class ManageDemsActivity extends DemManagementActivity
 
         // remove any () or degrees or leading/trailing whitespace
         latLonStr = latLonStr.trim();
-        latLonStr = latLonStr.toUpperCase();
-        latLonStr = latLonStr.toUpperCase().replaceAll("[()]", "");
+        latLonStr = latLonStr.toUpperCase(Locale.ENGLISH);
+        latLonStr = latLonStr.toUpperCase(Locale.ENGLISH).replaceAll("[()]", "");
         latLonStr = latLonStr.replaceAll("[Dd]egrees","°");
         latLonStr = latLonStr.replaceAll("[Dd]eg","°");
 
@@ -245,4 +247,3 @@ public class ManageDemsActivity extends DemManagementActivity
     public void calculateImage(View view, boolean shouldISendCoT) { return; } // not used in this activity
 
 } // ManageDemsActivity
-

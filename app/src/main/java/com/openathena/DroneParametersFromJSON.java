@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import android.net.Uri;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Locale;
 
 public class DroneParametersFromJSON {
     private static final String TAG = "DroneParametersFromJSON";
@@ -178,7 +179,7 @@ public class DroneParametersFromJSON {
             throw new IllegalArgumentException("ERROR: attempted to find getMatchingDrones for empty or null String!");
         }
 
-        String makeModel = make.toLowerCase() + model.toUpperCase();
+        String makeModel = make.toLowerCase(Locale.ENGLISH) + model.toUpperCase(Locale.ENGLISH);
         JSONArray matchingDrones = new JSONArray();
         try {
             for (int i = 0; i < droneArray.length(); i++) {

@@ -71,6 +71,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 // Libraries from the U.S. National Geospatial Intelligence Agency https://www.nga.mil
@@ -674,8 +675,8 @@ public class MainActivity extends DemManagementActivity {
             String model = exif.getAttribute(ExifInterface.TAG_MODEL);
             if (model == null) model = "";
             if (IS_EXTENDED_COT_MODE_ACTIVE) {
-                openAthenaCalculationInfo.put("make", make.toLowerCase());
-                openAthenaCalculationInfo.put("model", model.toUpperCase());
+                openAthenaCalculationInfo.put("make", make.toLowerCase(Locale.ENGLISH));
+                openAthenaCalculationInfo.put("model", model.toUpperCase(Locale.ENGLISH));
                 openAthenaCalculationInfo.put("isCameraModelRecognized", Boolean.toString(MetadataExtractor.isDroneModelRecognized(exif)));
                 openAthenaCalculationInfo.put("lensType", MetadataExtractor.getLensType(exif));
             }

@@ -16,6 +16,8 @@ import java.util.Date;
 import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Locale;
+
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
@@ -117,7 +119,7 @@ public class DemCache {
         selectedItem = -1;
 
         // list all DEM files in the demDir in app cache folder
-        File[] files = demDir.listFiles((dir,name) -> name.toLowerCase().endsWith(".tiff") || name.toLowerCase().endsWith(".dt2") || name.toLowerCase().endsWith(".dt3"));
+        File[] files = demDir.listFiles((dir,name) -> name.toLowerCase(Locale.ENGLISH).endsWith(".tiff") || name.toLowerCase(Locale.ENGLISH).endsWith(".dt2") || name.toLowerCase(Locale.ENGLISH).endsWith(".dt3"));
         if (files != null) {
 
             Log.d(TAG,"DemCache: found "+files.length+" files to look at");

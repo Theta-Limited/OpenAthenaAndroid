@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import java.util.LinkedHashMap;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class MetadataExtractor {
@@ -218,8 +219,8 @@ public class MetadataExtractor {
             Log.e(TAG, "ERROR: getMetadataValues failed, ExifInterface was null");
             throw new IllegalArgumentException("ERROR: getMetadataValues failed, exif was null");
         }
-        String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase();
-        String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase();
+        String make = exif.getAttribute(ExifInterface.TAG_MAKE).toUpperCase(Locale.ENGLISH);
+        String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase(Locale.ENGLISH);
         if (make == null || make.equals("")) {
             return null;
         }
@@ -341,7 +342,7 @@ public class MetadataExtractor {
 
         // DJI altitude is usually orthometric (EGM96 AMSL), but will be ellipsoidal (WGS84 hae) if special RTK device is used (rare)
         String make = exif.getAttribute(ExifInterface.TAG_MAKE);
-        if (!make.toLowerCase().contains("autel") /* I'm not sure if autel uses EGM96 AMSL or WGS84 hae for new firmware */ && !xmp_str.toLowerCase().contains("rtkflag")) {
+        if (!make.toLowerCase(Locale.ENGLISH).contains("autel") /* I'm not sure if autel uses EGM96 AMSL or WGS84 hae for new firmware */ && !xmp_str.toLowerCase(Locale.ENGLISH).contains("rtkflag")) {
             // convert the height from EGM96 AMSL to WGS84 hae if made by dji and rtk device not present
             Log.i(TAG, "Converting from orthometric to ellipsoidal vertical datum for image metadata");
             z = z - offsetProvider.getEGM96OffsetAtLatLon(y,x);
@@ -439,7 +440,7 @@ public class MetadataExtractor {
         String rdf_about = xmp_str.substring(aboutIndex + 10, aboutIndex + 24); // not perfect, should be fine though
         Log.d(TAG, "rdf_about: " + rdf_about);
 
-        if (!rdf_about.toLowerCase().contains("autel")) {
+        if (!rdf_about.toLowerCase(Locale.ENGLISH).contains("autel")) {
             isNewMetadataFormat = true;
         } else {
             isNewMetadataFormat = false;
@@ -555,8 +556,8 @@ public class MetadataExtractor {
         // From Parrot Docs, regarding EGM96 AMSL vs WGS84 hae:
         // Location altitude of where the photo was taken in meters expressed as a fraction (e.g. “4971569/65536”) On ANAFI 4K/Thermal/USA, this is the drone location with reference to the EGM96 geoid (AMSL); on ANAFI Ai with firmware < 7.4, this is the drone location with with reference to the WGS84 ellipsoid; on ANAFI Ai with firmware >= 7.4, this is the front camera location with reference to the WGS84 ellipsoid
         // https://developer.parrot.com/docs/groundsdk-tools/photo-metadata.html
-        String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase();
-        if (!model.toLowerCase().contains("anafiai")) {
+        String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase(Locale.ENGLISH);
+        if (!model.toLowerCase(Locale.ENGLISH).contains("anafiai")) {
             // convert from EGM96 AMSL to WGS84 hae (if necessary)
             z = z - offsetProvider.getEGM96OffsetAtLatLon(y,x);
         }
@@ -649,9 +650,9 @@ public class MetadataExtractor {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_altitude_error_msg), MissingDataException.dataSources.EXIF, MissingDataException.missingValues.ALTITUDE);
         }
 
-        latDir = latDir.toUpperCase();
+        latDir = latDir.toUpperCase(Locale.ENGLISH);
         String[] latArr = latRaw.split(",", 3);
-        lonDir = lonDir.toUpperCase();
+        lonDir = lonDir.toUpperCase(Locale.ENGLISH);
         String[] lonArr = lonRaw.split(",", 3);
 
         float y = 0.0f;

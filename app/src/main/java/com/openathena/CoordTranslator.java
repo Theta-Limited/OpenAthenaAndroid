@@ -14,6 +14,7 @@ import mil.nga.mgrs.*;
 import mil.nga.grid.features.Point;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -199,7 +200,7 @@ public class CoordTranslator {
         }
 
         // Sanitize input
-        latLonStr = latLonStr.trim().toUpperCase().replaceAll("[()]", "");
+        latLonStr = latLonStr.trim().toUpperCase(Locale.ENGLISH).replaceAll("[()]", "");
         latLonStr = latLonStr.replaceAll("[Dd]egrees","°");
         latLonStr = latLonStr.replaceAll("[Dd]eg","°");
 
@@ -238,7 +239,7 @@ public class CoordTranslator {
     // Helper method to convert degrees, minutes, seconds values to decimal
     public static double dmsToDecimal(String dms) throws ParseException {
         dms = dms.trim();
-        dms = dms.toUpperCase();
+        dms = dms.toUpperCase(Locale.ENGLISH);
         dms = dms.replaceAll("[()]","");
         dms = dms.replaceAll("[Dd]egrees","°");
         dms = dms.replaceAll("[Dd]eg","°");
