@@ -286,4 +286,8 @@
     <string name="error_the_file">The file</string>
     <string name="error_geofile_does_not_exist_2">does not exist.</string>
     <string name="mainactivity_dem_pixelunit_squares">squares</string>
+    <string name="u_s_national_grid">U.S. National Grid</string>
+    <string name="united_states_national_grid_functionally_equiv_to_mgrs_10m">United States National Grid. Functionally equiv. to MGRS 10m</string>
+    <string name="wgs84_lat_lon_dms">WGS84 Lat, Lon \n DMS (° \' \")</string>
+    <string name="tooltip_wgs84_dms">Lat,Lon with direction reference and broken up into degrees, minutes, and seconds</string>
 </resources>
