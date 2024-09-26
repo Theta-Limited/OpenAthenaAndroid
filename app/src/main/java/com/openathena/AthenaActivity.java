@@ -59,6 +59,8 @@ public abstract class AthenaActivity extends AppCompatActivity {
         CK42GaussKrüger
     }
 
+
+
     public String getCurrentOutputModeName() {
         switch (outputMode) {
             case WGS84:
@@ -105,6 +107,8 @@ public abstract class AthenaActivity extends AppCompatActivity {
 
     static SeekBar compassCorrectionSeekBar;
     static TextView compassCorrectionValue;
+
+    protected static boolean isMaritimeModeEnabled;
 
     protected double compassCorrectionOffset = 0.0d; // default value
     protected TextView textViewTargetCoord;
@@ -346,6 +350,18 @@ public abstract class AthenaActivity extends AppCompatActivity {
         return offset;
     }
 
+    protected void setIsMaritimeModeEnabled(boolean bool) {
+        isMaritimeModeEnabled = bool;
+        // apply value to AthenaApp singleton for consumption by DEMParser
+        AthenaApp.setIsMaritimeModeEnabled(bool);
+
+        // save value to persistent settings
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+        prefsEditor.putBoolean("isMaritimeModeEnabled", isMaritimeModeEnabled);
+        prefsEditor.apply();
+    }
+
     protected void requestExternStorage() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(android.Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
@@ -517,6 +533,11 @@ public abstract class AthenaActivity extends AppCompatActivity {
 
             int savedSeekBarValue = sharedPreferences.getInt("compassCorrectionSeekBarValue", 100);
             setCompassCorrectionSeekBar(savedSeekBarValue);
+
+            // restore value from saved settings
+            AthenaActivity.isMaritimeModeEnabled = sharedPreferences.getBoolean("isMaritimeModeEnabled", false);
+            // apply value to AthenaApp singleton for consumption by DEMParser
+            AthenaApp.isMaritimeModeEnabled = AthenaActivity.isMaritimeModeEnabled;
         }
     }
 
@@ -656,6 +677,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle saveInstanceState) {
         Log.d(TAG,"onSaveInstanceState started");
         super.onSaveInstanceState(saveInstanceState);
+        //saveInstanceState.putBoolean("isMaritimeModeEnabled", isMaritimeModeEnabled);
         saveStateToSingleton();
     }
 

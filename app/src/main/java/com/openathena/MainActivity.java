@@ -232,8 +232,12 @@ public class MainActivity extends DemManagementActivity {
             }
         }
 
-        if (isDEMLoaded) {
-            if (athenaApp != null && athenaApp.getDEMParser() != null) { // load DEM from App singleton instance in mem
+        if (isDEMLoaded || isMaritimeModeEnabled) {
+            if (isMaritimeModeEnabled) {
+                theParser = new SeaLevelDEMParserEmulator();
+                theTGetter = new TargetGetter(theParser);
+                isDEMLoaded = true;
+            } else if (athenaApp != null && athenaApp.getDEMParser() != null) { // load DEM from App singleton instance in mem
                 theParser = athenaApp.getDEMParser();
                 theTGetter = new TargetGetter(theParser);
                 setButtonReady(buttonSelectImage, true);
@@ -287,9 +291,9 @@ public class MainActivity extends DemManagementActivity {
         }
 
         restorePrefs(); // restore the outputMode from persistent settings
-        if (athenaApp.needsToCalculateForNewSelection && isDEMLoaded && isImageLoaded) {
+        if (AthenaApp.needsToCalculateForNewSelection && isDEMLoaded && isImageLoaded) {
             calculateImage(iView, athenaApp.shouldISendCoT);
-            athenaApp.needsToCalculateForNewSelection = false;
+            AthenaApp.needsToCalculateForNewSelection = false;
         }
 
         // load DEM cache for later reference
@@ -319,6 +323,27 @@ public class MainActivity extends DemManagementActivity {
         }
     } // onCreate
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isImageLoaded) {
+            if (isMaritimeModeEnabled) {
+                theParser = new SeaLevelDEMParserEmulator();
+                theTGetter = new TargetGetter(theParser);
+                isDEMLoaded = true;
+            } else if (imageUri != null){
+                // trigger a reload of the selcted image and DEM search
+                theParser = null;
+                theTGetter = null;
+                isDEMLoaded = false;
+                setButtonReady(buttonCalculateAndSendCoT, false);
+                clearText();
+                textViewTargetCoord.setText("");
+                imageSelected(imageUri);
+            }
+        }
+
+    }
 
     // save the current state of this activity to the athenaApp Singleton object
     @Override
@@ -465,11 +490,21 @@ public class MainActivity extends DemManagementActivity {
                     if (dce.contains(lat, lon)) {
                         appendText(getString(R.string.main_activity_found_dem_in_cache_starting_load) + "\n");
                         demSelected(matchingDemURI);
-                    } else {
+                    } else if (isMaritimeModeEnabled) {
+                        appendText(getString(R.string.maritime_mode_is_enabled_using_sea_level_instead_of_any_dem) + "\n");
+                        theParser = new SeaLevelDEMParserEmulator();
+                        isDEMLoaded = true;
+                        theTGetter = new TargetGetter(theParser);
+                    }
+                    else {
                         appendText(getString(R.string.main_activity_no_dem_found_for_your_image) + "\n");
                         displayNewDemDownloadChoice(lat, lon);
                     }
                 }
+            } else if (isMaritimeModeEnabled) {
+                theParser = new SeaLevelDEMParserEmulator();
+                isDEMLoaded = true;
+                theTGetter = new TargetGetter(theParser);
             } else {
                 appendText(getString(R.string.main_activity_no_dem_found_for_your_image) + "\n");
                 displayNewDemDownloadChoice(lat, lon);
@@ -495,7 +530,7 @@ public class MainActivity extends DemManagementActivity {
 
         Handler myHandler = new Handler();
 
-        // Load GeoTIFF in a new thread, this is a long-running task
+        // Load DEM in a new thread, this is a long-running task
         new Thread(() -> {
             Exception e = loadDEMnewThread(uri);
             myHandler.post(new Runnable() {
@@ -1076,7 +1111,6 @@ public class MainActivity extends DemManagementActivity {
     public void displayMissingCameraIntrinsicsAlert() {
         if (dangerousMissingCameraIntrinsicsCount < 1 || !MetadataExtractor.parameterProvider.isDroneArrayValid()) { // suppress warning if already encountered by user in this session
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                                             // TODO move this to values/strings.xml
             builder.setMessage("⚠\uFE0F " + getString(R.string.missing_camera_intrinsics_warning_message) + " ⚠\uFE0F");
             builder.setPositiveButton(R.string.i_understand_this_risk, (DialogInterface.OnClickListener) (dialog, which) -> {
                 dangerousMissingCameraIntrinsicsCount += 1;

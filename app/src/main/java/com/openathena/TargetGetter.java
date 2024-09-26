@@ -17,7 +17,13 @@ import java.lang.NullPointerException;
 public class TargetGetter {
     private static final String TAG = TargetGetter.class.getSimpleName();
     private DEMParser myDEMParser;
+
+    // number of meters travel for each step of the terrain-raycast
     private final double INCREMENT = 1.0d;
+    // maximum raycast range before throwing out of bounds exception
+    // (e.g. for a ray which goes out to space without ever intersecting with terrain)
+    private final double MAX_RAYCAST_RANGE = 100_000;
+
     // private MGRS mgrs;
     // private WGS84_SK42_Translator ellipsoidTranslator
     // private SK42_Gauss_Kruger_Projector gk_Projector
@@ -94,10 +100,16 @@ public class TargetGetter {
         // pythagorean theorem, deltaz^2 + deltax^2 + deltay^2 = 1
         double horizScalar = Math.cos(radTheta);
 
+
+        double post_spacing_meters = haversine(0, lat, myDEMParser.getXResolution(), lat, alt); // meters between datapoints, from degrees
         // meters of acceptable distance between constructed line and datapoint
         // Somewhat arbitrary. SRTM has a horizontal resolution of 30m, but vertical accuracy is often more precise
-        double post_spacing_meters = haversine(0, lat, myDEMParser.getXResolution(), lat, alt); // meters between datapoints, from degrees
-        final double THRESHOLD = post_spacing_meters / 16.0d; // meters of acceptable distance between constructed line and datapoint. somewhat arbitrary
+        final double THRESHOLD;
+        if (AthenaApp.isMaritimeModeEnabled) {
+            THRESHOLD = 1.0d;
+        } else {
+            THRESHOLD = post_spacing_meters / 16.0d; // meters of acceptable distance between constructed line and datapoint. somewhat arbitrary
+        }
 
         double curLat = lat;
         double curLon = lon;
@@ -120,6 +132,10 @@ public class TargetGetter {
         }
         double altDiff = curAlt - groundAlt;
         while (altDiff > THRESHOLD) {
+            if (iterCount * INCREMENT >= MAX_RAYCAST_RANGE) {
+                throw new RequestedValueOOBException("Raycast failed to intersect with terrain", curLat, curLon);
+            }
+
             try {
                 groundAlt = myDEMParser.getAltFromLatLon(curLat, curLon);
             } catch (RequestedValueOOBException e) {

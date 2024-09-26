@@ -35,10 +35,10 @@ public class DEMParser implements Serializable {
     private transient FileDirectory directory;
     private Rasters rasters; // implements Serializable
 
-    private geodataAxisParams xParams; // implements Serializable
-    private geodataAxisParams yParams; // implements Serializable
+    protected geodataAxisParams xParams; // implements Serializable
+    protected geodataAxisParams yParams; // implements Serializable
 
-    private EGMOffsetProvider offsetProvider = new EGM96OffsetAdapter();
+    protected EGMOffsetProvider offsetProvider = new EGM96OffsetAdapter();
 
     private verticalDatumTypes verticalDatum;
 
@@ -439,7 +439,7 @@ public class DEMParser implements Serializable {
      */
     public double getMaxLat() { return Math.max(yParams.end, yParams.start); }
 
-    private static class Location {
+    protected static class Location {
         double latitude;
         double longitude;
         double elevation;
@@ -469,7 +469,7 @@ public class DEMParser implements Serializable {
      * @param power the power parameter controls the degree of influence that the neighboring points have on the interpolated value. A higher power will result in a higher influence of closer points and a lower influence of more distant points.
      * @return interpolated elevation of the target in meters above the WGS84 reference ellipsoid
      */
-    private static double idwInterpolation(Location target, Location[] neighbors, double power) {
+    protected static double idwInterpolation(Location target, Location[] neighbors, double power) {
         double sumWeights = 0.0d;
         double sumWeightedElevations = 0.0d;
 
@@ -494,6 +494,13 @@ public class DEMParser implements Serializable {
      * @throws RequestedValueOOBException
      */
     public double getAltFromLatLon(double lat, double lon) throws RequestedValueOOBException, CorruptTerrainException{
+        if (AthenaApp.isMaritimeModeEnabled) {
+            // When the app is in Maritime mode:
+            // Instead of using any DEM, just returns average mean sea level height
+            // Converts to WGS84 height above ellipsoid (HAE)
+            return 0.0d - offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
+        }
+
         if (this.isDTED) {
             Point point = new Point(lat, lon);
             try {

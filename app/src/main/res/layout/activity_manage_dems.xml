@@ -46,6 +46,31 @@
         android:textAllCaps="false"
         android:layout_marginTop="16dp" />
 
+    <TextView
+        android:id="@+id/maritime_mode_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/label_maritime_mode"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/actionMenuTextColor"
+        android:textSize="24sp"
+        android:layout_marginTop="16dp"
+        />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/maritime_mode_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:showText="true"
+        android:switchTextAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:switchPadding="2dp"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        android:text="@string/label_switch_disabled"
+        android:textOff="@string/label_switch_disabled"
+        android:textOn="@string/label_switch_enabled" />
+
     <View
         android:id="@+id/view_sep_2"
         android:layout_width="match_parent"

@@ -19,9 +19,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+
+import androidx.appcompat.widget.SwitchCompat;
 
 import java.util.Locale;
 
@@ -32,12 +35,11 @@ public class ManageDemsActivity extends DemManagementActivity
     private EditText latLonText;
     private Button manageButton;
     private Button loadNewMapButton;
-    private ImageButton getPosGPSButton;
+    private SwitchCompat maritimeModeSwitch;
 
+    private ImageButton getPosGPSButton;
     private Button lookupButton;
     private Button resultsButton;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -49,6 +51,21 @@ public class ManageDemsActivity extends DemManagementActivity
 
         manageButton = (Button)findViewById(R.id.manageCacheButton);
         loadNewMapButton = (Button) findViewById(R.id.loadNewMapButton);
+        maritimeModeSwitch = (SwitchCompat) findViewById(R.id.maritime_mode_switch);
+
+        maritimeModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                // inherited method from AthenaActivity
+                // sets both the AthenaActivity and AthenaApp singleton static variable
+                setIsMaritimeModeEnabled(b);
+                // Tell AthenaApp singleton that target should be recalculated
+                AthenaApp.needsToCalculateForNewSelection = true;
+                // Set label text to 'Enabled' or 'Disabled'
+                compoundButton.setText(b ? R.string.label_switch_enabled : R.string.label_switch_disabled);
+            }
+        });
+        maritimeModeSwitch.setChecked(isMaritimeModeEnabled);
 
         getPosGPSButton = (ImageButton) findViewById(R.id.get_pos_gps_button);
         latLonText = (EditText)findViewById(R.id.lookup_latlon_text);
@@ -88,6 +105,7 @@ public class ManageDemsActivity extends DemManagementActivity
                 startActivity(intent);
             }
         });
+
 
 
         getPosGPSButton.setOnClickListener(new View.OnClickListener() {

@@ -57,14 +57,17 @@ public class AthenaApp extends Application { // Android Singleton Class for hold
     }
 
     public synchronized void setDEMParser(DEMParser demParser) {
-        this.demParser = demParser;
+        AthenaApp.demParser = demParser;
     }
 
     // flag which is set if any participating activity updates the selected point
     // should be cleared by participating activity upon calculation
-    public boolean needsToCalculateForNewSelection = false;
+    public static boolean needsToCalculateForNewSelection = false;
     // flag which indicates whether CoT message should be sent on next calculation
-    public boolean shouldISendCoT = false;
+    public static boolean shouldISendCoT = false;
+
+    public static boolean isMaritimeModeEnabled;
+    public static synchronized void setIsMaritimeModeEnabled(boolean bool) {AthenaApp.isMaritimeModeEnabled = bool;}
 
     // selected image pixel for use in ray offset calculation
     // represents (u, v) in pixels from the top left corner of the image
