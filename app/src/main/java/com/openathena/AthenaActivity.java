@@ -49,6 +49,8 @@ public abstract class AthenaActivity extends AppCompatActivity {
 
     public enum outputModes {
         WGS84,
+        WGS84_DMS,
+        USNG,  // USNG is functionally equivalent to MGRS
         UTM,
         MGRS1m,
         MGRS10m,
@@ -61,6 +63,10 @@ public abstract class AthenaActivity extends AppCompatActivity {
         switch (outputMode) {
             case WGS84:
                 return getString(R.string.wgs84_standard_lat_lon);
+            case WGS84_DMS:
+                return getString(R.string.wgs84_lat_lon_dms);
+            case USNG:
+                return getString(R.string.u_s_national_grid);
             case UTM:
                 return getString(R.string.utm);
             case MGRS1m:
@@ -153,6 +159,35 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 break;
             case 1:
                 prefsEditor.putInt("outputMode", mode);
+                prefsEditor.apply(); // make the outputMode change persistent
+                outputMode = outputModes.WGS84_DMS; // standard lat, lon format
+                if (outputModeRadioGroup != null && outputModeRadioGroup.getVisibility() == View.VISIBLE) {
+                    outputModeRadioGroup.check(R.id.radioButtonWGS84_DMS);
+                }
+                if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
+                    if(!isTargetCoordDisplayed) {
+                        textViewTargetCoord.setText("\uD83C\uDFAF " + getString(R.string.wgs84_lat_lon_dms));
+                        isTargetCoordDisplayed = false;
+                    }
+                }
+                Log.i(TAG, "Output mode set to WGS84 DMS");
+                break;
+            case 2:
+                prefsEditor.putInt("outputMode", mode);
+                prefsEditor.apply();
+                outputMode = outputModes.USNG;
+                if (outputModeRadioGroup != null && outputModeRadioGroup.getVisibility() == View.VISIBLE) {
+                    outputModeRadioGroup.check(R.id.radioButtonUSNG);
+                }
+                if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
+                    if(!isTargetCoordDisplayed) {
+                        textViewTargetCoord.setText("\uD83C\uDFAF " + getString(R.string.u_s_national_grid));
+                    }
+                }
+                Log.i(TAG, "Output mode set to USNG");
+                break;
+            case 3:
+                prefsEditor.putInt("outputMode", mode);
                 prefsEditor.apply();
                 outputMode = outputModes.UTM;
                 if (outputModeRadioGroup != null && outputModeRadioGroup.getVisibility() == View.VISIBLE) {
@@ -165,7 +200,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 }
                 Log.i(TAG, "Output mode set to UTM");
                 break;
-            case 2:
+            case 4:
                 prefsEditor.putInt("outputMode", mode);
                 prefsEditor.apply(); // make the outputMode change persistent
                 outputMode = outputModes.MGRS1m; // NATO Military Grid Ref, 1m square area
@@ -180,7 +215,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 }
                 Log.i(TAG, "Output mode changed to MGRS1m");
                 break;
-            case 3:
+            case 5:
                 prefsEditor.putInt("outputMode", mode);
                 prefsEditor.apply(); // make the outputMode change persistent
                 outputMode = outputModes.MGRS10m; // NATO Military Grid Ref, 10m square area
@@ -195,7 +230,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 }
                 Log.i(TAG, "Output mode changed to MGRS10m");
                 break;
-            case 4:
+            case 6:
                 prefsEditor.putInt("outputMode", mode);
                 prefsEditor.apply(); // make the outputMode change persistent
                 outputMode= outputModes.MGRS100m; // NATO Military Grid Ref, 100m square area
@@ -210,7 +245,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 }
                 Log.i(TAG, "Output mode changed to MGRS100m");
                 break;
-            case 5:
+            case 7:
                 prefsEditor.putInt("outputMode", mode);
                 prefsEditor.apply(); // make the outputMode change persistent
                 outputMode = outputModes.CK42Geodetic; // An alternative geodetic system using the Krasovsky 1940 ellipsoid. Commonly used in former Warsaw pact countries
@@ -227,7 +262,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 }
                 Log.i(TAG, "Output mode changed to CK42Geodetic");
                 break;
-            case 6:
+            case 8:
                 prefsEditor.putInt("outputMode", mode);
                 prefsEditor.apply(); // make the outputMode change persistent
                 outputMode = outputModes.CK42GaussKrüger; // An alternative geodetic system using the Krasovsky 1940 ellipsoid. Northing defined by X value, and Easting defined by Y value describe an exact position on Earth
@@ -663,7 +698,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
     }
 
     public boolean outputModeIsMGRS() {
-        return (outputMode == outputModes.MGRS1m || outputMode == outputModes.MGRS10m || outputMode == outputModes.MGRS100m);
+        return (outputMode == outputModes.MGRS1m || outputMode == outputModes.MGRS10m || outputMode == outputModes.USNG || outputMode == outputModes.MGRS100m);
     }
 
     public boolean isUnitFoot() {

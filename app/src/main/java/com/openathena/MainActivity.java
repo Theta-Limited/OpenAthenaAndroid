@@ -906,7 +906,7 @@ public class MainActivity extends DemManagementActivity {
                 targetCoordString += CoordTranslator.toSelectedOutputMode(latitude,longitude,outputMode);
                 targetCoordString += "</a> "; // end href tag
 
-                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                if (outputMode == outputModes.WGS84_DMS || getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     // add a newline between coordinate and elevation if device is in landscape
                     targetCoordString += "<br>";
                 }
@@ -919,7 +919,7 @@ public class MainActivity extends DemManagementActivity {
                 long altEGM96 = Math.round(mslAlt);
                 targetCoordString += getString(R.string.altitude_label_short) + " " + altEGM96 + " " + (isUnitFoot() ? "ft.":"m") + " ";
 
-                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                if (outputMode != outputModes.WGS84_DMS && getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                     // add a newline between elevation and TLE category if device is in Portrait
                     targetCoordString += "<br>";
                 }

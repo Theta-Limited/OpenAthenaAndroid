@@ -83,6 +83,24 @@
                 android:tooltipText="@string/wgs84_tooltip" />
 
             <RadioButton
+                android:id="@+id/radioButtonWGS84_DMS"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/wgs84_lat_lon_dms"
+                android:textSize="20sp"
+                android:tooltipText="@string/tooltip_wgs84_dms" />
+
+            <RadioButton
+                android:id="@+id/radioButtonUSNG"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/u_s_national_grid"
+                android:textSize="20sp"
+                android:tooltipText="@string/united_states_national_grid_functionally_equiv_to_mgrs_10m" />
+
+            <RadioButton
                 android:id="@+id/radioButtonUTM"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

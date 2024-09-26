@@ -44,12 +44,19 @@ public class PrefsActivity extends AthenaActivity {
                     if (outputMode != outputModes.WGS84) {
                         setOutputMode(outputModes.WGS84);
                     }
+                } else if (checkedId == R.id.radioButtonWGS84_DMS) {
+                    if (outputMode != outputModes.WGS84_DMS) {
+                        setOutputMode(outputModes.WGS84_DMS);
+                    }
                 } else if (checkedId == R.id.radioButtonUTM) {
                     if (outputMode != outputModes.UTM) {
                         setOutputMode(outputModes.UTM);
                     }
-                }
-                    else if (checkedId == R.id.radioButtonMGRS1m) {
+                } else if (checkedId == R.id.radioButtonUSNG) {
+                    if (outputMode != outputModes.USNG) {
+                        setOutputMode(outputModes.USNG);
+                    }
+                } else if (checkedId == R.id.radioButtonMGRS1m) {
                     if (outputMode != outputModes.MGRS1m) {
                         setOutputMode(outputModes.MGRS1m);
                     }

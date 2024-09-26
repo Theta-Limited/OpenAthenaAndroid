@@ -26,6 +26,66 @@ public class CoordTranslator {
 
     private static final String TAG = "CoordTranslator";
 
+    public static String toLatLonDMS(double latitude, double longitude) {
+        // Determine the hemisphere for latitude
+        String latDirection = latitude >= 0 ? "N" : "S";
+        // Determine the hemisphere for longitude
+        String lonDirection = longitude >= 0 ? "E" : "W";
+
+        // Convert latitude to absolute value for calculation
+        double absLat = Math.abs(latitude);
+        // Extract degrees
+        int latDegrees = (int) absLat;
+        // Calculate the total minutes
+        double latMinutesTotal = (absLat - latDegrees) * 60;
+        // Extract minutes
+        int latMinutes = (int) latMinutesTotal;
+        // Calculate seconds
+        double latSeconds = (latMinutesTotal - latMinutes) * 60;
+        // Round seconds to one decimal place
+        latSeconds = Double.parseDouble(roundToOneDecimalPlace(latSeconds));
+
+        // Handle rounding that causes seconds to be 60.0
+        if (latSeconds >= 60.0) {
+            latSeconds = 0.0;
+            latMinutes += 1;
+            // Handle case where minutes become 60
+            if (latMinutes >= 60) {
+                latMinutes = 0;
+                latDegrees += 1;
+            }
+        }
+
+        // Convert longitude to absolute value for calculation
+        double absLon = Math.abs(longitude);
+        // Extract degrees
+        int lonDegrees = (int) absLon;
+        // Calculate the total minutes
+        double lonMinutesTotal = (absLon - lonDegrees) * 60;
+        // Extract minutes
+        int lonMinutes = (int) lonMinutesTotal;
+        // Calculate seconds
+        double lonSeconds = (lonMinutesTotal - lonMinutes) * 60;
+        // Round seconds to one decimal place
+        lonSeconds = Double.parseDouble(roundToOneDecimalPlace(lonSeconds));
+
+        // Handle rounding that causes seconds to be 60.0
+        if (lonSeconds >= 60.0) {
+            lonSeconds = 0.0;
+            lonMinutes += 1;
+            // Handle case where minutes become 60
+            if (lonMinutes >= 60) {
+                lonMinutes = 0;
+                lonDegrees += 1;
+            }
+        }
+
+        // Format the DMS string
+        return String.format(Locale.ENGLISH, "%d°%d'%.1f\" %s, %d°%d'%.1f\" %s",
+                latDegrees, latMinutes, latSeconds, latDirection,
+                lonDegrees, lonMinutes, lonSeconds, lonDirection);
+    }
+
     public static String toUTM(double latitude, double longitude) {
         // mil.nga.mgrs library can also handle UTM out of the box
         // https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system
@@ -65,8 +125,16 @@ public class CoordTranslator {
         switch (outputMode) {
             case WGS84:
                 return roundDouble(latitude) + "," + " " + roundDouble(longitude);
+            case WGS84_DMS:
+                return toLatLonDMS(latitude, longitude);
             case UTM:
                 return toUTM(latitude,longitude);
+            case USNG:
+                // US National Grid is functionally equivalent to MGRS (unless using NAD 27 Datum)
+                // https://www.maptools.com/tutorials/mgrs_usng_diffs
+                // http://gpsinformation.info/USNG/USNG.html
+                // https://web.archive.org/web/20230601064856/https://www.dco.uscg.mil/Portals/9/CG-5R/nsarc/Land_SAR_Addendum/Published_Land%20SAR%20Addendum%20(1118111)%20-%20Bookmark.pdf#page=160
+                return toMGRS10m_Space_Separated(latitude, longitude);
             case MGRS1m:
                 return toMGRS1m_Space_Separated(latitude, longitude);
             case MGRS10m:
@@ -303,6 +371,14 @@ public class CoordTranslator {
         DecimalFormatSymbols decimalSymbols = DecimalFormatSymbols.getInstance();
         decimalSymbols.setDecimalSeparator('.');
         DecimalFormat df = new DecimalFormat("#.######", decimalSymbols);
+        df.setRoundingMode(RoundingMode.HALF_UP);
+        return df.format(d);
+    }
+
+    private static String roundToOneDecimalPlace(double d) {
+        DecimalFormatSymbols decimalSymbols = DecimalFormatSymbols.getInstance();
+        decimalSymbols.setDecimalSeparator('.');
+        DecimalFormat df = new DecimalFormat("#.#", decimalSymbols);
         df.setRoundingMode(RoundingMode.HALF_UP);
         return df.format(d);
     }
