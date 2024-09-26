@@ -148,11 +148,23 @@ public class DemDetailsActivity extends AthenaActivity
                 minLon = CoordTranslator.toCK42Lon(minLat,minLon,0.0d);
                 maxLat = CoordTranslator.toCK42Lat(maxLat,maxLon,0.0d);
                 maxLon = CoordTranslator.toCK42Lon(maxLat,maxLon,0.0d);
+                htmlString += "N: " + truncateDouble(maxLat, 6) + "<br>";
+                htmlString += "E: " + truncateDouble(maxLon, 6) + "<br>";
+                htmlString += "S: " + truncateDouble(minLat, 6) + "<br>";
+                htmlString += "W: " + truncateDouble(minLon, 6) + "<br>";
             }
-            htmlString += "N: " + truncateDouble(maxLat, 6) + "<br>";
-            htmlString += "E: " + truncateDouble(maxLon, 6) + "<br>";
-            htmlString += "S: " + truncateDouble(minLat, 6) + "<br>";
-            htmlString += "W: " + truncateDouble(minLon, 6) + "<br>";
+            if (outputMode == outputModes.WGS84) {
+                htmlString += "N: " + truncateDouble(maxLat, 6) + "<br>";
+                htmlString += "E: " + truncateDouble(maxLon, 6) + "<br>";
+                htmlString += "S: " + truncateDouble(minLat, 6) + "<br>";
+                htmlString += "W: " + truncateDouble(minLon, 6) + "<br>";
+            }
+            if (outputMode == outputModes.WGS84_DMS) {
+                htmlString += "N: " + CoordTranslator.toSelectedOutputMode(maxLat,maxLon,outputMode).split(", ")[0]  + "<br>";
+                htmlString += "E: " + CoordTranslator.toSelectedOutputMode(maxLat,maxLon,outputMode).split(", ")[1]  + "<br>";
+                htmlString += "S: " + CoordTranslator.toSelectedOutputMode(minLat,minLon,outputMode).split(", ")[0]  + "<br>";
+                htmlString += "W: " + CoordTranslator.toSelectedOutputMode(minLat,minLon,outputMode).split(", ")[1]  + "<br>";
+            }
         }
         htmlString += "</tt>";
 
@@ -160,12 +172,19 @@ public class DemDetailsActivity extends AthenaActivity
         htmlString += "<br>";
 
         htmlString += "size: " + athenaApp.demCache.getAreaSizeString(dEntry,isUnitFoot()) + "<br>";
-        String coordStr = truncateDouble(dEntry.cLat, 6)+","+truncateDouble(dEntry.cLon, 6);
+        String latLonStr = truncateDouble(dEntry.cLat, 6)+","+truncateDouble(dEntry.cLon, 6);
+        String coordStr = CoordTranslator.toSelectedOutputMode(dEntry.cLat, dEntry.cLon, outputMode);
 
         // Google Maps requires a ?q= tag to actually display a pin for the indicated location
         // https://en.wikipedia.org/wiki/Geo_URI_scheme#Unofficial_extensions
-        String urlStr = "geo:"+coordStr+"?q="+coordStr;
-        String lineStr = "center: <a href=\""+urlStr+"\">"+coordStr+"</a><br>";
+        String urlStr = "geo:"+latLonStr+"?q="+latLonStr;
+        String lineStr = "";
+        if (outputMode != outputModes.CK42Geodetic) {
+            lineStr = getString(R.string.center_label_demdetails);
+        } else {
+            lineStr = getString(R.string.center_ck42_label_demdetails);
+        }
+        lineStr += " " + "<a href=\"" + urlStr + "\">" + coordStr + "</a><br>";
         Log.d(TAG,"DemDetail: center link line is "+lineStr);
         htmlString += lineStr;
         htmlString += "size: "+dEntry.bytes/1024+" KB<br>";
