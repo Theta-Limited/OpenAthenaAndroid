@@ -290,4 +290,6 @@
     <string name="united_states_national_grid_functionally_equiv_to_mgrs_10m">United States National Grid. Functionally equiv. to MGRS 10m</string>
     <string name="wgs84_lat_lon_dms">WGS84 Lat, Lon \n DMS (° \' \")</string>
     <string name="tooltip_wgs84_dms">Lat,Lon with direction reference and broken up into degrees, minutes, and seconds</string>
+    <string name="center_label_demdetails">center:</string>
+    <string name="center_ck42_label_demdetails">center (CK-42):</string>
 </resources>
