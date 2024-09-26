@@ -219,7 +219,7 @@
     <string name="dronemodels_last_updated">Last Updated:</string>
     <string name="dronemodels_number_of_entries">Number of Entries:</string>
     <string name="in_drone_model">in drone model</string>
-    <string name="manage_cache">Manage Cache:</string>
+    <string name="manage_cache">Manage DEMs:</string>
     <string name="load_new_dem">Load New DEM</string>
     <string name="title_map_coverage_lookup">Map Coverage Lookup:</string>
     <string name="title_opentopography_api_key">OpenTopography API Key</string>
@@ -292,4 +292,8 @@
     <string name="tooltip_wgs84_dms">Lat,Lon with direction reference and broken up into degrees, minutes, and seconds</string>
     <string name="center_label_demdetails">center:</string>
     <string name="center_ck42_label_demdetails">center (CK-42):</string>
+    <string name="label_maritime_mode">Maritime mode\n(sea level instead of DEM)</string>
+    <string name="label_switch_disabled">Disabled</string>
+    <string name="label_switch_enabled">Enabled</string>
+    <string name="maritime_mode_is_enabled_using_sea_level_instead_of_any_dem">Maritime Mode is enabled. Using sea level instead of any DEM ...</string>
 </resources>
