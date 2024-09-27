@@ -326,16 +326,25 @@ public class MainActivity extends DemManagementActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume() isImageLoaded: " + isImageLoaded);
+        Log.d(TAG, "onResume() isDEMLoaded: " + isDEMLoaded);
+        Log.d(TAG, "onResume() isMaritimeModeEnabled: " + isMaritimeModeEnabled);
+        Log.d(TAG, "onResume() imageUri: " + ((imageUri == null) ? "null" : imageUri));
+        Log.d(TAG, "onResume() demURI: " + ((demUri == null) ? "null" : demUri));
+        Log.d(TAG, "onResume() theParser instanceof SeaLevelDEMParserEmulator: " + (theParser instanceof SeaLevelDEMParserEmulator));
         if (isImageLoaded) {
             if (isMaritimeModeEnabled) {
                 theParser = new SeaLevelDEMParserEmulator();
                 theTGetter = new TargetGetter(theParser);
+                setButtonReady(buttonCalculateAndSendCoT, true);
                 isDEMLoaded = true;
-            } else if (imageUri != null){
-                // trigger a reload of the selcted image and DEM search
+            } else if (theParser instanceof SeaLevelDEMParserEmulator){
+                // trigger a reload of the selcted image and force a DEM search in so doing
                 theParser = null;
+                athenaApp.setDEMParser(null);
                 theTGetter = null;
                 isDEMLoaded = false;
+                demUri = null;
                 setButtonReady(buttonCalculateAndSendCoT, false);
                 clearText();
                 textViewTargetCoord.setText("");
@@ -530,6 +539,10 @@ public class MainActivity extends DemManagementActivity {
 
         Handler myHandler = new Handler();
 
+        if (uri == null) {
+            return;
+        }
+
         // Load DEM in a new thread, this is a long-running task
         new Thread(() -> {
             Exception e = loadDEMnewThread(uri);
@@ -566,6 +579,9 @@ public class MainActivity extends DemManagementActivity {
             appCacheDir.mkdirs();
         }
 
+        if (uri == null) {
+            throw new IllegalArgumentException("Tried to load a null DEM uri");
+        }
         // Android 10/11, we can't access this file directly
         // We will copy the file into app's own package cache
         String fileName = getFileName(uri);
