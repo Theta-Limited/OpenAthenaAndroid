@@ -84,6 +84,7 @@ public class MainActivity extends DemManagementActivity {
 
     public static int dangerousMissingCameraIntrinsicsCount;
 
+
     public static int noDemApiKeyPresentDialogCount;
 
     // calculates elevation diff between WGS84 reference ellipsoid and EGM96 geoid
@@ -193,6 +194,7 @@ public class MainActivity extends DemManagementActivity {
         dangerousAutelAwarenessCount = athenaApp.getInt("dangerousAutelAwarenessCount");
         dangerousMissingCameraIntrinsicsCount = athenaApp.getInt("dangerousMissingCameraIntrinsicsCount");
         noDemApiKeyPresentDialogCount = athenaApp.getInt("noDemApiKeyPresentDialogCount");
+        dangerousMaritimeModeActivatedCount = athenaApp.getInt("dangerousMaritimeModeActivatedCount");
 
         CharSequence textRestore = athenaApp.getCharSequence("textview");
         if (textRestore != null) {
@@ -360,6 +362,8 @@ public class MainActivity extends DemManagementActivity {
         athenaApp.putInt("dangerousAutelAwarenessCount", dangerousAutelAwarenessCount);
         athenaApp.putInt("dangerousMissingCameraIntrinsicsCount", dangerousMissingCameraIntrinsicsCount);
         athenaApp.putInt("noDemApiKeyPresentDialogCount", noDemApiKeyPresentDialogCount);
+        athenaApp.putInt("dangerousMaritimeModeActivatedCount", dangerousMaritimeModeActivatedCount);
+
         if (textView != null) {
             athenaApp.putCharSequence("textview", textView.getText());
         }
@@ -894,6 +898,9 @@ public class MainActivity extends DemManagementActivity {
                         attribs += roundDouble(latitude) + "," + roundDouble(longitude);
                         // https://en.wikipedia.org/wiki/Geo_URI_scheme#Uncertainty
                         attribs += "</a>\n\n";
+                    }
+                    if (isMaritimeModeEnabled) {
+                        attribs += getString(R.string.danger_maritime_mode_is_enabled) + "\n";
                     }
                 } catch (RequestedValueOOBException e) {
                     if (e.isAltitudeDataBad) {

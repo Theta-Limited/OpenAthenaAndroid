@@ -9,6 +9,7 @@
 package com.openathena;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -24,11 +25,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SwitchCompat;
 
 import java.util.Locale;
 
-//                                      Parent Abstract class with common functionality
 public class ManageDemsActivity extends DemManagementActivity
 {
     public static String TAG = ManageDemsActivity.class.getSimpleName();
@@ -49,20 +50,28 @@ public class ManageDemsActivity extends DemManagementActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_dems);
 
+        if (athenaApp == null) {
+            athenaApp = (AthenaApp) getApplication();
+        }
+
         manageButton = (Button)findViewById(R.id.manageCacheButton);
         loadNewMapButton = (Button) findViewById(R.id.loadNewMapButton);
         maritimeModeSwitch = (SwitchCompat) findViewById(R.id.maritime_mode_switch);
 
+        dangerousMaritimeModeActivatedCount = athenaApp.getInt("dangerousMaritimeModeActivatedCount");
         maritimeModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            public void onCheckedChanged(CompoundButton compoundButton, boolean newIsMaritimeModeEnabled) {
                 // inherited method from AthenaActivity
                 // sets both the AthenaActivity and AthenaApp singleton static variable
-                setIsMaritimeModeEnabled(b);
+                setIsMaritimeModeEnabled(newIsMaritimeModeEnabled);
                 // Tell AthenaApp singleton that target should be recalculated
                 AthenaApp.needsToCalculateForNewSelection = true;
                 // Set label text to 'Enabled' or 'Disabled'
-                compoundButton.setText(b ? R.string.label_switch_enabled : R.string.label_switch_disabled);
+                compoundButton.setText(newIsMaritimeModeEnabled ? R.string.label_switch_enabled : R.string.label_switch_disabled);
+                if (newIsMaritimeModeEnabled) {
+                    displayMaritimeModeAlert();
+                }
             }
         });
         maritimeModeSwitch.setChecked(isMaritimeModeEnabled);
@@ -128,6 +137,27 @@ public class ManageDemsActivity extends DemManagementActivity
         resultsButton.setEnabled(false);
 
     } // onCreate()
+
+    private void displayMaritimeModeAlert() {
+        if (dangerousMaritimeModeActivatedCount < 2) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(ManageDemsActivity.this);
+            builder.setMessage(R.string.danger_maritime_mode_is_enabled);
+            builder.setPositiveButton(R.string.i_understand_this_risk, (DialogInterface.OnClickListener) (dialog, which) -> {
+                dangerousMaritimeModeActivatedCount += 1;
+            });
+            builder.setNegativeButton("Disable maritime mode", (DialogInterface.OnClickListener) (dialog, which) -> {
+                maritimeModeSwitch.setChecked(false);
+                dangerousMaritimeModeActivatedCount += 1;
+            });
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+                }
+            });
+        }
+    }
 
     @Override
     protected void updateLatLonText(Location location) {
@@ -211,6 +241,12 @@ public class ManageDemsActivity extends DemManagementActivity
             athenaApp.demCache.setSelectedItem(aFilename);
             resultsButton.setEnabled(true);
         }
+    }
+
+    @Override
+    protected void saveStateToSingleton() {
+        super.saveStateToSingleton();
+        athenaApp.putInt("dangerousMaritimeModeActivatedCount", dangerousMaritimeModeActivatedCount);
     }
 
     @Override

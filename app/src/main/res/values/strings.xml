@@ -292,8 +292,9 @@
     <string name="tooltip_wgs84_dms">Lat,Lon with direction reference and broken up into degrees, minutes, and seconds</string>
     <string name="center_label_demdetails">center:</string>
     <string name="center_ck42_label_demdetails">center (CK-42):</string>
-    <string name="label_maritime_mode">Maritime mode\n(sea level instead of DEM)</string>
+    <string name="label_maritime_mode">Maritime mode\n(sea level instead of terrain DEM)</string>
     <string name="label_switch_disabled">Disabled</string>
     <string name="label_switch_enabled">Enabled</string>
     <string name="maritime_mode_is_enabled_using_sea_level_instead_of_any_dem">Maritime Mode is enabled. Using sea level instead of any DEM ...</string>
+    <string name="danger_maritime_mode_is_enabled">⚠️ DANGER: Maritime mode is enabled. Calculations will be very inaccurate for any targets on land ⚠️</string>
 </resources>

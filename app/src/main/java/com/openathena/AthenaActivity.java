@@ -47,6 +47,8 @@ public abstract class AthenaActivity extends AppCompatActivity {
 
     public static int requestNo = 0;
 
+    public static int dangerousMaritimeModeActivatedCount;
+
     public enum outputModes {
         WGS84,
         WGS84_DMS,
