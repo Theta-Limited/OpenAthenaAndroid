@@ -238,4 +238,18 @@
     <string name="error_geofile_does_not_exist_2">は存在しません。</string>
     <string name="are_you_sure_delete_map">この標高モデル (DEM) を削除しますか?</string>
 
+    <string name="u_s_national_grid">米国ナショナルグリッド</string>
+    <string name="united_states_national_grid_functionally_equiv_to_mgrs_10m">米国ナショナルグリッド。機能的には MGRS 10m と同等</string>
+    <string name="wgs84_lat_lon_dms">WGS84 緯度、経度 \n 度分秒 (度 分 秒)</string>
+    <string name="tooltip_wgs84_dms">方向参照を含む緯度と経度を度、分、秒に分解</string>
+    <string name="center_label_demdetails">中心：</string>
+    <string name="center_ck42_label_demdetails">中心 (CK-42)：</string>
+    <string name="label_maritime_mode">海洋モード\n（地形 DEM の代わりに海面を使用）</string>
+    <string name="label_switch_disabled">オフ</string>
+    <string name="label_switch_enabled">オン</string>
+    <string name="maritime_mode_is_enabled_using_sea_level_instead_of_any_dem">海洋モードが有効です。DEM の代わりに海面を使用しています…</string>
+    <string name="danger_maritime_mode_is_enabled">⚠️ 危険：海洋モードが有効です。陸上ターゲットの計算が非常に不正確になります ⚠️</string>
+    <string name="disable_maritime_mode_action">海洋モードをオフにする</string>
+
+
 </resources>

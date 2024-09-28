@@ -237,4 +237,20 @@
     <string name="error_the_file">Файл</string>
     <string name="error_geofile_does_not_exist_2">не существует.</string>
     <string name="are_you_sure_delete_map">Удалить эту модель рельефа (DEM)?</string>
+
+    <string name="u_s_national_grid">Национальная сетка США</string>
+    <string name="united_states_national_grid_functionally_equiv_to_mgrs_10m">Национальная сетка США. Функционально эквивалентна MGRS 10 м</string>
+    <string name="wgs84_lat_lon_dms">WGS84 Шир., Долг. \n ГМС (° \' \")</string>
+    <string name="tooltip_wgs84_dms">Широта и долгота с указанием направления, разбитые на градусы, минуты и секунды</string>
+    <string name="center_label_demdetails">центр:</string>
+    <string name="center_ck42_label_demdetails">центр (СК-42):</string>
+    <string name="label_maritime_mode">Морской режим\n(используется уровень моря вместо ЦМР)</string>
+    <string name="label_switch_disabled">Выключено</string>
+    <string name="label_switch_enabled">Включено</string>
+    <string name="maritime_mode_is_enabled_using_sea_level_instead_of_any_dem">Морской режим включен. Используется уровень моря вместо любой ЦМР…</string>
+    <string name="danger_maritime_mode_is_enabled">⚠️ ОПАСНОСТЬ: Морской режим включен. Расчеты будут очень неточными для целей на суше ⚠️</string>
+    <string name="disable_maritime_mode_action">Выключить морской режим</string>
+
+
+
 </resources>

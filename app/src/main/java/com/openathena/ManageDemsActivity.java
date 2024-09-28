@@ -145,7 +145,7 @@ public class ManageDemsActivity extends DemManagementActivity
             builder.setPositiveButton(R.string.i_understand_this_risk, (DialogInterface.OnClickListener) (dialog, which) -> {
                 dangerousMaritimeModeActivatedCount += 1;
             });
-            builder.setNegativeButton("Disable maritime mode", (DialogInterface.OnClickListener) (dialog, which) -> {
+            builder.setNegativeButton(R.string.disable_maritime_mode_action, (DialogInterface.OnClickListener) (dialog, which) -> {
                 maritimeModeSwitch.setChecked(false);
                 dangerousMaritimeModeActivatedCount += 1;
             });
@@ -202,6 +202,7 @@ public class ManageDemsActivity extends DemManagementActivity
         Log.d(TAG,"ManageDems: splitting up "+latLonStr);
 
         // remove any () or degrees or leading/trailing whitespace
+        // TODO add other languages and their degrees abbreviations
         latLonStr = latLonStr.trim();
         latLonStr = latLonStr.toUpperCase(Locale.ENGLISH);
         latLonStr = latLonStr.toUpperCase(Locale.ENGLISH).replaceAll("[()]", "");

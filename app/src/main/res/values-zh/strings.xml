@@ -239,4 +239,17 @@
     <string name="mainactivity_dem_pixelunit_squares">正方形</string>
     <string name="are_you_sure_delete_map">删除此高程模型（DEM）吗？</string>
 
+    <string name="u_s_national_grid">美国国家网格</string>
+    <string name="united_states_national_grid_functionally_equiv_to_mgrs_10m">美国国家网格。功能等同于 MGRS 10 米</string>
+    <string name="wgs84_lat_lon_dms">WGS84 纬度, 经度 \n 度分秒 (度 分 秒)</string>
+    <string name="tooltip_wgs84_dms">包含方向参考的纬度和经度，分解为度、分、秒</string>
+    <string name="center_label_demdetails">中心：</string>
+    <string name="center_ck42_label_demdetails">中心 (CK-42)：</string>
+    <string name="label_maritime_mode">海洋模式\n（使用海平面代替地形 DEM）</string>
+    <string name="label_switch_disabled">已关闭</string>
+    <string name="label_switch_enabled">已启用</string>
+    <string name="maritime_mode_is_enabled_using_sea_level_instead_of_any_dem">已启用海洋模式。使用海平面代替任何 DEM…</string>
+    <string name="danger_maritime_mode_is_enabled">⚠️ 危险：已启用海洋模式。对陆地目标的计算将非常不准确 ⚠️</string>
+    <string name="disable_maritime_mode_action">关闭海洋模式</string>
+
 </resources>

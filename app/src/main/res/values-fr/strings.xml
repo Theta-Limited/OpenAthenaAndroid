@@ -238,4 +238,17 @@
     <string name="error_the_file">Le fichier</string>
     <string name="error_geofile_does_not_exist_2">n\'existe pas.</string>
     <string name="are_you_sure_delete_map">Supprimer ce modèle d\'élévation (DEM) ?</string>
+    <string name="u_s_national_grid">Grille nationale des États-Unis</string>
+    <string name="united_states_national_grid_functionally_equiv_to_mgrs_10m">Grille nationale des États-Unis. Équivalente fonctionnellement au MGRS 10m</string>
+    <string name="wgs84_lat_lon_dms">Latitude, Longitude WGS84 \n DMS (° \' \")</string>
+    <string name="tooltip_wgs84_dms">Latitude et longitude avec référence de direction, décomposées en degrés, minutes et secondes</string>
+    <string name="center_label_demdetails">centre :</string>
+    <string name="center_ck42_label_demdetails">centre (CK-42) :</string>
+    <string name="label_maritime_mode">Mode maritime\n(niveau de la mer au lieu du MNT terrestre)</string>
+    <string name="label_switch_disabled">Désactivé</string>
+    <string name="label_switch_enabled">Activé</string>
+    <string name="maritime_mode_is_enabled_using_sea_level_instead_of_any_dem">Le mode maritime est activé. Utilisation du niveau de la mer au lieu de tout MNT…</string>
+    <string name="danger_maritime_mode_is_enabled">⚠️ DANGER : Le mode maritime est activé. Les calculs seront très inexacts pour les cibles terrestres ⚠️</string>
+    <string name="disable_maritime_mode_action">Désactiver le mode maritime</string>
+
 </resources>

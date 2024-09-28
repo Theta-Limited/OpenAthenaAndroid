@@ -238,4 +238,19 @@
     <string name="error_geofile_does_not_exist_2">не існує.</string>
     <string name="are_you_sure_delete_map">Видалити цю модель висоти (DEM)?</string>
 
+    <string name="u_s_national_grid">Національна сітка США</string>
+    <string name="united_states_national_grid_functionally_equiv_to_mgrs_10m">Національна сітка США. Функціонально еквівалентна MGRS 10 м</string>
+    <string name="wgs84_lat_lon_dms">WGS84 Шир., Довг. \n ГМC (° \' \")</string>
+    <string name="tooltip_wgs84_dms">Широта та довгота з вказівкою напрямку, розбиті на градуси, хвилини та секунди</string>
+    <string name="center_label_demdetails">центр:</string>
+    <string name="center_ck42_label_demdetails">центр (СК-42):</string>
+    <string name="label_maritime_mode">Морський режим\n(рівень моря замість ЦМР)</string>
+    <string name="label_switch_disabled">Вимкнено</string>
+    <string name="label_switch_enabled">Увімкнено</string>
+    <string name="maritime_mode_is_enabled_using_sea_level_instead_of_any_dem">Морський режим увімкнено. Використовується рівень моря замість будь-якої ЦМР…</string>
+    <string name="danger_maritime_mode_is_enabled">⚠️ НЕБЕЗПЕКА: Морський режим увімкнено. Розрахунки будуть дуже неточними для цілей на суші ⚠️</string>
+    <string name="disable_maritime_mode_action">Вимкнути морський режим</string>
+
+
+
 </resources>

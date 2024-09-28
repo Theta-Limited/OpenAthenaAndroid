@@ -237,4 +237,18 @@
     <string name="error_the_file">Plik</string>
     <string name="error_geofile_does_not_exist_2">nie istnieje.</string>
     <string name="are_you_sure_delete_map">Usunąć ten model elewacji (DEM)?</string>
+
+    <string name="u_s_national_grid">Amerykańska Siatka Krajowa</string>
+    <string name="united_states_national_grid_functionally_equiv_to_mgrs_10m">Amerykańska Siatka Krajowa. Funkcjonalnie równoważna z MGRS 10m</string>
+    <string name="wgs84_lat_lon_dms">WGS84 Szer., Dł. \n DMS (° \' \")</string>
+    <string name="tooltip_wgs84_dms">Szerokość i długość geograficzna z oznaczeniem kierunku, rozbite na stopnie, minuty i sekundy</string>
+    <string name="center_label_demdetails">środek:</string>
+    <string name="center_ck42_label_demdetails">środek (CK-42):</string>
+    <string name="label_maritime_mode">Tryb morski\n(poziom morza zamiast DEM terenu)</string>
+    <string name="label_switch_disabled">Wyłączone</string>
+    <string name="label_switch_enabled">Włączone</string>
+    <string name="maritime_mode_is_enabled_using_sea_level_instead_of_any_dem">Tryb morski jest włączony. Używanie poziomu morza zamiast jakiegokolwiek DEM...</string>
+    <string name="danger_maritime_mode_is_enabled">⚠️ NIEBEZPIECZEŃSTWO: Tryb morski jest włączony. Obliczenia będą bardzo niedokładne dla celów na lądzie ⚠️</string>
+    <string name="disable_maritime_mode_action">Wyłącz tryb morski</string>
+
 </resources>

@@ -1,0 +1,4 @@
+Minor update to OpenAthena Beta version:
+ * Fix for DJI Mavic 2 Pro and Mavic 3 variants
+ * Add new maritime mode for operation in ocean without terrain DEM
+ * Add US national grid and lat,lon degrees, minutes, seconds as output modes
