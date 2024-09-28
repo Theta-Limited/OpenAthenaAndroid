@@ -228,6 +228,8 @@ public class MetadataExtractor {
             case "DJI":
                 return handleDJI(exif);
             //break;
+            case "HASSELBLAD": // Make name for older DJI pro cameras
+                return handleDJI(exif);
             case "SKYDIO":
                 return handleSKYDIO(exif);
             //break;
