@@ -238,4 +238,18 @@
     <string name="error_geofile_does_not_exist_2">은(는) 존재하지 않습니다.</string>
     <string name="are_you_sure_delete_map">이 고도 모델(DEM)을 삭제하시겠습니까?</string>
 
+    <string name="u_s_national_grid">미국 국가지도망</string>
+    <string name="united_states_national_grid_functionally_equiv_to_mgrs_10m">미국 국가지도망. 기능적으로 MGRS 10m와 동일</string>
+    <string name="wgs84_lat_lon_dms">WGS84 위도, 경도 \n 도분초 (° \' \")</string>
+    <string name="tooltip_wgs84_dms">방향 참조가 포함된 위도와 경도를 도, 분, 초로 분해</string>
+    <string name="center_label_demdetails">중심:</string>
+    <string name="center_ck42_label_demdetails">중심 (CK-42):</string>
+    <string name="label_maritime_mode">해양 모드\n(지형 DEM 대신 해수면 사용)</string>
+    <string name="label_switch_disabled">끔</string>
+    <string name="label_switch_enabled">켬</string>
+    <string name="maritime_mode_is_enabled_using_sea_level_instead_of_any_dem">해양 모드가 활성화되었습니다. DEM 대신 해수면을 사용합니다…</string>
+    <string name="danger_maritime_mode_is_enabled">⚠️ 위험: 해양 모드가 활성화되었습니다. 육지의 모든 대상에 대한 계산이 매우 부정확합니다 ⚠️</string>
+    <string name="disable_maritime_mode_action">해양 모드 끄기</string>
+
+
 </resources>
