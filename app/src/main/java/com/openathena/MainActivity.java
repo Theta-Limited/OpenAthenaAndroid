@@ -328,12 +328,12 @@ public class MainActivity extends DemManagementActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume() isImageLoaded: " + isImageLoaded);
-        Log.d(TAG, "onResume() isDEMLoaded: " + isDEMLoaded);
-        Log.d(TAG, "onResume() isMaritimeModeEnabled: " + isMaritimeModeEnabled);
-        Log.d(TAG, "onResume() imageUri: " + ((imageUri == null) ? "null" : imageUri));
-        Log.d(TAG, "onResume() demURI: " + ((demUri == null) ? "null" : demUri));
-        Log.d(TAG, "onResume() theParser instanceof SeaLevelDEMParserEmulator: " + (theParser instanceof SeaLevelDEMParserEmulator));
+        //Log.d(TAG, "onResume() isImageLoaded: " + isImageLoaded);
+        //Log.d(TAG, "onResume() isDEMLoaded: " + isDEMLoaded);
+        //Log.d(TAG, "onResume() isMaritimeModeEnabled: " + isMaritimeModeEnabled);
+        //Log.d(TAG, "onResume() imageUri: " + ((imageUri == null) ? "null" : imageUri));
+        //Log.d(TAG, "onResume() demURI: " + ((demUri == null) ? "null" : demUri));
+        //Log.d(TAG, "onResume() theParser instanceof SeaLevelDEMParserEmulator: " + (theParser instanceof SeaLevelDEMParserEmulator));
         if (isImageLoaded) {
             if (isMaritimeModeEnabled) {
                 theParser = new SeaLevelDEMParserEmulator();
