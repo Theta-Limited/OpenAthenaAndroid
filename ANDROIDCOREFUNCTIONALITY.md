@@ -4,23 +4,24 @@ These classes are managed by the AthenaApp and MainActivity classes.
 
 
 ## OpenAthena Class Diagram
-'''plantuml
-@startuml
-class Application
-class AthenaApp
-class MetadataExtractor
-class DEMParser
-class TargetGetter
-class MainActivity
-class Serializable
-Application ^-- AthenaApp : extends
-AthenaApp *-- DEMParser : contains
-Serializable ^-- DEMParser : implements
-MainActivity *-- MetadataExtractor : contains
-MainActivity *-- AthenaApp : contains
-MainActivity *-- TargetGetter : contains
-TargetGetter *-- DEMParser : contains
-@enduml
+'''mermaid
+classDiagram
+    class Application
+    class AthenaApp
+    class MetadataExtractor
+    class DEMParser
+    class TargetGetter
+    class MainActivity
+    class Serializable
+
+    Application --|> AthenaApp : extends
+    AthenaApp *-- DEMParser : contains
+    Serializable --|> DEMParser : implements
+    MainActivity *-- MetadataExtractor : contains
+    MainActivity *-- AthenaApp : contains
+    MainActivity *-- TargetGetter : contains
+    TargetGetter *-- DEMParser : contains
+
 '''
 
 ## OpenAthena Main Classes
@@ -28,75 +29,77 @@ TargetGetter *-- DEMParser : contains
 ### MetadataExtractor
 The MetadataExtractor class is responsible for extracting metadata from a given drone image. Different drones have different metadata structures, so this class defines behaviors for extracting necessary common information from a variety of drone types. The main interaction with the engine is the getMetaDataValues() method, which handles the actual metadata extraction. 
 
-'''plantuml
-@startuml
-class MetaDataExtractor {
-    isDroneModelRecognized()
-    getLensType()
-    isThermal()
-    getDistortionParameters()
-    getMatchingDrone()
-    getSensorPhysicalHeight()
-    getSensorPhysicalWidth()
-    getMetaDataValues()
-    handleDJI()
-    handleSkydio()
-    handleAutel()
-    handleParrot()
-    handleTeal()
-    getTagString()
-    getIntrinsicMatrixFromExif()
-    getIntrinsicMatrixFromKnownCCD()
-    getIntrinsicMatrixFromExif35mm()
-    getRayAnglesFromImgPixel()
-    correctRayAnglesForRoll()
-    rationalToFloat()    
-}
-@enduml
+'''mermaid
+classDiagram
+    class MetaDataExtractor {
+        + isDroneModelRecognized()
+        + getLensType()
+        + isThermal()
+        + getDistortionParameters()
+        + getMatchingDrone()
+        + getSensorPhysicalHeight()
+        + getSensorPhysicalWidth()
+        + getMetaDataValues()
+        + handleDJI()
+        + handleSkydio()
+        + handleAutel()
+        + handleParrot()
+        + handleTeal()
+        + getTagString()
+        + getIntrinsicMatrixFromExif()
+        + getIntrinsicMatrixFromKnownCCD()
+        + getIntrinsicMatrixFromExif35mm()
+        + getRayAnglesFromImgPixel()
+        + correctRayAnglesForRoll()
+        + rationalToFloat()    
+    }
+
 '''
 
 ### DEMParser
 The DEMParser ingests a Digital Elevation Model(DEM) and loads it into the terrain raycast engine. The parser handles DEMs of different formats, ensures elevation type compatibility, and contains a local cache of the DEM being used. The method getAltFromLatLon() can then be called to extract the altitude of a given latitude longitude coordinate.
 
-@startuml
-class DEMParser {
-    loadDEM()
-    isHorizontalDatumWGS84()
-    getXResolution()
-    getYResolution()
-    getNumCols()
-    getNumRows()
-    getMinLon()
-    getMaxLon()
-    getMinLat()
-    getMaxLat()
-    idwInterpolation()
-    getAltFromLatLon()
-}
-@enduml
+'''mermaid
+classDiagram
+    class DEMParser {
+        + loadDEM()
+        + isHorizontalDatumWGS84()
+        + getXResolution()
+        + getYResolution()
+        + getNumCols()
+        + getNumRows()
+        + getMinLon()
+        + getMaxLon()
+        + getMinLat()
+        + getMaxLat()
+        + idwInterpolation()
+        + getAltFromLatLon()
+    }
+
+'''
 
 ### TargetGetter
 TargetGetter is the main terrain casting class within the software. All of the necessary mathematical functions are contained here, and this can be considered the heart of the terrain raycast software. Calling the resolveTarget() method with the necessary drone metadata will cast against the internal representation of a DEM.
 
-'''plantuml
-@startuml
-class TargetGetter {
-    resolveTarget()
-    minArcAngle()
-    radNormalize()
-    degNormalize()
-    azumuthToUnitCircle()
-    radius_at_lat_lon()
-    inverse_haversine()
-    haversine()
-    haversine_bearing()
-    squared()
-    sqrt()
-    asin()
-    cos()
-    atan2()
-}
-@enduml
+'''mermaid
+classDiagram
+    class TargetGetter {
+        + resolveTarget()
+        + minArcAngle()
+        + radNormalize()
+        + degNormalize()
+        + azumuthToUnitCircle()
+        + radius_at_lat_lon()
+        + inverse_haversine()
+        + haversine()
+        + haversine_bearing()
+        + squared()
+        + sqrt()
+        + asin()
+        + cos()
+        + atan2()
+    }
+
 '''
 
 ### MainActivity and AthenaApp
