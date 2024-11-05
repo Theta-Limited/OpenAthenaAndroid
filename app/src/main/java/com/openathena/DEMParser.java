@@ -155,8 +155,8 @@ public class DEMParser implements Serializable {
         FileDirectoryEntry fde = directory.get(FieldTagType.GeoKeyDirectory);
         // Because my sources don't properly store vertical datum,
         // we have to assume its EGM96 (for GeoTIFFs) and hope it's correct :(
-        // When we implement the DTED2 and DTED3 format,
-        // we know it will also be in EGM96
+        // For the DTED2 and DTED3 format,
+        // we know it will be in EGM96 because of the DTED spec
         verticalDatum = verticalDatumTypes.EGM96;
 
         if (fde != null) {
@@ -502,16 +502,71 @@ public class DEMParser implements Serializable {
         }
 
         if (this.isDTED) {
-            Point point = new Point(lat, lon);
+            // on DEM edge check, if so just return nearest elevation
+            if (lat == getMaxLat() || lat == getMinLat() || lon == getMaxLon() || lon == getMinLon()) {
+                Point point = new Point(lat, lon);
+                try {
+                    double EGM96_altitude = this.dted.getElevation(point).getElevation();
+                    // DTED vertical datum is height above EGM96 geoid, we must convert it to height above WGS84 ellipsoid
+                    double WGS84_altitude = EGM96_altitude - offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
+                    return WGS84_altitude;
+                } catch (CorruptTerrainException e) {
+                    throw new CorruptTerrainException("The terrain data in the DTED file is corrupt.", e);
+                } catch (InvalidValueException e) {
+                    throw new RequestedValueOOBException("getAltFromLatLon arguments out of bounds!", lat, lon);
+                }
+            }
+
+            // Determine DTED grid resolution based on level
+            // For example, Level 0: 1 arc-second, Level 1: 3 arc-seconds, etc.
+            double gridLatStep = this.dted.getLatitudeInterval(); // Implement this method or retrieve from DTED metadata
+            double gridLonStep = this.dted.getLongitudeInterval(); // Implement this method or retrieve from DTED metadata
+
+            // Calculate the surrounding grid points
+            double latFloor = Math.floor(lat / gridLatStep) * gridLatStep;
+            double lonFloor = Math.floor(lon / gridLonStep) * gridLonStep;
+
+            // Define the four surrounding points
+            Point p1 = new Point(latFloor, lonFloor);
+            Point p2 = new Point(latFloor, lonFloor + gridLonStep);
+            Point p3 = new Point(latFloor + gridLatStep, lonFloor);
+            Point p4 = new Point(latFloor + gridLatStep, lonFloor + gridLonStep);
+
             try {
-                double EGM96_altitude = this.dted.getElevation(point).getElevation();
-                // DTED vertical datum is height above EGM96 geoid, we must convert it to height above WGS84 ellipsoid
-                double WGS84_altitude = EGM96_altitude - offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
+                // Retrieve elevations for the four surrounding points
+                double e1 = this.dted.getElevation(p1).getElevation();
+                double e2 = this.dted.getElevation(p2).getElevation();
+                double e3 = this.dted.getElevation(p3).getElevation();
+                double e4 = this.dted.getElevation(p4).getElevation();
+
+                // Create Location objects for each point
+                Location L1 = new Location(p1.getLatitude(), p1.getLongitude(), e1);
+                Location L2 = new Location(p2.getLatitude(), p2.getLongitude(), e2);
+                Location L3 = new Location(p3.getLatitude(), p3.getLongitude(), e3);
+                Location L4 = new Location(p4.getLatitude(), p4.getLongitude(), e4);
+
+                // Define the target location
+                Location target = new Location(lat, lon);
+
+                // Array of neighboring points
+                Location[] neighbors = new Location[]{L1, L2, L3, L4};
+
+                // Define the power parameter for IDW
+                double power = 1.875d;
+
+                // Perform IDW interpolation
+                double interpolatedAltitude = idwInterpolation(target, neighbors, power);
+
+                // Convert from EGM96 AMSL orthometric height to WGS84 HAE
+                double WGS84_altitude = interpolatedAltitude - offsetProvider.getEGM96OffsetAtLatLon(lat, lon);
+
                 return WGS84_altitude;
             } catch (CorruptTerrainException e) {
                 throw new CorruptTerrainException("The terrain data in the DTED file is corrupt.", e);
             } catch (InvalidValueException e) {
                 throw new RequestedValueOOBException("getAltFromLatLon arguments out of bounds!", lat, lon);
+            } catch (Exception e) {
+                throw new CorruptTerrainException("An unexpected error occurred while processing DTED data.", e);
             }
         }
 
