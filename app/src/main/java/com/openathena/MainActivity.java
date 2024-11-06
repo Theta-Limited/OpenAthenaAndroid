@@ -851,7 +851,12 @@ public class MainActivity extends DemManagementActivity {
 
             if (theTGetter != null) {
                 try {
+                    long startTime = System.nanoTime();
                     result = theTGetter.resolveTarget(y, x, z, azimuth, theta);
+                    long endTime = System.nanoTime();
+                    long duration = endTime - startTime;
+                    System.out.println("resolveTarget duration in milliseconds: " + duration / 1_000_000.0d);
+
                     distance = result[0];
                     latitude = result[1];
                     longitude = result[2];
