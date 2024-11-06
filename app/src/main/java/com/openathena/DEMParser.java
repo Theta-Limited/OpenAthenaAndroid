@@ -64,6 +64,9 @@ public class DEMParser implements Serializable {
         try {
             loadDEM(geofile);
         } catch (IllegalArgumentException | TiffException e) {
+            Log.d(TAG, "Could not parse as GeoTIFF file: " + e.getMessage());
+            Log.d(TAG, "now trying to parse as DTED file...");
+            //e.printStackTrace();
             // If GeoTIFF parsing fails, try to parse as DTED
             try {
                 this.dted = new FileBasedDTED(geofile);
@@ -519,8 +522,8 @@ public class DEMParser implements Serializable {
 
             // Determine DTED grid resolution based on level
             // For example, Level 0: 1 arc-second, Level 1: 3 arc-seconds, etc.
-            double gridLatStep = this.dted.getLatitudeInterval(); // Implement this method or retrieve from DTED metadata
-            double gridLonStep = this.dted.getLongitudeInterval(); // Implement this method or retrieve from DTED metadata
+            double gridLatStep = this.dted.getLatitudeInterval();
+            double gridLonStep = this.dted.getLongitudeInterval();
 
             // Calculate the surrounding grid points
             double latFloor = Math.floor(lat / gridLatStep) * gridLatStep;
@@ -545,6 +548,13 @@ public class DEMParser implements Serializable {
                 Location L3 = new Location(p3.getLatitude(), p3.getLongitude(), e3);
                 Location L4 = new Location(p4.getLatitude(), p4.getLongitude(), e4);
 
+//                Log.d(TAG, "Interpolating DTED DEM using IDW");
+//                Log.d(TAG, "Lat Lon: " + lat + "," + lon);
+//                Log.d(TAG, "L1: " + p1.getLatitude() + "," + p1.getLongitude());
+//                Log.d(TAG, "L2: " + p2.getLatitude() + "," + p2.getLongitude());
+//                Log.d(TAG, "L3: " + p3.getLatitude() + "," + p3.getLongitude());
+//                Log.d(TAG, "L4: " + p4.getLatitude() + "," + p4.getLongitude());
+
                 // Define the target location
                 Location target = new Location(lat, lon);
 
@@ -557,8 +567,16 @@ public class DEMParser implements Serializable {
                 // Perform IDW interpolation
                 double interpolatedAltitude = idwInterpolation(target, neighbors, power);
 
+//                double rawAltitude = this.dted.getElevation(new Point(lat, lon)).getElevation();
+//                Log.d(TAG, "rawAltitude: " + rawAltitude);
+//                Log.d(TAG, "interpolatedAltitude: " + interpolatedAltitude);
+
                 // Convert from EGM96 AMSL orthometric height to WGS84 HAE
                 double WGS84_altitude = interpolatedAltitude - offsetProvider.getEGM96OffsetAtLatLon(lat, lon);
+
+//                // Convert from EGM96 AMSL orthometric height to WGS84 HAE
+//                double WGS84_altitude = rawAltitude - offsetProvider.getEGM96OffsetAtLatLon(lat, lon);
+
 
                 return WGS84_altitude;
             } catch (CorruptTerrainException e) {

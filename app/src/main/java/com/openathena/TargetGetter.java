@@ -116,11 +116,10 @@ public class TargetGetter {
         double curAlt = alt;
         double groundAlt;
 
-        // account for curvature of Earth at each Epoch
         long iterCount = 0;
-        long iterPerEpoch = 128;
-        double lastEpochLat = curLat;
-        double lastEpochLon = curLon;
+//        long iterPerEpoch = 128;
+//        double lastEpochLat = curLat;
+//        double lastEpochLon = curLon;
         try {
             groundAlt = myDEMParser.getAltFromLatLon(curLat, curLon);
         } catch (RequestedValueOOBException e) {
@@ -143,17 +142,17 @@ public class TargetGetter {
             }
             altDiff = curAlt - groundAlt;
 
-            // account for curvature of Earth at each Epoch
-            if (iterCount > 0 && iterCount % iterPerEpoch == 0) {
-                double minArcAngle = minArcAngle(lastEpochLat, lastEpochLon, curLat, curLon);
-                Log.d(TAG, "iterCount: " + iterCount + ", minArcAngle: " + minArcAngle);
-                radTheta += Math.toRadians(minArcAngle); // rotate ray downwards by same amount Earth's curvature rotated it upwards
-                deltaZ = -1.0d * Math.sin(radTheta);
-                horizScalar = Math.cos(radTheta);
-
-                lastEpochLat = curLat;
-                lastEpochLon = curLon;
-            }
+//            // account for curvature of Earth at each Epoch
+//            if (iterCount > 0 && iterCount % iterPerEpoch == 0) {
+//                double minArcAngle = minArcAngle(lastEpochLat, lastEpochLon, curLat, curLon);
+//                Log.d(TAG, "iterCount: " + iterCount + ", minArcAngle: " + minArcAngle);
+//                radTheta += Math.toRadians(minArcAngle); // rotate ray downwards by same amount Earth's curvature rotated it upwards
+//                deltaZ = -1.0d * Math.sin(radTheta);
+//                horizScalar = Math.cos(radTheta);
+//
+//                lastEpochLat = curLat;
+//                lastEpochLon = curLon;
+//            }
 
             double avgAlt = curAlt;
             curAlt += deltaZ;
