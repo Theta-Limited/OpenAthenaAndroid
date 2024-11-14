@@ -15,10 +15,10 @@ public class EGM96OffsetAdapter implements EGMOffsetProvider, Serializable {
 //    }
 
     /**
-     * Get the difference in altitude between the WGS84 ellipsoid and the EGM96 geoid at the given WGS84 lat/lon
+     * Get the difference in altitude between the EGM96 geoid and the WGS84 ellipsoid and the  at the given WGS84 lat/lon
      * @param latitude The latitude of the point of interest
      * @param longitude The longitude of the point of interest
-     * @return The difference in altitude. Will be positive if the EGM96 geoid is higher than the WGS84 ellipsoid
+     * @return The difference in altitude. Will be negative if the EGM96 geoid is higher than the WGS84 ellipsoid
      */
     @Override
     public double getEGM96OffsetAtLatLon(double latitude, double longitude) {
