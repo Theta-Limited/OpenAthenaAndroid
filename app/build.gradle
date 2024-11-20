@@ -19,6 +19,16 @@ android {
         Properties properties = new Properties()
         properties.load(project.rootProject.file("local.properties").newDataInputStream())
         buildConfigField "String", "OPENTOPOGRAPHY_API_KEY", "\"${properties.getProperty("OPENTOPOGRAPHY_API_KEY")}\""
+
+        android {
+            dependenciesInfo {
+                // Disables dependency metadata when building APKs.
+                includeInApk = false
+                // Disables dependency metadata when building Android App Bundles.
+                includeInBundle = false
+                // More info: https://bi-zone.medium.com/easter-egg-in-apk-files-what-is-frosting-f356aa9f4d1
+            }
+        }
     }
 
     buildTypes {
