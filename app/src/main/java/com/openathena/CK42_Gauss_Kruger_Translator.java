@@ -5,7 +5,7 @@ package com.openathena;
 //
 // GPL-v3.0
 
-public class CK42_Gauss_Krüger_Translator {
+public class CK42_Gauss_Kruger_Translator {
     // Параметры эллипсоида Красовского // Parameters of the Krasovsky ellipsoid
     static final double a = WGS84_CK42_Geodetic_Translator.aP;
     static final double b = 6356863.019d; // Малая (полярная) полуось // Small (polar) semi-axis
@@ -16,7 +16,7 @@ public class CK42_Gauss_Krüger_Translator {
     static final double F = 1.0d; // Масштабный коэффициент // Scale factor
     static final double Lat0 = 0.0d; // Начальная параллель (в радианах) // Initial parallel (in radians)
 
-    public static long[] CK42_Geodetic_to_Gauss_Krüger(double CK42_LatDegrees, double CK42_LonDegrees) {
+    public static long[] CK42_Geodetic_to_Gauss_Kruger(double CK42_LatDegrees, double CK42_LonDegrees) {
         while (CK42_LonDegrees < 0.0d) {
             CK42_LonDegrees += 360.0d;
         }

@@ -72,9 +72,9 @@ public class PrefsActivity extends AthenaActivity {
                     if (outputMode != outputModes.CK42Geodetic) {
                         setOutputMode(outputModes.CK42Geodetic);
                     }
-                } else if (checkedId == R.id.radioButtonCK42GaussKrüger) {
-                    if (outputMode != outputModes.CK42GaussKrüger) {
-                        setOutputMode(outputModes.CK42GaussKrüger);
+                } else if (checkedId == R.id.radioButtonCK42GaussKruger) {
+                    if (outputMode != outputModes.CK42GaussKruger) {
+                        setOutputMode(outputModes.CK42GaussKruger);
                     }
                 } else {
                     setOutputMode(-1); // should never happen

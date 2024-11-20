@@ -131,7 +131,7 @@ public class DemDetailsActivity extends AthenaActivity
         String teletypeTextFlag = "<tt>"; // this tag is deprecated in HTML5, too bad we use it anyways
         // "<pre>" // proper tag for current rev HTML, does not seem to work with Android
 
-        if(outputModeIsMGRS() || outputMode == outputModes.UTM || outputMode == outputModes.CK42GaussKrüger) { // For Grid-based output modes
+        if(outputModeIsMGRS() || outputMode == outputModes.UTM || outputMode == outputModes.CK42GaussKruger) { // For Grid-based output modes
             htmlString += "DEM lat/lon bounds (" + getCurrentOutputModeName() + "):" + "<br>";
             htmlString += teletypeTextFlag;
             htmlString += "NW: " + CoordTranslator.toSelectedOutputMode(maxLat,minLon,outputMode) + "<br>";

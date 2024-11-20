@@ -146,7 +146,7 @@
                 android:tooltipText="@string/ck_42_geodetic_tooltip" />
 
             <RadioButton
-                android:id="@+id/radioButtonCK42GaussKrüger"
+                android:id="@+id/radioButtonCK42GaussKruger"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"

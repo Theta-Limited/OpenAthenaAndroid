@@ -148,7 +148,7 @@ public class CoordTranslator {
                 // This conversion introduces some inaccuracy due to lack of ellipsoidal height
                 // therefore, result should only be used for unimportant uses such as for dem bounds UI
                 return roundDouble(toCK42Lat(latitude,longitude,0.0d)) + "," + " " + roundDouble(toCK42Lon(latitude,longitude,0.0d));
-            case CK42GaussKrüger:
+            case CK42GaussKruger:
                 // This conversion introduces some inaccuracy due to lack of ellipsoidal height
                 // therefore, result should only be used for unimportant uses such as for dem bounds UI
                 return toCK42_GK_String(latitude, longitude, 0.0d);
@@ -221,7 +221,7 @@ public class CoordTranslator {
     }
 
     public static long[] fromCK42toCK42_GK(double CK42_latitude, double CK42_longitude) {
-        return CK42_Gauss_Krüger_Translator.CK42_Geodetic_to_Gauss_Krüger(CK42_latitude, CK42_longitude);
+        return CK42_Gauss_Kruger_Translator.CK42_Geodetic_to_Gauss_Kruger(CK42_latitude, CK42_longitude);
     }
 
     public static String makeGKHumanReadable(long GK) {

@@ -1005,7 +1005,7 @@ public class MainActivity extends DemManagementActivity {
                         targetCoordString += " ";
                     }
                     targetCoordString += "Alt: " + altCK42 + "m";
-                } else if (outputMode == outputModes.CK42GaussKrüger) {
+                } else if (outputMode == outputModes.CK42GaussKruger) {
                     String northing_string = CoordTranslator.makeGKHumanReadable(GK_northing);
                     String easting_string = CoordTranslator.makeGKHumanReadable(GK_easting);
                     // Note that for CK-42, height above ellipsoid is used rather than above mean sea level
@@ -1156,7 +1156,7 @@ public class MainActivity extends DemManagementActivity {
             Log.d(TAG, "clipboard text: " + text);
             text = text.replaceAll("<[^>]*>", ""); // remove HTML link tag(s)
             // don't remove newline characters for copy/paste text if output mode is CK42 GK gridref
-            if (outputMode != outputModes.CK42GaussKrüger) {
+            if (outputMode != outputModes.CK42GaussKruger) {
                 text = text.replaceAll("<br>", ""); // remove HTML <br> newlines
                 text = text.replaceAll("(\r\n|\n)", ""); // remove string literal newlines
             }

@@ -58,7 +58,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
         MGRS10m,
         MGRS100m,
         CK42Geodetic,
-        CK42GaussKrüger
+        CK42GaussKruger
     }
 
 
@@ -81,7 +81,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
                 return getString(R.string.nato_mgrs_100m);
             case CK42Geodetic:
                 return getString(R.string.ck_42_lat_lon);
-            case CK42GaussKrüger:
+            case CK42GaussKruger:
                 return getString(R.string.ck_42_gauss_kruger_n_e);
         }
         return ""; // this should never happen
@@ -271,11 +271,11 @@ public abstract class AthenaActivity extends AppCompatActivity {
             case 8:
                 prefsEditor.putInt("outputMode", mode);
                 prefsEditor.apply(); // make the outputMode change persistent
-                outputMode = outputModes.CK42GaussKrüger; // An alternative geodetic system using the Krasovsky 1940 ellipsoid. Northing defined by X value, and Easting defined by Y value describe an exact position on Earth
+                outputMode = outputModes.CK42GaussKruger; // An alternative geodetic system using the Krasovsky 1940 ellipsoid. Northing defined by X value, and Easting defined by Y value describe an exact position on Earth
                 // There is no reason anyone would ever use anything but Meter as the unit for CK42
                 setMeasurementUnit(measurementUnits.METER);
                 if (outputModeRadioGroup != null && outputModeRadioGroup.getVisibility() == View.VISIBLE) {
-                    outputModeRadioGroup.check(R.id.radioButtonCK42GaussKrüger);
+                    outputModeRadioGroup.check(R.id.radioButtonCK42GaussKruger);
                 }
                 if (textViewTargetCoord != null && textViewTargetCoord.getVisibility() == View.VISIBLE) {
                     if(!isTargetCoordDisplayed) {
@@ -283,7 +283,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
                         isTargetCoordDisplayed = false;
                     }
                 }
-                Log.i(TAG, "Output mode changed to CK42 GaussKrüger");
+                Log.i(TAG, "Output mode changed to CK42 GaussKruger");
                 break;
             default:
                 Log.e(TAG, "ERROR: unrecognized value for output mode: " + mode + ". reverting to WGS84...");
@@ -718,7 +718,7 @@ public abstract class AthenaActivity extends AppCompatActivity {
     } // onDestroy()
 
     public boolean outputModeIsSlavic() {
-        return (outputMode == outputModes.CK42GaussKrüger || outputMode == outputModes.CK42Geodetic);
+        return (outputMode == outputModes.CK42GaussKruger || outputMode == outputModes.CK42Geodetic);
     }
 
     public boolean outputModeIsMGRS() {
