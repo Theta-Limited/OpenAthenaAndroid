@@ -1,0 +1,3 @@
+Major update with an important accuracy fix!
+ * Fix incorrect conversion for altitude value which could cause error of up to 60 meters
+ * Add interpolation in parser for DTED2 format DEM files
