@@ -975,7 +975,9 @@ public class MainActivity extends DemManagementActivity {
                 }
 
                 // convert from WGS84 height above ellipsoid to EGM96 above mean sea level (much more commonly used)
-                double mslAlt = altitudeDouble + offsetAdapter.getEGM96OffsetAtLatLon(latitude, longitude);
+                // double mslAlt = altitudeDouble + offsetAdapter.getEGM96OffsetAtLatLon(latitude, longitude);
+                // re issue #180, fix incorrect equation for applying geoid offset
+                double mslAlt = altitudeDouble - offsetAdapter.getEGM96OffsetAtLatLon(latitude, longitude);
                 // convert from meters to feet if user setting indicates to do so
                 mslAlt *= (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d);
                 // round to nearest whole number

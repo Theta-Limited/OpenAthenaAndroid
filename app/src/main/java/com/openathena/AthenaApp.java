@@ -36,11 +36,10 @@ public class AthenaApp extends Application { // Android Singleton Class for hold
             // https://stackoverflow.com/a/3447148
             // Initialize matthias' library which calculates the offset between WGS84 reference ellipsoid and the EGM96 geoid
             // https://github.com/matthiaszimmermann/EGM96
+            // Note the README.md exmaple for this library is wrong, the correct conversion formula is:
+            // egm96Altitude = wgs84altitude - Geoid.getOffset(new Location(latitude, longitude));
             // More info: https://epsg.org/crs_4979/WGS-84.html https://epsg.org/crs_5773/EGM96-height.html
             Geoid.init(getAssets().open("EGM96complete.bin")); // op may consume significant memory
-            // example usage for calculating offset between WGS84 and EGM96 at a lat/lon:
-            // EGMOffsetProvider = new EGM96OffsetAdapter();
-            // double height_diff = EGMOffsetProvider.getEGM96OffsetAtLatLon(latitude, longitude)
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, e.getMessage());

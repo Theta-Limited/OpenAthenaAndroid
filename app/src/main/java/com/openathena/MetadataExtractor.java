@@ -347,7 +347,10 @@ public class MetadataExtractor {
         if (!make.toLowerCase(Locale.ENGLISH).contains("autel") /* I'm not sure if autel uses EGM96 AMSL or WGS84 hae for new firmware */ && !xmp_str.toLowerCase(Locale.ENGLISH).contains("rtkflag")) {
             // convert the height from EGM96 AMSL to WGS84 hae if made by dji and rtk device not present
             Log.i(TAG, "Converting from orthometric to ellipsoidal vertical datum for image metadata");
-            z = z - offsetProvider.getEGM96OffsetAtLatLon(y,x);
+
+            // z = z - offsetProvider.getEGM96OffsetAtLatLon(y,x);
+            // re issue #180, fix incorrect equation for applying geoid offset
+            z = z + offsetProvider.getEGM96OffsetAtLatLon(y,x);
         }
 
         double[] outArr = new double[]{y, x, z, azimuth, theta, roll};
@@ -414,7 +417,9 @@ public class MetadataExtractor {
         }
 
         // Skydio altitude is orthometric (EGM96 AMSL), we must convert to ellipsoidal (WGS84 hae)
-        z = z - offsetProvider.getEGM96OffsetAtLatLon(y, x);
+        // z = z - offsetProvider.getEGM96OffsetAtLatLon(y, x);
+        // re issue #180, fix incorrect equation for applying geoid offset
+        z = z + offsetProvider.getEGM96OffsetAtLatLon(y, x);
 
         double[] outArr = new double[]{y, x, z, azimuth, theta, roll};
         return outArr;
@@ -470,7 +475,9 @@ public class MetadataExtractor {
             // it EXPLICITLY SAYING (wrongly) in the metadata the vertical datum is ellipsoidal not orthometric
             //
             // This is why we can't have nice things...
-            z = z - offsetProvider.getEGM96OffsetAtLatLon(y, x);
+            // z = z - offsetProvider.getEGM96OffsetAtLatLon(y, x);
+            // re issue #180, fix incorrect equation for applying geoid offset
+            z = z + offsetProvider.getEGM96OffsetAtLatLon(y, x);
 
             String schemaNS = "http://pix4d.com/camera/1.0";
 
@@ -561,7 +568,9 @@ public class MetadataExtractor {
         String model = exif.getAttribute(ExifInterface.TAG_MODEL).toUpperCase(Locale.ENGLISH);
         if (!model.toLowerCase(Locale.ENGLISH).contains("anafiai")) {
             // convert from EGM96 AMSL to WGS84 hae (if necessary)
-            z = z - offsetProvider.getEGM96OffsetAtLatLon(y,x);
+            // z = z - offsetProvider.getEGM96OffsetAtLatLon(y,x);
+            // re issue #180, fix incorrect equation for applying geoid offset
+            z = z + offsetProvider.getEGM96OffsetAtLatLon(y,x);
         }
 
         double[] outArr = new double[]{y, x, z, azimuth, theta, roll};
@@ -582,7 +591,9 @@ public class MetadataExtractor {
         z = yxz[2];
 
         // Convert vertical datum from EGM96 (AMSL) to WGS84 (HAE)
-        z = z - offsetProvider.getEGM96OffsetAtLatLon(y,x);
+        // z = z - offsetProvider.getEGM96OffsetAtLatLon(y,x);
+        // re issue #180, fix incorrect equation for applying geoid offset
+        z = z + offsetProvider.getEGM96OffsetAtLatLon(y,x);
 
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
         if (xmp_str == null) {

@@ -501,7 +501,10 @@ public class DEMParser implements Serializable {
             // When the app is in Maritime mode:
             // Instead of using any DEM, just returns average mean sea level height
             // Converts to WGS84 height above ellipsoid (HAE)
-            return 0.0d - offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
+
+            // return 0.0d - offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
+            // re issue #180, fix incorrect equation for applying geoid offset
+            return 0.0d + offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
         }
 
         if (this.isDTED) {
@@ -511,7 +514,9 @@ public class DEMParser implements Serializable {
                 try {
                     double EGM96_altitude = this.dted.getElevation(point).getElevation();
                     // DTED vertical datum is height above EGM96 geoid, we must convert it to height above WGS84 ellipsoid
-                    double WGS84_altitude = EGM96_altitude - offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
+                    // double WGS84_altitude = EGM96_altitude - offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
+                    // re issue #180, fix incorrect equation for applying geoid offset
+                    double WGS84_altitude = EGM96_altitude + offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
                     return WGS84_altitude;
                 } catch (CorruptTerrainException e) {
                     throw new CorruptTerrainException("The terrain data in the DTED file is corrupt.", e);
@@ -567,16 +572,10 @@ public class DEMParser implements Serializable {
                 // Perform IDW interpolation
                 double interpolatedAltitude = idwInterpolation(target, neighbors, power);
 
-//                double rawAltitude = this.dted.getElevation(new Point(lat, lon)).getElevation();
-//                Log.d(TAG, "rawAltitude: " + rawAltitude);
-//                Log.d(TAG, "interpolatedAltitude: " + interpolatedAltitude);
-
                 // Convert from EGM96 AMSL orthometric height to WGS84 HAE
-                double WGS84_altitude = interpolatedAltitude - offsetProvider.getEGM96OffsetAtLatLon(lat, lon);
-
-//                // Convert from EGM96 AMSL orthometric height to WGS84 HAE
-//                double WGS84_altitude = rawAltitude - offsetProvider.getEGM96OffsetAtLatLon(lat, lon);
-
+                // double WGS84_altitude = interpolatedAltitude - offsetProvider.getEGM96OffsetAtLatLon(lat, lon);
+                // re issue #180, fix incorrect equation for applying geoid offset
+                double WGS84_altitude = interpolatedAltitude + offsetProvider.getEGM96OffsetAtLatLon(lat, lon);
 
                 return WGS84_altitude;
             } catch (CorruptTerrainException e) {
@@ -648,7 +647,9 @@ public class DEMParser implements Serializable {
 
             if (verticalDatum == verticalDatumTypes.EGM96) {
                 // convert from EGM96 AMSL orthometric height to WGS84 height above ellipsoid hae (if necessary)
-                altitude = altitude - offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
+                // altitude = altitude - offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
+                // re issue #180, fix incorrect equation for applying geoid offset
+                altitude = altitude + offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
             }
             return altitude;
         } // end edge case handling
@@ -675,7 +676,9 @@ public class DEMParser implements Serializable {
 
         if (verticalDatum == verticalDatumTypes.EGM96) {
             // convert from EGM96 AMSL orthometric height to WGS84 height above ellipsoid hae (if necessary)
-            altitude = altitude - offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
+            // altitude = altitude - offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
+            // re issue #180, fix incorrect equation for applying geoid offset
+            altitude = altitude + offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
         }
 
         return altitude;

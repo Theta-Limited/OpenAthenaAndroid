@@ -42,6 +42,9 @@ public class SeaLevelDEMParserEmulator extends DEMParser{
     public double getAltFromLatLon(double lat, double lon) {
         // Instead of using any DEM, this provider just returns average mean sea level height
         // Converts to WGS84 height above ellipsoid (HAE)
-        return 0.0d - offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
+
+        // return 0.0d - offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
+        // re issue #180, fix incorrect equation for applying geoid offset
+        return 0.0d + offsetProvider.getEGM96OffsetAtLatLon(lat,lon);
     }
 }
