@@ -250,6 +250,6 @@
     <string name="maritime_mode_is_enabled_using_sea_level_instead_of_any_dem">海洋モードが有効です。DEM の代わりに海面を使用しています…</string>
     <string name="danger_maritime_mode_is_enabled">⚠️ 危険：海洋モードが有効です。陸上ターゲットの計算が非常に不正確になります ⚠️</string>
     <string name="disable_maritime_mode_action">海洋モードをオフにする</string>
-
+    <string name="tle_disclaimer">ターゲットの位置エラーのカテゴリ出力は推定値であり、関連する機関による認証がない場合があります</string>
 
 </resources>

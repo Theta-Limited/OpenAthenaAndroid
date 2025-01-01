@@ -41,12 +41,13 @@ public class AboutActivity extends AthenaActivity {
 
         // set About text
         aboutText.setText(Html.fromHtml( getString(R.string.app_name) + " " + getString(R.string.version_word) + " " + versionName+"<br>"
-                        + "© 2024 Theta Informatics LLC<br>"
+                        + "© 2025 Theta Informatics LLC<br>"
                         + "<a href=\"https://www.gnu.org/licenses/agpl-3.0.en.html\">AGPL-3.0</a> " + getString(R.string.software_license) + ",<br>"
                         + getString(R.string.some_rights_reserved) + "<br>"
                         + "<br> <a href=\"https://openathena.com/\">OpenAthena.com</a> <br>"
                         + getString(R.string.AboutSnippet) + "<br>"
                         + getString(R.string.CalibrationReminderSnippet) + "<br>"
+                        + getString(R.string.tle_disclaimer) + "<br>"
                         + "<br><a href=\"https://github.com/mkrupczak3/OpenAthenaAndroid\">"
                         + getString(R.string.operation_manual) + "</a><br>"
                         + "<br><a href=\"https://github.com/Theta-Limited/OpenAthenaAndroid/blob/master/TROUBLESHOOTING.md\">"

@@ -250,7 +250,7 @@
     <string name="maritime_mode_is_enabled_using_sea_level_instead_of_any_dem">Морской режим включен. Используется уровень моря вместо любой ЦМР…</string>
     <string name="danger_maritime_mode_is_enabled">⚠️ ОПАСНОСТЬ: Морской режим включен. Расчеты будут очень неточными для целей на суше ⚠️</string>
     <string name="disable_maritime_mode_action">Выключить морской режим</string>
-
+    <string name="tle_disclaimer">Выходные данные категории ошибки местоположения цели являются лишь оценочными и могут не быть сертифицированы соответствующими органами</string>
 
 
 </resources>

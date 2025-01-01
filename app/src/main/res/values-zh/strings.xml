@@ -251,5 +251,6 @@
     <string name="maritime_mode_is_enabled_using_sea_level_instead_of_any_dem">已启用海洋模式。使用海平面代替任何 DEM…</string>
     <string name="danger_maritime_mode_is_enabled">⚠️ 危险：已启用海洋模式。对陆地目标的计算将非常不准确 ⚠️</string>
     <string name="disable_maritime_mode_action">关闭海洋模式</string>
+    <string name="tle_disclaimer">目标位置错误类别输出仅为估计值，可能未经相关当局认证</string>
 
 </resources>
