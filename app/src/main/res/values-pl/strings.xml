@@ -250,5 +250,6 @@
     <string name="maritime_mode_is_enabled_using_sea_level_instead_of_any_dem">Tryb morski jest włączony. Używanie poziomu morza zamiast jakiegokolwiek DEM...</string>
     <string name="danger_maritime_mode_is_enabled">⚠️ NIEBEZPIECZEŃSTWO: Tryb morski jest włączony. Obliczenia będą bardzo niedokładne dla celów na lądzie ⚠️</string>
     <string name="disable_maritime_mode_action">Wyłącz tryb morski</string>
+    <string name="tle_disclaimer">Wynik kategorii błędu lokalizacji celu jest tylko szacunkiem i może nie być certyfikowany przez odpowiednie organy</string>
 
 </resources>

@@ -250,5 +250,6 @@
     <string name="maritime_mode_is_enabled_using_sea_level_instead_of_any_dem">Le mode maritime est activé. Utilisation du niveau de la mer au lieu de tout MNT…</string>
     <string name="danger_maritime_mode_is_enabled">⚠️ DANGER : Le mode maritime est activé. Les calculs seront très inexacts pour les cibles terrestres ⚠️</string>
     <string name="disable_maritime_mode_action">Désactiver le mode maritime</string>
+    <string name="tle_disclaimer">La catégorie d\'erreur de localisation de cible est uniquement une estimation et peut ne pas être certifiée par les autorités compétentes</string>
 
 </resources>

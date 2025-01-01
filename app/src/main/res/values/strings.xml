@@ -298,4 +298,5 @@
     <string name="maritime_mode_is_enabled_using_sea_level_instead_of_any_dem">Maritime Mode is enabled. Using sea level instead of any DEM …</string>
     <string name="danger_maritime_mode_is_enabled">⚠️ DANGER: Maritime mode is enabled. Calculations will be very inaccurate for any targets on land ⚠️</string>
     <string name="disable_maritime_mode_action">Disable maritime mode</string>
+    <string name="tle_disclaimer">Target Location Error category output is only an estimate and may not be certified by relevant authorities</string>
 </resources>
