@@ -224,19 +224,6 @@ public class MetadataExtractor {
             return null;
         }
 
-//        if (make.equalsIgnoreCase("camera")) {
-//            String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
-//            if (xmp_str == null || xmp_str.trim().isEmpty()) return null;
-//            //Log.d(TAG, "xmp_str: " + xmp_str);
-//            Log.d(TAG, "EXIF make was: " + make);
-//            if (!xmp_str.trim().isEmpty()) {
-//                XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
-//                String schemaNS = "http://ns.adobe.com/tiff/1.0/";
-//                make = xmpMeta.getPropertyString(schemaNS,"Make");
-//                make = make.toUpperCase(Locale.ENGLISH);
-//                Log.d(TAG, "XMP make is: " + make);
-//            }
-//        }
         switch(make) {
             case "DJI":
                 return handleDJI(exif);
