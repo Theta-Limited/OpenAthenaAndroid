@@ -60,7 +60,7 @@ public class CursorOnTargetSender {
     static TimeZone tz = TimeZone.getTimeZone("UTC");
     static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
-    public static void sendCoT(Context invoker, double lat, double lon, double hae, double theta, String exif_datetime, LinkedHashMap<String,String> openAthenaCalculationInfo) {
+    public static void sendCoT(Context invoker, double lat, double lon, double hae, double theta, boolean isDroneModelRecognized, String exif_datetime, LinkedHashMap<String,String> openAthenaCalculationInfo) {
         if(invoker == null){
             throw new IllegalArgumentException("invoker context can not be null");
         } else if (!(invoker instanceof android.app.Activity)) {
@@ -89,7 +89,7 @@ public class CursorOnTargetSender {
         String fiveMinutesFromNowISO = df.format(fiveMinsFromNow);
         String imageISO = df.format(convert(exif_datetime));
 
-        double circularError = calculateCircularError(theta); // optimistic estimation of 2 sigma accuracy based on angle of camera depression theta
+        double circularError = calculateCircularError(theta, isDroneModelRecognized); // optimistic estimation of 2 sigma accuracy based on angle of camera depression theta
         String le = Double.toString(LINEAR_ERROR);
         String ce = Double.toString(circularError);
         new Thread(new Runnable() {
@@ -107,7 +107,11 @@ public class CursorOnTargetSender {
 
     }
 
-    public static double calculateCircularError(double theta) {
+    public static double calculateCircularError(double theta, boolean isDroneModelRecognized) {
+        // If the camera's intrinsic parameters are missing, accuracy will be significantly degraded
+        if(!isDroneModelRecognized) {
+            return 306.0d;
+        }
         return Math.abs(1.0d / Math.tan(Math.toRadians(theta)) * LINEAR_ERROR); // optimistic estimation of 2 sigma accuracy based on angle of camera depression theta
     }
 

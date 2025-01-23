@@ -44,7 +44,7 @@ public class MetadataExtractor {
      * @param exif exif of an image to analyze for make and model
      * @return true if the make and model is a known model
      */
-    public static boolean isDroneModelRecognized(ExifInterface exif) {
+    public static boolean isDroneModelRecognized(OpenAthenaExifInterface exif) {
         String make = exif.getAttribute(ExifInterface.TAG_MAKE);
         String model = exif.getAttribute(ExifInterface.TAG_MODEL);
         return (parameterProvider.getMatchingDrones(make, model).length() > 0);
@@ -55,7 +55,7 @@ public class MetadataExtractor {
      * @param exif exif of an image to analyze for make and model
      * @return String lensType either "perspective" or "fisheye", or "unknown"
      */
-    public static String getLensType(ExifInterface exif) {
+    public static String getLensType(OpenAthenaExifInterface exif) {
         JSONObject drone = getMatchingDrone(exif);
         String lensType;
         try {
@@ -69,7 +69,7 @@ public class MetadataExtractor {
         return lensType;
     }
 
-    public static boolean isThermal(ExifInterface exif) {
+    public static boolean isThermal(OpenAthenaExifInterface exif) {
         JSONObject drone = getMatchingDrone(exif);
         boolean isThermal = false;
         try {
@@ -89,14 +89,13 @@ public class MetadataExtractor {
      * @param exif exif of an image to analyze for make and model
      * @return LinkedHashMap ordered Map containing distortion parameter names and their values
      */
-    public static LinkedHashMap<String, Double> getDistortionParameters(ExifInterface exif) {
+    public static LinkedHashMap<String, Double> getDistortionParameters(OpenAthenaExifInterface exif) {
         JSONObject drone = getMatchingDrone(exif);
         LinkedHashMap<String, Double> distortionParamMap = new LinkedHashMap<>();
         if (drone == null) return null;
         String lensType;
         try {
             lensType = drone.getString("lensType");
-            if (lensType == null) return null;
             if ("perspective".equalsIgnoreCase(lensType)) {
                 distortionParamMap.put("k1", drone.getDouble("radialR1"));
                 distortionParamMap.put("k2", drone.getDouble("radialR2"));
@@ -131,7 +130,7 @@ public class MetadataExtractor {
      *     Many drone models have an EXIF make/model name collision between their main color camera and their secondary thermal camera, even though each has entirely different intrinsics.
      * </p>
      */
-    public static JSONObject getMatchingDrone(ExifInterface exif) {
+    public static JSONObject getMatchingDrone(OpenAthenaExifInterface exif) {
         String make = exif.getAttribute(ExifInterface.TAG_MAKE);
         String model = exif.getAttribute(ExifInterface.TAG_MODEL);
         JSONArray matchingDrones = parameterProvider.getMatchingDrones(make, model);
@@ -169,10 +168,10 @@ public class MetadataExtractor {
 
     /**
      * Returns the sensor physical height of a single pixel of a given drone make/model from droneModels.json database
-     * @param exif ExifInterface from metadata of an image to analyze for make and model
+     * @param exif OpenAthenaExifInterface from metadata of an image to analyze for make and model
      * @return double height (in mm) per pixel of the camera sensor of the given make/model camera
      */
-    public static double getSensorPhysicalHeight(ExifInterface exif) {
+    public static double getSensorPhysicalHeight(OpenAthenaExifInterface exif) {
         JSONObject drone = getMatchingDrone(exif);
         if (drone == null) {
             return -1.0d;
@@ -189,10 +188,10 @@ public class MetadataExtractor {
 
     /**
      * Returns the sensor physical width of a single pixel of a given drone make/model from droneModels.json database
-     * @param exif ExifInterface from metadata of an image to analyze for make and model
+     * @param exif OpenAthenaExifInterface from metadata of an image to analyze for make and model
      * @return double width (in mm) per pixel of the camera sensor of the given make/model camera
      */
-    public static double getSensorPhysicalWidth(ExifInterface exif) {
+    public static double getSensorPhysicalWidth(OpenAthenaExifInterface exif) {
         JSONObject drone = getMatchingDrone(exif);
         if (drone == null) {
             return -1.0d;
@@ -209,12 +208,12 @@ public class MetadataExtractor {
 
     /**
      * Obtain position and orientation values from EXIF and XMP metadata of a given image
-     * @param exif ExifInterface from the image metadata to be analyzed. Usually includes XMP metadata as well
+     * @param exif OpenAthenaExifInterface from the image metadata to be analyzed. Usually includes XMP metadata as well
      * @return double[6] containing latitude, longitude, elevation (in WGS84 hae), azimuth, pitch angle (theta, where downwards is positive), roll
      * @throws XMPException If expected XMP metadata values are missing
      * @throws MissingDataException If XMP or EXIF metadata are missing
      */
-    public static double[] getMetadataValues(ExifInterface exif) throws XMPException, MissingDataException {
+    public static double[] getMetadataValues(OpenAthenaExifInterface exif) throws XMPException, MissingDataException {
         if (exif == null) {
             Log.e(TAG, "ERROR: getMetadataValues failed, ExifInterface was null");
             throw new IllegalArgumentException("ERROR: getMetadataValues failed, exif was null");
@@ -224,6 +223,20 @@ public class MetadataExtractor {
         if (make == null || make.equals("")) {
             return null;
         }
+
+//        if (make.equalsIgnoreCase("camera")) {
+//            String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
+//            if (xmp_str == null || xmp_str.trim().isEmpty()) return null;
+//            //Log.d(TAG, "xmp_str: " + xmp_str);
+//            Log.d(TAG, "EXIF make was: " + make);
+//            if (!xmp_str.trim().isEmpty()) {
+//                XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmp_str.trim());
+//                String schemaNS = "http://ns.adobe.com/tiff/1.0/";
+//                make = xmpMeta.getPropertyString(schemaNS,"Make");
+//                make = make.toUpperCase(Locale.ENGLISH);
+//                Log.d(TAG, "XMP make is: " + make);
+//            }
+//        }
         switch(make) {
             case "DJI":
                 return handleDJI(exif);
@@ -260,12 +273,12 @@ public class MetadataExtractor {
 
     /**
      * Obtain position and orientation values from EXIF and XMP metadata of a DJI drone image
-     * @param exif ExifInterface from the DJI drone image metadata to be analyzed. Usually includes XMP metadata as well
+     * @param exif OpenAthenaExifInterface from the DJI drone image metadata to be analyzed. Usually includes XMP metadata as well
      * @return double[6] containing latitude, longitude, elevation (in WGS84 hae), azimuth, pitch angle (theta, where downwards is positive), roll
      * @throws XMPException If expected XMP metadata values are missing
      * @throws MissingDataException If XMP or EXIF metadata are missing
      */
-    public static double[] handleDJI(ExifInterface exif) throws XMPException, MissingDataException{
+    public static double[] handleDJI(OpenAthenaExifInterface exif) throws XMPException, MissingDataException{
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
         if (xmp_str == null) {
             throw new MissingDataException(parent.getString(R.string.xmp_missing_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
@@ -344,7 +357,10 @@ public class MetadataExtractor {
 
         // DJI altitude is usually orthometric (EGM96 AMSL), but will be ellipsoidal (WGS84 hae) if special RTK device is used (rare)
         String make = exif.getAttribute(ExifInterface.TAG_MAKE);
-        if (!make.toLowerCase(Locale.ENGLISH).contains("autel") /* I'm not sure if autel uses EGM96 AMSL or WGS84 hae for new firmware */ && !xmp_str.toLowerCase(Locale.ENGLISH).contains("rtkflag")) {
+        if (make == null) make = ""; else make = make.toLowerCase(Locale.ENGLISH);
+//        String model = exif.getAttribute(ExifInterface.TAG_MODEL);
+//        if (model == null) model = ""; else model = model.toUpperCase(Locale.ENGLISH);
+        if (!make.contains("autel") /* I'm not sure if autel uses EGM96 AMSL or WGS84 hae for new firmware */ && !xmp_str.toLowerCase(Locale.ENGLISH).contains("rtkflag")) {
             // convert the height from EGM96 AMSL to WGS84 hae if made by dji and rtk device not present
             Log.i(TAG, "Converting from orthometric to ellipsoidal vertical datum for image metadata");
 
@@ -359,12 +375,12 @@ public class MetadataExtractor {
 
     /**
      * Obtain position and orientation values from EXIF and XMP metadata of a given Skydio drone image
-     * @param exif ExifInterface from the Skydio drone image metadata to be analyzed. Usually includes XMP metadata as well
+     * @param exif OpenAthenaExifInterface from the Skydio drone image metadata to be analyzed. Usually includes XMP metadata as well
      * @return double[6] containing latitude, longitude, elevation (in WGS84 hae), azimuth, pitch angle (theta, where downwards is positive), roll
      * @throws XMPException If expected XMP metadata values are missing
      * @throws MissingDataException If XMP or EXIF metadata are missing
      */
-    public static double[] handleSKYDIO(ExifInterface exif) throws XMPException, MissingDataException {
+    public static double[] handleSKYDIO(OpenAthenaExifInterface exif) throws XMPException, MissingDataException {
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
         if (xmp_str == null) {
             throw new MissingDataException(parent.getString(R.string.xmp_missing_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
@@ -427,12 +443,12 @@ public class MetadataExtractor {
 
     /**
      * Obtain position and orientation values from EXIF and XMP metadata of a given Autel Robotics image
-     * @param exif ExifInterface from the Autel Robotics image metadata to be analyzed. Usually includes XMP metadata as well
+     * @param exif OpenAthenaExifInterface from the Autel Robotics image metadata to be analyzed. Usually includes XMP metadata as well
      * @return double[6] containing latitude, longitude, elevation (in WGS84 hae), azimuth, pitch angle (theta, where downwards is positive), roll
      * @throws XMPException If expected XMP metadata values are missing
      * @throws MissingDataException If XMP or EXIF metadata are missing
      */
-    public static double[] handleAUTEL(ExifInterface exif) throws XMPException, MissingDataException{
+    public static double[] handleAUTEL(OpenAthenaExifInterface exif) throws XMPException, MissingDataException{
         String xmp_str = exif.getAttribute(ExifInterface.TAG_XMP);
         if (xmp_str == null) {
             throw new MissingDataException(parent.getString(R.string.xmp_missing_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.ALL);
@@ -493,10 +509,26 @@ public class MetadataExtractor {
             } catch (NumberFormatException nfe) {
                 throw new MissingDataException(parent.getString(R.string.missing_data_exception_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
             }
-            // AUTEL old firmware Camera pitch 0 is down, 90 is forwards towards horizon
-            // so, we use the complement of the angle instead
-            // see: https://support.pix4d.com/hc/en-us/articles/202558969-Yaw-Pitch-Roll-and-Omega-Phi-Kappa-angles
-            theta = 90.0d - theta;
+
+            //String make = exif.getAttribute(ExifInterface.TAG_MAKE);
+            //if (make == null) make = ""; else make = make.toLowerCase(Locale.ENGLISH);
+            //String model = exif.getAttribute(ExifInterface.TAG_MODEL);
+            //if (model == null) model = ""; else model = model.toUpperCase(Locale.ENGLISH);
+
+            if (theta >= 0.0d) {
+                // AUTEL old firmware Camera pitch 0 is down, 90 is forwards towards horizon
+                // so, we use the complement of the angle instead
+                // see: https://support.pix4d.com/hc/en-us/articles/202558969-Yaw-Pitch-Roll-and-Omega-Phi-Kappa-angles
+                // if drone implements the above spec incorrectly and camera pitch is above horizon, the pitch value below will be incorrect
+                theta = 90.0d - theta;
+            } else {
+                // Some Autel Drones (such as the Autel Robotics Evo Lite Enterprise 640T [XL715]) implement the PIX4D camera pitch spec incorrectly.
+                // It is SUPPOSED TO BE 0 is down, 90 is forwards towards horizon
+                // HOWEVER: some drones appear to use DJI-style pitch values where 0 is straight forwards and negative values for downward pitch
+                // It is highly unlikely that a camera would be pointing further backwards than straight down (this is what a negative value would represent if the spec was used correctly)
+                // THEREFORE: if the pitch value is negative, we will assume they implemented the spec incorrectly and just treat it as DJI-style pitch value
+                theta = -1.0d * theta;
+            }
 
             try {
                 // pix4d NED, positive roll is clockwise
@@ -512,12 +544,12 @@ public class MetadataExtractor {
 
     /**
      * Obtain position and orientation values from EXIF and XMP metadata of a given Parrot drone image
-     * @param exif ExifInterface from the Parrot drone image metadata to be analyzed. Usually includes XMP metadata as well
+     * @param exif OpenAthenaExifInterface from the Parrot drone image metadata to be analyzed. Usually includes XMP metadata as well
      * @return double[6] containing latitude, longitude, elevation (in WGS84 hae), azimuth, pitch angle (theta, where downwards is positive), roll
      * @throws XMPException If expected XMP metadata values are missing
      * @throws MissingDataException If XMP or EXIF metadata are missing
      */
-    public static double[] handlePARROT(ExifInterface exif) throws XMPException, MissingDataException{
+    public static double[] handlePARROT(OpenAthenaExifInterface exif) throws XMPException, MissingDataException{
         double y;
         double x;
         double z;
@@ -577,7 +609,7 @@ public class MetadataExtractor {
         return outArr;
     }
 
-    public static double[] handleTeal(ExifInterface exif) throws XMPException, MissingDataException{
+    public static double[] handleTeal(OpenAthenaExifInterface exif) throws XMPException, MissingDataException{
         double y;
         double x;
         double z;
@@ -639,12 +671,12 @@ public class MetadataExtractor {
     }
 
     // http://android-er.blogspot.com/2009/12/read-exif-information-in-jpeg-file.html
-    public static String getTagString(String tag, ExifInterface exif)
+    public static String getTagString(String tag, OpenAthenaExifInterface exif)
     {
         return(tag + " : " + exif.getAttribute(tag) + "\n");
     }
 
-    public static Float[] exifGetYXZ(ExifInterface exif) throws MissingDataException
+    public static Float[] exifGetYXZ(OpenAthenaExifInterface exif) throws MissingDataException
     {
         String latDir = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
         String latRaw = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
@@ -695,7 +727,7 @@ public class MetadataExtractor {
         return(arrOut);
     }
 
-    public static double[] getIntrinsicMatrixFromExif(ExifInterface exif) throws Exception {
+    public static double[] getIntrinsicMatrixFromExif(OpenAthenaExifInterface exif) throws Exception {
         JSONObject drone = getMatchingDrone(exif);
 
         if (drone != null) {
@@ -717,7 +749,7 @@ public class MetadataExtractor {
         }
     }
 
-    protected static double[] getIntrinsicMatrixFromKnownCCD(ExifInterface exif, double[] pixelDimensions) throws Exception {
+    protected static double[] getIntrinsicMatrixFromKnownCCD(OpenAthenaExifInterface exif, double[] pixelDimensions) throws Exception {
         JSONObject drone = getMatchingDrone(exif);
 
         if (exif == null) {
@@ -805,7 +837,7 @@ public class MetadataExtractor {
         return intrinsicMatrix;
     }
 
-    protected static double[] getIntrinsicMatrixFromExif35mm(ExifInterface exif) throws Exception{
+    protected static double[] getIntrinsicMatrixFromExif35mm(OpenAthenaExifInterface exif) throws Exception{
         if (exif == null) {
             throw new IllegalArgumentException("Failed to get intrinsics, ExifInterface was null!");
         }
@@ -858,7 +890,7 @@ public class MetadataExtractor {
         return intrinsicMatrix;
     }
 
-    public static double[] getRayAnglesFromImgPixel(int x, int y, double rollAngleDeg, ExifInterface exifInterface) throws Exception {
+    public static double[] getRayAnglesFromImgPixel(int x, int y, double rollAngleDeg, OpenAthenaExifInterface exifInterface) throws Exception {
         JSONObject drone = getMatchingDrone(exifInterface);
         String lensType = "";
         if (drone != null) {

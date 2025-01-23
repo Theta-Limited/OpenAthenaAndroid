@@ -486,11 +486,11 @@ public class MainActivity extends DemManagementActivity {
 
         isImageLoaded = true;
 
-        ExifInterface exif;
+        OpenAthenaExifInterface exif;
         Uri matchingDemURI;
         try {
             is = cr.openInputStream(imageUri);
-            exif = new ExifInterface(is);
+            exif = new OpenAthenaExifInterface(is);
             double[] values = MetadataExtractor.getMetadataValues(exif);
             double lat = values[0];
             double lon = values[1];
@@ -675,7 +675,7 @@ public class MainActivity extends DemManagementActivity {
     public void calculateImage(View view, boolean shouldISendCoT)
     {
         Drawable aDrawable;
-        ExifInterface exif;
+        OpenAthenaExifInterface exif;
         String attribs = "";
 
         clearText();
@@ -696,7 +696,7 @@ public class MainActivity extends DemManagementActivity {
             ContentResolver cr = getContentResolver();
             InputStream is = cr.openInputStream(imageUri);
             aDrawable = iView.getDrawable();
-            exif = new ExifInterface(is);
+            exif = new OpenAthenaExifInterface(is);
 
             double[] values = MetadataExtractor.getMetadataValues(exif);
             double y = values[0];
@@ -722,7 +722,12 @@ public class MainActivity extends DemManagementActivity {
             attribs += MetadataExtractor.getTagString(ExifInterface.TAG_DATETIME, exif);
             attribs += MetadataExtractor.getTagString(ExifInterface.TAG_MAKE, exif);
             attribs += MetadataExtractor.getTagString(ExifInterface.TAG_MODEL, exif);
-            attribs += getString(R.string.isCameraModelRecognized) + " " + (MetadataExtractor.isDroneModelRecognized(exif) ? getString(R.string.yes) : getString(R.string.no)) + "\n";
+            boolean isDroneModelRecognized = MetadataExtractor.isDroneModelRecognized(exif);
+            attribs += getString(R.string.isCameraModelRecognized) + " " + (isDroneModelRecognized ? getString(R.string.yes) : getString(R.string.no)) + "\n";
+            if (!isDroneModelRecognized) {
+                attribs += "⚠\uFE0F " + getString(R.string.missing_camera_intrinsics_warning_message) + " ⚠\uFE0F" + "\n";
+
+            }
             attribs += getString(R.string.lens_type) + " " + (MetadataExtractor.getLensType(exif)) + "\n";
 
             String make = exif.getAttribute(ExifInterface.TAG_MAKE);
@@ -885,7 +890,7 @@ public class MainActivity extends DemManagementActivity {
                         attribs += getString(R.string.target_found_at_msg) + " (CK-42): " + roundDouble(latCK42) + "," + roundDouble(lonCK42) + " Alt (hae): " + altCK42 + " " + "m" + "\n";
                     }
                     attribs += getString(R.string.drone_dist_to_target_msg) + " " + Math.round(distance * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
-                    predictedCE = CursorOnTargetSender.calculateCircularError(theta);
+                    predictedCE = CursorOnTargetSender.calculateCircularError(theta, isDroneModelRecognized);
                     attribs += getString(R.string.target_predicted_ce) + " " + Math.round((predictedCE * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d))*10.0)/10.0 + " " + (isUnitFoot() ? "ft.":"m") + "\n";
                     TLE_Cat = CursorOnTargetSender.errorCategoryFromCE(predictedCE);
                     attribs += getString(R.string.target_location_error_category) + " " + TLE_Cat.name() + "\n";
@@ -1016,7 +1021,7 @@ public class MainActivity extends DemManagementActivity {
             }
             textViewTargetCoord.setText(Html.fromHtml(targetCoordString, 0, null, null));
             isTargetCoordDisplayed = true;
-            if (!MetadataExtractor.isDroneModelRecognized(exif)) {
+            if (!isDroneModelRecognized) {
                 displayMissingCameraIntrinsicsAlert();
             }
             // close file
@@ -1026,7 +1031,7 @@ public class MainActivity extends DemManagementActivity {
             //     e.g. for use with ATAK app
             if (shouldISendCoT) {
                 // NOTE that the CoT spec requires WGS84 hae, not EGM96 above mean sea level
-                CursorOnTargetSender.sendCoT(this, latitude, longitude, altitudeDouble, theta, exif.getAttribute(ExifInterface.TAG_DATETIME), openAthenaCalculationInfo);
+                CursorOnTargetSender.sendCoT(this, latitude, longitude, altitudeDouble, theta, isDroneModelRecognized, exif.getAttribute(ExifInterface.TAG_DATETIME), openAthenaCalculationInfo);
             }
         } catch (XMPException e) {
             Log.e(TAG, e.getMessage());

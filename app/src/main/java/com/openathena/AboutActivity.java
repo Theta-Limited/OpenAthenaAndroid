@@ -46,7 +46,7 @@ public class AboutActivity extends AthenaActivity {
                         + getString(R.string.some_rights_reserved) + "<br>"
                         + "<br> <a href=\"https://openathena.com/\">OpenAthena.com</a> <br>"
                         + getString(R.string.AboutSnippet) + "<br>"
-                        + getString(R.string.CalibrationReminderSnippet) + "<br>"
+                        + getString(R.string.CalibrationReminderSnippet) + "<br><br>"
                         + getString(R.string.tle_disclaimer) + "<br>"
                         + "<br><a href=\"https://github.com/mkrupczak3/OpenAthenaAndroid\">"
                         + getString(R.string.operation_manual) + "</a><br>"
