@@ -750,14 +750,17 @@ public class MainActivity extends DemManagementActivity {
                     if (IS_EXTENDED_COT_MODE_ACTIVE) openAthenaCalculationInfo.put(entry.getKey(), roundDouble(entry.getValue()));
                 }
             }
-            attribs += MetadataExtractor.getTagString(ExifInterface.TAG_FOCAL_LENGTH, exif);
+            // attribs += MetadataExtractor.getTagString(ExifInterface.TAG_FOCAL_LENGTH, exif);
+            String exifFocalLength = exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
+            if (exifFocalLength == null) exifFocalLength = "-1.0";
+            attribs += "FocalLength : " + roundDouble(MetadataExtractor.rationalToFloat(exifFocalLength)) + "mm" + "\n";
             attribs += MetadataExtractor.getTagString(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM, exif);
             attribs += MetadataExtractor.getTagString(ExifInterface.TAG_DIGITAL_ZOOM_RATIO, exif);
             attribs += MetadataExtractor.getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif);
             attribs += MetadataExtractor.getTagString(ExifInterface.TAG_IMAGE_LENGTH, exif);
             // yikes
             if (IS_EXTENDED_COT_MODE_ACTIVE) {
-                openAthenaCalculationInfo.put("focalLength", roundDouble(MetadataExtractor.rationalToFloat(exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH))));
+                openAthenaCalculationInfo.put("focalLength", roundDouble(MetadataExtractor.rationalToFloat(exifFocalLength)));
                 openAthenaCalculationInfo.put("digitalZoomRatio", zeroStringIfNull(exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO)));
                 openAthenaCalculationInfo.put("imageWidth", zeroStringIfNull(exif.getAttribute(ExifInterface.TAG_IMAGE_WIDTH)));
                 openAthenaCalculationInfo.put("imageLength", zeroStringIfNull(exif.getAttribute(ExifInterface.TAG_IMAGE_LENGTH)));

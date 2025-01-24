@@ -755,18 +755,16 @@ public class MetadataExtractor {
 
         String focalRational = exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
         double focalLength = rationalToFloat(focalRational);
-        if (focalLength == -1.0d || focalLength == 0.0d) {
-            // Some cameras (such as thermal cameras) don't report their focal length in EXIF
-            //     but if their focal length is a fixed known value stored in droneModels.json,
-            //     we can use it as a fallback method for calculation.
-            //     Otherwise: if focal length is still unknown will fall back to 35mm guess-timate method
-            if (drone != null && drone.has("focalLength")) {
-                focalLength = drone.getDouble("focalLength");
-            } else {
-                Log.e(TAG, "Failed to calculate intrinsics, focal length was missing or invalid!");
-                Log.e(TAG, "Warning: reverting to calc from 35mm mode");
-                return getIntrinsicMatrixFromExif35mm(exif);
-            }
+        // Some thermal cameras don't report their focal length in EXIF (or report them incorrectly)
+        //     if their focal length is a fixed known value stored in droneModels.json,
+        //     override the EXIF one with this value from the database.
+        //     Otherwise: if focal length is still unknown fall back to less accurate 35mm guess-timate method
+        if (drone != null && drone.has("focalLength")) {
+            focalLength = drone.getDouble("focalLength");
+        } else if (focalLength == -1.0d || focalLength == 0.0d) {
+            Log.e(TAG, "Failed to calculate intrinsics, focal length was missing or invalid!");
+            Log.e(TAG, "Warning: reverting to calc from 35mm mode");
+            return getIntrinsicMatrixFromExif35mm(exif);
         }
         Log.i(TAG, "focalLength is: " + focalLength + "mm");
 
