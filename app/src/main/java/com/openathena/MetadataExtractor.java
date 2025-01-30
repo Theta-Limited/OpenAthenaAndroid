@@ -918,6 +918,11 @@ public class MetadataExtractor {
                 double p2 = drone.getDouble("tangentialT2");
 
                 if (!(k1 == 0.0 && k2 == 0.0 && k3 == 0.0 && p1 == 0.0 && p2 == 0.0)) {
+                    // "A simplification of the standard OpenCV model with the denominator coefficients and tangential coefficients omitted."
+                    // https://support.skydio.com/hc/en-us/articles/4417425974683-Skydio-camera-and-metadata-overview
+                    // simplified distortion correction model based on Brown-Conrady model, omitting some terms
+                    //  A Flexible New Technique for Camera Calibration, 1998
+                    // https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr98-71.pdf
                     PerspectiveDistortionCorrector pdc = new PerspectiveDistortionCorrector(k1, k2, k3, p1, p2);
                     double[] undistortedNormalized = pdc.correctDistortion(xNormalized, yNormalized);
 

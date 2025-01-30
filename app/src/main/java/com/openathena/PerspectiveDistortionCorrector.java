@@ -39,6 +39,12 @@ public class PerspectiveDistortionCorrector {
      * solve for the undistorted (xU, yU) via a LM least-squares.
      */
     public double[] correctDistortion(double xDist, double yDist) {
+        // "A simplification of the standard OpenCV model with the denominator coefficients and tangential coefficients omitted."
+        // https://support.skydio.com/hc/en-us/articles/4417425974683-Skydio-camera-and-metadata-overview
+        // simplified distortion correction model based on Brown-Conrady model, omitting some terms
+        //  A Flexible New Technique for Camera Calibration, 1998
+        // https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr98-71.pdf
+        
         // If near zero, trivial solution
         double rDist = Math.sqrt(xDist*xDist + yDist*yDist);
         if (rDist < 1e-12) {
