@@ -67,6 +67,7 @@ public class AboutActivity extends AthenaActivity {
                         + "<a href=\"https://github.com/agilesrc/dem4j\">agilesrc/dem4j</a> Apache-2.0 license<br>"
                         + "<a href=\"https://github.com/ThreeTen/threetenbp\">ThreeTen/threetenbp</a> BSD 3-Clause<br>"
                         + "<a href=\"https://github.com/apache/commons-lang\">Apache Commons Lang</a> Apache License<br>"
+                        + "<a href=\"https://commons.apache.org/proper/commons-math/\">Apache Commons Math</a> Apache License<br>"
                         + "<a href=\"https://github.com/apache/commons-io\">Apache Commons IO</a> Apache License<br><br>"
                         + getString(R.string.about_opentopography_api_description)
                         + "<br><a href=\"https://opentopography.org/privacypolicy\">https://opentopography.org/privacypolicy</a><br><br>"
