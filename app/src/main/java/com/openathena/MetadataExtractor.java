@@ -14,8 +14,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -902,23 +904,28 @@ public class MetadataExtractor {
             try {
                 double k1 = drone.getDouble("radialR1");
                 double k2 = drone.getDouble("radialR2");
-                double k3 = drone.getDouble("radialR3");
-                double p1 = drone.getDouble("tangentialT1");
-                double p2 = drone.getDouble("tangentialT2");
+                double k3;
+                try {
+                    k3 = drone.getDouble("radialR3");
+                } catch (JSONException e) {
+                    // don't care if the 3rd radial term is missing; its effect is negligible for most lenses.
+                    k3 = 0.0d;
+                }
+                // Not used. We're correcting for radial distortion only
+                // double p1 = drone.getDouble("tangentialT1");
+                // double p2 = drone.getDouble("tangentialT2");
 
-                if (!(k1 == 0.0 && k2 == 0.0 && k3 == 0.0 && p1 == 0.0 && p2 == 0.0)) {
-                    // "A simplification of the standard OpenCV model with the denominator coefficients and tangential coefficients omitted."
-                    // https://support.skydio.com/hc/en-us/articles/4417425974683-Skydio-camera-and-metadata-overview
-                    // simplified distortion correction model based on Brown-Conrady model, omitting some terms
-                    //  A Flexible New Technique for Camera Calibration, 1998
-                    // https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr98-71.pdf
-                    PerspectiveDistortionCorrector pdc = new PerspectiveDistortionCorrector(k1, k2, p1, p2);
+                if (!(k1 == 0.0 && k2 == 0.0)) {
+                    // simplified distortion correction based on the division model
+                    // omits correction for tangential distortion.
+                    // https://en.wikipedia.org/wiki/Distortion_(optics)#Software_correction
+                    PerspectiveDistortionCorrector pdc = new PerspectiveDistortionCorrector(k1, k2, k3);
                     double[] undistortedNormalized = pdc.correctDistortion(xNormalized, yNormalized);
 
                     xUndistorted = undistortedNormalized[0] * fx;
                     yUndistorted = undistortedNormalized[1] * fy;
                 } else {
-                    Log.e(TAG, "DISTORTION PARAMETERS WERE MISSING!");
+                    Log.i(TAG, "DISTORTION PARAMETERS WERE MISSING!");
                 }
             } catch (JSONException jse) {
                 Log.e(TAG, "failed to obtain distortion parameters, using just pinhole camera model now");
