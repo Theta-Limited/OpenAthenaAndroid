@@ -933,7 +933,7 @@ public class MetadataExtractor {
         } else if ("fisheye".equalsIgnoreCase(lensType)) {
             try {
                 // Fisheye distortion goes BRRRRRRRRRRRrrrrrrrrrrr
-                // https://support.pix4d.com/hc/en-us/articles/202559089-How-are-the-Internal-and-External-Camera-Parameters-defined
+                // https://support.pix4d.com/hc/en-us/articles/202559089
                 // https://www.mathworks.com/help/vision/ug/fisheye-calibration-basics.html
                 double p0 = drone.getDouble("poly0");
                 double p1 = drone.getDouble("poly1");
