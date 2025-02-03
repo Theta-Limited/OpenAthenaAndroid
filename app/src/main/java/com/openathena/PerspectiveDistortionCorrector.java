@@ -44,7 +44,7 @@ public class PerspectiveDistortionCorrector {
         // simplified distortion correction model based on Brown-Conrady model, omitting some terms
         //  A Flexible New Technique for Camera Calibration, 1998
         // https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr98-71.pdf
-        
+
         // If near zero, trivial solution
         double rDist = Math.sqrt(xDist*xDist + yDist*yDist);
         if (rDist < 1e-12) {
@@ -152,7 +152,7 @@ public class PerspectiveDistortionCorrector {
         // d(yTan)/dxU = p1(d(r2)/dxU) + 2p2 yU
         // d(r2)/dxU=2xU => p1(2xU)
         double dyTan_dxU = p1*(2.0*xU) + 2.0*p2*yU;
-        double dyTan_dyU = p1*(2.0*yU) + 2.0*p2*xU;
+        double dyTan_dyU = 6.0 * p1 * yU + 2.0 * p2 * xU;
 
         // xDist = xU*radial + xTan
         // partial wrt xU => radial + xU dradial/dxU + dxTan/dxU
