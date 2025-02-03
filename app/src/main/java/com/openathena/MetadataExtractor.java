@@ -355,16 +355,39 @@ public class MetadataExtractor {
 
         // DJI altitude is usually orthometric (EGM96 AMSL), but will be ellipsoidal (WGS84 hae) if special RTK device is used (rare)
         String make = exif.getAttribute(ExifInterface.TAG_MAKE);
-        if (make == null) make = ""; else make = make.toLowerCase(Locale.ENGLISH);
-//        String model = exif.getAttribute(ExifInterface.TAG_MODEL);
-//        if (model == null) model = ""; else model = model.toUpperCase(Locale.ENGLISH);
+        if (make == null) make = ""; else make = make.toLowerCase(Locale.ENGLISH).trim();
+        String model = exif.getAttribute(ExifInterface.TAG_MODEL);
+        if (model == null) model = ""; else model = model.toUpperCase(Locale.ENGLISH).trim();
         if (!make.contains("autel") /* I'm not sure if autel uses EGM96 AMSL or WGS84 hae for new firmware */ && !xmp_str.toLowerCase(Locale.ENGLISH).contains("rtkflag")) {
             // convert the height from EGM96 AMSL to WGS84 hae if made by dji and rtk device not present
             Log.i(TAG, "Converting from orthometric to ellipsoidal vertical datum for image metadata");
 
-            // z = z - offsetProvider.getEGM96OffsetAtLatLon(y,x);
-            // re issue #180, fix incorrect equation for applying geoid offset
-            z = z + offsetProvider.getEGM96OffsetAtLatLon(y,x);
+            //Log.i(TAG, "Offset is: " +  offsetProvider.getEGM96OffsetAtLatLon(y, x));
+
+            // Have been encountering a weird discrepancy with the altitude values.
+            // For my Mavic 2 Zoom, the "mathematically correct" formula:
+            //     z = z + offsetProvider.getEGM96OffsetAtLatLon(y,x);
+            // ...produces good target results, while for my Mavic 3 Pro:
+            //     z = z - offsetProvider.getEGM96OffsetAtLatLon(y,x);
+            // ...produces good results.
+            // Without the code below, fixing one of these would break the other.
+            // My hypothesis is that DJI fixed a similar issue that we did in #160 which caused
+            // altitude value to be off by twice the geoid offset.
+            // Need to test with latest firmware to confirm
+            String[] vertiFlippedModels = {"L2D-20C", "FC4170", "FC4370", "FC4382", "M3E", "M3T"};
+            boolean isThisAVertiFlippedModel = false;
+            for (String aModel : vertiFlippedModels) {
+                if (model.equalsIgnoreCase(aModel)) {
+                    isThisAVertiFlippedModel = true;
+                    break;
+                }
+            }
+            if (isThisAVertiFlippedModel) {
+                z = z - offsetProvider.getEGM96OffsetAtLatLon(y,x);
+            } else {
+                // re issue #180, fix incorrect equation for applying geoid offset
+                z = z + offsetProvider.getEGM96OffsetAtLatLon(y,x);
+            }
         }
 
         double[] outArr = new double[]{y, x, z, azimuth, theta, roll};
