@@ -21,6 +21,43 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Set;
 
+class Version implements Comparable<Version> {
+
+    private String version;
+
+    public final String get() {
+        return this.version;
+    }
+
+    public Version(String version) {
+        if (version == null)
+            throw new IllegalArgumentException("Version can not be null");
+        if (!version.matches("[0-9]+(\\.[0-9]+)*"))
+            throw new IllegalArgumentException("Invalid version format");
+        this.version = version;
+    }
+
+    @Override
+    public int compareTo(Version that) {
+        if (that == null)
+            return 1;
+        String[] thisParts = this.get().split("\\.");
+        String[] thatParts = that.get().split("\\.");
+        int length = Math.max(thisParts.length, thatParts.length);
+        for (int i = 0; i < length; i++) {
+            int thisPart = i < thisParts.length ?
+                    Integer.parseInt(thisParts[i]) : 0;
+            int thatPart = i < thatParts.length ?
+                    Integer.parseInt(thatParts[i]) : 0;
+            if (thisPart < thatPart)
+                return -1;
+            if (thisPart > thatPart)
+                return 1;
+        }
+        return 0;
+    }
+}
+
 public class MetadataExtractor {
     private static final String TAG = "MetadataExtractor";
     private static MainActivity parent;
@@ -35,7 +72,10 @@ public class MetadataExtractor {
     // Wild guess, will treat DJI models which came out before the Mavic 3 as EGM96
     // see: https://www.djzphoto.com/blog/dji-product-history-timeline-drones-cameras-gimbals
     // see: https://github.com/Theta-Limited/DroneModels/blob/main/droneModels.json
-    private static final Set<String> EGM96_DRONE_MODELS = new HashSet<>(Arrays.asList("FC200", "FC220", "FC230", "PHANTOM VISION FC200", "FC300X", "FC300XW", "FC300S", "FC300C", "FC330", "FC6510", "FC550", "FC550RAW", "FC550R", "FC6520", "FC6540", "ZENMUSEH20", "ZENMUSEH20T", "ZENMUSEH20N", "ZH20N", "ZH20", "ZH20T", "ZENMUSEH20W", "djiZH20W", "ZH20W", "FC6310", "FC6310S", "FC6360", "FC7203", "FC7303", "FC2103", "FC2200", "FC2204", "FC2403", "MAVIC2-ENTERPRISE-ADVANCED", "M2EA", "L1D-20C", "ZENMUSEP1", "ZP1", "ZENMUSEEXT2", "XT2", "FLIR", "XT S", "ZENMUSEZ30", "Z30", "FC1102", "FC3170", "FC3411"));
+    //private static final Set<String> EGM96_DRONE_MODELS = new HashSet<>(Arrays.asList("FC200", "FC220", "FC230", "PHANTOM VISION FC200", "FC300X", "FC300XW", "FC300S", "FC300C", "FC330", "FC6510", "FC550", "FC550RAW", "FC550R", "FC6520", "FC6540", "ZENMUSEH20", "ZENMUSEH20T", "ZENMUSEH20N", "ZH20N", "ZH20", "ZH20T", "ZENMUSEH20W", "djiZH20W", "ZH20W", "FC6310", "FC6310S", "FC6360", "FC7203", "FC7303", "FC2103", "FC2200", "FC2204", "FC2403", "MAVIC2-ENTERPRISE-ADVANCED", "M2EA", "L1D-20C", "ZENMUSEP1", "ZP1", "ZENMUSEEXT2", "XT2", "FLIR", "XT S", "ZENMUSEZ30", "Z30", "FC1102", "FC3170", "FC3411"));
+
+
+    private static final Version djiFirmwareVerticalDatumWasSwitched = new Version("1.6");
 
     protected MetadataExtractor(MainActivity caller) {
         super();
@@ -351,25 +391,38 @@ public class MetadataExtractor {
             throw new MissingDataException(parent.getString(R.string.missing_data_exception_altitude_and_theta_error_msg), MissingDataException.dataSources.EXIF_XMP, MissingDataException.missingValues.THETA);
         }
 
-        // DJI altitude is usually orthometric (EGM96 AMSL), but will be ellipsoidal (WGS84 hae) if special RTK device is used (rare)
+        // DJI old firmware is orthometric (EGM96 AMSL) but is ellipsoidal (WGS84 hae) for newer firmware or if special RTK device is used
         String make = exif.getAttribute(ExifInterface.TAG_MAKE);
         if (make == null) make = ""; else make = make.toLowerCase(Locale.ENGLISH).trim();
         String thisModel = exif.getAttribute(ExifInterface.TAG_MODEL);
         if (thisModel == null) thisModel = ""; else thisModel = thisModel.toUpperCase(Locale.ENGLISH).trim();
-        if (!make.contains("autel") /* I'm not sure if autel uses EGM96 AMSL or WGS84 hae for new firmware */ && !xmp_str.toLowerCase(Locale.ENGLISH).contains("rtkflag")) {
+
+        // TODO check against a blacklist of DJI drone models which only provide relative altitude in their AbsoluteAltitude tag
+
+        // Check if firmware version is >= 1.6 meaning vertical datum would be WGS84 hae
+        Version thisFirmwareVersion = new Version("0");
+        String firmwareString;
+        try {
+            firmwareString = xmpMeta.getPropertyString(schemaNS, "Version");
+        } catch (XMPException e) {
+            firmwareString = null;
+        }
+        if (firmwareString != null) {
+            Log.i(TAG, "drone-dji:Version XMP tag value was: " + firmwareString);
+            thisFirmwareVersion = new Version(firmwareString);
+        }
+        boolean isFirmwareVerticalDatumWGS84 = (thisFirmwareVersion.compareTo(djiFirmwareVerticalDatumWasSwitched) >= 0);
+
+        if (!make.contains("autel") /* I'm not sure if autel uses EGM96 AMSL or WGS84 hae for new firmware */ && !xmp_str.toLowerCase(Locale.ENGLISH).contains("rtkflag") && !isFirmwareVerticalDatumWGS84) {
             //Log.i(TAG, "Offset is: " +  offsetProvider.getEGM96OffsetAtLatLon(y, x));
 
-            // Some older DJI models (e.g. the Mavic 2 Zoom) use EGM96 (height above mean sea level) as vertical datum instead of WGS84 (height above ellipsoid)
+            // Some older DJI models (e.g. the Mavic 2 Zoom) use EGM96 (height above mean sea level)
+            // Newer firmware (specifically with tag djiVersion>=1.6) uses WGS84 (height above ellipsoid)
             // If vertical datum is EGM96, convert it to WGS84 for calculation within OpenAthena by adding the Geoid offset
-            // Wild guess, will treat DJI models which came out before the Mavic 3 as EGM96
-            // see: https://www.djzphoto.com/blog/dji-product-history-timeline-drones-cameras-gimbals
-            // see: https://github.com/Theta-Limited/DroneModels/blob/main/droneModels.json
-            if (EGM96_DRONE_MODELS.contains(thisModel)) {
-                // convert the height from EGM96 AMSL to WGS84 hae if made by dji and rtk device not present
-                Log.i(TAG, "Converting from orthometric to ellipsoidal vertical datum for image metadata");
-                // re issue #180, fix incorrect equation for applying geoid offset
-                z = z + offsetProvider.getEGM96OffsetAtLatLon(y,x);
-            }
+            // convert the height from EGM96 AMSL to WGS84 hae if made by dji, rtk device not present, and firmware < 1.6
+            Log.i(TAG, "Converting from orthometric to ellipsoidal vertical datum for image metadata");
+            // re issue #180, fix incorrect equation for applying geoid offset
+            z = z + offsetProvider.getEGM96OffsetAtLatLon(y,x);
         }
 
         double[] outArr = new double[]{y, x, z, azimuth, theta, roll};
