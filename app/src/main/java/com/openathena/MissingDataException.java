@@ -10,6 +10,7 @@ public class MissingDataException extends Exception{
         LATITUDE,
         LONGITUDE,
         ALTITUDE,
+        ALTITUDE_ABSOLUTE_REFERENCE,
         AZIMUTH,
         THETA,
         ROLL,
