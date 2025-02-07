@@ -1,0 +1,5 @@
+Major update with accuracy fixes
+ * Significant accuracy improvements for most Autel drones
+ * Significant accuracy improvement for most newer DJI models including Mavic 3 Pro, Mini 3 Pro, and Mini 4 Pro
+ * Significant accuracy improvement for Mavic 3 Pro 7x telephoto camera FC4370
+ * Minor accuracy improvement for most other drone models related to lens distortion correction
