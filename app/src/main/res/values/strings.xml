@@ -107,6 +107,7 @@
     <string name="missing_data_exception_latitude_error_msg">ERROR: Latitude metadata not found! This drone is incompatible with OpenAthena! 😭</string>
     <string name="missing_data_exception_longitude_error_msg">ERROR: Longitude metadata not found! This drone is incompatible with OpenAthena! 😭</string>
     <string name="missing_data_exception_altitude_error_msg">ERROR: Altitude metadata not found! This drone is incompatible with OpenAthena! 😭</string>
+    <string name="missing_data_exception_altitude_absolute_reference">ERROR: This drone only provides altitude from launch point and is therefore incompatible with OpenAthena! 😭</string>
     <string name="missing_data_exception_azimuth_error_msg">ERROR: Azimuth metadata not found! This drone is incompatible with OpenAthena! 😭</string>
     <string name="missing_data_exception_theta_error_msg">ERROR: Camera Pitch metadata not found! This drone is incompatible with OpenAthena! 😭</string>
     <string name="missing_data_exception_roll">ERROR: Camera Roll metadata not found!</string>

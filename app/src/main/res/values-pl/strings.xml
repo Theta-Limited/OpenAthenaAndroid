@@ -95,6 +95,7 @@
     <string name="missing_data_exception_latitude_error_msg">BŁĄD: nie znaleziono metadanych Latitude! Ten dron jest niekompatybilny z OpenAthena! 😭</string>
     <string name="missing_data_exception_longitude_error_msg">BŁĄD: nie znaleziono metadanych długości geograficznej! Ten dron jest niekompatybilny z OpenAthena! 😭</string>
     <string name="missing_data_exception_altitude_error_msg">BŁĄD: nie znaleziono metadanych wysokości! Ten dron jest niekompatybilny z OpenAthena! 😭</string>
+    <string name="missing_data_exception_altitude_absolute_reference">BŁĄD: Ten dron dostarcza jedynie wysokość względem punktu startu, dlatego jest niekompatybilny z OpenAthena! 😭</string>
     <string name="missing_data_exception_azimuth_error_msg">BŁĄD: nie znaleziono metadanych azymutu! Ten dron jest niekompatybilny z OpenAthena! 😭</string>
     <string name="missing_data_exception_theta_error_msg">BŁĄD: nie znaleziono metadanych nachylenia kamery! Ten dron jest niekompatybilny z OpenAthena! 😭</string>
     <string name="missing_data_exception_roll">BŁĄD: nie znaleziono metadanych bełkotu kamery!</string>

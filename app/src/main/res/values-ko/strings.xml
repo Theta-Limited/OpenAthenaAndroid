@@ -96,6 +96,7 @@
     <string name="missing_data_exception_latitude_error_msg">오류: Latitude 메타데이터를 찾을 수 없습니다! 이 드론은 OpenAthena와 호환되지 않습니다! 😭</string>
     <string name="missing_data_exception_longitude_error_msg">오류: 경도 메타데이터를 찾을 수 없습니다! 이 드론은 OpenAthena와 호환되지 않습니다! 😭</string>
     <string name="missing_data_exception_altitude_error_msg">오류: 고도 메타데이터를 찾을 수 없습니다! 이 드론은 OpenAthena와 호환되지 않습니다! 😭</string>
+    <string name="missing_data_exception_altitude_absolute_reference">오류: 이 드론은 이륙 지점 기준의 고도만 제공하므로 OpenAthena와 호환되지 않습니다! 😭</string>
     <string name="missing_data_exception_azimuth_error_msg">오류: 방위각 메타데이터를 찾을 수 없습니다! 이 드론은 OpenAthena와 호환되지 않습니다! 😭</string>
     <string name="missing_data_exception_theta_error_msg">오류: 카메라 피치 메타데이터를 찾을 수 없습니다! 이 드론은 OpenAthena와 호환되지 않습니다! 😭</string>
     <string name="missing_data_exception_roll">오류: 카메라 롤 각도 메타데이터를 찾을 수 없습니다!</string>

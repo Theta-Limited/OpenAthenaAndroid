@@ -96,6 +96,7 @@
     <string name="missing_data_exception_latitude_error_msg">ОШИБКА: метаданные Локатора не найдены! Этот дрон несовместим с OpenAthena! 😭</string>
     <string name="missing_data_exception_longitude_error_msg">ОШИБКА: метаданные долготы не найдены! Этот дрон несовместим с OpenAthena! 😭</string>
     <string name="missing_data_exception_altitude_error_msg">ОШИБКА: метаданные высоты не найдены! Этот дрон несовместим с OpenAthena! 😭</string>
+    <string name="missing_data_exception_altitude_absolute_reference">ОШИБКА: Этот дрон предоставляет только высоту относительно точки взлёта и поэтому несовместим с OpenAthena! 😭</string>
     <string name="missing_data_exception_azimuth_error_msg">ОШИБКА: метаданные азимута не найдены! Этот дрон несовместим с OpenAthena! 😭</string>
     <string name="missing_data_exception_theta_error_msg">ОШИБКА: метаданные тангаж камеры не найдены! Этот дрон несовместим с OpenAthena! 😭</string>
     <string name="missing_data_exception_roll">ОШИБКА: метаданные угла крена не найдены!</string>

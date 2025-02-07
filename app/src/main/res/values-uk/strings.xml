@@ -96,6 +96,7 @@
     <string name="missing_data_exception_latitude_error_msg">ПОМИЛКА: метадані Latitude не знайдено! Цей дрон несумісний з OpenAthena! 😭</string>
     <string name="missing_data_exception_longitude_error_msg">ПОМИЛКА: метадані довготи не знайдено! Цей дрон несумісний з OpenAthena! 😭</string>
     <string name="missing_data_exception_altitude_error_msg">ПОМИЛКА: метадані висоти не знайдено! Цей дрон несумісний з OpenAthena! 😭</string>
+    <string name="missing_data_exception_altitude_absolute_reference">ПОМИЛКА: Цей дрон надає лише висоту відносно точки зльоту, тому несумісний з OpenAthena! 😭</string>
     <string name="missing_data_exception_azimuth_error_msg">ПОМИЛКА: метадані азимута не знайдено! Цей дрон несумісний з OpenAthena! 😭</string>
     <string name="missing_data_exception_theta_error_msg">ПОМИЛКА: метадані тангаж камери не знайдено! Цей дрон несумісний з OpenAthena! 😭</string>
     <string name="missing_data_exception_roll">ПОМИЛКА: метадані кута крену не знайдено!</string>

@@ -97,6 +97,7 @@
     <string name="missing_data_exception_latitude_error_msg">ERREUR : métadonnées de latitude introuvables ! Ce drone est incompatible avec OpenAthena ! 😭</string>
     <string name="missing_data_exception_longitude_error_msg">ERREUR : métadonnées de longitude introuvables ! Ce drone est incompatible avec OpenAthena ! 😭</string>
     <string name="missing_data_exception_altitude_error_msg">ERREUR : métadonnées d\'altitude introuvables ! Ce drone est incompatible avec OpenAthena ! 😭</string>
+    <string name="missing_data_exception_altitude_absolute_reference">ERREUR : Ce drone ne fournit que l\'altitude à partir de son point de lancement et est donc incompatible avec OpenAthena ! 😭</string>
     <string name="missing_data_exception_azimuth_error_msg">ERREUR : métadonnées d\'azimut introuvables ! Ce drone est incompatible avec OpenAthena ! 😭</string>
     <string name="missing_data_exception_theta_error_msg">ERREUR : les métadonnées du tangage de la caméra sont introuvables ! Ce drone est incompatible avec OpenAthena ! 😭</string>
     <string name="missing_data_exception_roll">ERREUR : les métadonnées de la roulis sont introuvables !</string>
