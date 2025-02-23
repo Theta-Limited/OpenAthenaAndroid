@@ -203,8 +203,26 @@ public class MetadataExtractor {
         for (int i = 0; i < matchingDrones.length(); i++) {
             try {
                 JSONObject drone = matchingDrones.getJSONObject(i);
-                double droneWidth = drone.getInt("widthPixels");
 
+                // Some drones (such as the Parrot Anafi) switch between a wide angle and a separate
+                //     telephoto camera at higher zoom levels
+                double minFixedFocalLenInclusive = 0.0d;
+                double maxFixedFocalLenExclusive = Double.MAX_VALUE;
+                try {
+                    minFixedFocalLenInclusive = drone.getDouble("minFixedFocalLenInclusive");
+                    maxFixedFocalLenExclusive = drone.getDouble("maxFixedFocalLenExclusive");
+                } catch (JSONException jse) {
+                    Log.i(TAG, jse.getMessage());
+                }
+                double imageFocalLen = exif.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH, 0.0d);
+                if (imageFocalLen < minFixedFocalLenInclusive || imageFocalLen >= maxFixedFocalLenExclusive) {
+                    continue;
+                }
+
+                // select matching drone camera make/model entry of nearest (geometric difference) pixel resolution
+                // This is used to solve make/model name collisions between color and thermal cameras on the same drone
+                // The thermal camera resolution is always lower than the color one
+                double droneWidth = drone.getInt("widthPixels");
                 double difference_ratio = droneWidth / targetWidth;
                 if (difference_ratio < 1.0d) {
                     difference_ratio = 1 / difference_ratio;
@@ -214,7 +232,7 @@ public class MetadataExtractor {
                     smallestDifference = difference_ratio;
                 }
             } catch (JSONException e) {
-                return null;
+                continue;
             }
         }
         return closestDrone;

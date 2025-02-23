@@ -110,7 +110,7 @@ public class MainActivity extends DemManagementActivity {
 
     // This flag controls whether extra calculation info is added to Cursor on Target message output
     // Many Cursor on Target consumer applications use a small buffer size, so by default this information is not included
-    public static final boolean IS_EXTENDED_COT_MODE_ACTIVE = false;
+    public static final boolean IS_EXTENDED_COT_MODE_ACTIVE = true;
 
     ActivityResultLauncher<String> mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
                 new ActivityResultCallback<Uri>() {
