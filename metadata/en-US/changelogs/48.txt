@@ -1,0 +1,1 @@
+Hotfix with significant accuracy improvement for zoomed images from the Parrot Anafi and Anafi USA.

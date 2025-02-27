@@ -805,6 +805,83 @@ public class MetadataExtractor {
         }
     }
 
+    public static float getDigitalZoomRatio(OpenAthenaExifInterface exif) throws Exception {
+        float digitalZoomRatio = 1.0f;
+
+        String make = exif.getAttribute(ExifInterface.TAG_MAKE);
+        if (make == null) make = "";
+        String model = exif.getAttribute(ExifInterface.TAG_MODEL);
+        if (model == null) model = "";
+
+        JSONObject drone = getMatchingDrone(exif);
+
+        try {
+            double[] pixelDimensions = new double[4];
+            if (drone != null) {
+                pixelDimensions[0] = (double) rationalToFloat(drone.getString("ccdWidthMMPerPixel"));
+                pixelDimensions[1] = (double) rationalToFloat(drone.getString("ccdHeightMMPerPixel"));
+                pixelDimensions[2] = (double) drone.getInt("widthPixels");
+                pixelDimensions[3] = (double) drone.getInt("heightPixels");
+            } else {
+                // placeholder values which will never be used
+                pixelDimensions[0] = -1.0d;
+                pixelDimensions[1] = -1.0d;
+                pixelDimensions[2] = -1.0d;
+                pixelDimensions[3] = -1.0d;
+            }
+            String digitalZoomRational = exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO);
+            if (digitalZoomRational != null && !digitalZoomRational.equals("")) {
+                digitalZoomRatio = rationalToFloat(exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO));
+                if (digitalZoomRatio < 1.0f) {
+                    digitalZoomRatio = 1.0f;
+                }
+            }
+
+            if (make.equalsIgnoreCase("PARROT")) {
+                if (model.equalsIgnoreCase("ANAFI") || model.equalsIgnoreCase("ANAFIUSA") || model.equalsIgnoreCase("ANAFIUA")) {
+                    Log.d(TAG, "isThermal: " + isThermal(exif));
+                    if (!isThermal(exif)) {
+                        Log.d(TAG, "getDigitalZoomRatio special case for parrot triggered");
+                        if (drone == null) {
+                            throw new Exception("Could not find necessary data for Parrot Anafi");
+                        }
+                        double imageWidth = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, -1);
+                        if (imageWidth <= 0.0d) {
+                            throw new Exception("Could not determine width of image");
+                        }
+                        // Parrot ANAFI and ANAFI USA do not report digital zoom correctly in EXIF DigitalZoomRatio tag
+                        // as a workaround, we will look at the pixel width of the image
+                        // and assume it is cropped if it is less than the full sensor size.
+                        // ALTHOUGH: If a Parrot image has been scaled down by external software this value will be completely wrong
+                        digitalZoomRatio = 5344.0f / (float) imageWidth;
+                    }
+                }
+            }
+            if (digitalZoomRatio != 1.0f) {
+                Log.d(TAG, "digitalZoomRatio is: " + digitalZoomRatio);
+                // Some thermal cameras perform undocumented integer upscaling on digitally zoomed thermal images
+                //     (which seems to be atypical for images with digital zoom)
+                //     to compensate, we ignore the digitalZoomRatio when calculating
+                //     the number of pixels for width and height
+                //
+                // Known behavior for Autel Evo III 640T, (TODO) might affect other make/models and/or color cameras as well!
+                if (isThermal(exif) && make.equalsIgnoreCase("AUTEL ROBOTICS")) {
+                    Log.d(TAG, "edge case detected: image had undocumented pixel upscaling. Ignoring digitalZoomRatio");
+                    digitalZoomRatio = 1.0f;
+                }
+            }
+        } catch (JSONException jse) {
+            if (make.equalsIgnoreCase("PARROT")) {
+                if (model.equalsIgnoreCase("ANAFI") || model.equalsIgnoreCase("ANAFIUSA") || model.equalsIgnoreCase("ANAFIUA")) {
+                    if (!isThermal(exif)) {
+                        throw new Exception("Could not find necessary data for Parrot Anafi");
+                    }
+                }
+            }
+        }
+        return digitalZoomRatio;
+    }
+
     protected static double[] getIntrinsicMatrixFromKnownCCD(OpenAthenaExifInterface exif, double[] pixelDimensions) throws Exception {
         JSONObject drone = getMatchingDrone(exif);
 
@@ -843,27 +920,7 @@ public class MetadataExtractor {
         double ccdWidthPixels = pixelDimensions[2];
         double ccdHeightPixels = pixelDimensions[3];
 
-        String digitalZoomRational = exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO);
-        float digitalZoomRatio = 1.0f;
-        if (digitalZoomRational != null && !digitalZoomRational.equals("")) {
-            digitalZoomRatio = rationalToFloat(exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO));
-            if (digitalZoomRatio < 1.0f) {
-                digitalZoomRatio = 1.0f;
-            }
-        }
-        if (digitalZoomRatio != 1.0f) {
-            Log.d(TAG, "digitalZoomRatio is: " + digitalZoomRatio);
-            // Some thermal cameras perform undocumented integer upscaling on digitally zoomed thermal images
-            //     (which seems to be atypical for images with digital zoom)
-            //     to compensate, we ignore the digitalZoomRatio when calculating
-            //     the number of pixels for width and height
-            //
-            // Known behavior for Autel Evo III 640T, (TODO) might affect other make/models and/or color cameras as well!
-            if (isThermal(exif) && exif.getAttribute(ExifInterface.TAG_MAKE).equalsIgnoreCase("AUTEL ROBOTICS")) {
-                Log.d(TAG, "edge case detected: image had undocumented pixel upscaling. Ignoring digitalZoomRatio");
-                digitalZoomRatio = 1.0f;
-            }
-        }
+        float digitalZoomRatio = getDigitalZoomRatio(exif);
 
         double imageWidth = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, -1);
         double imageHeight = exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, -1); // Image Height
@@ -904,14 +961,7 @@ public class MetadataExtractor {
             throw new Exception(parent.getString(R.string.error_metadata_extractor_focal_length_could_not_be_determined));
         }
 
-        String digitalZoomRational = exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO);
-        float digitalZoomRatio = 1.0f;
-        if (digitalZoomRational != null && !digitalZoomRational.equals("")) {
-            digitalZoomRatio = rationalToFloat(exif.getAttribute(ExifInterface.TAG_DIGITAL_ZOOM_RATIO));
-            if (digitalZoomRatio < 1.0f) {
-                digitalZoomRatio = 1.0f;
-            }
-        }
+        float digitalZoomRatio = getDigitalZoomRatio(exif);
 
         double imageWidth = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, 0);
         double imageHeight = exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, 0); // Image Height
