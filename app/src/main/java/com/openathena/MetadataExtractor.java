@@ -192,10 +192,19 @@ public class MetadataExtractor {
             return null;
         }
 
+        float digitalZoomRatio;
+        try {
+            digitalZoomRatio = getDigitalZoomRatio(exif);
+        } catch (Exception e) {
+            digitalZoomRatio = 1.0f;
+        }
+
         double targetWidth = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, -1);
         if (targetWidth <= 0) {
             throw new RuntimeException("could not determine width and height of image!");
         }
+        // If the image is digitally cropped/zoomed, reverse this to obtain original sensor pixel width
+        targetWidth *= digitalZoomRatio;
 
         double smallestDifference = Double.MAX_VALUE;
         JSONObject closestDrone = null;
