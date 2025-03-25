@@ -138,6 +138,28 @@ public class MetadataExtractor {
         return isThermal;
     }
 
+    public static double getCircularErrorLinearModelYIntercept(OpenAthenaExifInterface exif) throws RuntimeException {
+        JSONObject drone = getMatchingDrone(exif);
+        double y_intercept;
+        try {
+            y_intercept = drone.getDouble("CE_distance_linear_model_y_intercept");
+        } catch (JSONException | NullPointerException e) {
+            throw new RuntimeException("Accuracy data not found for matched drone model");
+        }
+        return y_intercept;
+    }
+
+    public static double getCircularErrorLinearModelDistanceSlope(OpenAthenaExifInterface exif) throws RuntimeException {
+        JSONObject drone = getMatchingDrone(exif);
+        double meters_per_meter_slope;
+        try {
+            meters_per_meter_slope = drone.getDouble("CE_distance_linear_model_slope_meters_per_meter");
+        } catch (JSONException | NullPointerException e) {
+            throw new RuntimeException("Accuracy data not found for matched drone model");
+        }
+        return meters_per_meter_slope;
+    }
+
     /**
      * Returns an ordered Map of distortion parameter names and their values for the appropriate lensType
      * @param exif exif of an image to analyze for make and model
