@@ -53,7 +53,9 @@ public class AboutActivity extends AthenaActivity {
                         + "<br><a href=\"https://github.com/Theta-Limited/OpenAthenaAndroid/blob/master/TROUBLESHOOTING.md\">"
                         + getString(R.string.troubleshooting_manual) + "</a><br>"
                         + "<br><a href=\"https://github.com/mkrupczak3/OpenAthenaAndroid\">"
-                        + getString(R.string.CallToActionSnippet)
+                        + getString(R.string.CallToActionSnippet) + "<br>"
+                        + getString(R.string.email_address_for_technical_support_prompt_about) + "<br>"
+                        + "<a href=\"mailto:support@theta.limited?subject=Support Request, OpenAthena for Android\">support@theta.limited</a>" + "<br>"
                         + "<br>" + getString(R.string.nato_vertical_datum_notice) + "<br>"
                         + getString(R.string.warsaw_vertical_datum_notice) + "<br>"
                         + getString(R.string.AuthorGitHubSnippet)
