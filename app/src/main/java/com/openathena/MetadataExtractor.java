@@ -1016,7 +1016,7 @@ public class MetadataExtractor {
         return intrinsicMatrix;
     }
 
-    public static double[] getRayAnglesFromImgPixel(int x, int y, double rollAngleDeg, OpenAthenaExifInterface exifInterface) throws Exception {
+    public static double[] getRayOffsetAnglesFromImgPixel(int x, int y, OpenAthenaExifInterface exifInterface) throws Exception {
         JSONObject drone = getMatchingDrone(exifInterface);
         String lensType = "";
         if (drone != null) {
@@ -1111,78 +1111,137 @@ public class MetadataExtractor {
         azDistorted = Math.toDegrees(azDistorted);
         elDistorted = Math.toDegrees(elDistorted);
 
-        // physical roll angle of the camera
-        double roll = rollAngleDeg;
+//        // physical roll angle of the camera
+//        double roll = rollAngleDeg;
 
-        double[] TBAngle = correctRayAnglesForRoll(azimuth, elevation, roll);
-        azimuth = TBAngle[0];
-        elevation = TBAngle[1];
+        // Moved to a different function applied elsewhere
+//        double[] TBAngle = correctRayAnglesForRoll(azimuth, elevation, roll);
+//        azimuth = TBAngle[0];
+//        elevation = TBAngle[1];
+//
+//        // for debug use only
+//        TBAngle = correctRayAnglesForRoll(azDistorted, elDistorted, roll);
+//        azDistorted = TBAngle[0];
+//        elDistorted = TBAngle[1];
 
-        // for debug use only
-        TBAngle = correctRayAnglesForRoll(azDistorted, elDistorted, roll);
-        azDistorted = TBAngle[0];
-        elDistorted = TBAngle[1];
-
-        Log.d(TAG, "Pixel (" + (xUndistorted + cx) + ", " + (yUndistorted + cy) + ", Roll: " + roll + ") -> Ray (" + azimuth + ", " + elevation + ")");
-        Log.d(TAG, "Without distortion correction, would have been:\n"+"Pixel (" + x + ", " + y + ", Roll: " + roll + ") -> Ray (" + azDistorted + ", " + elDistorted + ")");
+        Log.d(TAG, "Pixel (" + (xUndistorted + cx) + ", " + (yUndistorted + cy) + ") -> Ray (" + azimuth + ", " + elevation + ")");
+        Log.d(TAG, "Without distortion correction, would have been:\n"+"Pixel (" + x + ", " + y  + ") -> Ray (" + azDistorted + ", " + elDistorted + ")");
         return new double[] {azimuth, elevation};
     }
 
+    private static double d2r(double deg) { return deg * Math.PI / 180.0; }
+    private static double r2d(double rad) { return rad * 180.0 / Math.PI; }
 
     /**
-     * For an image taken where the camera lateral axis is not parallel with the ground, express the ray angle in terms of a frame of reference which is parallel to the ground
-     * <p>
-     *     While the camera gimbal of most drones attempt to keep the camera lateral axis parallel with the ground, this cannot be assumed for all cases. Therefore, this function rotates the 3D angle (calculated by camera intrinsics) by the same amount and direction as the roll of the camera.
-     * </p>
-     * @param psi the yaw (in degrees) of the ray relative to the camera. Rightwards is positive.
-     * @param theta the pitch angle (in degrees) of the ray relative to the camera. Downwards is positive.
-     * @param cameraRoll the roll angle (in degrees) of the camera relative to the earth's gravity. From the perspective of the camera, clockwise is positive
-     * @return a corrected Tait-Bryan angle double[phi, theta] (in degrees) representing the same ray but in a new frame of reference where the x axis is parallel to the ground (i.e. perpendicular to Earth's gravity)
+     * @return { azimuthCW_deg , pitchDown_deg }
      */
-    public static double[] correctRayAnglesForRoll(double psi, double theta, double cameraRoll) {
-        theta = -1.0d * theta; // convert from OpenAthena notation to standard Tait-Bryan aircraft notation (downward is negative)
+    public static double[] pixelRayAnglesOA(
+            double yawDeg,     // ψ₀  CW from North
+            double pitchDnDeg, // θ₀  positive = look down
+            double rollDeg,    // φ₀  right-wing-down +
+            double dYawDeg,    // Δψ  pixel right  +
+            double dPitchDeg)  // Δθ  pixel down   +
+    {
+        /* 1) camera-frame unit ray */
+        double xC = Math.tan(d2r(dYawDeg));     // right
+        double yC = Math.tan(d2r(dPitchDeg));   // down
+        double zC = 1.0;                        // forward
+        double l  = Math.hypot(Math.hypot(xC, yC), zC);
+        xC /= l;  yC /= l;  zC /= l;
 
-        // Convert degrees to radians
-        psi = Math.toRadians(psi);
-        theta = Math.toRadians(theta);
-        cameraRoll = Math.toRadians(cameraRoll);
+        /* 2) camera ➜ body (x fwd, y right, z down) */
+        double xB =  zC;
+        double yB =  xC;
+        double zB =  yC;
 
-        // Convert Tait-Bryan angles to unit vector
-        // Note that these axis are labeled according to the Tait-Bryan aircraft notation, where:
-        //     +x is forward
-        //     +y is rightward
-        //     +z is downward
-        // This is different than either the image plane notation or ENU
-        double x = Math.cos(theta) * Math.cos(psi);
-        double y = Math.cos(theta) * Math.sin(psi);
-        double z = Math.sin(theta);
+        /* 3) Euler:  Rx(−φ) · Ry(θ) · Rz_cw(ψ) */
+        double ψ = d2r(yawDeg);
+        double θ = d2r(pitchDnDeg);    // +down
+        double φ = d2r(rollDeg);
 
-        // Create rotation matrix for roll angle r around the X-axis
-        double[][] rotationMatrix = {
-                {1, 0, 0},
-                {0, Math.cos(cameraRoll), -Math.sin(cameraRoll)},
-                {0, Math.sin(cameraRoll), Math.cos(cameraRoll)}
-        };
+        double cψ = Math.cos(ψ),  sψ = Math.sin(ψ);
+        double cθ = Math.cos(θ),  sθ = Math.sin(θ);
+        double cφ = Math.cos(φ),  sφ = Math.sin(φ);
 
-        // Rotate the unit vector back to correct for the observer's roll
-        double[] rotatedVector = {
-                rotationMatrix[0][0] * x + rotationMatrix[0][1] * y + rotationMatrix[0][2] * z,
-                rotationMatrix[1][0] * x + rotationMatrix[1][1] * y + rotationMatrix[1][2] * z,
-                rotationMatrix[2][0] * x + rotationMatrix[2][1] * y + rotationMatrix[2][2] * z
-        };
+        /* roll  (right-wing-down = −φ CCW) */
+        double n1 =  xB;
+        double e1 =  cφ*yB + sφ*zB;
+        double d1 = -sφ*yB + cφ*zB;
 
-        // Convert rotated unit vector back to Tait-Bryan angle
-        double correctedPsi = Math.atan2(rotatedVector[1], rotatedVector[0]);
-        double correctedTheta = Math.atan2(rotatedVector[2], Math.sqrt(rotatedVector[0] * rotatedVector[0] + rotatedVector[1] * rotatedVector[1]));
+        /* pitch-down */
+        double n2 =  cθ*n1 - sθ*d1;
+        double e2 =  e1;
+        double d2 =  sθ*n1 + cθ*d1;
 
-        // Convert from radians back to degrees
-        correctedPsi = Math.toDegrees(correctedPsi);
-        correctedTheta = Math.toDegrees(correctedTheta);
+        /* yaw CW */
+        double north =  cψ*n2 - sψ*e2;
+        double east  =  sψ*n2 + cψ*e2;
+        double down  =  d2;
 
-        correctedTheta = -1.0d * correctedTheta; // convert from Tait-Bryan notation to OpenAthena notation (downwards is positive)
+        /* 4) back to Euler angles */
+        double az   = (r2d(Math.atan2(east, north)) + 360.0) % 360.0;
+        double horiz= Math.hypot(north, east);
+        double pitchDn = r2d(Math.atan2(down, horiz));   // +ve down
 
-        return new double[]{correctedPsi, correctedTheta};
+        return new double[]{ az, pitchDn };
     }
+
+
+//    /**
+//     * For an image taken where the camera lateral axis is not parallel with the ground, express the ray angle in terms of a frame of reference which is parallel to the ground
+//     * <p>
+//     *     While the camera gimbal of most drones attempt to keep the camera lateral axis parallel with the ground, this cannot be assumed for all cases. Therefore, this function rotates the 3D angle (calculated by camera intrinsics) by the same amount and direction as the roll of the camera.
+//     * </p>
+//     * @param psi the yaw (in degrees) of the ray relative to the camera. Rightwards is positive.
+//     * @param theta the pitch angle (in degrees) of the ray relative to the camera. Downwards is positive.
+//     * @param cameraRoll the roll angle (in degrees) of the camera relative to the earth's gravity. From the perspective of the camera, clockwise is positive
+//     * @return a corrected Tait-Bryan angle double[phi, theta] (in degrees) representing the same ray but in a new frame of reference where the x axis is parallel to the ground (i.e. perpendicular to Earth's gravity)
+//     */
+//    public static double[] correctRayAnglesForRoll(double psi, double theta, double cameraRoll) {
+//        theta = -1.0d * theta; // convert from OpenAthena notation to standard Tait-Bryan aircraft notation (downward is negative)
+//
+//        // Convert degrees to radians
+//        psi = Math.toRadians(psi);
+//        theta = Math.toRadians(theta);
+//        cameraRoll = Math.toRadians(cameraRoll);
+//
+//        // Convert Tait-Bryan angles to unit vector
+//        // Note that these axis are labeled according to the Tait-Bryan aircraft notation, where:
+//        //     +x is forward
+//        //     +y is rightward
+//        //     +z is downward
+//        // This is different than either the image plane notation or ENU
+//        double x = Math.cos(theta) * Math.cos(psi);
+//        double y = Math.cos(theta) * Math.sin(psi);
+//        double z = Math.sin(theta);
+//
+//        // Create rotation matrix for roll angle r around the X-axis
+//        double[][] rotationMatrix = {
+//                {1, 0, 0},
+//                {0, Math.cos(cameraRoll), -Math.sin(cameraRoll)},
+//                {0, Math.sin(cameraRoll), Math.cos(cameraRoll)}
+//        };
+//
+//        // Rotate the unit vector back to correct for the observer's roll
+//        double[] rotatedVector = {
+//                rotationMatrix[0][0] * x + rotationMatrix[0][1] * y + rotationMatrix[0][2] * z,
+//                rotationMatrix[1][0] * x + rotationMatrix[1][1] * y + rotationMatrix[1][2] * z,
+//                rotationMatrix[2][0] * x + rotationMatrix[2][1] * y + rotationMatrix[2][2] * z
+//        };
+//
+//        // Convert rotated unit vector back to Tait-Bryan angle
+//        double correctedPsi = Math.atan2(rotatedVector[1], rotatedVector[0]);
+//        double correctedTheta = Math.atan2(rotatedVector[2], Math.sqrt(rotatedVector[0] * rotatedVector[0] + rotatedVector[1] * rotatedVector[1]));
+//
+//        // Convert from radians back to degrees
+//        correctedPsi = Math.toDegrees(correctedPsi);
+//        correctedTheta = Math.toDegrees(correctedTheta);
+//
+//        correctedTheta = -1.0d * correctedTheta; // convert from Tait-Bryan notation to OpenAthena notation (downwards is positive)
+//
+//        return new double[]{correctedPsi, correctedTheta};
+//    }
+
 
 
     public static float rationalToFloat(String str)
