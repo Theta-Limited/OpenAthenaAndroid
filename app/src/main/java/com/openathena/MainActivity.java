@@ -21,6 +21,7 @@ import com.agilesrc.dem4j.exceptions.CorruptTerrainException;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 import android.Manifest;
@@ -31,16 +32,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.OpenableColumns;
 import android.text.Html;
 
 import androidx.core.util.Consumer;
 import androidx.exifinterface.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -791,7 +796,7 @@ public class MainActivity extends DemManagementActivity {
                 if (AthenaApp.get_selection_x() < 0 || AthenaApp.get_selection_y() < 0) {
                     throw new NoSuchFieldException("no point was selected");
                 } else {
-                    relativeRay = MetadataExtractor.getRayOffsetAnglesFromImgPixel(AthenaApp.get_selection_x(), AthenaApp.get_selection_y(), exif);
+                    relativeRay = MetadataExtractor.getRayAnglesFromImgPixel(AthenaApp.get_selection_x(), AthenaApp.get_selection_y(), roll, exif);
                 }
             } catch (Exception e) {
                 relativeRay = new double[] {0.0d, 0.0d};
@@ -811,15 +816,8 @@ public class MainActivity extends DemManagementActivity {
                 openAthenaCalculationInfo.put("pitchOffsetDegSelectedPoint", roundDouble(-1.0d * thetaOffsetSelectedPoint));
             }
 
-            // Old incorrect formula
-//            azimuth += azimuthOffsetSelectedPoint;
-//            theta += thetaOffsetSelectedPoint;
-
-            // New formula for applying yaw and pitch offset in camera reference frame to
-            //     Camera orientation angle in global reference frame
-            double[] finalRayAngle = MetadataExtractor.pixelRayAnglesOA(azimuth,theta,roll,azimuthOffsetSelectedPoint,thetaOffsetSelectedPoint);
-            azimuth = finalRayAngle[0];
-            theta = finalRayAngle[1];
+            azimuth += azimuthOffsetSelectedPoint;
+            theta += thetaOffsetSelectedPoint;
 
             if (!outputModeIsSlavic()) {
                 attribs += getString(R.string.latitude_label_long) + " "+ roundDouble(y) + "°\n";
