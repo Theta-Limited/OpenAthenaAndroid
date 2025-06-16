@@ -10,7 +10,7 @@ OpenAthena™ allows common drones to spot precise geodetic locations.
 
 <a href="https://github.com/mkrupczak3/OpenAthena"><img width="540" alt="OpenAthena Drone Camera Terrain Raycast Concept Diagram" src="https://github.com/mkrupczak3/OpenAthena/raw/main/assets/OpenAthena_Concept_Diagram.png"></a>
 
-<a href="https://play.google.com/store/apps/details?id=com.openathena"><img width="330" alt="OpenAthena arbitrary point location demo gif" src="./assets/tap_to_locate_demo_small.gif"></a>
+<a href="https://play.google.com/store/apps/details?id=com.openathena"><img width="200" alt="OpenAthena arbitrary point location demo gif" src="./assets/tap_to_locate_demo_small.gif"></a>
 
 <a href="https://play.google.com/store/apps/details?id=com.openathena"><img width="586" alt="OpenAthena Android splash screen demo" src="./assets/App_Open_Demo_landscape.png"></a>
 
@@ -20,9 +20,11 @@ OpenAthena™ allows common drones to spot precise geodetic locations.
 
 <img width="586" alt="OpenAthena for Android triggers a waypoint to show in Android Team Awarness Kit at the calculated location" src="./assets/ATAK_OpenAthena_CoT_Demo_landscape.png">
 
+<img width="586" alt="OpenAthena for Android MGRS coordinate output for a target on the Pioneer Runway range, Fort Huachuca AZ" src="./assets/MGRS_Screenshot_Huachuca.jpg">
+
 # License
 
-Copyright (C) 2024 Theta Informatics LLC
+Copyright (C) 2025 Theta Informatics LLC
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 as published by the Free Software Foundation.
 
@@ -46,7 +48,49 @@ You should have received a copy of the GNU General Public License along with thi
 
 # Operation manual
 
-## Troubleshooting
+## Quickstart
+
+### 1. Select an Image 🖼:
+
+To being, tap the '🖼' button to select and load a drone image.
+
+This app is compatible with images taken by select models of DJI, Skydio, Autel, Parrot, and Teal aircraft models. The drone's position and its camera's orientation are automatically extracted from the image metadata. 
+
+OpenAthena will automatically select and/or download a Digital Elevation Model (DEM) for the area around where your selected drone image was taken.
+
+<img width="586" alt="OpenAthena™ Android User is prompted to allow automatic download of a Digital Elevation Model for use with their selected drone image" src="./assets/0699_download_DEM_prompt.png">
+
+### 2. Calculate a target 🎯:
+
+Tap anywhere on the displayed image to calculate the corresponding target location on the ground. You can tap the result display box to copy the result text to your clipboard or open the position in the maps app of your choice by clicking the blue hyperlink:
+
+<img width="586" alt="OpenAthena™ Android Target Calculation demo using cobb.tif and DJI_0419.JPG, output mode MGRS 1m" src="./assets/MGRS_demo_thompson_park.png">
+
+<img width="586" alt="OpenAthena Android DJI_0419.JPG target location text copied to clipboard" src="./assets/0419_text_copied_to_clipboard.png">
+
+
+
+
+### 3. [ATAK](https://en.wikipedia.org/wiki/Android_Team_Awareness_Kit) Cursor on Target
+
+When the "✉️" button is pressed, OpenAthena will send a Cursor on Target multicast UDP packet to udp://239.2.3.1:6969 to all devices on the same network as your device. Under default settings, this will cause a marker to show up in ATAK at the target location for all recipients:
+
+<img width="586" alt="OpenAthena™ Android Target Calculation demo using cobb.tif and DJI_0419.JPG, output mode WGS84" src="./assets/DJI_0419_Target_Res_Demo_landscape.png">
+<img width="586" alt="OpenAthena for Android triggers a waypoint to show in Android Team Awarness Kit at the calculated location" src="./assets/ATAK_OpenAthena_CoT_Demo_landscape.png">
+
+Change the marker to its appropriate type (friend, suspect, hostile) in ATAK, then send the updated target to other networked users.
+
+### Arbitrary Point Selection
+
+OpenAthena allows users to tap any point in the image to locate it. Tapping on any point in the image will move the marker and calculate the new location. A new Cursor-on-Target message will not be sent to ATAK until the "✉️" button is pressed:
+
+<img width="586" alt="OpenAthena for Android demo of arbitrary point selection for raycast calculation" src="./assets/DJI_0419_Target_Res_Arbitrary_Point_Demo_landscape.png">
+
+<img width="586" alt="OpenAthena for Android demo of a cursor on target message calculated for an arbitrary point selected in a drone image" src="./assets/ATAK_OpenAthena_CoT_Arbitrary_Point_Demo_landscape.png">
+
+## Tips for best results:
+
+### Troubleshooting
 
 Certain error conditions may occur during regular use of this software. For troubleshooting information and a detailed description of the cause of possible errors, review the following document [TROUBLESHOOTING.md](./TROUBLESHOOTING.md):
 
@@ -56,9 +100,9 @@ Certain error conditions may occur during regular use of this software. For trou
 
 
 
-## Setup for drone flight
+### Setup for drone flight
 
-### Compass sensor 🧭 calibration
+#### Compass sensor 🧭 calibration
 
 It is _**strongly suggested**_ that you should [calibrate the drone's compass sensor for the local environment](https://phantompilots.com/threads/compass-calibration-a-complete-primer.32829/) before taking photos to be used with OpenAthena. Consult your drone's operation manual for this procedure. The image metadata from an un-calibrated drone can be several degrees off from the correct heading. This can result in dramatic target-resolution inaccuracies if the sensor is not calibrated. _**Always**_ verify a target match location from OpenAthena before use!
 
@@ -85,44 +129,6 @@ On DJI drones, this indicator shows the number of GPS satellites visible to the 
 <img width="586" alt="A screenshot of the UI for DJI Go 4 during flight of a Mavic 2 Zoom drone. The GPS connection indicator is highlighted" src="./assets/dji_good_gps_lock_ex.png">
 
 Wait until at least 6 GPS satellites are visible (or you can confirm the GPS fix is good) before starting flight.
-
-## Select an Image 🖼:
-
-To being, tap the '🖼' button to select and load a drone image.
-
-This app is compatible with images taken by select models of DJI, Skydio, Autel, and Parrot aircraft models. The drone's position and its camera's orientation are automatically extracted from the image metadata. 
-
-OpenAthena for Android (v0.21.0 and later) will automatically select and/or download a Digital Elevation Model (DEM) for the area around your selected drone image.
-
-<img width="586" alt="OpenAthena™ Android User is prompted to allow automatic download of a Digital Elevation Model for use with their selected drone image" src="./assets/0699_download_DEM_prompt.png">
-
-## Calculate a target 🎯:
-
-Tap anywhere on the displayed image to calculate the corresponding target location on the ground. You can tap the result display box to copy the result text to your clipboard or open the position in the maps app of your choice by clicking the blue hyperlink:
-
-<img width="586" alt="OpenAthena™ Android Target Calculation demo using cobb.tif and DJI_0419.JPG, output mode WGS84" src="./assets/DJI_0419_Target_Res_Demo_landscape.png">
-
-<img width="586" alt="OpenAthena Android DJI_0419.JPG target location text copied to clipboard" src="./assets/0419_text_copied_to_clipboard.png">
-
-
-<img width="586" alt="OpenAthena Android DJI_0419.JPG target shown in Google Maps satellite view" src="./assets/0419_maps_screenshot.png">
-
-## [ATAK](https://en.wikipedia.org/wiki/Android_Team_Awareness_Kit) Cursor on Target
-
-When the "✉️" button is pressed, OpenAthena will send a Cursor on Target multicast UDP packet to udp://239.2.3.1:6969 to all devices on the same network as your device. Under default settings, this will cause a marker to show up in ATAK at the target location for all recipients:
-
-<img width="586" alt="OpenAthena for Android triggers a waypoint to show in Android Team Awarness Kit at the calculated location" src="./assets/ATAK_OpenAthena_CoT_Demo_landscape.png">
-
-Change the marker to its appropriate type (friend, suspect, hostile) in ATAK, then send the updated target to other networked users.
-
-## Arbitrary Point Selection
-
-OpenAthena allows users to tap any point in the image to locate it. Tapping on any point in the image will move the marker and calculate the new location. A new Cursor-on-Target message will not be sent to ATAK until the "✉️" button is pressed:
-
-<img width="586" alt="OpenAthena for Android demo of arbitrary point selection for raycast calculation" src="./assets/DJI_0419_Target_Res_Arbitrary_Point_Demo_landscape.png">
-
-<img width="586" alt="OpenAthena for Android demo of a cursor on target message calculated for an arbitrary point selected in a drone image" src="./assets/ATAK_OpenAthena_CoT_Arbitrary_Point_Demo_landscape.png">
-
 # Application Settings (optional) ⚙:
 
 OpenAthena for Android supports multiple output modes for target calculation, including:
