@@ -54,7 +54,7 @@ You should have received a copy of the GNU General Public License along with thi
 
 To being, tap the '🖼' button to select and load a drone image.
 
-This app is compatible with images taken by select models of DJI, Skydio, Autel, Parrot, and Teal aircraft models. The drone's position and its camera's orientation are automatically extracted from the image metadata. 
+This app is compatible with images taken by most DJI, Skydio, Autel, Parrot, and Teal drone models. The drone's position and its camera's orientation are automatically extracted from image EXIF and XMP metadata. 
 
 OpenAthena will automatically select and/or download a Digital Elevation Model (DEM) for the area around where your selected drone image was taken.
 
