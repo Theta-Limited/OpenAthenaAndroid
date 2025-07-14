@@ -28,11 +28,14 @@ public class DemDownloader
     // for example:
     // OPENTOPOGRAPHY_API_KEY=hexnumbers
     public static String TAG = DemDownloader.class.getSimpleName();
-    private static final String URL_STR = "https://portal.opentopography.org/API/globaldem?";
+    protected static final String URL_STR = "https://portal.opentopography.org/API/globaldem?";
+    // Use COP30 everywhere due to better results accuracy observed than SRTM
+    // https://github.com/Theta-Limited/OpenAthenaAndroid/issues/187
+    protected static String demTypeStr = "COP30";
     private int responseCode;
     private int responseBytes;
     private double s, w, n, e; // Bounding box coordinates
-    private String filenameSuffix = ".tiff";
+    protected static final String filenameSuffix = ".tiff";
     public String filename;
     private static final String OUTPUT_FORMAT_STRING = "GTiff";
     private Context context;
@@ -75,7 +78,7 @@ public class DemDownloader
     public boolean isApiKeyValid() throws IOException {
         // Minimal bounding box at a location with no data
         String testUrl = URL_STR +
-                "demtype=SRTMGL1" +
+                "demtype=" + demTypeStr +
                 "&south=0" +
                 "&north=0.01" +
                 "&west=0" +
@@ -112,9 +115,7 @@ public class DemDownloader
 //            // https://portal.opentopography.org/datasetMetadata?otCollectionID=OT.032021.4326.1
 //            demTypeStr = "COP30";
 //        }
-        // Use COP30 everywhere due to better accuracy than SRTM
-        // https://github.com/Theta-Limited/OpenAthenaAndroid/issues/187
-        String demTypeStr = "COP30";
+
 
         String requestURLStr = URL_STR +
                 "demtype=" + demTypeStr +

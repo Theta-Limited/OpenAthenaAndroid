@@ -445,6 +445,7 @@ public class MetadataExtractor {
         }
         // Check if firmware version means vertical datum should be WGS84 hae instead of EGM96 amsl
         boolean isFirmwareVerticalDatumWGS84 = (thisFirmwareVersion.compareTo(djiFirmwareVerticalDatumWasSwitched) >= 0);
+        Log.i(TAG, "isFirmwareVerticalDatumWGS84: " + Boolean.toString(isFirmwareVerticalDatumWGS84));
 
         if (!make.contains("autel") && !xmp_str.toLowerCase(Locale.ENGLISH).contains("rtkflag") && !isFirmwareVerticalDatumWGS84) {
             //Log.i(TAG, "Offset is: " +  offsetProvider.getEGM96OffsetAtLatLon(y, x));
