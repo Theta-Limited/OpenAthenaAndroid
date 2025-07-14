@@ -75,6 +75,8 @@ public class AboutActivity extends AthenaActivity {
                         + getString(R.string.about_opentopography_api_description)
                         + "<br><a href=\"https://opentopography.org/privacypolicy\">https://opentopography.org/privacypolicy</a><br><br>"
                         + getString(R.string.about_about_opentopography)
+                        + "<br><br>"
+                        + getString(R.string.icon_credit)
                 ,0,null, null)
         );
 

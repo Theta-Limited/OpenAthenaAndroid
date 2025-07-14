@@ -153,7 +153,7 @@
     <string name="CalibrationReminderSnippet">For best results, please calibrate your drone\'s compass 🧭 before flight!</string>
     <string name="obtain_a_digital_elevation_model_here">Obtain a Digital Elevation Model Here</string>
     <string name="terrain_altitude">Terrain Altitude :</string>
-    <string name="icon_credit" translatable="false">Credit Carole Raddato, Statue of Athena wearing a Corinthian helmet. 2014 CC BY-SA 2.0</string>
+    <string name="icon_credit" translatable="false">Image \"Statue of Athena wearing a Corinthian helmet.\" Credit Carole Raddato, 2014 CC BY-SA 2.0</string>
     <string name="distance_unit_label">Distance Unit:</string>
     <string name="meter_label">Meter</string>
     <string name="us_foot_label">US Foot</string>
