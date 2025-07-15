@@ -301,4 +301,7 @@
     <string name="disable_maritime_mode_action">Disable maritime mode</string>
     <string name="tle_disclaimer">Target Location Error category output is only an estimate and may not be certified by relevant authorities</string>
     <string name="email_address_for_technical_support_prompt_about">Email address for technical support:</string>
+    <string name="extended_mode_enabled">Extended/debug CoT mode ON</string>
+    <string name="extended_mode_disabled">Extended/debug CoT mode OFF</string>
+    <string name="attribs_extended_cot_enabled_notification">"Extended Cursor on Target output: "</string>
 </resources>

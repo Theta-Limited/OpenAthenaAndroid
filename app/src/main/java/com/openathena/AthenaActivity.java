@@ -64,8 +64,6 @@ public abstract class AthenaActivity extends AppCompatActivity {
         CK42GaussKruger
     }
 
-
-
     public String getCurrentOutputModeName() {
         switch (outputMode) {
             case WGS84:
@@ -126,9 +124,15 @@ public abstract class AthenaActivity extends AppCompatActivity {
 
     public Uri droneModelsJsonUri = null;
 
-
     // The most recent measured or extracted point of interest for finding a DEM with sufficient coverage
     protected static String lastPointOfInterest = "";
+
+    // This flag controls whether extra calculation info is added to Cursor on Target message output
+    // Many Cursor on Target consumer applications use a small buffer size, so by default this information is not included
+    protected static boolean is_extended_cot_mode_active = false;
+    protected static void toggleExtendedCotMode() {
+        is_extended_cot_mode_active = !is_extended_cot_mode_active;
+    }
 
     public AthenaActivity() {
         super();

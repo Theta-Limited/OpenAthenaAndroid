@@ -21,7 +21,6 @@ import com.agilesrc.dem4j.exceptions.CorruptTerrainException;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 import android.Manifest;
@@ -108,9 +107,7 @@ public class MainActivity extends DemManagementActivity {
     DEMParser theParser = null;
     TargetGetter theTGetter = null;
 
-    // This flag controls whether extra calculation info is added to Cursor on Target message output
-    // Many Cursor on Target consumer applications use a small buffer size, so by default this information is not included
-    public static final boolean IS_EXTENDED_COT_MODE_ACTIVE = false;
+
 
     ActivityResultLauncher<String> mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
                 new ActivityResultCallback<Uri>() {
@@ -710,7 +707,7 @@ public class MainActivity extends DemManagementActivity {
 
             Log.i(TAG, "parsed xmpMeta\n");
 
-            if (IS_EXTENDED_COT_MODE_ACTIVE) {
+            if (is_extended_cot_mode_active) {
                 openAthenaCalculationInfo.put("droneLatitude", roundDouble(y));
                 openAthenaCalculationInfo.put("droneLongitude", roundDouble(x));
                 openAthenaCalculationInfo.put("droneElevationHAE", roundDouble(z));
@@ -734,7 +731,7 @@ public class MainActivity extends DemManagementActivity {
             if (make == null) make = "";
             String model = exif.getAttribute(ExifInterface.TAG_MODEL);
             if (model == null) model = "";
-            if (IS_EXTENDED_COT_MODE_ACTIVE) {
+            if (is_extended_cot_mode_active) {
                 openAthenaCalculationInfo.put("make", make.toLowerCase(Locale.ENGLISH));
                 openAthenaCalculationInfo.put("model", model.toUpperCase(Locale.ENGLISH));
                 openAthenaCalculationInfo.put("isCameraModelRecognized", Boolean.toString(MetadataExtractor.isDroneModelRecognized(exif)));
@@ -747,7 +744,7 @@ public class MainActivity extends DemManagementActivity {
                 attribs += getString(R.string.distortion_parameters) + "\n";
                 for (Map.Entry<String, Double> entry : paramMap.entrySet()) {
                     attribs += "    " + entry.getKey() + ": " + entry.getValue() + "\n";
-                    if (IS_EXTENDED_COT_MODE_ACTIVE) openAthenaCalculationInfo.put(entry.getKey(), roundDouble(entry.getValue()));
+                    if (is_extended_cot_mode_active) openAthenaCalculationInfo.put(entry.getKey(), roundDouble(entry.getValue()));
                 }
             }
             // attribs += MetadataExtractor.getTagString(ExifInterface.TAG_FOCAL_LENGTH, exif);
@@ -759,7 +756,7 @@ public class MainActivity extends DemManagementActivity {
             attribs += MetadataExtractor.getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif);
             attribs += MetadataExtractor.getTagString(ExifInterface.TAG_IMAGE_LENGTH, exif);
             // yikes
-            if (IS_EXTENDED_COT_MODE_ACTIVE) {
+            if (is_extended_cot_mode_active) {
                 openAthenaCalculationInfo.put("focalLength", roundDouble(MetadataExtractor.rationalToFloat(exifFocalLength)));
                 openAthenaCalculationInfo.put("digitalZoomRatio", zeroStringIfNull(Float.toString(MetadataExtractor.getDigitalZoomRatio(exif))));
                 openAthenaCalculationInfo.put("imageWidth", zeroStringIfNull(exif.getAttribute(ExifInterface.TAG_IMAGE_WIDTH)));
@@ -772,7 +769,7 @@ public class MainActivity extends DemManagementActivity {
 //            attribs += "cx: " + intrinsics[2] + "\n";
 //            attribs += "cy: " + intrinsics[5] + "\n";
             attribs += getString(R.string.roll_label) + " " + roundDouble(roll) + "°\n";
-            if (IS_EXTENDED_COT_MODE_ACTIVE) {
+            if (is_extended_cot_mode_active) {
                 openAthenaCalculationInfo.put("f_x", roundDouble(intrinsics[0]));
                 openAthenaCalculationInfo.put("f_y", roundDouble(intrinsics[4]));
 //            openAthenaCalculationInfo.put("c_x", roundDouble(intrinsics[2]));
@@ -785,7 +782,7 @@ public class MainActivity extends DemManagementActivity {
             }
             azimuth += azimuthOffsetUserCorrection;
 
-            if (IS_EXTENDED_COT_MODE_ACTIVE) {
+            if (is_extended_cot_mode_active) {
                 openAthenaCalculationInfo.put("azimuthOffsetUserCorrection", roundDouble(azimuthOffsetUserCorrection));
                 openAthenaCalculationInfo.put("imageSelectedProportionX", roundDouble(AthenaApp.get_proportion_selection_x()));
                 openAthenaCalculationInfo.put("imageSelectedProportionY", roundDouble(AthenaApp.get_proportion_selection_y()));
@@ -811,7 +808,7 @@ public class MainActivity extends DemManagementActivity {
             attribs += getString(R.string.azimuth_offset_label) + " " + Math.round(azimuthOffsetSelectedPoint) + "°\n";
             attribs += getString(R.string.pitch_offset_label) + " " + -1 * Math.round(thetaOffsetSelectedPoint) + "°\n";
 
-            if (IS_EXTENDED_COT_MODE_ACTIVE) {
+            if (is_extended_cot_mode_active) {
                 openAthenaCalculationInfo.put("yawOffsetDegSelectedPoint", roundDouble(azimuthOffsetSelectedPoint));
                 openAthenaCalculationInfo.put("pitchOffsetDegSelectedPoint", roundDouble(-1.0d * thetaOffsetSelectedPoint));
             }
@@ -870,7 +867,7 @@ public class MainActivity extends DemManagementActivity {
                     longitude = result[2];
                     altitudeDouble = result[3];
 
-                    if (IS_EXTENDED_COT_MODE_ACTIVE) openAthenaCalculationInfo.put("slantRange", roundDouble(distance));
+                    if (is_extended_cot_mode_active) openAthenaCalculationInfo.put("slantRange", roundDouble(distance));
 
                     latCK42 = CoordTranslator.toCK42Lat(latitude, longitude, altitudeDouble);
                     lonCK42 = CoordTranslator.toCK42Lon(latitude, longitude, altitudeDouble);
@@ -898,6 +895,9 @@ public class MainActivity extends DemManagementActivity {
                     TLE_Cat = CursorOnTargetSender.errorCategoryFromCE(predictedCE);
                     attribs += getString(R.string.target_location_error_category) + " " + TLE_Cat.name() + "\n";
                     if (shouldISendCoT) {
+                        if (is_extended_cot_mode_active) {
+                            attribs += getString(R.string.attribs_extended_cot_enabled_notification) + getString(R.string.yes) + "\n";
+                        }
                         attribs += getString(R.string.mainactivity_label_cursor_on_target_message_sent_with_uid) + " " + CursorOnTargetSender.buildUIDString(this) + "\n";
                     }
                     if (!outputModeIsSlavic()) { // to avoid confusion with WGS84, no Maps link is provided when outputModeIsSlavic()

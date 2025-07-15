@@ -4,19 +4,30 @@
 
 package com.openathena;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+import com.google.android.material.snackbar.Snackbar;
 
 public class AboutActivity extends AthenaActivity {
 
     public static String TAG = AboutActivity.class.getSimpleName();
+    ImageView athenaIcon;
     TextView aboutText;
     String versionName;
+
+    /** CoT DEBUG mode Easter-egg settings */
+    private static final int REQUIRED_TAPS      = 5;      // how many taps
+    private static final long TAP_WINDOW_MS     = 3_000;  // max time span for them (3 s)
+    private int   tapCount          = 0;
+    private long  firstTapTimestamp = 0L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +36,53 @@ public class AboutActivity extends AthenaActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
+
+        athenaIcon = (ImageView) findViewById(R.id.aboutImageView);
+        athenaIcon.setOnClickListener(v -> {
+            long now = System.currentTimeMillis();
+
+            // Reset counter if first tap was too long ago
+            if (now - firstTapTimestamp > TAP_WINDOW_MS) {
+                tapCount = 0;
+                firstTapTimestamp = now;
+            }
+
+            tapCount++;
+
+            if (tapCount == 1) {
+                firstTapTimestamp = now;   // mark start of the burst
+            }
+
+            if (tapCount >= REQUIRED_TAPS) {
+                AthenaActivity.toggleExtendedCotMode();
+                boolean on = AthenaActivity.is_extended_cot_mode_active;
+
+                // 2-s toast for final confirmation
+                Toast.makeText(
+                        this,
+                        on ? "Extended CoT mode enabled!" : "Extended CoT mode disabled.",
+                        Toast.LENGTH_SHORT).show();
+
+                tapCount = 0;
+                firstTapTimestamp = 0L;
+            } else {
+                int remaining = REQUIRED_TAPS - tapCount;
+
+                if (remaining < Math.max(REQUIRED_TAPS - 2, 2)) {
+                    Snackbar foo = Snackbar.make(
+                            v,                                            // attach to tapped ImageView
+                            remaining + " more tap" + (remaining == 1 ? "" : "s"),
+                            400                                           // duration in ms
+                    );
+                    if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                        foo.setAnchorView(R.id.aboutScrollView);
+                    } else {
+                        foo.setAnchorView(R.id.aboutImageView);
+                    }
+                    foo.show();
+                }
+            }
+        });
 
         aboutText = (TextView)findViewById(R.id.aboutText);
         aboutText.setMovementMethod(LinkMovementMethod.getInstance());
@@ -56,7 +114,7 @@ public class AboutActivity extends AthenaActivity {
                         + "<br><a href=\"https://github.com/mkrupczak3/OpenAthenaAndroid\">"
                         + getString(R.string.CallToActionSnippet) + "<br>"
                         + getString(R.string.email_address_for_technical_support_prompt_about) + "<br>"
-                        + "<a href=\"mailto:support@theta.limited?subject=Support Request, OpenAthena for Android\">support@theta.limited</a>" + "<br>"
+                        + "<a href=\"mailto:support@theta.limited?subject=Support Request, OpenAthena for Android " + versionName + "\">support@theta.limited</a>" + "<br>"
                         + "<br>" + getString(R.string.nato_vertical_datum_notice) + "<br>"
                         + getString(R.string.warsaw_vertical_datum_notice) + "<br>"
                         + getString(R.string.AuthorGitHubSnippet)
