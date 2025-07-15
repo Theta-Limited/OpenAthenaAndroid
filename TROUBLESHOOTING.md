@@ -82,7 +82,7 @@ This error indicates that the attempted raycast's start height was already below
 The following are common causes of this error:
 * Older DJI drone models incorrectly report their altitude as the difference from their launch point rather than relative to sea level. There is no mitigation, data from such drone models is unusable
 * Altitude data from the drone is inaccurate. To mitigate occurrence of this error, let the drone sit at its launch position longer to acquire a better GPS lock before takeoff.
-* The elevation model height at the location the picture was taken is higher than actual terrain. This commonly occurs in areas with dense vegetation (especially in the southern hemisphere) or urban areas with tall buildings. In such scenarios, the first radar return from the satellite for the SRTM mapping mission came from the tallest object rather than terrain. To mitigate this error, use an alternative Digital Terrain Model (DTM) rather than Digital Surface Model (DSM). [FABDEM](https://www.fathom.global/product/global-terrain-data-fabdem/) is one such existing commercial offering which attempts to remove the effect of forrests and buildings.
+* The elevation model height at the location the picture was taken is higher than actual terrain. This commonly occurs in areas with dense vegetation (especially in the southern hemisphere) or urban areas with tall buildings. In such scenarios, the first radar return from the satellite for the SRTM/COP30 mapping mission came from the tallest object rather than terrain. 
 
 ### ERROR: EXIF metadata not found!
 
@@ -109,7 +109,7 @@ This error indicates that usable metadata could not be found within the image. T
 
 This error indicates that the camera/drone manufacturer which took the image is not yet supported.
 
-OpenAthena does not work with images taken by smartphones. The software's terrain-raycast technique requires an elevated view and accurate metdata indicating position and orientation of the camera. Smartphone images do not provide such preconditions and are thus incompatible with OpenAthena.
+OpenAthena does not work with images taken by smartphones. The software's terrain-raycast technique requires an elevated view and accurate metdata indicating position and orientation of the camera. Smartphone images taken from the ground do not provide sufficent vertical separation from the ground (and orientation metadata) are thus incompatible with OpenAthena.
 
 If you would like to make OpenAthena compatible with your drone model, please send example images to support@theta.limited via email along with the make and model name of your drone. For enhanced accuracy, inquire via the support email and Theta may ship you a calibration pattern poster to use your drone camera with our [camera calibration script](https://github.com/Theta-Limited/camera-calibration) at no cost to you.
 
