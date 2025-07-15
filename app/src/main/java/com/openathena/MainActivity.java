@@ -32,20 +32,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
+
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Configuration;
-import android.database.Cursor;
+
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.provider.OpenableColumns;
+
 import android.text.Html;
 
 import androidx.core.util.Consumer;
+
 import androidx.exifinterface.media.ExifInterface;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;

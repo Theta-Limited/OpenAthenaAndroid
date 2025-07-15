@@ -72,38 +72,47 @@
         </provider>
         <activity
             android:name=".DemCacheListActivity"
+            android:theme="@style/Theme.OpenAthenaAndroid"
             android:exported="false"
             android:label="@string/title_activity_demcache" />
         <activity
             android:name=".NewElevationMapActivity"
+            android:theme="@style/Theme.OpenAthenaAndroid"
             android:exported="false"
             android:label="@string/title_activity_newelevationmap" />
         <activity
             android:name=".ManageDemsActivity"
+            android:theme="@style/Theme.OpenAthenaAndroid"
             android:exported="false"
             android:label="@string/title_activity_managedems" />
         <activity
             android:name=".ManageDroneModelsAndAPIKeyActivity"
+            android:theme="@style/Theme.OpenAthenaAndroid"
             android:exported="false"
             android:label="@string/action_manage_drone_models_and_api_key" />
         <activity
             android:name=".DemDetailsActivity"
+            android:theme="@style/Theme.OpenAthenaAndroid"
             android:exported="false"
             android:label="@string/title_activity_mapsdetail" />
         <activity
             android:name=".PrefsActivity"
+            android:theme="@style/Theme.OpenAthenaAndroid"
             android:exported="false"
             android:label="@string/title_activity_prefs" />
         <activity
             android:name=".AboutActivity"
+            android:theme="@style/Theme.OpenAthenaAndroid"
             android:exported="false"
             android:label="@string/title_activity_about" />
         <activity
             android:name=".SelectionActivity"
+            android:theme="@style/Theme.OpenAthenaAndroid"
             android:exported="true"
             android:label="@string/title_activity_selection" />
         <activity
             android:name=".MainActivity"
+            android:theme="@style/Theme.OpenAthenaAndroid"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

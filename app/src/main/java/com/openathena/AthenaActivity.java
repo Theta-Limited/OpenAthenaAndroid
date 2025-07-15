@@ -9,10 +9,13 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.exifinterface.media.ExifInterface;
 
 
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -141,6 +144,17 @@ public abstract class AthenaActivity extends AppCompatActivity {
         } else {
             setOutputMode(aMode.ordinal()); // overloaded method call
         }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.Theme_OpenAthenaAndroid);
+        super.onCreate(savedInstanceState);
+        boolean isDarkMode = (getResources().getConfiguration().uiMode &
+                Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        WindowInsetsControllerCompat ctl =
+                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        ctl.setAppearanceLightStatusBars(!isDarkMode);
     }
 
     @SuppressLint("SetTextI18n")

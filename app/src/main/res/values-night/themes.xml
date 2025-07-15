@@ -2,16 +2,26 @@
     <!-- Base application theme. -->
     <style name="Theme.OpenAthenaAndroid" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimary">@color/dark_red</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">@color/black</item>
+
+        <!-- ▶  Force the app-bar / surfaces to use purple in Night mode  -->
+        <item name="colorSurface">@color/dark_red</item>                 <!-- M2 widgets -->
+        <item name="colorSurfaceVariant">@color/dark_red</item>          <!-- M2 cards/menu -->
+        <item name="colorPrimarySurface">@color/dark_red</item>          <!-- M3 app-bar -->
+
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+<!--        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>-->
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="Theme.OpenAthenaAndroid.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 </resources>
