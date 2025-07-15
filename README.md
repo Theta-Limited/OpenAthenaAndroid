@@ -1,9 +1,9 @@
 # OpenAthena™ for Android
 OpenAthena for Android
 
-An Android port of the [OpenAthena project](http://OpenAthena.com)
+An Android version of the [OpenAthena project](http://OpenAthena.com)
 
-OpenAthena™ allows common drones to spot precise geodetic locations.
+OpenAthena™ instantly calculates the ground location of any single pixel from any single drone image.
 
 🖼️👨‍💻 + 🧮⛰️ = 🎯📍
 
@@ -62,7 +62,7 @@ OpenAthena will automatically select and/or download a Digital Elevation Model (
 
 ### 2. Calculate a target 🎯:
 
-Tap anywhere on the displayed image to calculate the corresponding target location on the ground. You can tap the result display box to copy the result text to your clipboard or open the position in the maps app of your choice by clicking the blue hyperlink:
+Tap anywhere within the displayed image to calculate the corresponding ground target location. You can tap the result display box to copy the result text to your clipboard, or open the position in the maps app of your choice by clicking on the blue hyperlink:
 
 <img width="586" alt="OpenAthena™ Android Target Calculation demo using cobb.tif and DJI_0419.JPG, output mode MGRS 1m" src="./assets/MGRS_demo_thompson_park.png">
 
@@ -73,7 +73,7 @@ Tap anywhere on the displayed image to calculate the corresponding target locati
 
 ### 3. [ATAK](https://en.wikipedia.org/wiki/Android_Team_Awareness_Kit) Cursor on Target
 
-When the "✉️" button is pressed, OpenAthena will send a Cursor on Target multicast UDP packet to udp://239.2.3.1:6969 to all devices on the same network as your device. Under default settings, this will cause a marker to show up in ATAK at the target location for all recipients:
+When the "✉️" button is pressed, OpenAthena will send a Cursor on Target multicast UDP packet to udp://239.2.3.1:6969 to all devices on the same network. This will cause a marker to show up in ATAK at the target location for all recipients:
 
 <img width="586" alt="OpenAthena™ Android Target Calculation demo using cobb.tif and DJI_0419.JPG, output mode WGS84" src="./assets/DJI_0419_Target_Res_Demo_landscape.png">
 <img width="586" alt="OpenAthena for Android triggers a waypoint to show in Android Team Awarness Kit at the calculated location" src="./assets/ATAK_OpenAthena_CoT_Demo_landscape.png">
@@ -184,7 +184,7 @@ If you're interested in contributing to this project, feel free to make a fork. 
 follow the [fork and pull model](https://reflectoring.io/github-fork-and-pull/) for third-party contributions.
 
 ### Cloning this project with submodules
-This project requires content from other git repositories (such as Theta's [DroneModels database](https://github.com/Theta-Limited/DroneModels)) to build correctly.
+⚠️This project requires content from other git repositories (such as Theta's [DroneModels database](https://github.com/Theta-Limited/DroneModels)) and will not build correctly without them! ⚠️
 
 To clone this project properly, with the necessary submodules:
 ```bash
