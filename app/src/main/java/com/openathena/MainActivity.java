@@ -1237,16 +1237,16 @@ public class MainActivity extends DemManagementActivity {
             public void run() {
                 textView.append(aStr);
 
-                if(isImageLoaded) {
-                    // Additional code to scroll to the bottom
-                    scrollView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            // Scroll to the bottom of the ScrollView
-                            scrollView.fullScroll(ScrollView.FOCUS_DOWN);
-                        }
-                    });
-                }
+//                if(isImageLoaded) {
+//                    // Additional code to scroll to the bottom
+//                    scrollView.post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            // Scroll to the bottom of the ScrollView
+//                            scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+//                        }
+//                    });
+//                }
             }
         });
     } // appendText to textView but do so on UI thread
