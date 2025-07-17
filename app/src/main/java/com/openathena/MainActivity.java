@@ -851,6 +851,7 @@ public class MainActivity extends DemManagementActivity {
             long GK_northing;
             long GK_easting;
 
+            TLE_Model_Parameters tle_model;
             double predictedCE;
             CursorOnTargetSender.TLE_Categories TLE_Cat;
 
@@ -890,10 +891,19 @@ public class MainActivity extends DemManagementActivity {
                         attribs += getString(R.string.target_found_at_msg) + " (CK-42): " + roundDouble(latCK42) + "," + roundDouble(lonCK42) + " Alt (hae): " + altCK42 + " " + "m" + "\n";
                     }
                     attribs += getString(R.string.drone_dist_to_target_msg) + " " + Math.round(distance * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d)) + " " + (isUnitFoot() ? "ft.":"m") + "\n";
-                    predictedCE = CursorOnTargetSender.calculateCircularError(theta, isDroneModelRecognized);
+
+                    tle_model = MetadataExtractor.getTLEModelParameters(exif);
+                    boolean are_tle_model_values_available = MetadataExtractor.areTLEModelValuesAvailable(exif);
+                    attribs += getString(R.string.attribs_is_tle_estimation_calibrated_for_this_drone) + " " + (are_tle_model_values_available ? getString(R.string.yes) : getString(R.string.no)) + "\n";
+                    attribs += getString(R.string.attribs_tle_prediction_model_parameters) + "\n";
+                    attribs += "\t" + "y_intercept:" + " " + roundDouble(tle_model.tle_model_y_intercept * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d)) + (isUnitFoot() ? "ft.":"m") + "\n";
+                    attribs += "\t" + "slant_range_coeff:" + " " + roundDouble(tle_model.tle_model_slant_range_coeff) + (isUnitFoot() ? "ft./ft.":"m/m") + "\n";
+                    attribs += "\t" + "tle_model_slant_ratio_coeff:" + " " + roundDouble(tle_model.tle_model_slant_ratio_coeff) + "\n";
+                    predictedCE = CursorOnTargetSender.calculateCircularError(theta, distance, isDroneModelRecognized, tle_model);
                     attribs += getString(R.string.target_predicted_ce) + " " + Math.round((predictedCE * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d))*10.0)/10.0 + " " + (isUnitFoot() ? "ft.":"m") + "\n";
                     TLE_Cat = CursorOnTargetSender.errorCategoryFromCE(predictedCE);
                     attribs += getString(R.string.target_location_error_category) + " " + TLE_Cat.name() + "\n";
+
                     if (shouldISendCoT) {
                         if (is_extended_cot_mode_active) {
                             attribs += getString(R.string.attribs_extended_cot_enabled_notification) + getString(R.string.yes) + "\n";
@@ -1034,7 +1044,7 @@ public class MainActivity extends DemManagementActivity {
             //     e.g. for use with ATAK app
             if (shouldISendCoT) {
                 // NOTE that the CoT spec requires WGS84 hae, not EGM96 above mean sea level
-                CursorOnTargetSender.sendCoT(this, latitude, longitude, altitudeDouble, theta, isDroneModelRecognized, exif.getAttribute(ExifInterface.TAG_DATETIME), openAthenaCalculationInfo);
+                CursorOnTargetSender.sendCoT(this, latitude, longitude, altitudeDouble, theta, distance, isDroneModelRecognized, tle_model, exif.getAttribute(ExifInterface.TAG_DATETIME), openAthenaCalculationInfo);
             }
         } catch (XMPException e) {
             Log.e(TAG, e.getMessage());

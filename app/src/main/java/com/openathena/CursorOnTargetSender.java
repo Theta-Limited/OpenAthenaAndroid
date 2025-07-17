@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
@@ -56,11 +57,14 @@ public class CursorOnTargetSender {
     // from https://doi.org/10.1016/j.asej.2017.01.007
     private static final double LINEAR_ERROR = 5.9d;
 
+    // Approximately the minimum possible error from a typical GPS unit
+    private static final double MINIMUM_ERROR = 5.0d;
 
     static TimeZone tz = TimeZone.getTimeZone("UTC");
+    @SuppressLint("SimpleDateFormat")
     static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
-    public static void sendCoT(Context invoker, double lat, double lon, double hae, double theta, boolean isDroneModelRecognized, String exif_datetime, LinkedHashMap<String,String> openAthenaCalculationInfo) {
+    public static void sendCoT(Context invoker, double lat, double lon, double hae, double theta, double slant_range, boolean isDroneModelRecognized, TLE_Model_Parameters tle_model, String exif_datetime, LinkedHashMap<String,String> openAthenaCalculationInfo) {
         if(invoker == null){
             throw new IllegalArgumentException("invoker context can not be null");
         } else if (!(invoker instanceof android.app.Activity)) {
@@ -89,7 +93,7 @@ public class CursorOnTargetSender {
         String fiveMinutesFromNowISO = df.format(fiveMinsFromNow);
         String imageISO = df.format(convert(exif_datetime));
 
-        double circularError = calculateCircularError(theta, isDroneModelRecognized); // optimistic estimation of 2 sigma accuracy based on angle of camera depression theta
+        double circularError = calculateCircularError(theta, slant_range, isDroneModelRecognized, tle_model); // optimistic estimation of 2 sigma accuracy based on angle of camera depression theta
         String le = Double.toString(LINEAR_ERROR);
         String ce = Double.toString(circularError);
         new Thread(new Runnable() {
@@ -107,12 +111,35 @@ public class CursorOnTargetSender {
 
     }
 
-    public static double calculateCircularError(double theta, boolean isDroneModelRecognized) {
+    public static double calculateCircularError(double theta, double slant_range, boolean isDroneModelRecognized, TLE_Model_Parameters tle_model) {
         // If the camera's intrinsic parameters are missing, accuracy will be significantly degraded
         if(!isDroneModelRecognized) {
             return 306.0d;
         }
-        return Math.abs(1.0d / Math.tan(Math.toRadians(theta)) * LINEAR_ERROR); // optimistic estimation of 2 sigma accuracy based on angle of camera depression theta
+
+        if (theta > 90.0d) {
+            // If camera is facing backwards, use the appropriate value for the reverse direction (the supplementary angle of theta)
+            theta = 180.0d - theta;
+        }
+        if (theta > 89.0d) {
+            // clip slant angle to avoid exploding value
+            theta = 89.0d;
+        }
+
+        // ratio of vertical distance (treating downwards as positive) to horizontal distance
+        double slant_ratio = Math.tan(theta * (Math.PI / 180.0d));
+
+        double tle_model_y_intercept = tle_model.tle_model_y_intercept;
+        double tle_model_slant_range_coeff = tle_model.tle_model_slant_range_coeff;
+        double tle_model_slant_ratio_coeff = tle_model.tle_model_slant_ratio_coeff;
+
+        // two factor linear model prediction for circular error based on slant_range and slant_ratio
+        // in cases where slant_ratio was statistically-insignificant, tle_model_slant_ratio_coeff := 0.0 and only slant_range is used
+        // for more details, see https://github.com/Theta-Limited/DroneModels?tab=readme-ov-file#target-location-error-tle-estimation-model-parameters
+        //                   and https://github.com/Theta-Limited/OA-Accuracy-Testing
+        double predicted_ce = tle_model_y_intercept + slant_range * tle_model_slant_range_coeff + slant_ratio * tle_model_slant_ratio_coeff;
+        predicted_ce = Math.max(MINIMUM_ERROR, predicted_ce);
+        return predicted_ce;
     }
 
     // Target Location Error categories
