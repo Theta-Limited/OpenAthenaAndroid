@@ -525,6 +525,10 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
 
     public int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        if (reqWidth <= 0 || reqHeight <= 0) {
+            return 1;
+        }
+
         // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
@@ -540,6 +544,7 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
             while ((halfHeight / inSampleSize) >= reqHeight
                     && (halfWidth / inSampleSize) >= reqWidth) {
                 inSampleSize *= 2;
+                Log.d(TAG, "inSampleSize: " + inSampleSize);
             }
         }
 
