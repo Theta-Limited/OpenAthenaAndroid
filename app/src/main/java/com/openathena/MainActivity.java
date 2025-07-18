@@ -141,6 +141,10 @@ public class MainActivity extends DemManagementActivity {
 //                }
 //            });
 
+    /**
+     * Called when the activity is created or re-created
+     * @param savedInstanceState Bundle of saved state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG,"onCreate started");
@@ -322,6 +326,9 @@ public class MainActivity extends DemManagementActivity {
         }
     } // onCreate
 
+    /**
+     * Called when the activity is becoming visible to the user.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -353,7 +360,9 @@ public class MainActivity extends DemManagementActivity {
 
     }
 
-    // save the current state of this activity to the athenaApp Singleton object
+    /**
+     * Save the current state of this activity to the athenaApp Singleton object
+     */
     @Override
     protected void saveStateToSingleton() {
         athenaApp.putInt("dangerousAutelAwarenessCount", dangerousAutelAwarenessCount);
@@ -382,6 +391,11 @@ public class MainActivity extends DemManagementActivity {
         }
     }
 
+    /**
+     * Change button opacity and enable/disable
+     * @param aButton Button to change
+     * @param isItReady True if button should be enabled, false otherwise
+     */
     public void setButtonReady(Button aButton, boolean isItReady) {
         runOnUiThread(new Runnable() {
             @Override
@@ -400,7 +414,10 @@ public class MainActivity extends DemManagementActivity {
         });
     }
 
-    // back from image selection dialog; handle it
+    /**
+     * Handle image chosen from selection dialog
+     * @param uri Uri of selected image
+     */
     private void imageSelected(Uri uri)
     {
         File appCacheDir = new File(getCacheDir(), "images");
@@ -574,6 +591,11 @@ public class MainActivity extends DemManagementActivity {
         }).start();
     }
 
+    /**
+     * Load DEM in a new thread, this is a long-running task
+     * @param uri Uri of the DEM file
+     * @return Exception if DEM could not be loaded
+     */
     private Exception loadDEMnewThread(Uri uri) {
         File appCacheDir = new File(getCacheDir(), "DEMs");
         if (!appCacheDir.exists()) {
@@ -649,26 +671,24 @@ public class MainActivity extends DemManagementActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-
-
-    @Override
     protected void onDestroy()
     {
         Log.d(TAG,"onDestroy started");
         super.onDestroy();
     }
 
-    // overloaded, called by button press
+    /** overloaded, this one is called by a manual button press
+     * @param view MarkableImageView object
+     */
     public void calculateImage(View view) {
         calculateImage(view, true);
     }
 
+    /**
+     * Primary target calculation function for MainActivity
+     * @param view MarkableImageView object
+     * @param shouldISendCoT boolean indicating whether to send CoT message
+     */
     public void calculateImage(View view, boolean shouldISendCoT)
     {
         Drawable aDrawable;
@@ -1064,6 +1084,12 @@ public class MainActivity extends DemManagementActivity {
         }
     } // button click
 
+    /**
+     * post results of DEM download, load, etc. and refresh DEM cache
+     * @param lat latitude of center of new DEM
+     * @param lon longitude of center of new DEM
+     * @param resultStr result text to display from operation performed previously
+     */
     protected void postResults(double lat, double lon, String resultStr) {
         postResults(resultStr);
         DemCache.DemCacheEntry dce = athenaApp.demCache.searchCacheEntry(lat, lon);
@@ -1072,12 +1098,23 @@ public class MainActivity extends DemManagementActivity {
             demSelected(dce.fileUri);
         }
     }
+
+    /**
+     * post results of DEM download, load, etc. and refresh DEM cache
+     * @param resultStr result text to display from operation performed previously
+     */
     @Override
     protected void postResults(String resultStr) {
         appendText(resultStr + "\n");
         athenaApp.demCache.refreshCache();
     }
 
+    /**
+     * Download new DEM
+     * @param lat center latitude for new DEM
+     * @param lon center longitude for new DEM
+     * @param meters_diameter new DEM diameter (square width & height) in meters
+     */
     @Override
     protected void downloadNewDEM(double lat, double lon, double meters_diameter) {
         DemDownloader aDownloader = new DemDownloader(getApplicationContext(),lat,lon,meters_diameter);
@@ -1099,6 +1136,9 @@ public class MainActivity extends DemManagementActivity {
         });
     }
 
+    /**
+     * Print DEM bounds to TextView
+     */
     private void printDEMBounds() {
         String attribs = "";
         if (!outputModeIsSlavic()) {
@@ -1121,6 +1161,9 @@ public class MainActivity extends DemManagementActivity {
         appendText(attribs);
     }
 
+    /**
+     * Display alert of inferior target accuracy if image is from an Autel drone
+     */
     public void displayAutelAlert() {
         if (dangerousAutelAwarenessCount < 1) { // suppress warning if already encountered by user in this session
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -1133,11 +1176,21 @@ public class MainActivity extends DemManagementActivity {
         }
     }
 
-    // Overloaded function call
+    /**
+     * Display alert if user wants to download a new DEM
+     * @param lat center latitude for new DEM to be downloaded
+     * @param lon center longitude for new DEM to be downloaded
+     */
     public void displayNewDemDownloadChoice(double lat, double lon) {
         displayNewDemDownloadChoice(lat,lon,AthenaApp.DEM_DOWNLOAD_DEFAULT_METERS_DIAMETER);
     }
 
+    /**
+     * Display alert if user wants to download a new DEM
+     * @param lat center latitude for new DEM to be downloaded
+     * @param lon center longitude for new DEM to be downloaded
+     * @param diameter new DEM diameter (square width & height) in meters
+     */
     public void displayNewDemDownloadChoice(double lat, double lon, double diameter) {
         if (showProgressBarSemaphore > 0) {
             // Do not display a new download prompt if a DEM download or load operation is still in progress
@@ -1156,6 +1209,9 @@ public class MainActivity extends DemManagementActivity {
         alertDialog.show();
     }
 
+    /**
+     * Display alert if camera intrinsics are missing
+     */
     public void displayMissingCameraIntrinsicsAlert() {
         if (dangerousMissingCameraIntrinsicsCount < 1 || !MetadataExtractor.parameterProvider.isDroneArrayValid()) { // suppress warning if already encountered by user in this session
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -1168,6 +1224,10 @@ public class MainActivity extends DemManagementActivity {
         }
     }
 
+    /**
+     * Copy target coordinates to clipboard
+     * @param view textView for target coordinates
+     */
     public void copyTargetCoordText(View view) {
         if (isTargetCoordDisplayed) {
             String text = textViewTargetCoord.getText().toString();
@@ -1187,8 +1247,10 @@ public class MainActivity extends DemManagementActivity {
         }
     }
 
-    // select image button clicked; launch chooser and get result
-    // in callback
+    /**
+     * select image button clicked; launch chooser and get result in callback
+     * @param view button view
+     */
     public void selectImage(View view)
     {
         Log.d(TAG,"selectImageClick started");
@@ -1214,7 +1276,11 @@ public class MainActivity extends DemManagementActivity {
 //    }
 
 
-
+    /**
+     * Round a double to 6 decimal places
+     * @param d double to round
+     * @return String representation of rounded double
+     */
     private static String roundDouble(double d) {
         DecimalFormatSymbols decimalSymbols = DecimalFormatSymbols.getInstance();
         decimalSymbols.setDecimalSeparator('.');
@@ -1223,6 +1289,11 @@ public class MainActivity extends DemManagementActivity {
         return df.format(d);
     }
 
+    /**
+     * If string is null or empty, return 0.0
+     * @param s string to check
+     * @return s if not null or empty, 0.0 otherwise
+     */
     private static String zeroStringIfNull(String s) {
         if (s == null || s.isEmpty()) {
             return "0.0";
@@ -1231,6 +1302,10 @@ public class MainActivity extends DemManagementActivity {
         }
     }
 
+    /**
+     * Append text to textView for calculation metadata/trace
+     * @param aStr string to append
+     */
     private void appendText(final String aStr) {
         runOnUiThread(new Runnable() {
             @Override
@@ -1252,7 +1327,9 @@ public class MainActivity extends DemManagementActivity {
     } // appendText to textView but do so on UI thread
 
 
-    // reset the text field
+    /**
+     * Clear text from textView
+     */
     private void clearText()
     {
         runOnUiThread(new Runnable() {

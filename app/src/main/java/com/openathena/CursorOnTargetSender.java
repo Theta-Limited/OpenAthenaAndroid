@@ -57,13 +57,26 @@ public class CursorOnTargetSender {
     // from https://doi.org/10.1016/j.asej.2017.01.007
     private static final double LINEAR_ERROR = 5.9d;
 
-    // Approximately the minimum possible error from a typical GPS unit
+    // Approximately the minimum possible horizontal error from a typical GPS unit
     private static final double MINIMUM_ERROR = 5.0d;
 
     static TimeZone tz = TimeZone.getTimeZone("UTC");
     @SuppressLint("SimpleDateFormat")
     static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
+    /**
+     * Sends a Cursor on Target message for a target calculated by OpenAthena
+     * @param invoker Context of the caller activity
+     * @param lat Latitude of target
+     * @param lon Longitude of target
+     * @param hae Elevation of target (in WGS84 height above ellipsoid vertical datum)
+     * @param theta Angle of camera depression (in degrees, downwards is positive)
+     * @param slant_range Distance from camera to target (in meters) calcualted by terrain-raycast
+     * @param isDroneModelRecognized True if the drone's camera has calibration values in droneModels.json, false otherwise
+     * @param tle_model Contains parameters of 2 factor linear model for target location error estimation
+     * @param exif_datetime Exif date and time of image taken
+     * @param openAthenaCalculationInfo LinkedHashMap<String,String> containing all the various calculation data from oaInfoMap to use for statistics/experimentation and debugging
+     */
     public static void sendCoT(Context invoker, double lat, double lon, double hae, double theta, double slant_range, boolean isDroneModelRecognized, TLE_Model_Parameters tle_model, String exif_datetime, LinkedHashMap<String,String> openAthenaCalculationInfo) {
         if(invoker == null){
             throw new IllegalArgumentException("invoker context can not be null");
@@ -111,6 +124,23 @@ public class CursorOnTargetSender {
 
     }
 
+    /**
+     * Estimates the circular error for a target calculated by OpenAthena based on a two factor linear model
+     * <p>
+     *     Uses a two factor linear model which accounts for both slant range and slant ratio.<br>
+     *     If such data is available, the linear model is fitted to empirical test data from testing with a given drone model<br>
+     *     For more info see:<br>
+     *     <a href="https://github.com/Theta-Limited/OpenAthenaAndroid/pull/191">https://github.com/Theta-Limited/OpenAthenaAndroid/pull/191</a> <br>
+     *     <a href="https://github.com/Theta-Limited/DroneModels?tab=readme-ov-file#target-location-error-tle-estimation-model-parameters">https://github.com/Theta-Limited/DroneModels?tab=readme-ov-file#target-location-error-tle-estimation-model-parameters</a> <br>
+     *     <a href="https://github.com/Theta-Limited/OA-Accuracy-Testing/blob/6d480938d57f11fb4aab5a942e695c4d8c3559cd/Analyze-OA-CoT-and-GCP-csv-data.R#L248">https://github.com/Theta-Limited/OA-Accuracy-Testing/blob/6d480938d57f11fb4aab5a942e695c4d8c3559cd/Analyze-OA-CoT-and-GCP-csv-data.R#L248</a><br>
+     *
+     * </p>
+     * @param theta Angle of camera depression (in degrees, downwards is positive)
+     * @param slant_range Distance from camera to target (in meters) calcualted by terrain-raycast
+     * @param isDroneModelRecognized True if the drone's camera has calibration values in droneModels.json, false otherwise
+     * @param tle_model Contains parameters of 2 factor linear model for target location error estimation
+     * @return Estimated circular error (in meters)
+     */
     public static double calculateCircularError(double theta, double slant_range, boolean isDroneModelRecognized, TLE_Model_Parameters tle_model) {
         // If the camera's intrinsic parameters are missing, accuracy will be significantly degraded
         if(!isDroneModelRecognized) {
@@ -154,6 +184,11 @@ public class CursorOnTargetSender {
         CAT_6, // > 305 meters
     }
 
+    /**
+     * Obtains target location error category based on circular error value
+     * @param circular_error Estimated circular error (in meters)
+     * @return Target location Error (TLE) category
+     */
     public static TLE_Categories errorCategoryFromCE(double circular_error) {
         if (circular_error > 305.0) {
             return TLE_Categories.CAT_6;
@@ -173,6 +208,11 @@ public class CursorOnTargetSender {
         }
     }
 
+    /**
+     * Obtains HTML color code corresponding to a given TLE category
+     * @param tle_cat TLE category
+     * @return HTML color code
+     */
     public static String htmlColorFromTLE_Category(TLE_Categories tle_cat) {
         if (tle_cat == TLE_Categories.CAT_1) {
             // Green
@@ -189,6 +229,11 @@ public class CursorOnTargetSender {
         }
     }
 
+    /**
+     * Build string for Cursor on Target UID based on the device's unique ID, and a serial number for the message
+     * @param invoker Context of the caller activity
+     * @return String to use for the Cursor on Target UID
+     */
     public static String buildUIDString(Context invoker) {
         mContext = invoker;
         loadUid();
@@ -198,7 +243,7 @@ public class CursorOnTargetSender {
     /**
      * Converts an ExifInterface time and date tag into a Joda time format
      *
-     * @param exif_tag_datetime
+     * @param exif_tag_datetime Exif time and date tag value
      * @return null in case of failure, the date object otherwise
      */
     public static Date convert(String exif_tag_datetime) {
@@ -214,7 +259,20 @@ public class CursorOnTargetSender {
     }
 
 
-
+    /**
+     * Build Cursor on Target message for a target calculated by OpenAthena (an XML-like message format)
+     * @param uid String to use for the Cursor on Target UID
+     * @param imageISO ISO8601 date and time of image taken
+     * @param nowAsISO ISO8601 date and time of now
+     * @param fiveMinutesFromNowISO ISO8601 date and time 5 minutes from now
+     * @param lat Latitude of target
+     * @param lon Longitude of target
+     * @param ce Circular error of calculation about true target (in meters)
+     * @param hae Elevation of target (in WGS84 height above ellipsoid vertical datum)
+     * @param le Linear (vertical) error of calculation about true target (in meters)
+     * @param oaInfoMap LinkedHashMap<String,String> containing all the various calculation data from oaInfoMap to use for statistics/experimentation and debugging
+     * @return a String containing the built Cursor on Target message
+     */
     public static String buildCoT(String uid, String imageISO, String nowAsISO, String fiveMinutesFromNowISO, String lat, String lon, String ce, String hae, String le, LinkedHashMap<String,String> oaInfoMap) {
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -280,6 +338,13 @@ public class CursorOnTargetSender {
         }
     }
 
+    /**
+     * Deliver the Cursor on Target message to all devices on the same network using UDP multicast
+     * <p>
+     *     The CoT message is sent to udp://239.2.3.1:6969, which causes the point ot show up on all devices on the same network running ATAK
+     * </p>
+     * @param xml String containing the built Cursor on Target message
+     */
     private static void deliverUDP(String xml) {
         new Thread(new Runnable() {
             @Override
@@ -310,6 +375,9 @@ public class CursorOnTargetSender {
         }).start();
     }
 
+    /**
+     * Saves the target serial number to persistent storage so that target serial numbers remain unique
+     */
     private static void saveUid() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
@@ -317,6 +385,9 @@ public class CursorOnTargetSender {
         prefsEditor.apply();
     }
 
+    /**
+     * Loads the target serial number from persistent storage
+     */
     private static void loadUid() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         if (sharedPreferences != null) {

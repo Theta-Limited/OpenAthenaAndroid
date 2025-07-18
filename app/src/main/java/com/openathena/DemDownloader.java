@@ -24,12 +24,14 @@ import androidx.core.util.Consumer;
 
 public class DemDownloader
 {
-    // add your API key to local.properties in root of the android project
+    // Make sure to add your OpenTopography API key to local.properties in root of the android project!
     // for example:
-    // OPENTOPOGRAPHY_API_KEY=hexnumbers
+    // OPENTOPOGRAPHY_API_KEY=nlhhp3yd9ud54tr3eem4akqv49wcb23i
+    // that is not an actual valid key btw. You will need to obtain your own from:
+    // https://opentopography.org/blog/introducing-api-keys-access-opentopography-global-datasets
     public static String TAG = DemDownloader.class.getSimpleName();
     protected static final String URL_STR = "https://portal.opentopography.org/API/globaldem?";
-    // Use COP30 everywhere due to better results accuracy observed than SRTM
+    // Use COP30 everywhere due to better results accuracy (observed in empirical testing) than SRTM
     // https://github.com/Theta-Limited/OpenAthenaAndroid/issues/187
     protected static String demTypeStr = "COP30";
     private int responseCode;

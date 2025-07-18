@@ -23,12 +23,16 @@ import java.util.Set;
 
 class Version implements Comparable<Version> {
 
-    private String version;
+    private final String version;
 
     public final String get() {
         return this.version;
     }
 
+    /**
+     * Constructs a new Version object
+     * @param version String containing a valid semantic version number
+     */
     public Version(String version) {
         if (version == null)
             throw new IllegalArgumentException("Version can not be null");
@@ -37,6 +41,11 @@ class Version implements Comparable<Version> {
         this.version = version;
     }
 
+    /**
+     * Compares this version to another version based on semantic version number
+     * @param that other version to compareTo
+     * @return int 1 if this version is greater, 0 if equal, -1 if less
+     */
     @Override
     public int compareTo(Version that) {
         if (that == null)
@@ -62,7 +71,7 @@ public class MetadataExtractor {
     private static final String TAG = "MetadataExtractor";
     private static MainActivity parent;
 
-    private static HashMap<String, HashMap> mfnMaps = new HashMap<String, HashMap>();
+    //private static HashMap<String, HashMap> mfnMaps = new HashMap<String, HashMap>();
 
     protected static EGMOffsetProvider offsetProvider = new EGM96OffsetAdapter();
     public static DroneParametersFromJSON parameterProvider;
@@ -110,6 +119,11 @@ public class MetadataExtractor {
         return (parameterProvider.getMatchingDrones(make, model).length() > 0);
     }
 
+    /**
+     * Returns true if and only if Target Location Error (TLE) estimation model parameters are available for the drone
+     * @param exif exif of an image to analyze for make and model
+     * @return true if and only if the drone's TLE model parameters are available
+     */
     public static boolean areTLEModelValuesAvailable(OpenAthenaExifInterface exif) {
         JSONObject drone = getMatchingDrone(exif);
         try {
@@ -140,6 +154,15 @@ public class MetadataExtractor {
         return lensType;
     }
 
+    /**
+     * Returns true if and only if the drone image is from a thermal camera
+     * <p>
+     *     If there is a make/model name collision between a thermal camera and a color camera,
+     *     match to the correct camera based on its pixel width according to geometric distance from expected value
+     * </p>
+     * @param exif exif of a drone image to analyze
+     * @return true if and only if the drone image is from a thermal camera
+     */
     public static boolean isThermal(OpenAthenaExifInterface exif) {
         JSONObject drone = getMatchingDrone(exif);
         boolean isThermal = false;
@@ -155,6 +178,11 @@ public class MetadataExtractor {
         return isThermal;
     }
 
+    /**
+     * Returns the y-intercept (in meters) of the Target Location Error linear model for the given drone
+     * @param exif exif of a drone image to analyze and match to entry in droneModels.json
+     * @return double y-intercept (in meters) of the Target Location Error linear model for the given drone
+     */
     public static double getTLEModelYIntercept(OpenAthenaExifInterface exif) {
         JSONObject drone = getMatchingDrone(exif);
         double y_intercept = TLE_MODEL_DEFAULT_Y_INTERCEPT;
@@ -166,6 +194,11 @@ public class MetadataExtractor {
         return y_intercept;
     }
 
+    /**
+     * Returns the slant range coefficient (in meters error per additional meter distance) of the Target Location Error linear model for the given drone
+     * @param exif exif of a drone image to analyze and match to entry in droneModels.json
+     * @return double slant range coefficient (in meters error per additional meter distance) of the Target Location Error linear model for the given drone
+     */
     public static double getTLEModelSlantRangeCoefficient(OpenAthenaExifInterface exif) {
         JSONObject drone = getMatchingDrone(exif);
         double meters_error_per_meter_distance = TLE_MODEL_DEFAULT_SLANT_RANGE_COEFFICIENT;
@@ -177,6 +210,11 @@ public class MetadataExtractor {
         return meters_error_per_meter_distance;
     }
 
+    /**
+     * Returns the slant ratio coefficient of the Target Location Error linear model for the given drone
+     * @param exif exif of a drone image to analyze and match to entry in droneModels.json
+     * @return double slant ratio coefficient of the Target Location Error linear model for the given drone
+     */
     public static double getTLEModelSlantRatioCoefficient(OpenAthenaExifInterface exif) {
         JSONObject drone = getMatchingDrone(exif);
         double tle_model_slant_ratio_coeff = TLE_MODEL_DEFAULT_SLANT_RATIO_COEFFICIENT;
@@ -188,6 +226,11 @@ public class MetadataExtractor {
         return tle_model_slant_ratio_coeff;
     }
 
+    /**
+     * Returns a TLE_Model_Parameters object containing the parameters of the Target Location Error linear model for the given drone
+     * @param exif exif of a drone image to analyze and match to entry in droneModels.json
+     * @return TLE_Model_Parameters object containing the parameters of the Target Location Error linear model for the given drone (or default values)
+     */
     public static TLE_Model_Parameters getTLEModelParameters(OpenAthenaExifInterface exif) {
         double tle_model_y_intercept = getTLEModelYIntercept(exif);
         double tle_model_slant_range_coeff = getTLEModelSlantRangeCoefficient(exif);
@@ -723,6 +766,13 @@ public class MetadataExtractor {
         return outArr;
     }
 
+    /**
+     * Obtain position and orientation values from EXIF and XMP metadata of a given Teal drone image
+     * @param exif OpenAthenaExifInterface from the Teal drone image metadata to be analyzed. Usually includes XMP metadata as well
+     * @return double[6] containing latitude, longitude, elevation (in WGS84 hae), azimuth, pitch angle (theta, where downwards is positive), roll
+     * @throws XMPException if exception occurs during parsing of XMP metadata
+     * @throws MissingDataException if XMP or EXIF metadata are missing
+     */
     public static double[] handleTeal(OpenAthenaExifInterface exif) throws XMPException, MissingDataException{
         double y;
         double x;
@@ -784,12 +834,29 @@ public class MetadataExtractor {
         return outArr;
     }
 
+
     // http://android-er.blogspot.com/2009/12/read-exif-information-in-jpeg-file.html
+
+    /**
+     * Obtain a string representation for both the key and value of a given EXIF tag
+     * @param tag String representation of the EXIF tag key name
+     * @param exif OpenAthenaExifInterface containing the drone image metadata to be analyzed
+     * @return String representation of the EXIF tag key and value
+     */
     public static String getTagString(String tag, OpenAthenaExifInterface exif)
     {
         return(tag + " : " + exif.getAttribute(tag) + "\n");
     }
 
+    /**
+     * Obtain latitude, longitude, and elevation values from EXIF metadata of a given drone image
+     * <p>
+     *     This is a fallback method only used where absolutely necessary; typically XMP metadata is more precise
+     * </p>
+     * @param exif OpenAthenaExifInterface containing the drone image metadata to be analyzed
+     * @return Float[] containing latitude, longitude, and elevation
+     * @throws MissingDataException If EXIF metadata are missing
+     */
     public static Float[] exifGetYXZ(OpenAthenaExifInterface exif) throws MissingDataException
     {
         String latDir = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
@@ -837,8 +904,7 @@ public class MetadataExtractor {
             z = z * -1.0f;
         }
 
-        Float[] arrOut = {y, x, z};
-        return(arrOut);
+        return(new Float[]{y, x, z});
     }
 
     public static double[] getIntrinsicMatrixFromExif(OpenAthenaExifInterface exif) throws Exception {
@@ -850,19 +916,25 @@ public class MetadataExtractor {
             pixelDimensions[1] = (double) rationalToFloat(drone.getString("ccdHeightMMPerPixel"));
             pixelDimensions[2] = (double) drone.getInt("widthPixels");
             pixelDimensions[3] = (double) drone.getInt("heightPixels");
-            if (pixelDimensions != null) {
-                Log.i(TAG, "found pixel dimensions (mm) from lookup: " + pixelDimensions[0] + ", " + pixelDimensions[1]);
-                return getIntrinsicMatrixFromKnownCCD(exif, pixelDimensions);
-            } else {
-                Log.i(TAG, "Camera make and model not recognized. Guestimating intrinsics from exif...");
-                return getIntrinsicMatrixFromExif35mm(exif);
-            }
+            Log.i(TAG, "found pixel dimensions (mm) from lookup: " + pixelDimensions[0] + ", " + pixelDimensions[1]);
+            return getIntrinsicMatrixFromKnownCCD(exif, pixelDimensions);
         } else {
             Log.i(TAG, "Camera make and model not recognized. Guestimating intrinsics from exif...");
             return getIntrinsicMatrixFromExif35mm(exif);
         }
     }
 
+    /**
+     * Obtain digital zoom ratio from EXIF metadata of a given drone image
+     * <p>
+     *     Parrot Anafi drone is a special case which does not report its digital zoom ratio in EXIF
+     *     For this particular drone model, a fallback method is used which compares the image resolution
+     *     to the full resolution of the uncropped sensor to determine the effective digital zoom ratio
+     * </p>
+     * @param exif OpenAthenaExifInterface containing the drone image metadata to be analyzed
+     * @return float representing the digital zoom ratio
+     * @throws Exception if exception occurs during parsing of EXIF metadata
+     */
     public static float getDigitalZoomRatio(OpenAthenaExifInterface exif) throws Exception {
         float digitalZoomRatio = 1.0f;
 
@@ -940,6 +1012,13 @@ public class MetadataExtractor {
         return digitalZoomRatio;
     }
 
+    /**
+     * Obtain camera intrinsics matrix from a drone camera with known calibration values in droneModels.json
+     * @param exif OpenAthenaExifInterface containing the drone image metadata to be analyzed
+     * @param pixelDimensions mmWidth and mmHeight of the camera CCD/CMOS sensor
+     * @return double[] representing the camera intrinsics matrix
+     * @throws Exception if exception occurs during parsing of EXIF metadata
+     */
     protected static double[] getIntrinsicMatrixFromKnownCCD(OpenAthenaExifInterface exif, double[] pixelDimensions) throws Exception {
         JSONObject drone = getMatchingDrone(exif);
 
@@ -1006,6 +1085,15 @@ public class MetadataExtractor {
         return intrinsicMatrix;
     }
 
+    /**
+     * Fallback method for estimating camera intrinsics matrix from a drone camera with unknown calibration values (not in droneModels.json) using the EXIF focalLength35mmEquiv tag
+     * <p>
+     *     This method will be far less accurate than getIntrinsicMatrixFromKnownCCD(), so a warning will be displayed to the user
+     * </p>
+     * @param exif OpenAthenaExifInterface containing the drone image metadata to be analyzed
+     * @return double[] representing the camera intrinsics matrix, estimated by a less accurate fallback method
+     * @throws Exception if exception occurs during parsing of EXIF metadata
+     */
     protected static double[] getIntrinsicMatrixFromExif35mm(OpenAthenaExifInterface exif) throws Exception{
         if (exif == null) {
             throw new IllegalArgumentException("Failed to get intrinsics, ExifInterface was null!");
@@ -1052,6 +1140,15 @@ public class MetadataExtractor {
         return intrinsicMatrix;
     }
 
+    /**
+     * Calculate the azimuth (yaw) and elevation (pitch) offset angle of a given pixel from the center of the image
+     * @param x pixel x position of the pixel to calculate the angle for (measured from top left corner)
+     * @param y pixel y position of the pixel to calculate the angle for (measured from top left corner)
+     * @param rollAngleDeg roll angle of the drone camera in degrees
+     * @param exifInterface OpenAthenaExifInterface containing the drone image metadata to be analyzed
+     * @return double[] representing the yaw and pitch offset angles for the specified image pixel
+     * @throws Exception if exception occurs during parsing of EXIF metadata
+     */
     public static double[] getRayAnglesFromImgPixel(int x, int y, double rollAngleDeg, OpenAthenaExifInterface exifInterface) throws Exception {
         JSONObject drone = getMatchingDrone(exifInterface);
         String lensType = "";
@@ -1220,7 +1317,11 @@ public class MetadataExtractor {
         return new double[]{correctedPsi, correctedTheta};
     }
 
-
+    /**
+     * Convert a rational string to a float
+     * @param str containing a rational number in the form "numerator/denominator"
+     * @return float representing the rational number
+     */
     public static float rationalToFloat(String str)
     {
         if (str == null || str.isEmpty()) {
