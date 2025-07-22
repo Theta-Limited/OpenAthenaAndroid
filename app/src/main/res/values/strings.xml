@@ -306,4 +306,8 @@
     <string name="attribs_extended_cot_enabled_notification">"Extended Cursor on Target output: "</string>
     <string name="attribs_is_tle_estimation_calibrated_for_this_drone">Is Target Location Error estimation calibrated for this drone model?:</string>
     <string name="attribs_tle_prediction_model_parameters">TLE prediction model parameters:</string>
+    <string name="attribs_tle_model_y_intercept_label">y_intercept</string>
+    <string name="attribs_tle_model_slant_range_coeff_label">slant_range_coeff</string>
+    <string name="about_easter_egg_extended_cot_mode_enabled">Extended CoT mode enabled!</string>
+    <string name="about_easter_egg_extended_cot_mode_disabled">Extended CoT mode disabled.</string>
 </resources>
