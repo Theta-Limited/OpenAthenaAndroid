@@ -544,7 +544,6 @@ public class MarkableImageView extends androidx.appcompat.widget.AppCompatImageV
             while ((halfHeight / inSampleSize) >= reqHeight
                     && (halfWidth / inSampleSize) >= reqWidth) {
                 inSampleSize *= 2;
-                Log.d(TAG, "inSampleSize: " + inSampleSize);
             }
         }
 

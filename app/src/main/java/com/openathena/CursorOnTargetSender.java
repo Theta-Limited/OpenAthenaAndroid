@@ -125,10 +125,9 @@ public class CursorOnTargetSender {
     }
 
     /**
-     * Estimates the circular error for a target calculated by OpenAthena based on a two factor linear model
+     * Estimates the circular error for a target calculated by OpenAthena based on a one factor linear model
      * <p>
-     *     Uses a two factor linear model which accounts for both slant range and slant ratio.<br>
-     *     If such data is available, the linear model is fitted to empirical test data from testing with a given drone model<br>
+     *     Uses a one factor linear model which accounts for slant range from drone to target<br>
      *     For more info see:<br>
      *     <a href="https://github.com/Theta-Limited/OpenAthenaAndroid/pull/191">https://github.com/Theta-Limited/OpenAthenaAndroid/pull/191</a> <br>
      *     <a href="https://github.com/Theta-Limited/DroneModels?tab=readme-ov-file#target-location-error-tle-estimation-model-parameters">https://github.com/Theta-Limited/DroneModels?tab=readme-ov-file#target-location-error-tle-estimation-model-parameters</a> <br>
@@ -142,8 +141,9 @@ public class CursorOnTargetSender {
      * @return Estimated circular error (in meters)
      */
     public static double calculateCircularError(double theta, double slant_range, boolean isDroneModelRecognized, TLE_Model_Parameters tle_model) {
-        // If the camera's intrinsic parameters are missing, accuracy will be significantly degraded
+        // If the camera's intrinsic parameters (calibration values) are missing, accuracy will be significantly degraded.
         if(!isDroneModelRecognized) {
+            // return an estimate with the highest category of predicted error (CAT 6)
             return 306.0d;
         }
 
@@ -151,24 +151,15 @@ public class CursorOnTargetSender {
             // If camera is facing backwards, use the appropriate value for the reverse direction (the supplementary angle of theta)
             theta = 180.0d - theta;
         }
-        if (theta > 89.0d) {
-            // clip slant angle to avoid exploding value
-            theta = 89.0d;
-        }
 
-        // ratio of vertical distance (treating downwards as positive) to horizontal distance
-        double slant_ratio = Math.tan(theta * (Math.PI / 180.0d));
 
         double tle_model_y_intercept = tle_model.tle_model_y_intercept;
         double tle_model_slant_range_coeff = tle_model.tle_model_slant_range_coeff;
-        double tle_model_slant_ratio_coeff = tle_model.tle_model_slant_ratio_coeff;
 
-        // two factor linear model prediction for circular error based on slant_range and slant_ratio
-        // in cases where slant_ratio was statistically-insignificant, tle_model_slant_ratio_coeff := 0.0 and only slant_range is used
+        // one factor linear model for circular error estimation based on slant_range from drone to target
         // for more details, see https://github.com/Theta-Limited/DroneModels?tab=readme-ov-file#target-location-error-tle-estimation-model-parameters
         //                   and https://github.com/Theta-Limited/OA-Accuracy-Testing
-        double predicted_ce = tle_model_y_intercept + slant_range * tle_model_slant_range_coeff + slant_ratio * tle_model_slant_ratio_coeff;
-        predicted_ce = Math.max(MINIMUM_ERROR, predicted_ce);
+        double predicted_ce = tle_model_y_intercept + slant_range * tle_model_slant_range_coeff;
         return predicted_ce;
     }
 

@@ -91,11 +91,10 @@ public class MetadataExtractor {
 
     private static final Version djiFirmwareVerticalDatumWasSwitched = new Version("1.5");
 
-    // Base estimation of Target Location Error (TLE) due to GPS innaccuracy, used if no calibrated value is present
+    // Base estimation of Target Location Error (TLE) due to GPS innaccuracy, used if no calibrated value is present for a particular drone model
     private static final double TLE_MODEL_DEFAULT_Y_INTERCEPT = 5.25d;
-    // Base estimation of increase in TLE per meter of slant range
+    // Base estimation of increase in TLE per meter of slant range, used if no calibrated value is present for a particular drone model
     private static final double TLE_MODEL_DEFAULT_SLANT_RANGE_COEFFICIENT = 0.026d;
-    private static final double TLE_MODEL_DEFAULT_SLANT_RATIO_COEFFICIENT = 0.0d;
 
     protected MetadataExtractor(MainActivity caller) {
         super();
@@ -211,22 +210,6 @@ public class MetadataExtractor {
     }
 
     /**
-     * Returns the slant ratio coefficient of the Target Location Error linear model for the given drone
-     * @param exif exif of a drone image to analyze and match to entry in droneModels.json
-     * @return double slant ratio coefficient of the Target Location Error linear model for the given drone
-     */
-    public static double getTLEModelSlantRatioCoefficient(OpenAthenaExifInterface exif) {
-        JSONObject drone = getMatchingDrone(exif);
-        double tle_model_slant_ratio_coeff = TLE_MODEL_DEFAULT_SLANT_RATIO_COEFFICIENT;
-        try {
-            tle_model_slant_ratio_coeff = drone.getDouble("tle_model_slant_ratio_coeff");
-        } catch (JSONException | NullPointerException e) {
-            Log.i(TAG, "No tle_model_slant_ratio_coeff value found for this drone model, using default: " + TLE_MODEL_DEFAULT_SLANT_RATIO_COEFFICIENT);
-        }
-        return tle_model_slant_ratio_coeff;
-    }
-
-    /**
      * Returns a TLE_Model_Parameters object containing the parameters of the Target Location Error linear model for the given drone
      * @param exif exif of a drone image to analyze and match to entry in droneModels.json
      * @return TLE_Model_Parameters object containing the parameters of the Target Location Error linear model for the given drone (or default values)
@@ -234,8 +217,7 @@ public class MetadataExtractor {
     public static TLE_Model_Parameters getTLEModelParameters(OpenAthenaExifInterface exif) {
         double tle_model_y_intercept = getTLEModelYIntercept(exif);
         double tle_model_slant_range_coeff = getTLEModelSlantRangeCoefficient(exif);
-        double tle_model_slant_ratio_coeff = getTLEModelSlantRatioCoefficient(exif);
-        return new TLE_Model_Parameters(tle_model_y_intercept, tle_model_slant_range_coeff, tle_model_slant_ratio_coeff);
+        return new TLE_Model_Parameters(tle_model_y_intercept, tle_model_slant_range_coeff);
     }
 
     /**

@@ -60,7 +60,7 @@ public class AboutActivity extends AthenaActivity {
                 // 2-s toast for final confirmation
                 Toast.makeText(
                         this,
-                        on ? "Extended CoT mode enabled!" : "Extended CoT mode disabled.",
+                        on ? getString(R.string.about_easter_egg_extended_cot_mode_enabled) : getString(R.string.about_easter_egg_extended_cot_mode_disabled),
                         Toast.LENGTH_SHORT).show();
 
                 tapCount = 0;
