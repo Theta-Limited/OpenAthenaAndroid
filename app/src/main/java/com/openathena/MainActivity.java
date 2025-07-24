@@ -918,7 +918,7 @@ public class MainActivity extends DemManagementActivity {
                     attribs += getString(R.string.attribs_tle_prediction_model_parameters) + "\n";
                     attribs += "\t" + getString(R.string.attribs_tle_model_y_intercept_label) + ":" + " " + roundDouble(tle_model.tle_model_y_intercept * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d)) + (isUnitFoot() ? "ft.":"m") + "\n";
                     attribs += "\t" + getString(R.string.attribs_tle_model_slant_range_coeff_label) + ":" + " " + roundDouble(tle_model.tle_model_slant_range_coeff) + (isUnitFoot() ? "ft./ft.":"m/m") + "\n";
-                    predictedCE = CursorOnTargetSender.calculateCircularError(theta, distance, isDroneModelRecognized, tle_model);
+                    predictedCE = CursorOnTargetSender.calculateCircularError(distance, isDroneModelRecognized, tle_model);
                     attribs += getString(R.string.target_predicted_ce) + " " + Math.round((predictedCE * (isUnitFoot() ? AthenaApp.FEET_PER_METER : 1.0d))*10.0)/10.0 + " " + (isUnitFoot() ? "ft.":"m") + "\n";
                     TLE_Cat = CursorOnTargetSender.errorCategoryFromCE(predictedCE);
                     attribs += getString(R.string.target_location_error_category) + " " + TLE_Cat.name() + "\n";

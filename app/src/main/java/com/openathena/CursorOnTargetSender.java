@@ -106,7 +106,7 @@ public class CursorOnTargetSender {
         String fiveMinutesFromNowISO = df.format(fiveMinsFromNow);
         String imageISO = df.format(convert(exif_datetime));
 
-        double circularError = calculateCircularError(theta, slant_range, isDroneModelRecognized, tle_model); // optimistic estimation of 2 sigma accuracy based on angle of camera depression theta
+        double circularError = calculateCircularError(slant_range, isDroneModelRecognized, tle_model); // optimistic estimation of 2 sigma accuracy based on angle of camera depression theta
         String le = Double.toString(LINEAR_ERROR);
         String ce = Double.toString(circularError);
         new Thread(new Runnable() {
@@ -134,24 +134,17 @@ public class CursorOnTargetSender {
      *     <a href="https://github.com/Theta-Limited/OA-Accuracy-Testing/blob/6d480938d57f11fb4aab5a942e695c4d8c3559cd/Analyze-OA-CoT-and-GCP-csv-data.R#L248">https://github.com/Theta-Limited/OA-Accuracy-Testing/blob/6d480938d57f11fb4aab5a942e695c4d8c3559cd/Analyze-OA-CoT-and-GCP-csv-data.R#L248</a><br>
      *
      * </p>
-     * @param theta Angle of camera depression (in degrees, downwards is positive)
      * @param slant_range Distance from camera to target (in meters) calcualted by terrain-raycast
      * @param isDroneModelRecognized True if the drone's camera has calibration values in droneModels.json, false otherwise
      * @param tle_model Contains parameters of 2 factor linear model for target location error estimation
      * @return Estimated circular error (in meters)
      */
-    public static double calculateCircularError(double theta, double slant_range, boolean isDroneModelRecognized, TLE_Model_Parameters tle_model) {
+    public static double calculateCircularError(double slant_range, boolean isDroneModelRecognized, TLE_Model_Parameters tle_model) {
         // If the camera's intrinsic parameters (calibration values) are missing, accuracy will be significantly degraded.
         if(!isDroneModelRecognized) {
             // return an estimate with the highest category of predicted error (CAT 6)
             return 306.0d;
         }
-
-        if (theta > 90.0d) {
-            // If camera is facing backwards, use the appropriate value for the reverse direction (the supplementary angle of theta)
-            theta = 180.0d - theta;
-        }
-
 
         double tle_model_y_intercept = tle_model.tle_model_y_intercept;
         double tle_model_slant_range_coeff = tle_model.tle_model_slant_range_coeff;
