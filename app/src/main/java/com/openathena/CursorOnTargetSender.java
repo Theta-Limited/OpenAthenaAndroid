@@ -136,7 +136,7 @@ public class CursorOnTargetSender {
      * </p>
      * @param slant_range Distance from camera to target (in meters) calcualted by terrain-raycast
      * @param isDroneModelRecognized True if the drone's camera has calibration values in droneModels.json, false otherwise
-     * @param tle_model Contains parameters of 2 factor linear model for target location error estimation
+     * @param tle_model Contains parameters of one factor linear model for target location error estimation
      * @return Estimated circular error (in meters)
      */
     public static double calculateCircularError(double slant_range, boolean isDroneModelRecognized, TLE_Model_Parameters tle_model) {
@@ -146,6 +146,7 @@ public class CursorOnTargetSender {
             return 306.0d;
         }
 
+        // params for one factor linear model, consisting of a y intercept and slope
         double tle_model_y_intercept = tle_model.tle_model_y_intercept;
         double tle_model_slant_range_coeff = tle_model.tle_model_slant_range_coeff;
 
