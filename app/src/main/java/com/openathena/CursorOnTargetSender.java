@@ -134,7 +134,7 @@ public class CursorOnTargetSender {
      *     <a href="https://github.com/Theta-Limited/OA-Accuracy-Testing/blob/6d480938d57f11fb4aab5a942e695c4d8c3559cd/Analyze-OA-CoT-and-GCP-csv-data.R#L248">https://github.com/Theta-Limited/OA-Accuracy-Testing/blob/6d480938d57f11fb4aab5a942e695c4d8c3559cd/Analyze-OA-CoT-and-GCP-csv-data.R#L248</a><br>
      *
      * </p>
-     * @param slant_range Distance from camera to target (in meters) calcualted by terrain-raycast
+     * @param slant_range Distance from camera to target (in meters) calculated by terrain-raycast
      * @param isDroneModelRecognized True if the drone's camera has calibration values in droneModels.json, false otherwise
      * @param tle_model Contains parameters of one factor linear model for target location error estimation
      * @return Estimated circular error (in meters)
