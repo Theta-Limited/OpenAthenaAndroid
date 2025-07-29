@@ -26,7 +26,7 @@ OpenAthena™ allows common drones to spot precise geodetic locations.
 
 OpenAthena™ for Android is designed to be usable by operators without the need for explicit technical training. A downside of this however is that fail conditions of the software can occur without the user having technical insight into why.
 
-OpenAthena is designed to fail safe. If data is known to be inaccurate, unusable, or incomplete enough for a calculation, the software will abort the calculation rather than provide an inaccurate result.
+OpenAthena is designed to fail safe. If data is known to be inaccurate, unusable, or incomplete enough for a calculation, the software will abort the calculation (or report it as the highest possible error category) rather than provide an inaccurate result.
 
 This troubleshooting manual provides important context on common fail conditions and why they occur. This context is important for operators so they may overcome fail conditions which occur in certain specific conditions and adapt their use of the software to overcome them.
 
@@ -60,7 +60,7 @@ The **failed to load DEM** error can also occur in the following conditions:
 
 To use this app, you need a GeoTIFF or DTED (resolution level 2 or higher) Digital Elevation Model (DEM) file covering your Area of Operations. DEM files store terrain elevation data for an area on Earth. OpenAthena performs a simulated ray-cast from a drone camera's position and orientation towards the digital twin of Earth terrain represented by the elevation model. This technique is used by the software to precisely locate any pixel within a given drone image.
 
-GeoTIFF DEM files obtained from the [STRM GL1 30m](https://portal.opentopography.org/raster?opentopoID=OTSRTM.082015.4326.1) tend to produce more accurate target results than DTED files.
+GeoTIFF DEM files tend to produce more accurate target results than DTED files.
 
 OpenAthena for Android v0.21.0 and higher can automatically download DEM files when an internet connection is present. It also allows the user to download a custom-specified area (Manage Elevation Models -> Load New DEM) for later use offline. Downloaded DEMs are saved in the application cache directory where they may be automatically loaded by the app whenever you load a drone image from the corresponding area.
 
@@ -80,7 +80,7 @@ This error indicates that the attempted raycast for your target calculation went
 This error indicates that the attempted raycast's start height was already below that of the terrain model. This only occurs in situations where either the drone altitude, the terrain model, or both are inaccurate.
 
 The following are common causes of this error:
-* Older DJI drone models incorrectly report their altitude as the difference from their launch point rather than relative to sea level. There is no mitigation, data from such drone models is unusable
+* Older DJI drone models incorrectly report their altitude as the difference from their launch point rather than relative to sea level. There is no mitigation, data from such drone models is unusable (for safety,  OpenAthena for Android use a blacklist mechanism to prevent affected drone models from being used)
 * Altitude data from the drone is inaccurate. To mitigate occurrence of this error, let the drone sit at its launch position longer to acquire a better GPS lock before takeoff.
 * The elevation model height at the location the picture was taken is higher than actual terrain. This commonly occurs in areas with dense vegetation (especially in the southern hemisphere) or urban areas with tall buildings. In such scenarios, the first radar return from the satellite for the SRTM/COP30 mapping mission came from the tallest object rather than terrain. 
 
@@ -89,6 +89,8 @@ The following are common causes of this error:
 The loaded image did not contain the metadata that is necessary for calculation. Many social media sites and messaging platforms automatically remove EXIF metadata from shared images in an attempt to protect user privacy. To mitigate this error, use an alternative messaging method such as email which does not remove EXIF data.
 
 This error can also occur for drone models which do not store EXIF metadata in the first place. Such drone models are incompatible with OpenAthena.
+
+Additionally, pictures obtained from controller "screenshot" methods which do not capture camera position and orientation EXIF metadata are incompatible with the software. 
 
 ### ERROR: XMP metadata not found!
 
@@ -138,7 +140,11 @@ This error occurs in rare cases with specific low end consumer-oriented DJI dron
 Accuracy issues occuring during the app's opperation are typically caused by three factors:
 * Slant angle from drone camera to target is nearly parallel to the ground. Circular Error via terrain-raycast is much higher than normal in such cases
 * Poor magnetometer (compass sensor) calibration of the drone. Unless a calibration procedure is performed for the drone's compass while within 100 miles of the operating AO, heading information from the drone's compass can be off by up to 10 degrees or so, causing significant circular error which increases with distance.
-* Camera intrinsic parameters are not present within the DroneModels database for the loaded drone image. In the target calculation output trace text, if the `Is camera model recognized?` value is `No`, this means internal properties of the camera were calculated using a less accurate fallback method. In this case, calculations will become more inaccurate the further the selected pixel is from the central point of the image.
+* Camera intrinsic parameters are not present within the DroneModels database for the loaded drone image. In this case, calculations will become more inaccurate the further the selected pixel is from the central point of the image. When camera calibration parameters are not available for the desired drone model, OpenAthena for Android will display a popup warning to the user informing them of inferior accuracy in target results. Additionally, target location error (TLE) category will be reported as the highest possible value (CAT6) whenver camera calibration data is not available. 
+
+<img width="330" alt="OpenAthena for Android missing camera intrinsics inferior accuracy warning popup" src="./assets/troubleshooting/missing_camera_intrinsics_inferior_accuracy_warning_popup.jpg">
+
+<img width="330" alt="OpenAthena for Android screenshot. Target Location Error will be reported as highest possible value (CAT6) whenever camera calibration data is missing for a given drone camera" src="./assets/troubleshooting/missing_camera_intrinsics_auto_TLE_cat_max.jpg">
 
 #### Compass sensor 🧭 calibration
 
@@ -172,7 +178,11 @@ Wait until at least 6 GPS satellites are visible (or you can confirm the GPS fix
 
 OpenAthena for Android supports multiple output modes for target calculation, including:
 
-* Latitude, Longitude (standard WGS84)
+* Latitude, Longitude (standard WGS84 decimal)
+* Latitude, Longitude
+(WGS84 degrees, minute, seconds)
+* U.S. National Grid (similar to NATO MGRS)
+* UTM
 * [Nato Military Grid Reference System](https://en.wikipedia.org/wiki/Military_Grid_Reference_System) (MGRS) 1m, 10m, and 100m
 * [CK-42 Система координат](https://en.wikipedia.org/wiki/SK-42_reference_system) Latitude Longitude (an alternative geodetic system commonly used in slavic countries)
 * [CK-42 Система координат](https://en.wikipedia.org/wiki/SK-42_reference_system) [Gauss-Krüger](https://desktop.arcgis.com/en/arcmap/latest/map/projections/gauss-kruger.htm) Grid: Northing, Easting (an alternative military grid reference system used by former Warsaw pact countries)
