@@ -100,6 +100,7 @@ public class AboutActivity extends AthenaActivity {
         // set About text
         aboutText.setText(Html.fromHtml( getString(R.string.app_name) + " " + getString(R.string.version_word) + " " + versionName+"<br>"
                         + "© 2025 Theta Informatics LLC<br>"
+                        + "CAGE 9Q433<br>"
                         + "<a href=\"https://www.gnu.org/licenses/agpl-3.0.en.html\">AGPL-3.0</a> " + getString(R.string.software_license) + ",<br>"
                         + getString(R.string.some_rights_reserved) + "<br>" + "<br>"
                         + "Distribution Statement A: Approved for public release: distribution is unlimited" + "<br>"

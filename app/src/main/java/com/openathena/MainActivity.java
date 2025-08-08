@@ -938,7 +938,6 @@ public class MainActivity extends DemManagementActivity {
                         // https://en.wikipedia.org/wiki/Geo_URI_scheme#Unofficial_extensions
                         attribs += "?q=" + roundDouble(latitude) + "," + roundDouble(longitude) + "\">";
                         attribs += roundDouble(latitude) + "," + roundDouble(longitude);
-                        // https://en.wikipedia.org/wiki/Geo_URI_scheme#Uncertainty
                         attribs += "</a>\n\n";
                     }
                     if (isMaritimeModeEnabled) {
