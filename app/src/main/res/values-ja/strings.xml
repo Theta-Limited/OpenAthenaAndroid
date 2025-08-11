@@ -252,5 +252,13 @@
     <string name="danger_maritime_mode_is_enabled">⚠️ 危険：海洋モードが有効です。陸上ターゲットの計算が非常に不正確になります ⚠️</string>
     <string name="disable_maritime_mode_action">海洋モードをオフにする</string>
     <string name="tle_disclaimer">ターゲットの位置エラーのカテゴリ出力は推定値であり、関連する機関による認証がない場合があります</string>
+    <string name="email_address_for_technical_support_prompt_about">技術サポート用メールアドレス：</string>
+    <string name="attribs_extended_cot_enabled_notification">"拡張 CoT 出力:"</string>
+    <string name="attribs_is_tle_estimation_calibrated_for_this_drone">このドローン機種でターゲットの位置エラーの推定は較正済みですか：</string>
+    <string name="attribs_tle_prediction_model_parameters">ターゲットの位置エラー予測モデルのパラメータ：</string>
+    <string name="attribs_tle_model_y_intercept_label">y切片</string>
+    <string name="attribs_tle_model_slant_range_coeff_label">斜距係数</string>
+    <string name="about_easter_egg_extended_cot_mode_enabled">拡張 CoT モードを有効にしました！</string>
+    <string name="about_easter_egg_extended_cot_mode_disabled">拡張 CoT モードを無効にしました。</string>
 
 </resources>

@@ -252,5 +252,13 @@
     <string name="danger_maritime_mode_is_enabled">⚠️ NIEBEZPIECZEŃSTWO: Tryb morski jest włączony. Obliczenia będą bardzo niedokładne dla celów na lądzie ⚠️</string>
     <string name="disable_maritime_mode_action">Wyłącz tryb morski</string>
     <string name="tle_disclaimer">Wynik kategorii błędu lokalizacji celu jest tylko szacunkiem i może nie być certyfikowany przez odpowiednie organy</string>
+    <string name="email_address_for_technical_support_prompt_about">Adres e-mail do wsparcia technicznego:</string>
+    <string name="attribs_extended_cot_enabled_notification">"Rozszerzony wynik CoT:"</string>
+    <string name="attribs_is_tle_estimation_calibrated_for_this_drone">Czy oszacowanie błędu lokalizacji celu jest skalibrowane dla tego modelu drona:</string>
+    <string name="attribs_tle_prediction_model_parameters">Parametry modelu predykcji błędu lokalizacji celu:</string>
+    <string name="attribs_tle_model_y_intercept_label">wyraz wolny</string>
+    <string name="attribs_tle_model_slant_range_coeff_label">współczynnik zasięgu skośnego</string>
+    <string name="about_easter_egg_extended_cot_mode_enabled">Tryb CoT rozszerzony włączony!</string>
+    <string name="about_easter_egg_extended_cot_mode_disabled">Tryb CoT rozszerzony wyłączony.</string>
 
 </resources>

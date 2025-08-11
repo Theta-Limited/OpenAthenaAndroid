@@ -252,6 +252,14 @@
     <string name="danger_maritime_mode_is_enabled">⚠️ ОПАСНОСТЬ: Морской режим включен. Расчеты будут очень неточными для целей на суше ⚠️</string>
     <string name="disable_maritime_mode_action">Выключить морской режим</string>
     <string name="tle_disclaimer">Выходные данные категории ошибки местоположения цели являются лишь оценочными и могут не быть сертифицированы соответствующими органами</string>
+    <string name="email_address_for_technical_support_prompt_about">Адрес электронной почты службы поддержки:</string>
+    <string name="attribs_extended_cot_enabled_notification">"Расширенный вывод CoT:"</string>
+    <string name="attribs_is_tle_estimation_calibrated_for_this_drone">Оценка ошибки местоположения цели откалибрована для этой модели дрона:</string>
+    <string name="attribs_tle_prediction_model_parameters">Параметры модели прогнозирования ошибки местоположения цели:</string>
+    <string name="attribs_tle_model_y_intercept_label">свободный член</string>
+    <string name="attribs_tle_model_slant_range_coeff_label">коэффициент наклонной дальности</string>
+    <string name="about_easter_egg_extended_cot_mode_enabled">Расширенный режим CoT включён!</string>
+    <string name="about_easter_egg_extended_cot_mode_disabled">Расширенный режим CoT отключён.</string>
 
 
 </resources>
