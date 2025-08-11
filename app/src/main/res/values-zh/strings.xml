@@ -253,5 +253,13 @@
     <string name="danger_maritime_mode_is_enabled">⚠️ 危险：已启用海洋模式。对陆地目标的计算将非常不准确 ⚠️</string>
     <string name="disable_maritime_mode_action">关闭海洋模式</string>
     <string name="tle_disclaimer">目标位置错误类别输出仅为估计值，可能未经相关当局认证</string>
+    <string name="email_address_for_technical_support_prompt_about">技术支持邮箱：</string>
+    <string name="attribs_extended_cot_enabled_notification">"扩展 CoT 输出："</string>
+    <string name="attribs_is_tle_estimation_calibrated_for_this_drone">此无人机机型的目标位置误差估计是否已校准：</string>
+    <string name="attribs_tle_prediction_model_parameters">目标位置误差预测模型参数：</string>
+    <string name="attribs_tle_model_y_intercept_label">y 截距</string>
+    <string name="attribs_tle_model_slant_range_coeff_label">斜距系数</string>
+    <string name="about_easter_egg_extended_cot_mode_enabled">已启用扩展 CoT 模式！</string>
+    <string name="about_easter_egg_extended_cot_mode_disabled">已禁用扩展 CoT 模式。</string>
 
 </resources>

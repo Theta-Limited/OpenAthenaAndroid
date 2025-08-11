@@ -252,5 +252,13 @@
     <string name="danger_maritime_mode_is_enabled">⚠️ 위험: 해양 모드가 활성화되었습니다. 육지의 모든 대상에 대한 계산이 매우 부정확합니다 ⚠️</string>
     <string name="disable_maritime_mode_action">해양 모드 끄기</string>
     <string name="tle_disclaimer">목표 위치 오류 범주 출력은 추정치이며 관련 기관의 인증을 받지 않을 수 있습니다</string>
+    <string name="email_address_for_technical_support_prompt_about">기술 지원용 이메일 주소:</string>
+    <string name="attribs_extended_cot_enabled_notification">"확장 CoT 출력:"</string>
+    <string name="attribs_is_tle_estimation_calibrated_for_this_drone">이 드론 기종에서 목표 위치 오차 추정이 보정되었습니까:</string>
+    <string name="attribs_tle_prediction_model_parameters">목표 위치 오차 예측 모델 매개변수:</string>
+    <string name="attribs_tle_model_y_intercept_label">y 절편</string>
+    <string name="attribs_tle_model_slant_range_coeff_label">경사거리 계수</string>
+    <string name="about_easter_egg_extended_cot_mode_enabled">확장 CoT 모드가 활성화되었습니다!</string>
+    <string name="about_easter_egg_extended_cot_mode_disabled">확장 CoT 모드가 비활성화되었습니다.</string>
 
 </resources>

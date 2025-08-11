@@ -252,5 +252,13 @@
     <string name="danger_maritime_mode_is_enabled">⚠️ DANGER : Le mode maritime est activé. Les calculs seront très inexacts pour les cibles terrestres ⚠️</string>
     <string name="disable_maritime_mode_action">Désactiver le mode maritime</string>
     <string name="tle_disclaimer">La catégorie d\'erreur de localisation de cible est uniquement une estimation et peut ne pas être certifiée par les autorités compétentes</string>
+    <string name="email_address_for_technical_support_prompt_about">Adresse e-mail du support technique :</string>
+    <string name="attribs_extended_cot_enabled_notification">"Sortie CoT étendue :"</string>
+    <string name="attribs_is_tle_estimation_calibrated_for_this_drone">L’estimation de l’erreur de localisation de la cible est-elle calibrée pour ce modèle de drone :</string>
+    <string name="attribs_tle_prediction_model_parameters">Paramètres du modèle de prédiction de l’erreur de localisation de la cible :</string>
+    <string name="attribs_tle_model_y_intercept_label">ordonnée à l’origine</string>
+    <string name="attribs_tle_model_slant_range_coeff_label">coefficient de distance oblique</string>
+    <string name="about_easter_egg_extended_cot_mode_enabled">Mode CoT étendu activé !</string>
+    <string name="about_easter_egg_extended_cot_mode_disabled">Mode CoT étendu désactivé.</string>
 
 </resources>

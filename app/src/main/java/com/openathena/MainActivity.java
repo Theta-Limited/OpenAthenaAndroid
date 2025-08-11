@@ -925,7 +925,7 @@ public class MainActivity extends DemManagementActivity {
 
                     if (shouldISendCoT) {
                         if (is_extended_cot_mode_active) {
-                            attribs += getString(R.string.attribs_extended_cot_enabled_notification) + getString(R.string.yes) + "\n";
+                            attribs += getString(R.string.attribs_extended_cot_enabled_notification) + " " + getString(R.string.yes) + "\n";
                         }
                         attribs += getString(R.string.mainactivity_label_cursor_on_target_message_sent_with_uid) + " " + CursorOnTargetSender.buildUIDString(this) + "\n";
                     }
