@@ -1,0 +1,9 @@
+Major release with some minor adjustments
+* New and more accurate formula for target location error estimation based on slant range
+* Use Copernicus GLO-30 (better accuracy) instead of SRTM for all new DEM downloads
+* code cleanup
+* Update app, UI, and submodules for Android 15
+* update droneModels.json
+* fix a crash from orientation change when re-entering app
+* add easter egg for extended debug CoT mode enable/disable
+* improve reliability of calculation for cropped images
