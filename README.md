@@ -8,6 +8,11 @@ OpenAthena™ instantly calculates the ground location of any single pixel from 
 🖼️👨‍💻 + 🧮⛰️ = 🎯📍
 
 
+**NOTICE: OpenAthena for Android is no longer open source to the general public, following a license change from Theta Informatics LLC. While no longer open source, it will remain available as a free app download on Google Play.**
+
+ U.S. Government, Military, and other trusted end users can request source code access by emailing [support@theta.limited](mailto:support@theta.limited).
+
+
 <a href="https://github.com/mkrupczak3/OpenAthena"><img width="540" alt="OpenAthena Drone Camera Terrain Raycast Concept Diagram" src="https://github.com/mkrupczak3/OpenAthena/raw/main/assets/OpenAthena_Concept_Diagram.png"></a>
 
 <a href="https://play.google.com/store/apps/details?id=com.openathena"><img width="200" alt="OpenAthena arbitrary point location demo gif" src="./assets/tap_to_locate_demo_small.gif"></a>
@@ -26,20 +31,11 @@ OpenAthena™ instantly calculates the ground location of any single pixel from 
 
 Copyright (C) 2025 Theta Informatics LLC
 
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 as published by the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 # Install
 
-<a href="https://f-droid.org/packages/com.openathena">
-    <img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
-    alt="Get it on F-Droid"
-    height="80">
-</a>
-<a href='https://apt.izzysoft.de/fdroid/index/apk/com.openathena'><img width="216" alt='Get it on izzysoft.de' src='https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png'/></a>
+
+
 <a href='https://play.google.com/store/apps/details?id=com.openathena&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img width="216" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
 
 ## GitHub releases page:
@@ -160,51 +156,21 @@ The app also supports selection between `Meter` and `US Foot` as the Distance Un
 
 The end goal of this project is to enable UAS operators to perform terrain-raycast localization from any point within a live video feed. The target resolution engine of this application is highly modular and may be extended to operate on any such telemetry data source. This capability will be specific to each UAS manufacturer's SDK; therefore, it will take time to develop.
 
+
 # Contributing
-
-OpenAthena™ for Android is an open source project, and we thrive on contributions from the community. Whether you're a seasoned developer or just starting out, we welcome your involvement in making OpenAthena better for everyone.
-
-## Why Contribute?
 
 Contributing to OpenAthena means being part of a community that values innovation and collaboration. It’s an opportunity to enhance your skills, connect with other talented individuals, and make a tangible impact on a tool that benefits drone enthusiasts and professionals around the world.
 
 ## How You Can Contribute
 
-- **Code Contributions:** If you're looking to write code, check out our issues on GitHub, especially those tagged with "Good First Issue". These are great for getting started!
 - **Bug Reports:** Encountering bugs? Report them on our GitHub issue tracker. Detailed reports can help us improve stability and user experience.
 - **Feature Suggestions:** Have ideas on how to make OpenAthena even better? We love hearing new ideas! Share them as feature requests on our issue tracker.
 - **Documentation:** Help us improve our documentation to ensure it's clear and accessible to everyone. All documentation will be in [Markdown format](https://duckduckgo.com/?t=ffab&q=markdown+cheat+sheet&ia=answer) 
 
-## Contributor license agreement
-
-Other than documentation changes, contributors to this project must agree to [Theta's Contributor License Agreement (CLA)](https://github.com/Theta-Limited/Contributor-License-Agreement). This CLA is the minimum necessary to protect the OpenAthena project; it is designed to be as short and simple as possible to preserve the interests of contributors.
-
-## Code
-If you're interested in contributing to this project, feel free to make a fork. This project will
-follow the [fork and pull model](https://reflectoring.io/github-fork-and-pull/) for third-party contributions.
-
-### Cloning this project with submodules
-⚠️This project requires content from other git repositories (such as Theta's [DroneModels database](https://github.com/Theta-Limited/DroneModels)) and will not build correctly without them! ⚠️
-
-To clone this project properly, with the necessary submodules:
-```bash
-git clone --recursive git@github.com:Theta-Limited/OpenAthenaAndroid.git # can also use https clone url instead
-```
-
-If you have already cloned, and wish to acquire the neccesary submodule contents:
-```bash
-git submodule init
-git submodule update
-```
-
-If you wish to update the contents of submodules from their source:
-```bash
-git submodule update --remote
-```
 
 ### OPENTOPOGRAPHY_API_KEY in local.properties for DEM downloading
 
-The OpenAthena app's automatic DEM downloading feature requires an Application Programming Interface (API) key from OpenTopography.org ([obtainable here](https://opentopography.org/blog/introducing-api-keys-access-opentopography-global-datasets)) to function. Such an API key authenticates the app with OpenTopography's servers for DEM downloading. A default key will be automatically included in releases from the Google Play or Apple AppStore; however, you will need to obtain one for yourself if you clone this project's code from GitHub or download it from F-Droid.
+The OpenAthena app's automatic DEM downloading feature requires an Application Programming Interface (API) key from OpenTopography.org ([obtainable here](https://opentopography.org/blog/introducing-api-keys-access-opentopography-global-datasets)) to function. Such an API key authenticates the app with OpenTopography's servers for DEM downloading. A default key will be automatically included in releases from the Google Play or Apple AppStore; however, you will need to obtain one for yourself if you download an older version of this software GitHub or F-Droid.
 
 #### Add your OpenTopography API key from within the OpenAthena app
 
@@ -227,36 +193,6 @@ Finally, paste your API key into the OpenAthena™ for Android app and hit the "
 <img width="270" alt="OpenAthena™ Android Open Settings Activity demo" src="./assets/Toast_New_API_Key_Applied.png">
 
 If you have an internet connection, the API Key Status should appear as ✅ (Valid). If you are offline the status will appear as ❓ (Unknown). If your API key is in fact valid, the software will work correctly with the OpenTopography API for DEM downloading once internet connection is restored.
-
-
-#### How to Acquire and use an OpenTopography API Key for building this project
-
-Follow the instructions in the link below to obtain an API Key for OpenTopography.org:
-
-[https://opentopography.org/blog/introducing-api-keys-access-opentopography-global-datasets](https://opentopography.org/blog/introducing-api-keys-access-opentopography-global-datasets)
-
-After cloning this project, edit the file `local.properties` which is auto-generated by Android Studio in the root directory of the project. It should have appearance similar to below:
-```bash
-## This file must *NOT* be checked into Version Control Systems,
-# as it contains information specific to your local configuration.
-#
-# Location of the SDK. This is only used by Gradle.
-# For customization when using a Version Control System, please read the
-# header note.
-#Tue Jun 14 14:32:24 EDT 2022
-sdk.dir=/home/YOURNAME/Android/Sdk/
-```
-
-Add your OpenTopography API key to the end of the `local.properties` file:
-```bash
-OPENTOPOGRAPHY_API_KEY=nlhhp3yd9ud54tr3eem4akqv49wcb23i
-```
-
-
-...replacing nlhh...23i with the OpenTopography API key you obtained from the above link
-
-
-You will then be able to build the project and the API key will be included in the app.
 
 
 # Acknowledgements
