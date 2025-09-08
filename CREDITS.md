@@ -11,4 +11,4 @@ This software project would not be possible without the tireless work of many U.
 [Apache Commons Lang](https://github.com/apache/commons-lang) Apache License  
 [Apache Commons IO](https://github.com/apache/commons-io) Apache License  
 
-Source code for these libraries are available via the links above. For more information, email [supoprt@theta.limited](mailto:support@theta.limited)
+Source code for these libraries as used in the OpenAthena for Android app are available via the links above. For more information, email [supoprt@theta.limited](mailto:support@theta.limited)
